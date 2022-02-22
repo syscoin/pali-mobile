@@ -5,7 +5,6 @@ import AssetsController, { TokenChangedType } from '../assets/AssetsController';
 import NetworkController from '../network/NetworkController';
 import BscNetworkController from '../network/BscNetworkController';
 import PolygonNetworkController from '../network/PolygonNetworkController';
-import KeyringController from '../keyring/KeyringController';
 import ArbNetworkController from '../network/ArbNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
@@ -19,29 +18,6 @@ export enum SecurityChangedType {
   SubmittedChanged = 0x04,
 }
 
-export interface IData {
-  eth: ISecurityData[];
-  bsc: ISecurityData[];
-  polygon: ISecurityData[];
-  arbitrum: ISecurityData[];
-  heco: ISecurityData[];
-  optimism: ISecurityData[];
-  avalanche: ISecurityData[];
-  new: string; // 字符串类型的数字
-}
-
-export interface ISecurityData {
-  address: string;
-  disclaimer_desc: string;
-  website: string;
-  detect_status: number;
-  options: {
-    normal: SecurityContent[];
-    notice: SecurityContent[];
-    risk: SecurityContent[];
-  };
-}
-
 export interface SecurityContent {
   name: string;
   desc: string;
@@ -49,12 +25,45 @@ export interface SecurityContent {
   o_type: string; // "0", "1", "2"
 }
 
+export interface Holder {
+  address: string;
+  is_locked: number;
+  tag: string;
+  is_contract: number;
+  balance: string;
+  percent: string;
+}
+
+export interface Dex {
+  name: string;
+  liquidity: string;
+  pair: string;
+}
+
 export interface SecurityToken {
-  isRobotDetected: boolean;
   chainId: string;
   address: string;
-  disclaimer: string;
-  website: string;
+  is_blacklisted: string;
+  is_in_dex: string;
+  is_mintable: string;
+  is_open_source: string;
+  is_proxy: string;
+  slippage_modifiable: string;
+  buy_tax: string;
+  can_take_back_ownership: string;
+  holder_count: string;
+  is_anti_whale: string;
+  is_honeypot: string;
+  is_whitelisted: string;
+  lp_holder_count: string;
+  lp_total_supply: string;
+  owner_address: string;
+  sell_tax: string;
+  total_supply: string;
+  transfer_pausable: string;
+  dex: Dex[];
+  holders: Holder[];
+  lp_holders: Holder[];
   normal: SecurityContent[];
   notice: SecurityContent[];
   risk: SecurityContent[];
@@ -69,7 +78,6 @@ export interface SecurityNft {
 
 export interface SecurityState extends BaseState {
   securityTokens: SecurityToken[];
-  submittedTokens: { [key: string]: string[] };
   updateTime: number;
   redDotDataMaps: { [key: string]: RedDotData };
   lastRiskBubbleTimestamp: number;
@@ -104,16 +112,12 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
 
   private handle?: NodeJS.Timer;
 
-  private getServerURL() {
-    return useTestServer() ? 'https://miaoqiang.libsss.com/api/v1/' : 'https://uniswap.morpheuscommunity.net/api/v1/';
-  }
-
   private getGoServerURL() {
     return useTestServer() ? 'https://go.libsss.com/api/' : 'https://go.morpheuscommunity.net/api/';
   }
 
   private getSecurityURL() {
-    return `${this.getServerURL()}open/safety`;
+    return `https://api.gopluslabs.io/api/v1/`;
   }
 
   constructor(config?: Partial<SecurityConfig>, state?: Partial<SecurityState>) {
@@ -123,7 +127,6 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       lastRiskBubbleTimestamp: 0,
       securityTokens: [],
       updateTime: 0,
-      submittedTokens: {},
       redDotDataMaps: {},
       securityNfts: [],
       changedType: SecurityChangedType.NoChange,
@@ -131,40 +134,28 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     this.initialize();
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // eslint-disable-next-line consistent-return
-  public async fetchInfo(addressArray: string[], bscAddressArray: string[],
-    polygonAddressArray: string[], arbAddressArray: string[], hecoAddressArray: string[],
-    opAddressArray: string[], avaxAddressArray: string[]): Promise<IData | undefined> {
+  private async fetchSecurityData(addressArray: string[], chainId: string): Promise<any | undefined> {
+    if (!addressArray || !chainId || addressArray.length === 0) {
+      return undefined;
+    }
     try {
-      const url = this.getSecurityURL();
-      const keyringController = this.context.KeyringController as KeyringController;
-      const accounts = await keyringController.getAccounts();
+      let addressAppend = '';
+      addressArray.forEach((addr) => {
+        addressAppend += `${addr},`;
+      });
+      addressAppend = addressAppend.substr(0, addressAppend.length - 1);
+      const url = `${this.getSecurityURL()}token_security/${chainId}?contract_addresses=${addressAppend}`;
       const response = await handleFetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          address: addressArray,
-          bsc_address: bscAddressArray,
-          polygon_address: polygonAddressArray,
-          arbitrum_address: arbAddressArray,
-          heco_address: hecoAddressArray,
-          optimism_address: opAddressArray,
-          avalanche_address: avaxAddressArray,
-          user_address: accounts.length > 0 ? accounts[0] : '',
-        }),
+        method: 'GET',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           'Accept-Language': this.config.acceptLanguage,
         },
       });
-      const { code, data } = response;
-      if (code === 200) {
-        return data;
-      }
+      return response?.result;
     } catch (e) {
-      logDebug('leon.w@fetchInfo error: ', e);
+      logDebug('cyh@fetchInfo error: ', e);
     }
     return undefined;
   }
@@ -266,48 +257,31 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       hecoAddressArray.length === 0 && opAddressArray.length === 0 && avaxAddressArray.length === 0) {
       return;
     }
+
     const chainIdList = { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId };
-    let securityTokens: any[] = [];
-    if (tokenArray.length <= 150) {
-      const params = {
-        addressArray,
-        bscAddressArray,
-        polygonAddressArray,
-        arbAddressArray,
-        hecoAddressArray,
-        opAddressArray,
-        avaxAddressArray,
-        ...chainIdList,
-      };
-      securityTokens = await this.fetchPart(params);
-    } else {
-      for (let i = 0; i <= tokenArray.length / 150; i++) {
-        const subTokens = tokenArray.slice(i * 150, (i + 1) * 150);
-        const ethAddrs = subTokens.filter((e) => e.chainId === chainId).map((e) => e.address);
-        const bscAddrs = subTokens.filter((e) => e.chainId === bscChainId).map((e) => e.address);
-        const polygonAddrs = subTokens.filter((e) => e.chainId === polygonChainId).map((e) => e.address);
-        const arbAddrs = subTokens.filter((e) => e.chainId === arbChainId).map((e) => e.address);
-        const hecoAddrs = subTokens.filter((e) => e.chainId === hecoChainId).map((e) => e.address);
-        const opAddrs = subTokens.filter((e) => e.chainId === opChainId).map((e) => e.address);
-        const avaxAddrs = subTokens.filter((e) => e.chainId === avaxChainId).map((e) => e.address);
-        const params = {
-          addressArray: ethAddrs,
-          bscAddressArray: bscAddrs,
-          polygonAddressArray: polygonAddrs,
-          arbAddressArray: arbAddrs,
-          hecoAddressArray: hecoAddrs,
-          opAddressArray: opAddrs,
-          avaxAddressArray: avaxAddrs,
-          ...chainIdList,
-        };
-        const ret = await this.fetchPart(params);
-        securityTokens = [...securityTokens, ...ret];
-      }
+    const ethSecurityTokens = await this.fetchInfo(addressArray, chainId);
+    const bscSecurityTokens = await this.fetchInfo(bscAddressArray, bscChainId);
+    const polygonSecurityTokens = await this.fetchInfo(polygonAddressArray, polygonChainId);
+    const arbSecurityTokens = await this.fetchInfo(arbAddressArray, arbChainId);
+    const hecoSecurityTokens = await this.fetchInfo(hecoAddressArray, hecoChainId);
+    const opSecurityTokens = await this.fetchInfo(opAddressArray, opChainId);
+    const avaxSecurityTokens = await this.fetchInfo(avaxAddressArray, avaxChainId);
+    const securityTokens = [...ethSecurityTokens, ...bscSecurityTokens, ...polygonSecurityTokens, ...arbSecurityTokens, ...hecoSecurityTokens, ...opSecurityTokens, ...avaxSecurityTokens];
+
+    const newSecurityTokens = [...securityTokens];
+    const oldSecurityTokens = this.state.securityTokens;
+    if (oldSecurityTokens && oldSecurityTokens.length > 0) {
+      oldSecurityTokens.forEach((oldToken) => {
+        const findToken = securityTokens.find((token: { address: string; chainId: string }) => toLowerCaseEquals(oldToken.address, token.address) && oldToken.chainId === token.chainId);
+        if (!findToken) {
+          newSecurityTokens.push(oldToken);
+        }
+      });
     }
-    const newRedDotDataMap = this.updateRedDotData(securityTokens, chainIdList);
+    const newRedDotDataMap = this.updateRedDotData(newSecurityTokens, chainIdList);
     this.update({
       redDotDataMaps: newRedDotDataMap,
-      securityTokens, updateTime: Date.now(),
+      securityTokens: newSecurityTokens, updateTime: Date.now(),
       changedType: SecurityChangedType.TokensChanged,
     });
   }
@@ -382,32 +356,90 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     return newRedDotDataMap;
   }
 
-  private mapResultList(list: ISecurityData[], chainId: string) {
-    return list.map((data) => {
-      const { address, options, disclaimer_desc, website, detect_status } = data;
-      const { normal, notice, risk } = options;
-      const disclaimer = disclaimer_desc;
-      const isRobotDetected = detect_status === 1;
-      return { chainId, address, normal, notice, risk, website, disclaimer, isRobotDetected };
+  private mapResultList(tokenArray: any[], listData: any, chainId: string) {
+    if (!listData || !tokenArray || !chainId) {
+      return [];
+    }
+    const securityTokens: any[] = [];
+    tokenArray.forEach((address: string) => {
+      const data = listData[address.toLowerCase()];
+      if (data) {
+        const normal: SecurityContent[] = [];
+        const notice: SecurityContent[] = [];
+        const risk: SecurityContent[] = [];
+        if (data.is_open_source === '1') {
+          normal.push({ desc: '', o_type: '', name: 'is_open_source', type: '1' });
+        } else if (data.is_open_source === '0') {
+          notice.push({ desc: '', o_type: '', name: 'is_open_source', type: '2' });
+        }
+        if (data.is_proxy === '1') {
+          notice.push({ desc: '', o_type: '', name: 'is_proxy', type: '2' });
+        } else if (data.is_proxy === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_proxy', type: '1' });
+        }
+        if (data.is_mintable === '1') {
+          notice.push({ desc: '', o_type: '', name: 'is_mintable', type: '2' });
+        } else if (data.is_mintable === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_mintable', type: '1' });
+        }
+        if (data.slippage_modifiable === '1') {
+          notice.push({ desc: '', o_type: '', name: 'slippage_modifiable', type: '2' });
+        } else if (data.slippage_modifiable === '0') {
+          normal.push({ desc: '', o_type: '', name: 'slippage_modifiable', type: '1' });
+        }
+        if (data.is_honeypot === '1') {
+          risk.push({ desc: '', o_type: '', name: 'is_honeypot', type: '3' });
+        } else if (data.is_honeypot === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_honeypot', type: '1' });
+        }
+        if (data.transfer_pausable === '1') {
+          notice.push({ desc: '', o_type: '', name: 'transfer_pausable', type: '2' });
+        } else if (data.transfer_pausable === '0') {
+          normal.push({ desc: '', o_type: '', name: 'transfer_pausable', type: '1' });
+        }
+        if (data.is_blacklisted === '1') {
+          notice.push({ desc: '', o_type: '', name: 'is_blacklisted', type: '2' });
+        } else if (data.is_blacklisted === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_blacklisted', type: '1' });
+        }
+        if (data.is_whitelisted === '1') {
+          notice.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '2' });
+        } else if (data.is_whitelisted === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '1' });
+        }
+        if (data.is_whitelisted === '1') {
+          notice.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '2' });
+        } else if (data.is_whitelisted === '0') {
+          normal.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '1' });
+        }
+        if (data.is_in_dex === '1') {
+          normal.push({ desc: '', o_type: '', name: 'is_in_dex', type: '1' });
+        } else if (data.is_in_dex === '0') {
+          notice.push({ desc: '', o_type: '', name: 'is_in_dex', type: '2' });
+        }
+        securityTokens.push({ address, chainId, normal, notice, risk, ...data });
+      }
     });
+    return securityTokens;
   }
 
-  private async fetchPart(params: any) {
-    const { addressArray, bscAddressArray, polygonAddressArray, arbAddressArray, hecoAddressArray, opAddressArray, avaxAddressArray } = params;
-    const { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId } = params;
-    const listData = await this.fetchInfo(addressArray, bscAddressArray, polygonAddressArray, arbAddressArray, hecoAddressArray, opAddressArray, avaxAddressArray);
-    if (listData) {
-      let securityTokens: SecurityToken[] = [];
-      securityTokens = securityTokens.concat(this.mapResultList(listData.eth || [], chainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.bsc || [], bscChainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.polygon || [], polygonChainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.arbitrum || [], arbChainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.heco || [], hecoChainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.optimism || [], opChainId));
-      securityTokens = securityTokens.concat(this.mapResultList(listData.avalanche || [], avaxChainId));
+  public async fetchInfo(tokenArray: any[], chainId: string) {
+    let securityTokens: any[] = [];
+    if (!tokenArray || tokenArray.length === 0 || !chainId) {
       return securityTokens;
     }
-    return [];
+
+    if (tokenArray.length <= 100) {
+      const listData = await this.fetchSecurityData(tokenArray, chainId);
+      securityTokens = securityTokens.concat(this.mapResultList(tokenArray, listData, chainId));
+    } else {
+      for (let i = 0; i <= tokenArray.length / 100; i++) {
+        const subTokens = tokenArray.slice(i * 100, (i + 1) * 100);
+        const listData = await this.fetchSecurityData(subTokens, chainId);
+        securityTokens = securityTokens.concat(this.mapResultList(subTokens, listData, chainId));
+      }
+    }
+    return securityTokens;
   }
 
   /**
@@ -475,92 +507,31 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     setTimeout(() => this.loadNftWhitelist(), 2000);
   }
 
-  public async submitToken(address: string, token: string, chain: number): Promise<number> {
+  public async fastCheck(chainId: string, address: string) {
+    if (!chainId || !address) {
+      return undefined;
+    }
     const releaseLock = await this.mutex.acquire();
     try {
-      const url = `${this.getServerURL()}currency/user/submit`;
-      const response = await handleFetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          address, token, chain,
-        }),
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Accept-Language': this.config.acceptLanguage,
-        },
-      });
-      const { code } = response;
-      if (code === 200) {
-        this.updateSubmitList(chain, token);
-        return 200;
-      }
-      console.log('response --> ', response);
-      return code;
-    } catch (e) {
-      logDebug('leon.w@fetchInfo error: ', e);
-    } finally {
-      releaseLock();
-    }
-    return -1;
-  }
-
-  updateSubmitList(chain: number, token: string) {
-    const submittedTokens = this.state.submittedTokens || {};
-    if (!submittedTokens[chain]) {
-      submittedTokens[chain] = [];
-    }
-    if (!submittedTokens[chain].includes(token)) {
-      submittedTokens[chain].push(token);
-      this.update({
-        submittedTokens,
-        changedType: SecurityChangedType.SubmittedChanged,
-      });
-    }
-  }
-
-  async fastCheck(chain: number, chainId: string, address: string) {
-    const releaseLock = await this.mutex.acquire();
-    try {
-      const keyringController = this.context.KeyringController as KeyringController;
-      const accounts = await keyringController.getAccounts();
-      const url = `${this.getServerURL()}open/safetyAuto`;
-      const response = await handleFetch(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          address, chain,
-          user_address: accounts.length > 0 ? accounts[0] : '',
-        }),
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Accept-Language': this.config.acceptLanguage,
-        },
-      });
-      const { code } = response;
-      if (code === 200) {
-        const { securityTokens } = this.state;
-        const newTokens = [...securityTokens];
-        const { normal, notice, risk } = response?.data || {};
-        const findRet = newTokens.findIndex((v) => toLowerCaseEquals(v.address, address) && v.chainId === chainId);
-        if (findRet === -1) {
-          newTokens.push({ chainId, address, normal, notice, risk, website: '', disclaimer: '', isRobotDetected: true });
-          this.update({
-            securityTokens: newTokens,
-            changedType: SecurityChangedType.TokensChanged,
-          });
+      const { securityTokens } = this.state;
+      if (securityTokens && securityTokens.length > 0) {
+        const findToken = securityTokens.find((token) => toLowerCaseEquals(token.address, address) && token.chainId === chainId);
+        if (findToken) {
+          return findToken;
         }
-      } else if (code === 4403) {
-        this.updateSubmitList(chain, address);
       }
-      console.log('response --> ', `${chain} - ${chainId}`, response);
-      return response;
+      const tokens = await this.fetchInfo([address], chainId);
+      const newSecurityTokens = [...securityTokens, ...tokens];
+      this.update({
+        securityTokens: newSecurityTokens,
+      });
+      return tokens && tokens.length > 0 ? tokens[0] : undefined;
     } catch (e) {
-      logDebug('leon.w@fetchInfo error: ', e);
+      logDebug('cyh@fastCheck error: ', e);
     } finally {
       releaseLock();
     }
-    return { data: undefined, code: -1, msg: 'failed' };
+    return undefined;
   }
 
   /**

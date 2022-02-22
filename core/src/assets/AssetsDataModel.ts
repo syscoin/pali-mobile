@@ -9,7 +9,7 @@ import ArbNetworkController from '../network/ArbNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
 import RpcNetworkController from '../network/RpcNetworkController';
-import util, { isEtherscanAvailableAsync, logDebug, safelyExecute } from '../util';
+import util, { isEtherscanAvailableAsync, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
 import { BN } from '..';
 import SecurityController, { SecurityToken } from '../security/SecurityController';
 import OpNetworkController from '../network/OpNetworkController';
@@ -517,7 +517,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         tokenAmount[asset.type] += asset.balanceFiatNumber * asset.safetyFactor;
         tokenAmount[ChainType.All] += asset.balanceFiatNumber * asset.safetyFactor;
         if (!asset.isDefi) {
-          const securityData = securityTokens.filter((token) => token.address.toLowerCase() === asset.address?.toLowerCase() && token.chainId === asset.assetChainId);
+          const securityData = securityTokens.filter((token) => toLowerCaseEquals(token.address, asset.address) && token.chainId === asset.assetChainId);
           if (securityData.length > 0) {
             asset.securityData = securityData[0];
           }

@@ -32,6 +32,7 @@ import AssetElement from '../../UI/AssetElement';
 import Fuse from 'fuse.js';
 import { fontStyles, colors } from '../../../styles/common';
 import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
+import { getSecurityData } from '../../../util/security';
 
 const { width, height } = Dimensions.get('window');
 const hideItemWidth = 70;
@@ -455,8 +456,7 @@ class AddAsset extends PureComponent {
 	);
 
 	renderSecurityTag = asset => {
-		const { securityData } = asset;
-
+		const securityData = getSecurityData(asset);
 		if (!securityData) {
 			return;
 		}
@@ -563,7 +563,8 @@ class AddAsset extends PureComponent {
 	renderItem = (asset, index) => {
 		const { isAmountHide } = this.props;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
-		const { price, priceChange, done, balanceFiat, balance, securityData } = asset;
+		const { price, priceChange, done, balanceFiat, balance } = asset;
+		const securityData = getSecurityData(asset);
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 		const isRpc = getIsRpc(asset.type);
 		const isDefi = asset.isDefi;

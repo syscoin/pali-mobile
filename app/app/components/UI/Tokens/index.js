@@ -43,6 +43,7 @@ import { Easing } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
 import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
+import { getSecurityData } from '../../../util/security';
 
 const { width, height } = Dimensions.get('window');
 const hideItemWidth = 70;
@@ -866,8 +867,7 @@ class Tokens extends PureComponent {
 	};
 
 	renderSecurityTag = asset => {
-		const { securityData } = asset;
-
+		const securityData = getSecurityData(asset);
 		if (!securityData) {
 			return;
 		}
@@ -884,7 +884,8 @@ class Tokens extends PureComponent {
 		const index = rowData.index;
 		const { isAmountHide } = this.props;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
-		const { price, priceChange, done, balanceFiat, balance, securityData } = asset;
+		const { price, priceChange, done, balanceFiat, balance } = asset;
+		const securityData = getSecurityData(asset);
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 		const isEnd = index + 1 === allLength;
 		const isRpc = getIsRpc(asset.type);

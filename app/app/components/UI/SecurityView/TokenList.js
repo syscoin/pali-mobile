@@ -7,24 +7,26 @@ import {
 	StyleSheet,
 	TouchableWithoutFeedback,
 	TouchableOpacity,
-	ActivityIndicator
+	ActivityIndicator,
+	DeviceEventEmitter
 } from 'react-native';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import AsyncStorage from '@react-native-community/async-storage';
 import { colors, fontStyles } from '../../../styles/common';
-import { renderAmount } from '../../../util/number';
 import { ChainType, util } from 'gopocket-core';
+import { getChainIdByType, renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
 import TokenImage from '../TokenImage';
 import LinearGradient from 'react-native-linear-gradient';
 import Engine from '../../../core/Engine';
-import { chainTypeTochain } from '../../../util/walletconnect';
 import SearchView from './SearchView';
 import SecurityDesc from '../SecurityDesc';
 import { toLowerCaseEquals } from '../../../util/general';
-import SecurityFastCheck from '../SecurityFastCheck';
 import { getIcTagResource } from '../../../util/rpcUtil';
+import { key2Warn } from '../../../util/security';
+import Modal from 'react-native-modal';
+import LottieView from 'lottie-react-native';
 
 const styles = StyleSheet.create({
 	emptyView: {
@@ -41,11 +43,6 @@ const styles = StyleSheet.create({
 	},
 	flexOne: {
 		flex: 1
-	},
-	flexRow: {
-		marginVertical: 8,
-		flexDirection: 'row',
-		alignItems: 'center'
 	},
 	listWrapper: {
 		backgroundColor: colors.white,
@@ -79,7 +76,8 @@ const styles = StyleSheet.create({
 	iconStyle: {
 		width: 40,
 		height: 40,
-		alignItems: 'center'
+		alignItems: 'center',
+		borderRadius: 10
 	},
 	titleItem: {
 		flexDirection: 'row',
@@ -177,28 +175,46 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		alignSelf: 'flex-start'
 	},
-	disclaimerView: {
-		marginTop: 15,
-		paddingVertical: 8,
-		paddingHorizontal: 14,
-		backgroundColor: colors.$FFE8C5,
-		borderWidth: 1,
-		borderColor: colors.$F8B671,
-		borderRadius: 4
+	modalNoBorder: {
+		justifyContent: 'flex-end'
 	},
-	disclaimerText: {
-		fontSize: 11,
-		color: colors.$C46A4F
+	detailModal: {
+		width: 300,
+		maxHeight: '90%',
+		alignSelf: 'center',
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		overflow: 'hidden',
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingBottom: 20
 	},
-	fastCheckIcon: {
-		width: 22,
-		height: 22,
-		marginRight: 4
+	animation: {
+		width: 160,
+		height: 160
 	},
-	fastCheckText: {
-		flex: 1,
-		fontSize: 11,
-		color: colors.$666666
+	hitSlop: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 10
+	},
+	touchClose: {
+		paddingTop: 10,
+		paddingHorizontal: 12,
+		alignSelf: 'flex-end'
+	},
+	modalTitle: {
+		color: colors.$030319,
+		fontSize: 20,
+		...fontStyles.semibold,
+		marginBottom: 20
+	},
+	modalDesc: {
+		color: colors.$8F92A1,
+		fontSize: 12,
+		marginTop: 14,
+		marginBottom: 20
 	}
 });
 
@@ -211,7 +227,8 @@ class TokenList extends PureComponent {
 	static propTypes = {
 		tokens: PropTypes.array,
 		onItemPress: PropTypes.func,
-		contactEntry: PropTypes.object
+		contactEntry: PropTypes.object,
+		isLockScreen: PropTypes.bool
 	};
 
 	state = {
@@ -220,7 +237,8 @@ class TokenList extends PureComponent {
 		searchQuery: '',
 		searchResult: [],
 		searchLoading: false,
-		initLoaded: false
+		initLoaded: false,
+		updateAssets: []
 	};
 
 	currentSortType = SORT_NETWORTH;
@@ -230,7 +248,53 @@ class TokenList extends PureComponent {
 			this.currentSortType = sortType;
 		}
 		this.initTokenList();
+
+		DeviceEventEmitter.addListener('updateSecurity', this.updateSecurity);
 	}
+
+	componentWillUnmount() {
+		DeviceEventEmitter.removeListener('updateSecurity', this.updateSecurity);
+	}
+
+	updateSecurity = asset => {
+		const updateAssets = [...this.state.updateAssets];
+		updateAssets.push(asset);
+		this.setState({ updateAssets });
+	};
+
+	fastCheck = async asset => {
+		const { SecurityController } = Engine.context;
+		const chainId = getChainIdByType(asset.type);
+		try {
+			const securityData = await SecurityController.fastCheck(chainId, asset.address);
+			if (securityData) {
+				const { normal, notice, risk } = securityData;
+				const normalLength = normal ? normal.length : 0;
+				const noticeLength = notice ? notice.length : 0;
+				const riskLength = risk ? risk.length : 0;
+				asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
+				this.setState({ showFastCheck: false });
+			} else {
+				this.timeoutFastCheck(10 * 1000);
+			}
+		} catch (e) {
+			console.error('cyh@fastCheck error: ', e);
+		}
+	};
+
+	clearTimeout = () => {
+		if (this.handle && this.handle !== 0) {
+			this.handle && clearTimeout(this.handle);
+			this.handle = 0;
+		}
+	};
+
+	timeoutFastCheck = (delayTime, asset) => {
+		this.clearTimeout();
+		this.handle = setTimeout(() => {
+			this.fastCheck(asset);
+		}, delayTime);
+	};
 
 	initTokenList = () => {
 		const { tokens } = this.props;
@@ -296,13 +360,22 @@ class TokenList extends PureComponent {
 		const { tokens, onItemPress } = this.props;
 		const ret = tokens.find(t => t.type === asset.type && toLowerCaseEquals(t.address, asset.address));
 		if (ret) {
-			onItemPress(ret);
+			onItemPress({ ...ret, isSecurityCenter: true });
 		} else {
-			onItemPress(asset);
+			onItemPress({ ...asset, isSecurityCenter: true });
 		}
 	};
 
 	renderItem = (asset, index, isQuery = false) => {
+		const { updateAssets } = this.state;
+		if (updateAssets && updateAssets.length > 0) {
+			const updateAsset = updateAssets.find(
+				upAsset => toLowerCaseEquals(upAsset.address, asset.address) && upAsset.type === asset.type
+			);
+			if (updateAsset) {
+				asset = updateAsset;
+			}
+		}
 		const { price, balanceFiat, balance } = asset;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
@@ -376,12 +449,39 @@ class TokenList extends PureComponent {
 	};
 
 	onSubmitClick = asset => {
-		this.setState({ showFastCheck: true, activeAsset: asset });
+		this.setState({ showFastCheck: true });
+		this.timeoutFastCheck(0, asset);
 	};
 
 	onHideFastCheck = () => {
+		this.clearTimeout();
 		this.setState({ showFastCheck: false });
 	};
+
+	renderFastCheck = () => (
+		<Modal
+			isVisible={this.state.showFastCheck && !this.props.isLockScreen}
+			actionContainerStyle={styles.modalNoBorder}
+			backdropOpacity={0.7}
+			animationIn="fadeIn"
+			animationOut="fadeOut"
+			useNativeDriver
+		>
+			<View style={styles.detailModal}>
+				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.onHideFastCheck} style={styles.touchClose}>
+					<Image source={require('../../../images/ic_pop_close.png')} />
+				</TouchableOpacity>
+				<Text style={styles.modalTitle}>{strings('security.detecting')}</Text>
+				<LottieView
+					style={styles.animation}
+					autoPlay
+					loop
+					source={require('../../../animations/detecting.json')}
+				/>
+				<Text style={styles.modalDesc}>{strings('security.take_seconds')}</Text>
+			</View>
+		</Modal>
+	);
 
 	showDescModal = (item, token) => {
 		this.selectSecurityContent = item;
@@ -393,40 +493,21 @@ class TokenList extends PureComponent {
 		if (asset.nativeCurrency) {
 			return;
 		}
-		const {
-			normalLength,
-			notice,
-			noticeLength,
-			risk,
-			riskLength,
-			disclaimer,
-			isRobotDetected
-		} = asset.securityData;
-		const { SecurityController } = Engine.context;
-		const { submittedTokens } = SecurityController.state;
-		const chain = chainTypeTochain(asset.type);
-		const hasSubmitted = submittedTokens[chain] && submittedTokens[chain].includes(asset.address);
+		const { normalLength, notice, noticeLength, risk, riskLength } = asset.securityData;
 		//未检测显示申请提交按钮
 		if (normalLength === 0 && noticeLength === 0 && riskLength === 0) {
 			return (
 				<TouchableWithoutFeedback style={styles.flexOne}>
 					<View>
-						<TouchableOpacity
-							activeOpacity={hasSubmitted ? 1 : 0.6}
-							onPress={hasSubmitted ? undefined : this.onSubmitClick.bind(this, asset)}
-						>
+						<TouchableOpacity activeOpacity={0.6} onPress={this.onSubmitClick.bind(this, asset)}>
 							<LinearGradient
 								start={{ x: 0, y: 0 }}
 								end={{ x: 1, y: 0 }}
 								colors={['#ADB8E2', '#8798D9']}
 								style={styles.unknownTouch}
 							>
-								<Text style={styles.unknownLabel}>
-									{strings(hasSubmitted ? 'security.submitted_tips' : 'security.uncheck_tips')}
-								</Text>
-								{!hasSubmitted && (
-									<Image source={require('../../../images/security_arrow_white.png')} />
-								)}
+								<Text style={styles.unknownLabel}>{strings('security.uncheck_tips')}</Text>
+								<Image source={require('../../../images/security_arrow_white.png')} />
 							</LinearGradient>
 						</TouchableOpacity>
 					</View>
@@ -434,21 +515,9 @@ class TokenList extends PureComponent {
 			);
 		}
 
-		const hasDisclaimer = !!disclaimer;
 		return (
 			<TouchableWithoutFeedback style={styles.flexOne}>
 				<View>
-					{isRobotDetected && (
-						<View style={styles.flexRow}>
-							<Image style={styles.fastCheckIcon} source={require('../../../images/tag_safe_gray.png')} />
-							<Text style={styles.fastCheckText}>{strings('security.fast_check_hint2')}</Text>
-						</View>
-					)}
-					{hasDisclaimer && (
-						<View style={styles.disclaimerView}>
-							<Text style={styles.disclaimerText}>{disclaimer}</Text>
-						</View>
-					)}
 					{risk &&
 						risk.map((data, index) => (
 							<TouchableOpacity
@@ -472,7 +541,7 @@ class TokenList extends PureComponent {
 									this.showDescModal(data, asset);
 								}}
 							>
-								<Text style={styles.warningLabel}>{data.name}</Text>
+								<Text style={styles.warningLabel}>{key2Warn(data.name)}</Text>
 								<Image source={require('../../../images/security_arrow_yellow.png')} />
 							</TouchableOpacity>
 						))}
@@ -510,16 +579,7 @@ class TokenList extends PureComponent {
 	};
 
 	render() {
-		const {
-			tokenList,
-			searchResult,
-			searchQuery,
-			searchLoading,
-			showSecurityDesc,
-			initLoaded,
-			showFastCheck,
-			activeAsset
-		} = this.state;
+		const { tokenList, searchResult, searchQuery, searchLoading, showSecurityDesc, initLoaded } = this.state;
 		const { contactEntry } = this.props;
 		const isQuery = !!searchQuery;
 		return (
@@ -545,15 +605,15 @@ class TokenList extends PureComponent {
 					asset={this.selectedToken}
 					onDismiss={() => this.setState({ showSecurityDesc: false })}
 				/>
-				{showFastCheck && (
-					<SecurityFastCheck isVisible={showFastCheck} asset={activeAsset} onDismiss={this.onHideFastCheck} />
-				)}
+				{this.renderFastCheck()}
 			</View>
 		);
 	}
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+	isLockScreen: state.settings.isLockScreen
+});
 
 const mapDispatchToProps = dispatch => ({});
 

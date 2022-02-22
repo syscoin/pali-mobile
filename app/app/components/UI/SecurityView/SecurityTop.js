@@ -10,6 +10,7 @@ import { util } from 'gopocket-core';
 import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import { isRpcChainId } from '../../../util/ControllerUtils';
+import { toLowerCaseEquals } from '../../../util/general';
 
 const statUrl = 'https://go.morpheuscommunity.net/api/v2/open/event/handle';
 const statUrlForTesting = 'https://go.libsss.com/api/v2/open/event/handle';
@@ -110,7 +111,7 @@ class SecurityTop extends Component {
 		Engine.fetchAssetsSafety(true);
 		setTimeout(() => {
 			this.setState({ checkLoading: false });
-		}, 2000);
+		}, 3000);
 		onEvent('SafetyDetection');
 		this.statDetect();
 	};
@@ -244,7 +245,7 @@ class SecurityTop extends Component {
 			} else {
 				const securityData = securityTokens.filter(
 					token =>
-						token.address.toLowerCase() === asset.address.toLowerCase() &&
+						toLowerCaseEquals(token.address, asset.address) &&
 						(token.chainId === chainId ||
 							token.chainId === bscChainId ||
 							token.chainId === polygonChainId ||

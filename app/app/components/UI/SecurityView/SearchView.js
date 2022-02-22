@@ -10,6 +10,7 @@ import Engine from '../../../core/Engine';
 import { ChainType, isValidAddress, util } from 'gopocket-core';
 import { getAssetLogo } from '../../../util/number';
 import { logDebug } from 'gopocket-core/dist/util';
+import { getSecurityData } from '../../../util/security';
 
 const styles = StyleSheet.create({
 	searchSection: {
@@ -112,66 +113,23 @@ export default class SearchView extends PureComponent {
 		return ret;
 	};
 
-	addOne = (token, security) => {
-		let risk = [],
-			notice = [],
-			normal = [];
-		const securityData = {};
-		if (security) {
-			const { options, disclaimer_desc, website, detect_status } = security;
-			if (options) {
-				risk = options.risk;
-				notice = options.notice;
-				normal = options.normal;
-			}
-			securityData.disclaimer = disclaimer_desc;
-			securityData.website = website;
-			securityData.isRobotDetected = detect_status === 1;
-		}
-		securityData.address = token.address;
-		securityData.risk = risk;
-		securityData.riskLength = risk ? risk.length : 0;
-		securityData.notice = notice;
-		securityData.noticeLength = notice ? notice.length : 0;
-		securityData.normal = normal;
-		securityData.normalLength = normal ? normal.length : 0;
-		token.securityData = securityData;
-	};
-
-	addSecurityData = (securityData, tokenList) => {
-		if (!securityData || tokenList.length === 0) {
+	addSecurityTokens = tokenList => {
+		if (tokenList.length === 0) {
 			return;
 		}
-		const ethListData = securityData.eth || [];
-		const bscListData = securityData.bsc || [];
-		const polygonListData = securityData.polygon || [];
-		const arbListData = securityData.arbitrum || [];
-		const hecoListData = securityData.heco || [];
-		const opListData = securityData.optimism || [];
-		const avaxListData = securityData.avalanche || [];
-		tokenList.forEach(token => {
-			token.logo = getAssetLogo({
-				type: token.type,
-				address: token.address,
-				l1Address: token.l1Address
+		tokenList.forEach(asset => {
+			asset.logo = getAssetLogo({
+				type: asset.type,
+				address: asset.address,
+				l1Address: asset.l1Address
 			});
-			let ret = [];
-			if (token.type === ChainType.Ethereum) {
-				ret = ethListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Arbitrum) {
-				ret = arbListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Polygon) {
-				ret = polygonListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Bsc) {
-				ret = bscListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Heco) {
-				ret = hecoListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Optimism) {
-				ret = opListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			} else if (token.type === ChainType.Avax) {
-				ret = avaxListData.filter(t => util.toLowerCaseEquals(t.address, token.address));
-			}
-			this.addOne(token, ret[0]);
+
+			const securityData = getSecurityData(asset);
+			const { normal, notice, risk } = securityData;
+			const normalLength = normal ? normal.length : 0;
+			const noticeLength = notice ? notice.length : 0;
+			const riskLength = risk ? risk.length : 0;
+			asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
 		});
 	};
 
@@ -204,8 +162,7 @@ export default class SearchView extends PureComponent {
 			OpContractController,
 			AvaxContractController,
 			RpcNetworkController,
-			RpcContractController,
-			SecurityController
+			RpcContractController
 		} = Engine.context;
 
 		let results = [];
@@ -255,16 +212,7 @@ export default class SearchView extends PureComponent {
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
 			if (results.length > 0) {
-				const securityData = await SecurityController.fetchInfo(
-					ethAddressArray,
-					bscAddressArray,
-					polyAddressArray,
-					arbAddressArray,
-					hecoAddressArray,
-					opAddressArray,
-					avaxAddressArray
-				);
-				this.addSecurityData(securityData, results);
+				this.addSecurityTokens(results);
 				this.sortResult(results);
 			}
 			this.props.onSearch({ searchQuery, results });
@@ -458,17 +406,8 @@ export default class SearchView extends PureComponent {
 
 		results = [...results, ...chainSearchResult];
 		if (results.length > 0) {
-			const securityData = await SecurityController.fetchInfo(
-				ethAddressArray,
-				bscAddressArray,
-				polyAddressArray,
-				arbAddressArray,
-				hecoAddressArray,
-				opAddressArray,
-				avaxAddressArray
-			);
 			this.sortResult(results);
-			this.addSecurityData(securityData, results);
+			this.addSecurityTokens(results);
 		}
 		this.props.onSearch({ searchQuery, results });
 	};

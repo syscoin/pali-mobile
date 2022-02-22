@@ -168,7 +168,12 @@ export const colors = {
 	$C4C5CD: '#C4C5CD',
 	famousTwitterBg: '#00000059',
 	famousTagBg: '#00000040',
-	watchFamousTwitterBg: '#5092FF17'
+	watchFamousTwitterBg: '#5092FF17',
+	$DADFE3A8: '#DADFE3A8',
+	$F1D3C29E: '#F1D3C29E',
+	$D38D69: '#D38D69',
+	$FFB00030: '#FFB00030',
+	$E9ECF1: '#E9ECF1'
 };
 
 /**

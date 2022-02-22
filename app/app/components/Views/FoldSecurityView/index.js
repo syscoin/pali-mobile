@@ -11,24 +11,27 @@ import {
 	Text,
 	Dimensions,
 	PanResponder,
-	TouchableWithoutFeedback
+	TouchableWithoutFeedback,
+	DeviceEventEmitter
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import TokenImage from '../../UI/TokenImage';
-import { ChainType, util } from 'gopocket-core';
+import { util } from 'gopocket-core';
 import { strings } from '../../../../locales/i18n';
 import DashSecondLine from '../DashSecondLine';
-import { getChainIdByType } from '../../../util/number';
+import { getChainIdByType, renderCoinValue } from '../../../util/number';
 import ApprovalEvent from '../../UI/ApprovalEvent';
 import Modal from 'react-native-modal';
 import Engine from '../../../core/Engine';
-import { chainTypeTochain } from '../../../util/walletconnect';
-import SecurityFastCheck from '../../UI/SecurityFastCheck';
 import { onEvent } from 'react-native-mumeng';
-import { getIcTagResource } from '../../../util/rpcUtil';
+import { getChainTypeByChainId } from '../../../util/networks';
+import { ChainTypeNames, ChainTypes } from '../../../util/ChainTypeImages';
+import PercentageCircle from '../../UI/PercentageCircle';
+import LottieView from 'lottie-react-native';
+import { getSecurityData } from '../../../util/security';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -41,7 +44,7 @@ const styles = StyleSheet.create({
 	},
 	iconLayout: {
 		marginRight: 10,
-		width: 50,
+		width: 40,
 		height: 40,
 		alignSelf: 'center'
 	},
@@ -49,28 +52,26 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		overflow: 'hidden',
-		marginRight: 12
+		marginRight: 10
 	},
 	iconStyle: {
 		width: 40,
 		height: 40,
-		alignItems: 'center'
-	},
-	tagView: {
-		position: 'absolute',
-		left: 30,
-		top: 20
+		alignItems: 'center',
+		borderRadius: 10
 	},
 	securityItemView: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 20
+		padding: 20,
+		paddingHorizontal: 24
 	},
 	unkownItemText: {
 		fontSize: 18,
 		...fontStyles.semibold,
 		color: colors.$030319,
-		marginLeft: 10
+		marginLeft: 10,
+		flex: 1
 	},
 	lineFull: {
 		backgroundColor: colors.$F0F0F0,
@@ -78,19 +79,18 @@ const styles = StyleSheet.create({
 	},
 	lineMargin: {
 		height: 1,
-		marginHorizontal: 20
+		marginHorizontal: 24,
+		flex: 0
 	},
 	maxSymbolWidth: {
-		maxWidth: '50%'
+		maxWidth: '50%',
+		marginRight: 6
 	},
 	symbolText: {
 		color: colors.$030319,
-		fontSize: 24,
-		...fontStyles.semibold
-	},
-	addressText: {
-		color: colors.$030319,
-		fontSize: 10
+		fontSize: 16,
+		...fontStyles.semibold,
+		lineHeight: 20
 	},
 	flexOne: {
 		flex: 1
@@ -110,36 +110,13 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.$FE6E91,
 		alignItems: 'center',
 		justifyContent: 'center',
-		margin: 20
+		margin: 20,
+		flexDirection: 'row'
 	},
 	applyCheckText: {
 		fontSize: 16,
-		color: colors.white
-	},
-	checkDetailItem: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginHorizontal: 20,
-		marginVertical: 5
-	},
-	checkDetailItemText: {
-		marginLeft: 6,
-		fontSize: 12,
-		...fontStyles.medium,
-		color: colors.$030319
-	},
-	checkDetailTitle: {
-		...fontStyles.medium,
-		color: colors.$030319,
-		fontSize: 12,
-		marginHorizontal: 20,
-		marginBottom: 3
-	},
-	applyCheckHint: {
-		color: colors.$030319,
-		fontSize: 12,
-		marginHorizontal: 20,
-		marginBottom: 14
+		color: colors.white,
+		marginLeft: 9
 	},
 	securityLayout: {
 		position: 'absolute',
@@ -158,7 +135,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	scrollWrap: {
-		marginHorizontal: 35,
+		marginHorizontal: 30,
 		marginTop: 20,
 		flex: 1
 	},
@@ -193,29 +170,8 @@ const styles = StyleSheet.create({
 		fontSize: 22
 	},
 	securityIconLargeSize: {
-		width: 30,
-		height: 30
-	},
-	checkItemLayout: {
-		flexDirection: 'row',
-		flex: 1,
-		padding: 20
-	},
-	checkItemContent: {
-		marginLeft: 10,
-		flex: 1
-	},
-	checkItemTitle: {
-		color: colors.$030319,
-		...fontStyles.semibold,
-		fontSize: 18,
-		lineHeight: 22
-	},
-	checkItemDesc: {
-		color: colors.$60657D,
-		fontSize: 13,
-		marginTop: 6,
-		lineHeight: 17
+		width: 20,
+		height: 20
 	},
 	approvalTitle: {
 		marginLeft: 20,
@@ -277,7 +233,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		lineHeight: 23
 	},
-	bottomPadding: {
+	spaceHeight: {
 		height: 18
 	},
 	flexGrowOne: {
@@ -287,6 +243,175 @@ const styles = StyleSheet.create({
 		flex: 1,
 		borderRadius: 10,
 		backgroundColor: colors.white
+	},
+	securityTitle: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		padding: 20,
+		backgroundColor: colors.white,
+		borderRadius: 10
+	},
+	securityItemTitle: {
+		fontSize: 24,
+		color: colors.$030319,
+		...fontStyles.semibold
+	},
+	securityItemDesc: {
+		marginTop: 8,
+		color: colors.$8F92A1,
+		fontSize: 14,
+		textAlign: 'center',
+		lineHeight: 16
+	},
+	securityItem: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	securityItemWrap: {
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		flexDirection: 'row',
+		marginTop: 18,
+		paddingVertical: 20,
+		paddingHorizontal: 14
+	},
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
+	},
+	infoModalWrapper: {
+		backgroundColor: colors.white,
+		borderTopLeftRadius: 10,
+		borderTopRightRadius: 10,
+		padding: 30,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	infoTitle: {
+		color: colors.$030319,
+		fontSize: 20,
+		...fontStyles.semibold
+	},
+	infoDesc: {
+		color: colors.$60657D,
+		marginTop: 14,
+		textAlign: 'left',
+		fontSize: 14
+	},
+	animation: {
+		width: 160,
+		height: 160
+	},
+	unDetectedWrap: {
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		flex: 1
+	},
+	fastCheckWrap: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingBottom: 20
+	},
+	fastCheckTitle: {
+		color: colors.$030319,
+		fontSize: 20,
+		...fontStyles.semibold,
+		marginBottom: 30
+	},
+	fastCheckDesc: {
+		color: colors.$8F92A1,
+		fontSize: 12,
+		marginTop: 14
+	},
+	fullLine: {
+		height: 1,
+		backgroundColor: colors.$F0F0F0
+	},
+	checkItemWrap: {
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		paddingHorizontal: 24
+	},
+	checkItemContent: {
+		flexDirection: 'row',
+		flex: 1,
+		height: 62,
+		alignItems: 'center'
+	},
+	checkItemTitle: {
+		color: colors.$030319,
+		fontSize: 16,
+		...fontStyles.semibold,
+		flex: 1
+	},
+	heightOne: {
+		height: 1
+	},
+	holderItemWrap: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginTop: 14
+	},
+	holderItemContent: {
+		width: 28,
+		height: 28,
+		borderRadius: 6,
+		backgroundColor: colors.$F6F6F6,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	holderNum: {
+		color: colors.$8F92A1,
+		fontSize: 14
+	},
+	marginLeft14: {
+		marginLeft: 14
+	},
+	holderPercent: {
+		color: colors.$030319,
+		fontSize: 14,
+		...fontStyles.semibold
+	},
+	holderAddr: {
+		color: colors.$8F92A1,
+		fontSize: 12
+	},
+	holderBase: {
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		marginTop: 18,
+		paddingVertical: 20,
+		paddingHorizontal: 24
+	},
+	holderTitle: {
+		fontSize: 18,
+		color: colors.$030319,
+		...fontStyles.semibold,
+		marginBottom: 20
+	},
+	contentCenter: {
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	circleContent: {
+		color: colors.$FE6E91,
+		fontSize: 18,
+		...fontStyles.semibold
+	},
+	circleDesc: {
+		color: colors.$FE6E91,
+		fontSize: 10,
+		marginTop: 2
+	},
+	holderList: {
+		flexDirection: 'row',
+		marginTop: 6
+	},
+	holderRight: {
+		flex: 1,
+		marginLeft: 10
 	}
 });
 
@@ -305,19 +430,30 @@ class FoldSecurityView extends PureComponent {
 		isLockScreen: PropTypes.bool,
 		asset: PropTypes.object,
 		securityViewOpacity: PropTypes.any,
-		closeSecurityView: PropTypes.func
+		closeSecurityView: PropTypes.func,
+		onFastCheck: PropTypes.func
 	};
 
 	state = {
 		IOSStatusBarHeight: 0,
 		tabIndex: 0,
 		infiniteDescVisible: false,
-		showFastCheck: false
+		showFastCheck: false,
+		infoModalVisible: false,
+		infoModalTitle: '',
+		infoModalDesc: '',
+		securityData: {}
 	};
 
 	scrollViewRef = React.createRef();
 
 	// securityViewOpacity = new Animated.Value(0);
+
+	UNSAFE_componentWillMount() {
+		const { asset } = this.props;
+		const securityData = getSecurityData(asset);
+		this.setState({ securityData });
+	}
 
 	async componentDidMount() {
 		if (Device.isIos()) {
@@ -328,101 +464,428 @@ class FoldSecurityView extends PureComponent {
 		}
 	}
 
+	componentWillUnmount() {
+		this.clearTimeout();
+	}
+
+	fastCheck = async () => {
+		const { SecurityController } = Engine.context;
+		const { asset } = this.props;
+		const chainId = getChainIdByType(asset.type);
+		try {
+			const securityData = await SecurityController.fastCheck(chainId, asset.address);
+			if (securityData) {
+				const { normal, notice, risk } = securityData;
+				const normalLength = normal ? normal.length : 0;
+				const noticeLength = notice ? notice.length : 0;
+				const riskLength = risk ? risk.length : 0;
+				this.props.asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
+				this.setState({
+					securityData: { ...securityData, normalLength, noticeLength, riskLength },
+					showFastCheck: false
+				});
+				if (asset.isSecurityCenter) {
+					DeviceEventEmitter.emit('updateSecurity', this.props.asset);
+				}
+			} else {
+				this.timeoutFastCheck(10 * 1000);
+			}
+		} catch (e) {
+			console.error('cyh@fastCheck error: ', e);
+		}
+	};
+
+	clearTimeout = () => {
+		if (this.handle && this.handle !== 0) {
+			this.handle && clearTimeout(this.handle);
+			this.handle = 0;
+		}
+	};
+
+	timeoutFastCheck = delayTime => {
+		this.clearTimeout();
+		this.handle = setTimeout(() => {
+			this.fastCheck();
+		}, delayTime);
+	};
+
 	renderUnDetected = () => (
-		<View style={styles.flexOne}>
-			<View style={styles.securityItemView}>
-				<Image style={styles.securityIconLargeSize} source={require('../../../images/img_defi_unknown.png')} />
-				<Text style={styles.unkownItemText}>{strings('security.item_open_source')}</Text>
-			</View>
-			<DashSecondLine lineWidth={width - 80} style={styles.lineMargin} />
-			<View style={styles.securityItemView}>
-				<Image style={styles.securityIconLargeSize} source={require('../../../images/img_defi_unknown.png')} />
-				<Text style={styles.unkownItemText}>{strings('security.item_in_dex')}</Text>
-			</View>
-			<DashSecondLine lineWidth={width - 80} style={styles.lineMargin} />
-			<View style={styles.securityItemView}>
-				<Image style={styles.securityIconLargeSize} source={require('../../../images/img_defi_unknown.png')} />
-				<Text style={styles.unkownItemText}>{strings('security.item_proxy_contract')}</Text>
-			</View>
-			<DashSecondLine lineWidth={width - 80} style={styles.lineMargin} />
-			<View style={styles.securityItemView}>
-				<Image style={styles.securityIconLargeSize} source={require('../../../images/img_defi_unknown.png')} />
-				<Text style={styles.unkownItemText}>{strings('security.item_trading_slippage')}</Text>
-			</View>
+		<View style={styles.unDetectedWrap}>
+			{this.state.showFastCheck ? (
+				<View style={styles.fastCheckWrap}>
+					<Text style={styles.fastCheckTitle}>{strings('security.detecting')}</Text>
+					<LottieView
+						style={styles.animation}
+						autoPlay
+						loop
+						source={require('../../../animations/detecting.json')}
+					/>
+					<Text style={styles.fastCheckDesc}>{strings('security.take_seconds')}</Text>
+				</View>
+			) : (
+				<View style={styles.flexOne}>
+					<View style={styles.securityItemView}>
+						<Text style={styles.unkownItemText}>{strings('security.detect_contract_security')}</Text>
+						<Image
+							style={styles.securityIconLargeSize}
+							source={require('../../../images/img_defi_unknown.png')}
+						/>
+					</View>
+					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+					<View style={styles.securityItemView}>
+						<Text style={styles.unkownItemText}>{strings('security.detect_holders_status')}</Text>
+						<Image
+							style={styles.securityIconLargeSize}
+							source={require('../../../images/img_defi_unknown.png')}
+						/>
+					</View>
+					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+					<View style={styles.securityItemView}>
+						<Text style={styles.unkownItemText}>{strings('security.detect_liqudity_providers')}</Text>
+						<Image
+							style={styles.securityIconLargeSize}
+							source={require('../../../images/img_defi_unknown.png')}
+						/>
+					</View>
+					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+					<View style={styles.securityItemView}>
+						<Text style={styles.unkownItemText}>{strings('security.detect_trading_tax')}</Text>
+						<Image
+							style={styles.securityIconLargeSize}
+							source={require('../../../images/img_defi_unknown.png')}
+						/>
+					</View>
+					<View style={styles.fullLine} />
+					<View style={styles.flexGrowOne} />
+
+					<TouchableOpacity
+						activeOpacity={0.6}
+						style={styles.applyCheckTouch}
+						onPress={() => {
+							this.setState({ showFastCheck: true });
+							onEvent('request_detection');
+							this.timeoutFastCheck(0);
+						}}
+					>
+						<Image source={require('../../../images/ic_gplus_white.png')} />
+						<Text style={[styles.applyCheckText]}>{strings('fold_security.apply_check')}</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 		</View>
 	);
 
-	renderCheckedItem = (imgSource, title, desc, addLine, key) => (
-		<View style={styles.flexOne} key={'security-item-' + key}>
-			<View style={styles.checkItemLayout}>
-				<Image source={imgSource} style={styles.securityIconLargeSize} />
-				<View style={styles.checkItemContent}>
-					<Text style={styles.checkItemTitle}>{title}</Text>
-					<Text style={styles.checkItemDesc}>{desc}</Text>
-				</View>
+	renderCheckedItem = (title, desc, checked, addLine) => (
+		<TouchableOpacity
+			style={styles.flexOne}
+			activeOpacity={1.0}
+			onPress={() => {
+				this.showInfoModal(title, desc);
+			}}
+		>
+			<View style={styles.checkItemContent}>
+				<Text style={styles.checkItemTitle} allowFontScaling={false}>
+					{title}
+				</Text>
+				<Image
+					source={
+						checked
+							? require('../../../images/ic_security_checked.png')
+							: require('../../../images/ic_security_unchecked.png')
+					}
+				/>
 			</View>
-			{addLine && <DashSecondLine lineWidth={width - 80} style={styles.lineMargin} />}
+			{addLine && <DashSecondLine lineWidth={width - 108} style={styles.heightOne} />}
+		</TouchableOpacity>
+	);
+
+	renderHorderItem = (holder, index) => (
+		<View style={styles.holderItemWrap} key={'holder-index-' + index}>
+			<View
+				style={[
+					styles.holderItemContent,
+					{
+						backgroundColor:
+							index === 1
+								? colors.$FFB00030
+								: index === 2
+								? colors.$DADFE3A8
+								: index === 3
+								? colors.$F1D3C29E
+								: colors.$F6F6F6
+					}
+				]}
+			>
+				<Text
+					allowFontScaling={false}
+					style={[
+						styles.holderNum,
+						{
+							color:
+								index === 1
+									? colors.$FFB000
+									: index === 2
+									? colors.$60657D
+									: index === 3
+									? colors.$D38D69
+									: colors.$8F92A1
+						},
+						index === 1 || index === 2 || (index === 3 && { ...fontStyles.semibold })
+					]}
+				>
+					{index}
+				</Text>
+			</View>
+			<View style={styles.marginLeft14}>
+				<Text allowFontScaling={false} style={styles.holderPercent}>
+					{(holder.percent * 100).toFixed(2)}%
+				</Text>
+				<Text style={styles.holderAddr} allowFontScaling={false}>
+					{holder.address?.substring(0, 4) + '...' + holder.address?.substring(holder.address?.length - 4)}
+				</Text>
+			</View>
 		</View>
 	);
 
 	renderChecked = () => {
-		const { asset } = this.props;
-		const securityData = asset.securityData || {};
-		const { notice, risk, normal } = securityData;
-		const noticeNum = notice && notice.length ? notice.length : 0;
-		const riskNum = risk && risk.length ? risk.length : 0;
-		const normalNum = normal && normal.length ? normal.length : 0;
+		const securityData = this.state.securityData;
+		const {
+			chainId,
+			is_open_source,
+			is_honeypot,
+			is_proxy,
+			is_blacklisted,
+			is_whitelisted,
+			can_take_back_ownership,
+			transfer_pausable,
+			is_anti_whale,
+			holder_count,
+			lp_holder_count,
+			total_supply,
+			is_mintable,
+			slippage_modifiable,
+			buy_tax,
+			sell_tax,
+			dex,
+			holders
+		} = securityData;
 
-		const allSize = noticeNum + riskNum + normalNum;
-		let renderIndex = 0;
+		const chainType = getChainTypeByChainId(chainId);
+		const indexOf = ChainTypes.indexOf(chainType);
+		let chainName = ChainTypeNames[0];
+		if (indexOf !== -1 && indexOf < ChainTypeNames.length) {
+			chainName = ChainTypeNames[indexOf];
+		}
+
+		let allPercent = 0;
+		if (holders) {
+			holders.forEach(holder => {
+				allPercent += parseFloat(holder.percent);
+			});
+			if (allPercent > 1) {
+				allPercent = 1;
+			}
+		}
+
 		return (
 			<View style={styles.flexOne}>
-				{risk &&
-					risk.map((data, index) => {
-						renderIndex++;
-						return this.renderCheckedItem(
-							require('../../../images/img_defi_danger.png'),
-							data.name,
-							data.desc,
-							allSize > renderIndex,
-							renderIndex
-						);
-					})}
-				{notice &&
-					notice.map((data, index) => {
-						renderIndex++;
-						return this.renderCheckedItem(
-							require('../../../images/img_defi_warning.png'),
-							data.name,
-							data.desc,
-							allSize > renderIndex,
-							renderIndex
-						);
-					})}
-				{normal &&
-					normal.map((data, index) => {
-						renderIndex++;
-						return this.renderCheckedItem(
-							require('../../../images/img_defi_safe.png'),
-							data.name,
-							data.desc,
-							allSize > renderIndex,
-							renderIndex
-						);
-					})}
+				<View style={styles.checkItemWrap}>
+					{this.renderCheckedItem(
+						strings('security.open_source'),
+						strings('security.open_source_desc'),
+						is_open_source === '1',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.able_to_sell'),
+						strings('security.able_to_sell_desc'),
+						is_honeypot === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.no_proxy_contract'),
+						strings('security.no_proxy_contract_desc'),
+						is_proxy === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.no_blacklist'),
+						strings('security.no_blacklist_desc'),
+						is_blacklisted === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.no_whitelist'),
+						strings('security.no_whitelist_desc'),
+						is_whitelisted === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.no_ownership_takeback'),
+						strings('security.no_ownership_takeback_desc'),
+						can_take_back_ownership === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.unpausable_trading'),
+						strings('security.unpausable_trading_desc'),
+						transfer_pausable === '0',
+						true
+					)}
+					{this.renderCheckedItem(
+						strings('security.anti_whale'),
+						strings('security.anti_whale_desc'),
+						is_anti_whale === '0',
+						false
+					)}
+				</View>
+
+				<TouchableOpacity
+					style={styles.securityItemWrap}
+					activeOpacity={1.0}
+					onPress={() => {
+						this.showInfoModal(strings('security.on_chain_info'), strings('security.on_chain_info_desc'));
+					}}
+				>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{holder_count < 10000 ? holder_count : renderCoinValue(holder_count)}
+						</Text>
+						<Text style={styles.securityItemDesc}>{strings('security.holders')}</Text>
+					</View>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{lp_holder_count < 10000 ? lp_holder_count : renderCoinValue(lp_holder_count)}
+						</Text>
+						<Text style={styles.securityItemDesc}>{strings('security.lp')}</Text>
+					</View>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{dex.length}
+						</Text>
+						<Text style={styles.securityItemDesc}>{strings('security.dexs')}</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity
+					style={styles.securityItemWrap}
+					activeOpacity={1.0}
+					onPress={() => {
+						this.showInfoModal(strings('security.trading_tax'), strings('security.trading_tax_desc'));
+					}}
+				>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{sell_tax * 100}%
+						</Text>
+						<Text allowFontScaling={false} style={styles.securityItemDesc}>
+							{strings('security.sell_tax')}
+						</Text>
+					</View>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{buy_tax * 100}%
+						</Text>
+						<Text allowFontScaling={false} style={styles.securityItemDesc}>
+							{strings('security.buy_tax')}
+						</Text>
+					</View>
+					<View style={styles.securityItem}>
+						<Image
+							source={
+								slippage_modifiable === '1'
+									? require('../../../images/ic_security_unchecked.png')
+									: require('../../../images/ic_security_checked.png')
+							}
+						/>
+						<Text style={styles.securityItemDesc} allowFontScaling={false}>
+							{strings('security.immutable_tax')}
+						</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity
+					style={styles.securityItemWrap}
+					activeOpacity={1.0}
+					onPress={() => {
+						this.showInfoModal(strings('security.total_supply'), strings('security.total_supply_desc'));
+					}}
+				>
+					<View style={styles.securityItem}>
+						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+							{renderCoinValue(total_supply)}
+						</Text>
+						<Text style={styles.securityItemDesc} allowFontScaling={false}>
+							{strings('security.total_supply_on', { chain: chainName })}
+						</Text>
+					</View>
+					<View style={styles.securityItem}>
+						<Image
+							source={
+								is_mintable === '1'
+									? require('../../../images/ic_security_unchecked.png')
+									: require('../../../images/ic_security_checked.png')
+							}
+						/>
+						<Text style={styles.securityItemDesc} allowFontScaling={false}>
+							{strings('security.unmintable')}
+						</Text>
+					</View>
+					<View style={styles.securityItem} />
+				</TouchableOpacity>
+
+				{holders && holders.length > 0 && (
+					<View style={styles.holderBase}>
+						<Text style={styles.holderTitle} allowFontScaling={false}>
+							{strings('security.top_ten_holders')}
+						</Text>
+						<View style={styles.contentCenter}>
+							<PercentageCircle
+								percent={allPercent * 100}
+								radius={75}
+								borderWidth={25}
+								innerColor={colors.white}
+								bgcolor={colors.$E9ECF1}
+								color={colors.$FE6E91}
+							>
+								<View style={styles.contentCenter}>
+									<Text style={styles.circleContent} allowFontScaling={false}>
+										{(allPercent * 100).toFixed(2)}%
+									</Text>
+									<Text style={styles.circleDesc} allowFontScaling={false}>
+										{strings('security.top_num')}
+									</Text>
+								</View>
+							</PercentageCircle>
+						</View>
+						<View style={styles.holderList}>
+							<View style={styles.flexOne}>
+								{holders.map((holder, index) => {
+									if (index < 5) {
+										return this.renderHorderItem(holder, index + 1);
+									}
+									return undefined;
+								})}
+							</View>
+							<View style={styles.holderRight}>
+								{holders.map((holder, index) => {
+									if (index >= 5) {
+										return this.renderHorderItem(holder, index + 1);
+									}
+									return undefined;
+								})}
+							</View>
+						</View>
+					</View>
+				)}
 			</View>
 		);
 	};
 
 	renderSecurityView = () => {
-		const { SecurityController } = Engine.context;
-		const { showFastCheck } = this.state;
 		const { asset } = this.props;
-		const { submittedTokens } = SecurityController.state;
-		const chain = chainTypeTochain(asset.type);
-		const hasSubmitted = submittedTokens[chain] && submittedTokens[chain].includes(asset.address);
 
-		const { risk, notice, normal, isRobotDetected } = asset.securityData || {};
+		const { risk, notice, normal } = this.state.securityData;
 		const noticeNum = notice ? notice.length : 0;
 		const riskNum = risk ? risk.length : 0;
 		const normalNum = normal ? normal.length : 0;
@@ -443,98 +906,24 @@ class FoldSecurityView extends PureComponent {
 			riskImg = require('../../../images/img_defi_warning.png');
 			riskTextColor = colors.$FFB000;
 		}
-		const addressLabel = asset.address
-			? asset.address.substring(0, 6) + '...' + asset.address.substring(asset.address.length - 6)
-			: '';
 		return (
 			<View style={styles.flexOne}>
-				<View style={styles.securityItemView}>
+				<View style={styles.securityTitle}>
 					<View style={styles.iconLayout}>
 						<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-						<Image
-							style={styles.tagView}
-							source={
-								asset.type === ChainType.Ethereum
-									? require('../../../images/ic_eth_tag.png')
-									: asset.type === ChainType.Polygon
-									? require('../../../images/ic_polygon_tag.png')
-									: asset.type === ChainType.Arbitrum
-									? require('../../../images/ic_arb_tag.png')
-									: asset.type === ChainType.Heco
-									? require('../../../images/ic_heco_tag.png')
-									: asset.type === ChainType.Optimism
-									? require('../../../images/ic_op_tag.png')
-									: asset.type === ChainType.Avax
-									? require('../../../images/ic_avax_tag.png')
-									: util.isRpcChainType(asset.type)
-									? getIcTagResource(asset.type)
-									: require('../../../images/ic_bsc_tag.png')
-							}
-						/>
 					</View>
 					<View style={styles.maxSymbolWidth}>
-						<Text style={styles.symbolText} numberOfLines={1}>
-							{asset.symbol}
+						<Text style={styles.symbolText} numberOfLines={2}>
+							{strings('security.security_index')}
 						</Text>
-						<Text style={styles.addressText}>{addressLabel}</Text>
 					</View>
 					<View style={styles.flexOne} />
 					<Image style={styles.unknowSmallSize} source={riskImg} />
 					<Text style={[styles.undetectedText, { color: riskTextColor }]}>{riskText}</Text>
 				</View>
-				<View style={styles.lineFull} />
+				<View style={styles.spaceHeight} />
 				{!checked && this.renderUnDetected()}
 				{checked && this.renderChecked()}
-
-				{(isRobotDetected || !checked) && (
-					<View>
-						<View style={styles.lineFull} />
-						<TouchableOpacity
-							activeOpacity={0.6}
-							style={[
-								styles.applyCheckTouch,
-								(hasSubmitted || isRobotDetected) && { backgroundColor: colors.$E6E6E6 }
-							]}
-							disabled={hasSubmitted || isRobotDetected}
-							onPress={() => {
-								console.log('====onPress ', showFastCheck);
-								this.setState({ showFastCheck: true });
-								onEvent('request_detection');
-							}}
-						>
-							<Text
-								style={[
-									styles.applyCheckText,
-									(hasSubmitted || isRobotDetected) && { color: colors.$A6A6A6 }
-								]}
-							>
-								{hasSubmitted || isRobotDetected
-									? strings('fold_security.apply_check_already')
-									: strings('fold_security.apply_check')}
-							</Text>
-						</TouchableOpacity>
-
-						<Text style={styles.applyCheckHint}>{strings('security.preliminary_results_hint')}</Text>
-
-						<Text style={styles.checkDetailTitle}>{strings('security.detail_include')}</Text>
-						<View style={styles.checkDetailItem}>
-							<Image source={require('../../../images/ic_project_security.png')} />
-							<Text style={styles.checkDetailItemText}>{strings('security.proj_security')}</Text>
-						</View>
-						<View style={styles.checkDetailItem}>
-							<Image source={require('../../../images/ic_contract_security.png')} />
-							<Text style={styles.checkDetailItemText}>{strings('security.contract_security')}</Text>
-						</View>
-						<View style={styles.checkDetailItem}>
-							<Image source={require('../../../images/ic_trade_security.png')} />
-							<Text style={styles.checkDetailItemText}>{strings('security.transaction_security')}</Text>
-						</View>
-					</View>
-				)}
-
-				{showFastCheck && (
-					<SecurityFastCheck isVisible={showFastCheck} asset={asset} onDismiss={this.onHideFastCheck} />
-				)}
 			</View>
 		);
 	};
@@ -620,6 +1009,33 @@ class FoldSecurityView extends PureComponent {
 			</View>
 		);
 	};
+
+	showInfoModal = (title, desc) => {
+		this.setState({ infoModalVisible: true, infoModalTitle: title.replace('\n', ''), infoModalDesc: desc });
+	};
+
+	hideInfoModal = () => {
+		this.setState({ infoModalVisible: false });
+	};
+
+	renderInfoModal = () => (
+		<Modal
+			isVisible={this.state.infoModalVisible && !this.props.isLockScreen}
+			onBackdropPress={this.hideInfoModal}
+			onBackButtonPress={this.hideInfoModal}
+			onSwipeComplete={this.hideInfoModal}
+			swipeDirection={'down'}
+			propagateSwipe
+			style={styles.bottomModal}
+		>
+			<View>
+				<View style={styles.infoModalWrapper}>
+					<Text style={styles.infoTitle}>{this.state.infoModalTitle}</Text>
+					<Text style={styles.infoDesc}>{this.state.infoModalDesc}</Text>
+				</View>
+			</View>
+		</Modal>
+	);
 
 	render = () => {
 		const { securityViewOpacity, closeSecurityView } = this.props;
@@ -707,11 +1123,11 @@ class FoldSecurityView extends PureComponent {
 								contentContainerStyle={styles.flexGrowOne}
 							>
 								<View style={styles.flexOne}>
-									<View style={styles.wrapContent}>
-										{tabIndex === 0 && this.renderSecurityView()}
-										{tabIndex === 1 && this.renderApprovalView()}
-									</View>
-									<View style={styles.bottomPadding} />
+									{tabIndex === 0 && this.renderSecurityView()}
+									{tabIndex === 1 && (
+										<View style={styles.wrapContent}>{this.renderApprovalView()}</View>
+									)}
+									<View style={styles.spaceHeight} />
 								</View>
 							</ScrollView>
 						</View>
@@ -728,6 +1144,7 @@ class FoldSecurityView extends PureComponent {
 					</View>
 				</View>
 				{this.renderInfiniteDesc()}
+				{this.renderInfoModal()}
 			</View>
 		);
 	};

@@ -29,6 +29,7 @@ import { strings } from '../../../../locales/i18n';
 import { iosShake } from '../../../util/NativeUtils';
 import { onEvent } from 'react-native-mumeng';
 import { SafeAreaView } from 'react-navigation';
+import { getSecurityData } from '../../../util/security';
 
 const activeOpacity = 0.8;
 const { height } = Dimensions.get('screen');
@@ -233,7 +234,7 @@ class Asset extends PureComponent {
 
 	renderUnfold = (unFoldOpacity, moveHeight) => {
 		const { asset } = this.state;
-		const securityData = asset.securityData || {};
+		const securityData = getSecurityData(asset);
 		const { notice, risk, normal } = securityData;
 		const riskNum = risk ? risk.length : 0;
 		const noticeNum = notice ? notice.length : 0;
@@ -285,7 +286,7 @@ class Asset extends PureComponent {
 			bgColor = '#91D752';
 			bgImg = require('../../../images/img_coin_bg_safe.png');
 		} else {
-			const securityData = asset.securityData || {};
+			const securityData = getSecurityData(asset);
 			const { notice, risk } = securityData;
 			const noticeNum = notice && notice.length ? notice.length : 0;
 			const riskNum = risk && risk.length ? risk.length : 0;
