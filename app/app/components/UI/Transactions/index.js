@@ -71,6 +71,7 @@ class Transactions extends PureComponent {
 	curTxType = -1;
 
 	isEnsPolling = false;
+	isMount = true;
 	pollEns = [];
 
 	isEndReached = false;
@@ -98,12 +99,14 @@ class Transactions extends PureComponent {
 	};
 
 	componentDidMount = async () => {
+		this.isMount = true;
 		await this.loadEthClaimValues();
 		await this.handNewProps(this.props.txType);
 	};
 
 	componentWillUnmount() {
 		this.isEnsPolling = false;
+		this.isMount = false;
 	}
 
 	handNewProps = async txType => {
@@ -261,7 +264,7 @@ class Transactions extends PureComponent {
 				loadEnd = loadTxs.loadEnd;
 				hasLoadCount += loadTxs.txs.length;
 				targetTx.push(...loadTxs.txs);
-			} while (!loadEnd && hasLoadCount < loadCount);
+			} while (this.isMount && !loadEnd && hasLoadCount < loadCount);
 		}
 		this.checkEns(targetTx);
 		if (asset) {
