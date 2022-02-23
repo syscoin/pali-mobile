@@ -213,7 +213,7 @@ class Transactions extends PureComponent {
 						chainId,
 						selectedAddress,
 						startIndex,
-						loadCount + 5
+						loadCount + 10
 					);
 				} else if (txType === 3) {
 					targetTx = await NativeThreads.get().callSqliteAsync(
@@ -222,7 +222,7 @@ class Transactions extends PureComponent {
 						type,
 						chainId,
 						startIndex,
-						loadCount + 5
+						loadCount + 10
 					);
 				} else {
 					targetTx = await NativeThreads.get().callSqliteAsync(
@@ -233,7 +233,7 @@ class Transactions extends PureComponent {
 						txType === 2 && selectedAddress,
 						txType === 1 && selectedAddress,
 						startIndex,
-						loadCount + 5
+						loadCount + 10
 					);
 				}
 				const loadTxs = targetTx;
@@ -242,6 +242,9 @@ class Transactions extends PureComponent {
 				this.allLoadCount += targetTx.length;
 				const tempTxs = [];
 				targetTx.forEach((tx, index) => {
+					if (this.state.transactions?.find(aTx => aTx.transactionHash === tx.transactionHash)) {
+						return;
+					}
 					if (tempTxs.find(subTx => tx.transactionHash === subTx.transactionHash)) {
 						return;
 					}
@@ -545,6 +548,10 @@ class Transactions extends PureComponent {
 				continue;
 			}
 			if (!hexToBN(tx.transaction.value).isZero()) {
+				transactions_with_gas.push({ ...tx });
+				continue;
+			}
+			if (tx.tokenTxs?.length) {
 				transactions_with_gas.push({ ...tx });
 				continue;
 			}
