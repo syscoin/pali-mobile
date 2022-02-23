@@ -199,6 +199,8 @@ class Transactions extends PureComponent {
 				} else {
 					targetTx = this.loadRpcTokenTx(txType, chainId, selectedAddress, startIndex, loadCount);
 				}
+				loadEnd = targetTx.length < loadCount;
+				this.allLoadCount += targetTx.length;
 			} else if (asset.nativeCurrency) {
 				if (txType === 2) {
 					targetTx = await NativeThreads.get().callSqliteAsync(
@@ -208,7 +210,7 @@ class Transactions extends PureComponent {
 						chainId,
 						selectedAddress,
 						startIndex,
-						loadCount
+						loadCount + 5
 					);
 				} else if (txType === 3) {
 					targetTx = await NativeThreads.get().callSqliteAsync(
@@ -217,7 +219,7 @@ class Transactions extends PureComponent {
 						type,
 						chainId,
 						startIndex,
-						loadCount
+						loadCount + 5
 					);
 				} else {
 					targetTx = await NativeThreads.get().callSqliteAsync(
@@ -228,18 +230,38 @@ class Transactions extends PureComponent {
 						txType === 2 && selectedAddress,
 						txType === 1 && selectedAddress,
 						startIndex,
-						loadCount
+						loadCount + 5
 					);
 				}
+				const loadTxs = targetTx;
+				targetTx = targetTx.slice(0, loadCount);
+				loadEnd = targetTx.length < loadCount;
+				this.allLoadCount += targetTx.length;
+				const tempTxs = [];
+				targetTx.forEach((tx, index) => {
+					if (tempTxs.find(subTx => tx.transactionHash === subTx.transactionHash)) {
+						return;
+					}
+					tx.tokenTxs = loadTxs
+						.slice(index + 1)
+						.filter(subTx => tx.transactionHash === subTx.transactionHash);
+					tempTxs.push(tx);
+				});
+				targetTx = tempTxs;
 			} else {
 				targetTx = await this.loadTokenTx(txType, chainId, type, asset, startIndex, loadCount);
+				loadEnd = targetTx.length < loadCount;
+				this.allLoadCount += targetTx.length;
 			}
-			loadEnd = targetTx.length < loadCount;
-			this.allLoadCount += targetTx.length;
 		} else {
-			const loadTxs = await this.loadAllTx(txType, startIndex, loadCount);
-			loadEnd = loadTxs.loadEnd;
-			targetTx = loadTxs.txs;
+			let hasLoadCount = 0;
+			targetTx = [];
+			do {
+				const loadTxs = await this.loadAllTx(txType, startIndex, loadCount);
+				loadEnd = loadTxs.loadEnd;
+				hasLoadCount += loadTxs.txs.length;
+				targetTx.push(...loadTxs.txs);
+			} while (!loadEnd && hasLoadCount < loadCount);
 		}
 		this.checkEns(targetTx);
 		if (asset) {
@@ -454,9 +476,12 @@ class Transactions extends PureComponent {
 			tempTxs.forEach(tx => {
 				const tokenTxs = addressTokenTx.filter(tokenTx => tokenTx.transactionHash === tx.transactionHash);
 				if (tokenTxs?.length) {
-					const token = tokenTxs.find(token =>
-						util.toLowerCaseEquals(token.transferInformation?.contractAddress, tx.transaction?.to)
-					);
+					let token;
+					if (!(tx.gasUsed && tx.transaction && tx.transaction.value !== '0x0')) {
+						token = tokenTxs.find(token =>
+							util.toLowerCaseEquals(token.transferInformation?.contractAddress, tx.transaction?.to)
+						);
+					}
 					let addTxs = [];
 					if (token) {
 						tx.to = token.to;

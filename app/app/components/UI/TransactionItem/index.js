@@ -262,12 +262,16 @@ const TransactionItem = props => {
 		const weight = getAmountWeight(token.formatAmount);
 		return (
 			<View style={[styles.txRow, index >= 0 && styles.txBeginMargin]} key={index}>
-				<NFTImage
-					style={styles.tokenIcon}
-					imageUrl={token.logo}
-					defaultImg={iconDefault}
-					resizeMode={'contain'}
-				/>
+				{!token.symbol ? (
+					<Image style={styles.tokenIcon} source={require('../../../images/img_conrtact.png')} />
+				) : (
+					<NFTImage
+						style={styles.tokenIcon}
+						imageUrl={token.logo}
+						defaultImg={iconDefault}
+						resizeMode={'contain'}
+					/>
+				)}
 				<View style={styles.tokenSymbolLayout}>
 					<Text style={styles.tokenSymbol} numberOfLines={1} ellipsizeMode={'tail'} allowFontScaling={false}>
 						{token.isApproval

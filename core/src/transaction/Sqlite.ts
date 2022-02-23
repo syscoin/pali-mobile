@@ -841,8 +841,8 @@ export class Sqlite {
     count: number
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND tx_value=? ORDER BY time DESC LIMIT ? OFFSET ?';
-      const values = [address, type, 'tx', 'internaltx', chainId, '0x0', count, index];
+      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND (transactionHash IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) OR tx_value=?) ORDER BY time DESC LIMIT ? OFFSET ?';
+      const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, '0x0', count, index];
       this.db.executeSql(
         sql,
         values,
