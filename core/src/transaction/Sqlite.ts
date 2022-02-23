@@ -901,17 +901,24 @@ export class Sqlite {
     });
   }
 
-  async getSendNativeCurrencyTx(
+  async getActionTx(
     address: string,
     type: ChainType,
     chainId: string,
     from: string,
+    to: string,
     index: number,
     count: number
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
-      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND lower(tx_from)=? AND tx_value IS NOT NULL AND tx_value IS NOT '0x0' ORDER BY time DESC LIMIT ? OFFSET ?`;
-      const values = [address, type, 'tx', 'internaltx', chainId, from.toLowerCase(), count, index];
+      let subSql = '';
+      if (from) {
+        subSql = `AND lower(tx_from)='${from.toLowerCase()}'`;
+      } else if (to) {
+        subSql = `AND lower(tx_to)='${to.toLowerCase()}'`;
+      }
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ${subSql} AND tx_value IS NOT NULL AND tx_value IS NOT '0x0' AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) ORDER BY time DESC LIMIT ? OFFSET ?`;
+      const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, count, index];
       this.db.executeSql(
         sql,
         values,
@@ -923,7 +930,7 @@ export class Sqlite {
           }
         },
         (error: any) => {
-          this._errorLog('getTransactionsHistory', error);
+          this._errorLog('getActionNativeCurrencyTx', error);
           resolve([]);
         }
       );

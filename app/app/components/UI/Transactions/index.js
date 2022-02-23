@@ -205,13 +205,14 @@ class Transactions extends PureComponent {
 				loadEnd = targetTx.length < loadCount;
 				this.allLoadCount += targetTx.length;
 			} else if (asset.nativeCurrency) {
-				if (txType === 2) {
+				if (txType === 1 || txType === 2) {
 					targetTx = await NativeThreads.get().callSqliteAsync(
-						'getSendNativeCurrencyTx',
+						'getActionTx',
 						selectedAddress,
 						type,
 						chainId,
-						selectedAddress,
+						txType === 2 && selectedAddress,
+						txType === 1 && selectedAddress,
 						startIndex,
 						loadCount + 10
 					);
@@ -230,8 +231,8 @@ class Transactions extends PureComponent {
 						selectedAddress,
 						type,
 						chainId,
-						txType === 2 && selectedAddress,
-						txType === 1 && selectedAddress,
+						null,
+						null,
 						startIndex,
 						loadCount + 10
 					);
@@ -263,7 +264,7 @@ class Transactions extends PureComponent {
 			let hasLoadCount = 0;
 			targetTx = [];
 			do {
-				const loadTxs = await this.loadAllTx(txType, startIndex, loadCount);
+				const loadTxs = await this.loadAllTx(txType, targetTx, startIndex, loadCount);
 				loadEnd = loadTxs.loadEnd;
 				hasLoadCount += loadTxs.txs.length;
 				targetTx.push(...loadTxs.txs);
@@ -377,7 +378,7 @@ class Transactions extends PureComponent {
 		return [...tokenTxs, ...approveTx].sort((a, b) => b.time - a.time);
 	};
 
-	loadAllTx = async (txType, startIndex, loadCount) => {
+	loadAllTx = async (txType, hasLoadTx, startIndex, loadCount) => {
 		const { selectedAddress } = this.props;
 		const selectChainType = this.props.selectChainType || ChainType.All;
 		const chainId = selectChainType === ChainType.All ? null : getChainIdByType(selectChainType);
@@ -461,6 +462,9 @@ class Transactions extends PureComponent {
 			const tempTxs = [];
 			const moreTxs = txs?.sort((a, b) => b.time - a.time);
 			addressTxs.forEach((tx, index) => {
+				if (hasLoadTx?.find(subTx => tx.transactionHash === subTx.transactionHash)) {
+					return;
+				}
 				if (this.state.transactions?.find(aTx => aTx.transactionHash === tx.transactionHash)) {
 					return;
 				}
