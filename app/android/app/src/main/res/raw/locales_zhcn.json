@@ -563,7 +563,7 @@
 		"no_whitelist_desc": "白名单用于仅允许白名单内的地址的交易行为。若合约有白名单请咨询项目方其用途。",
 		"no_ownership_takeback_desc": "有控制权取回权限的合约，在合约owner将owner权限给予其他人后可以强行取回owner权限，是一种安全隐患。若合约有此权限，请咨询项目方其用户。",
 		"unpausable_trading_desc": "可暂停交易可能导致该代币的买卖交易全部暂停，造成用户损失。若合约有本项，请咨询项目方。",
-		"anti_whale_desc": "具有抗巨鲸逻辑的合约能限制大数额的交易，防止代币价格波动过大。本项目为参考，并非有活没有本功能为不安全。",
+		"anti_whale_desc": "具有抗巨鲸逻辑的合约能限制大数额的交易，防止代币价格波动过大。本项目为参考，并非有或没有本功能为不安全。",
 		"holders": "持币人数",
 		"lp": "流动性提供者",
 		"dexs": "上线DEX",
@@ -597,7 +597,15 @@
 		"detect_liqudity_providers": "流动性提供者",
 		"detect_trading_tax": "交易税",
 		"detecting": "检测中…",
-		"take_seconds": "可能需要10~20秒"
+		"take_seconds": "可能需要10~20秒",
+		"genuine_token": "真币",
+		"genuine_token_desc": "该代币是否为真实的代币。",
+		"not_airdrop_scam": "非空投诈骗",
+		"not_airdrop_scam_desc": "若标记为否则该币种为空投诈骗。",
+		"counterfeit_token": "假币",
+		"counterfeit_token_desc": "该代币为假冒币种。",
+		"airdrop_scam": "空投诈骗",
+		"airdrop_scam_desc": "该币种为空投诈骗。"
 	},
 	"approval_management": {
 		"tab_token": "代币检测",

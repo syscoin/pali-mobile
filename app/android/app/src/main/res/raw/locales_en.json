@@ -597,7 +597,15 @@
 		"detect_liqudity_providers": "Liqudity Providers",
 		"detect_trading_tax": "Trading Tax",
 		"detecting": "Detecting…",
-		"take_seconds": "It may take 10~20 seconds"
+		"take_seconds": "It may take 10~20 seconds",
+		"genuine_token": "Genuine Token",
+		"genuine_token_desc": "Whether the token is the genuine token issued by project team.",
+		"not_airdrop_scam": "Not Airdrop-Scam",
+		"not_airdrop_scam_desc": "The token is airdrop scam if marked with false.",
+		"counterfeit_token": "Counterfeit  Token",
+		"counterfeit_token_desc": "The token is a counterfeit.",
+		"airdrop_scam": "Airdrop Scam",
+		"airdrop_scam_desc": "The token is airdrop scam."
 	},
 	"approval_management": {
 		"tab_token": "Tokens",

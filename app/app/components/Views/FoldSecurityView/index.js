@@ -658,6 +658,8 @@ class FoldSecurityView extends PureComponent {
 			is_whitelisted,
 			can_take_back_ownership,
 			transfer_pausable,
+			is_true_token,
+			is_airdrop_scam,
 			is_anti_whale,
 			holder_count,
 			lp_holder_count,
@@ -687,58 +689,105 @@ class FoldSecurityView extends PureComponent {
 			}
 		}
 
+		let noLineKey;
+		if (is_anti_whale) {
+			noLineKey = 'is_anti_whale';
+		} else if (is_airdrop_scam) {
+			noLineKey = 'is_airdrop_scam';
+		} else if (is_true_token) {
+			noLineKey = 'is_true_token';
+		} else if (transfer_pausable) {
+			noLineKey = 'transfer_pausable';
+		} else if (can_take_back_ownership) {
+			noLineKey = 'can_take_back_ownership';
+		} else if (is_whitelisted) {
+			noLineKey = 'is_whitelisted';
+		} else if (is_blacklisted) {
+			noLineKey = 'is_blacklisted';
+		} else if (is_proxy) {
+			noLineKey = 'is_proxy';
+		} else if (is_honeypot) {
+			noLineKey = 'is_honeypot';
+		} else if (is_open_source) {
+			noLineKey = 'is_open_source';
+		}
+
 		return (
 			<View style={styles.flexOne}>
-				<View style={styles.checkItemWrap}>
-					{this.renderCheckedItem(
-						strings('security.open_source'),
-						strings('security.open_source_desc'),
-						is_open_source === '1',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.able_to_sell'),
-						strings('security.able_to_sell_desc'),
-						is_honeypot === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.no_proxy_contract'),
-						strings('security.no_proxy_contract_desc'),
-						is_proxy === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.no_blacklist'),
-						strings('security.no_blacklist_desc'),
-						is_blacklisted === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.no_whitelist'),
-						strings('security.no_whitelist_desc'),
-						is_whitelisted === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.no_ownership_takeback'),
-						strings('security.no_ownership_takeback_desc'),
-						can_take_back_ownership === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.unpausable_trading'),
-						strings('security.unpausable_trading_desc'),
-						transfer_pausable === '0',
-						true
-					)}
-					{this.renderCheckedItem(
-						strings('security.anti_whale'),
-						strings('security.anti_whale_desc'),
-						is_anti_whale === '0',
-						false
-					)}
-				</View>
+				{!!noLineKey && (
+					<View style={styles.checkItemWrap}>
+						{is_open_source &&
+							this.renderCheckedItem(
+								strings('security.open_source'),
+								strings('security.open_source_desc'),
+								is_open_source === '1',
+								noLineKey !== 'is_open_source'
+							)}
+						{is_honeypot &&
+							this.renderCheckedItem(
+								strings('security.able_to_sell'),
+								strings('security.able_to_sell_desc'),
+								is_honeypot === '0',
+								noLineKey !== 'is_honeypot'
+							)}
+						{is_proxy &&
+							this.renderCheckedItem(
+								strings('security.no_proxy_contract'),
+								strings('security.no_proxy_contract_desc'),
+								is_proxy === '0',
+								noLineKey !== 'is_proxy'
+							)}
+						{is_blacklisted &&
+							this.renderCheckedItem(
+								strings('security.no_blacklist'),
+								strings('security.no_blacklist_desc'),
+								is_blacklisted === '0',
+								noLineKey !== 'is_blacklisted'
+							)}
+						{is_whitelisted &&
+							this.renderCheckedItem(
+								strings('security.no_whitelist'),
+								strings('security.no_whitelist_desc'),
+								is_whitelisted === '0',
+								noLineKey !== 'is_whitelisted'
+							)}
+						{can_take_back_ownership &&
+							this.renderCheckedItem(
+								strings('security.no_ownership_takeback'),
+								strings('security.no_ownership_takeback_desc'),
+								can_take_back_ownership === '0',
+								noLineKey !== 'can_take_back_ownership'
+							)}
+						{transfer_pausable &&
+							this.renderCheckedItem(
+								strings('security.unpausable_trading'),
+								strings('security.unpausable_trading_desc'),
+								transfer_pausable === '0',
+								noLineKey !== 'transfer_pausable'
+							)}
+						{is_true_token &&
+							this.renderCheckedItem(
+								strings('security.genuine_token'),
+								strings('security.genuine_token_desc'),
+								is_true_token === '1',
+								noLineKey !== 'is_true_token'
+							)}
+						{is_airdrop_scam &&
+							this.renderCheckedItem(
+								strings('security.not_airdrop_scam'),
+								strings('security.not_airdrop_scam_desc'),
+								is_airdrop_scam === '0',
+								noLineKey !== 'is_airdrop_scam'
+							)}
+						{is_anti_whale &&
+							this.renderCheckedItem(
+								strings('security.anti_whale'),
+								strings('security.anti_whale_desc'),
+								is_anti_whale === '0',
+								noLineKey !== 'is_anti_whale'
+							)}
+					</View>
+				)}
 
 				<TouchableOpacity
 					style={styles.securityItemWrap}
@@ -790,18 +839,22 @@ class FoldSecurityView extends PureComponent {
 							{strings('security.buy_tax')}
 						</Text>
 					</View>
-					<View style={styles.securityItem}>
-						<Image
-							source={
-								slippage_modifiable === '1'
-									? require('../../../images/ic_security_unchecked.png')
-									: require('../../../images/ic_security_checked.png')
-							}
-						/>
-						<Text style={styles.securityItemDesc} allowFontScaling={false}>
-							{strings('security.immutable_tax')}
-						</Text>
-					</View>
+					{slippage_modifiable ? (
+						<View style={styles.securityItem}>
+							<Image
+								source={
+									slippage_modifiable === '1'
+										? require('../../../images/ic_security_unchecked.png')
+										: require('../../../images/ic_security_checked.png')
+								}
+							/>
+							<Text style={styles.securityItemDesc} allowFontScaling={false}>
+								{strings('security.immutable_tax')}
+							</Text>
+						</View>
+					) : (
+						<View style={styles.securityItem} />
+					)}
 				</TouchableOpacity>
 
 				<TouchableOpacity
@@ -819,18 +872,22 @@ class FoldSecurityView extends PureComponent {
 							{strings('security.total_supply_on', { chain: chainName })}
 						</Text>
 					</View>
-					<View style={styles.securityItem}>
-						<Image
-							source={
-								is_mintable === '1'
-									? require('../../../images/ic_security_unchecked.png')
-									: require('../../../images/ic_security_checked.png')
-							}
-						/>
-						<Text style={styles.securityItemDesc} allowFontScaling={false}>
-							{strings('security.unmintable')}
-						</Text>
-					</View>
+					{is_mintable ? (
+						<View style={styles.securityItem}>
+							<Image
+								source={
+									is_mintable === '1'
+										? require('../../../images/ic_security_unchecked.png')
+										: require('../../../images/ic_security_checked.png')
+								}
+							/>
+							<Text style={styles.securityItemDesc} allowFontScaling={false}>
+								{strings('security.unmintable')}
+							</Text>
+						</View>
+					) : (
+						<View style={styles.securityItem} />
+					)}
 					<View style={styles.securityItem} />
 				</TouchableOpacity>
 

@@ -22,6 +22,10 @@ export const key2Warn = key => {
 		return strings('security.whitelist');
 	} else if (key === 'is_in_dex') {
 		return strings('security.no_in_dex');
+	} else if (key === 'is_true_token') {
+		return strings('security.counterfeit_token');
+	} else if (key === 'is_airdrop_scam"') {
+		return strings('security.airdrop_scam');
 	}
 	return '';
 };
@@ -45,6 +49,10 @@ export const key2WarnDesc = key => {
 		return strings('security.no_whitelist_desc');
 	} else if (key === 'is_in_dex') {
 		return strings('security.no_in_dex_desc');
+	} else if (key === 'is_true_token') {
+		return strings('security.counterfeit_token_desc');
+	} else if (key === 'is_airdrop_scam"') {
+		return strings('security.airdrop_scam_desc');
 	}
 	return '';
 };

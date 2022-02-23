@@ -20,9 +20,7 @@ export enum SecurityChangedType {
 
 export interface SecurityContent {
   name: string;
-  desc: string;
   type: string; // "1":normal; "2":notice; "3":risk;
-  o_type: string; // "0", "1", "2"
 }
 
 export interface Holder {
@@ -51,6 +49,8 @@ export interface SecurityToken {
   slippage_modifiable: string;
   buy_tax: string;
   can_take_back_ownership: string;
+  is_true_token: string;
+  is_airdrop_scam: string;
   holder_count: string;
   is_anti_whale: string;
   is_honeypot: string;
@@ -83,6 +83,7 @@ export interface SecurityState extends BaseState {
   lastRiskBubbleTimestamp: number;
   securityNfts: SecurityNft[];
   changedType: SecurityChangedType;
+  updateVersion: number; // The structure of securityTokens changes, use this field to distinguish
 }
 
 export interface RedDotData {
@@ -130,6 +131,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       redDotDataMaps: {},
       securityNfts: [],
       changedType: SecurityChangedType.NoChange,
+      updateVersion: 0
     };
     this.initialize();
   }
@@ -368,54 +370,64 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
         const notice: SecurityContent[] = [];
         const risk: SecurityContent[] = [];
         if (data.is_open_source === '1') {
-          normal.push({ desc: '', o_type: '', name: 'is_open_source', type: '1' });
+          normal.push({ name: 'is_open_source', type: '1' });
         } else if (data.is_open_source === '0') {
-          notice.push({ desc: '', o_type: '', name: 'is_open_source', type: '2' });
+          notice.push({ name: 'is_open_source', type: '2' });
         }
         if (data.is_proxy === '1') {
-          notice.push({ desc: '', o_type: '', name: 'is_proxy', type: '2' });
+          notice.push({ name: 'is_proxy', type: '2' });
         } else if (data.is_proxy === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_proxy', type: '1' });
+          normal.push({ name: 'is_proxy', type: '1' });
         }
         if (data.is_mintable === '1') {
-          notice.push({ desc: '', o_type: '', name: 'is_mintable', type: '2' });
+          notice.push({ name: 'is_mintable', type: '2' });
         } else if (data.is_mintable === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_mintable', type: '1' });
+          normal.push({ name: 'is_mintable', type: '1' });
         }
         if (data.slippage_modifiable === '1') {
-          notice.push({ desc: '', o_type: '', name: 'slippage_modifiable', type: '2' });
+          notice.push({ name: 'slippage_modifiable', type: '2' });
         } else if (data.slippage_modifiable === '0') {
-          normal.push({ desc: '', o_type: '', name: 'slippage_modifiable', type: '1' });
+          normal.push({ name: 'slippage_modifiable', type: '1' });
         }
         if (data.is_honeypot === '1') {
-          risk.push({ desc: '', o_type: '', name: 'is_honeypot', type: '3' });
+          risk.push({ name: 'is_honeypot', type: '3' });
         } else if (data.is_honeypot === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_honeypot', type: '1' });
+          normal.push({ name: 'is_honeypot', type: '1' });
         }
         if (data.transfer_pausable === '1') {
-          notice.push({ desc: '', o_type: '', name: 'transfer_pausable', type: '2' });
+          notice.push({ name: 'transfer_pausable', type: '2' });
         } else if (data.transfer_pausable === '0') {
-          normal.push({ desc: '', o_type: '', name: 'transfer_pausable', type: '1' });
+          normal.push({ name: 'transfer_pausable', type: '1' });
         }
         if (data.is_blacklisted === '1') {
-          notice.push({ desc: '', o_type: '', name: 'is_blacklisted', type: '2' });
+          notice.push({ name: 'is_blacklisted', type: '2' });
         } else if (data.is_blacklisted === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_blacklisted', type: '1' });
+          normal.push({ name: 'is_blacklisted', type: '1' });
         }
         if (data.is_whitelisted === '1') {
-          notice.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '2' });
+          notice.push({ name: 'is_whitelisted', type: '2' });
         } else if (data.is_whitelisted === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '1' });
+          normal.push({ name: 'is_whitelisted', type: '1' });
         }
         if (data.is_whitelisted === '1') {
-          notice.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '2' });
+          notice.push({ name: 'is_whitelisted', type: '2' });
         } else if (data.is_whitelisted === '0') {
-          normal.push({ desc: '', o_type: '', name: 'is_whitelisted', type: '1' });
+          normal.push({ name: 'is_whitelisted', type: '1' });
         }
         if (data.is_in_dex === '1') {
-          normal.push({ desc: '', o_type: '', name: 'is_in_dex', type: '1' });
+          normal.push({ name: 'is_in_dex', type: '1' });
         } else if (data.is_in_dex === '0') {
-          notice.push({ desc: '', o_type: '', name: 'is_in_dex', type: '2' });
+          notice.push({ name: 'is_in_dex', type: '2' });
+        }
+        if (data.is_true_token === '1') {
+          normal.push({ name: 'is_true_token', type: '1' });
+        } else if (data.is_true_token === '0') {
+          risk.push({ name: 'is_true_token', type: '3' });
+        }
+        if (data.is_airdrop_scam === '1') {
+          risk.push({ name: 'is_airdrop_scam', type: '3' });
+        } else if (data.is_airdrop_scam === '0') {
+          normal.push({ name: 'is_airdrop_scam', type: '1' });
         }
         securityTokens.push({ address, chainId, normal, notice, risk, ...data });
       }
@@ -586,6 +598,17 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       logDebug('loadNftWhitelist error: ', e);
     }
   }
-}
 
+  rehydrate(state: Partial<SecurityState>) {
+    const newState = { ...state };
+    if (newState.updateVersion === 1) {
+      super.rehydrate(newState);
+    } else {
+      newState.updateVersion = 1;
+      newState.updateTime = 0;
+      newState.securityTokens = [];
+      this.update(newState);
+    }
+  }
+}
 export default SecurityController;
