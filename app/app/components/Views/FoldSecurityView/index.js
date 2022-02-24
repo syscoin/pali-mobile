@@ -416,6 +416,36 @@ const styles = StyleSheet.create({
 	holderRight: {
 		flex: 1,
 		marginLeft: 10
+	},
+	detailModal: {
+		width: 300,
+		alignSelf: 'center',
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		overflow: 'hidden',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	noDetectedTitle: {
+		marginHorizontal: 26,
+		marginVertical: 30,
+		fontSize: 16,
+		color: colors.$030319
+	},
+	noDetectedLine: {
+		height: 1,
+		backgroundColor: colors.$F0F0F0,
+		alignSelf: 'stretch'
+	},
+	noDetectedTouch: {
+		alignSelf: 'stretch',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	tryLaterText: {
+		marginVertical: 15,
+		fontSize: 16,
+		color: colors.$030319
 	}
 });
 
@@ -446,10 +476,12 @@ class FoldSecurityView extends PureComponent {
 		infoModalVisible: false,
 		infoModalTitle: '',
 		infoModalDesc: '',
-		securityData: {}
+		securityData: {},
+		showNoDetectedModal: false
 	};
 
 	scrollViewRef = React.createRef();
+	fastCheckCount = 0;
 
 	// securityViewOpacity = new Animated.Value(0);
 
@@ -491,7 +523,11 @@ class FoldSecurityView extends PureComponent {
 				if (asset.isSecurityCenter) {
 					DeviceEventEmitter.emit('updateSecurity', this.props.asset);
 				}
+			} else if (this.fastCheckCount === 1) {
+				this.fastCheckCount = 0;
+				this.setState({ showFastCheck: false, showNoDetectedModal: true });
 			} else {
+				this.fastCheckCount = 1;
 				this.timeoutFastCheck(10 * 1000);
 			}
 		} catch (e) {
@@ -568,6 +604,7 @@ class FoldSecurityView extends PureComponent {
 						onPress={() => {
 							this.setState({ showFastCheck: true });
 							onEvent('request_detection');
+							this.fastCheckCount = 0;
 							this.timeoutFastCheck(0);
 						}}
 					>
@@ -674,8 +711,6 @@ class FoldSecurityView extends PureComponent {
 			dex,
 			holders
 		} = securityData;
-
-		console.log('===securityData  =', securityData);
 
 		let allPercent = 0;
 		if (holders) {
@@ -804,7 +839,9 @@ class FoldSecurityView extends PureComponent {
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
 							{lp_holder_count
 								? lp_holder_count < 10000
-									? lp_holder_count
+									? lp_holder_count === '0' && dex.length === 1
+										? '?'
+										: lp_holder_count
 									: renderCoinValue(lp_holder_count)
 								: '-'}
 						</Text>
@@ -827,7 +864,11 @@ class FoldSecurityView extends PureComponent {
 				>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{sell_tax ? sell_tax * 100 + '%' : '-'}
+							{sell_tax
+								? sell_tax === '0' || sell_tax === '1'
+									? sell_tax * 100 + '%'
+									: (sell_tax * 100).toFixed(2) + '%'
+								: '-'}
 						</Text>
 						<Text allowFontScaling={false} style={styles.securityItemDesc}>
 							{strings('security.sell_tax')}
@@ -835,7 +876,11 @@ class FoldSecurityView extends PureComponent {
 					</View>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{buy_tax ? buy_tax * 100 + '%' : '-'}
+							{buy_tax
+								? buy_tax === '0' || buy_tax === '1'
+									? buy_tax * 100 + '%'
+									: (buy_tax * 100).toFixed(2) + '%'
+								: '-'}
 						</Text>
 						<Text allowFontScaling={false} style={styles.securityItemDesc}>
 							{strings('security.buy_tax')}
@@ -989,10 +1034,6 @@ class FoldSecurityView extends PureComponent {
 		);
 	};
 
-	onHideFastCheck = () => {
-		this.setState({ showFastCheck: false });
-	};
-
 	showInfiniteDesc = () => {
 		this.setState({ infiniteDescVisible: true });
 	};
@@ -1021,6 +1062,30 @@ class FoldSecurityView extends PureComponent {
 					</View>
 				</View>
 			</TouchableWithoutFeedback>
+		</Modal>
+	);
+
+	renderNoDetectedModal = () => (
+		<Modal
+			isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
+			actionContainerStyle={styles.modalNoBorder}
+			backdropOpacity={0.7}
+			animationIn="fadeIn"
+			animationOut="fadeOut"
+			useNativeDriver
+		>
+			<View style={styles.detailModal}>
+				<Text style={styles.noDetectedTitle}>{strings('security.detect_no_security')}</Text>
+				<View style={styles.noDetectedLine} />
+				<TouchableOpacity
+					style={styles.noDetectedTouch}
+					onPress={() => {
+						this.setState({ showNoDetectedModal: false });
+					}}
+				>
+					<Text style={styles.tryLaterText}>{strings('security.try_it_later')}</Text>
+				</TouchableOpacity>
+			</View>
 		</Modal>
 	);
 
@@ -1206,6 +1271,7 @@ class FoldSecurityView extends PureComponent {
 				</View>
 				{this.renderInfiniteDesc()}
 				{this.renderInfoModal()}
+				{this.renderNoDetectedModal()}
 			</View>
 		);
 	};
