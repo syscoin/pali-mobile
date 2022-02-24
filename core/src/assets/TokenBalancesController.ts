@@ -333,7 +333,6 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
         case ChainType.Polygon:
           const polygonContractBalances = { ...this.state.polygonContractBalances };
           polygonContractBalances[selectedAddress] = newContractBalances;
-          console.log('PPYang update polygonContractBalances ===================', polygonContractBalances);
           this.update({ polygonContractBalances });
           break;
         case ChainType.Bsc:

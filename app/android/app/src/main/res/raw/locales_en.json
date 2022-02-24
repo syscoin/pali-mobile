@@ -294,7 +294,8 @@
 		"wallet_backup": "Backup Wallet",
 		"backup_later": "Backup later, enter now",
 		"enter_wallet": "Enter Wallet",
-		"clear_try_again": "clear and try again"
+		"clear_try_again": "clear and try again",
+		"wallet_is_ready": "Wallet is ready"
 	},
 	"manual_backup_step_2": {
 		"complete": "Complete,enter wallet",

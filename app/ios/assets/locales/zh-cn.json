@@ -295,7 +295,8 @@
 		"wallet_backup": "备份助记词",
 		"backup_later": "稍后备份，先进入钱包",
 		"enter_wallet": "进入钱包",
-		"clear_try_again": "清除并重试"
+		"clear_try_again": "清除并重试",
+		"wallet_is_ready": "钱包初始化完毕"
 	},
 	"manual_backup_step_2": {
 		"complete": "已完成，进入钱包",

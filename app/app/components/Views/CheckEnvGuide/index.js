@@ -1,26 +1,38 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Animated, Platform, BackHandler, StatusBar } from 'react-native';
-import { colors } from '../../../styles/common';
+import {
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+	Animated,
+	Platform,
+	BackHandler,
+	ActivityIndicator,
+	Image
+} from 'react-native';
+import { colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import MStatusBar from '../../UI/MStatusBar';
-import LottieVideoView from '../../UI/LottieVideoView';
 import { getWords } from '../../../util/validators';
 import { PanGestureHandler } from 'react-native-gesture-handler';
-import Device from '../../../util/Device';
 import { SafeAreaView } from 'react-navigation';
-
-const statusBarHeight = Device.isAndroid() ? StatusBar.currentHeight : 0;
 
 const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1
 	},
-	videoBase: {
+	centerLabel: {
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'center',
-		marginTop: statusBarHeight + 60
+		alignItems: 'center'
+	},
+	readyText: {
+		color: colors.$FE6E91,
+		fontSize: 20,
+		lineHeight: 28,
+		...fontStyles.semibold,
+		marginTop: 24
 	},
 	nextButton: {
 		height: 44,
@@ -70,13 +82,17 @@ export default class CheckEnvGuide extends PureComponent {
 		type: this.props.navigation.getParam('playType', 2), //1.新建钱包  2：导入助记词
 		touchOpacity: new Animated.Value(0),
 		fromWalletManager: this.props.navigation.getParam('fromWalletManager', false),
-		mnemonic: this.props.navigation.getParam('mnemonic', ''),
-		videoPlayEnd: false
+		mnemonic: this.props.navigation.getParam('mnemonic', '')
 	};
 
 	componentDidMount = async () => {
 		if (Platform.OS === 'android') {
 			BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
+		}
+		if (this.state.type === 2) {
+			setTimeout(() => {
+				this.props.navigation.navigate('Home');
+			}, 1800);
 		}
 	};
 
@@ -95,7 +111,7 @@ export default class CheckEnvGuide extends PureComponent {
 
 	render = () => {
 		const { navigation } = this.props;
-		const { type, fromWalletManager, mnemonic, videoPlayEnd } = this.state;
+		const { type, fromWalletManager, mnemonic } = this.state;
 		return (
 			<SafeAreaView style={[styles.flexOne, { backgroundColor: colors.white }]}>
 				<MStatusBar navigation={navigation} fixPadding={false} translucent />
@@ -111,36 +127,19 @@ export default class CheckEnvGuide extends PureComponent {
 					</PanGestureHandler>
 				</View>
 				<View style={styles.flexOne}>
-					<View style={styles.videoBase}>
-						<LottieVideoView
-							playType={type}
-							onPlayEnd={() => {
-								this.setState({ videoPlayEnd: true });
-								Animated.timing(this.state.touchOpacity, {
-									toValue: 1.0,
-									duration: 200,
-									useNativeDriver: false
-								}).start();
-							}}
-						/>
-					</View>
-					<Animated.View style={[styles.operateLayout, { opacity: this.state.touchOpacity }]}>
-						<View style={styles.touchBase}>
-							{type === 2 ? (
-								<TouchableOpacity
-									disabled={!videoPlayEnd}
-									style={styles.nextButton}
-									activeOpacity={0.8}
-									onPress={() => {
-										navigation.navigate('Home');
-									}}
-								>
-									<Text style={styles.nextLabel}>{strings('manual_backup_step_1.enter_wallet')}</Text>
-								</TouchableOpacity>
-							) : (
-								<View>
+					{type === 2 ? (
+						<View style={styles.centerLabel}>
+							<ActivityIndicator size="large" color={colors.$FE6E91} />
+						</View>
+					) : (
+						<>
+							<View style={styles.centerLabel}>
+								<Image source={require('../../../images/img_creatwallet.png')} />
+								<Text style={styles.readyText}>{strings('manual_backup_step_1.wallet_is_ready')}</Text>
+							</View>
+							<Animated.View style={styles.operateLayout}>
+								<View style={styles.touchBase}>
 									<TouchableOpacity
-										disabled={!videoPlayEnd}
 										style={styles.nextButton}
 										activeOpacity={0.8}
 										onPress={() => {
@@ -163,7 +162,6 @@ export default class CheckEnvGuide extends PureComponent {
 										</Text>
 									</TouchableOpacity>
 									<TouchableOpacity
-										disabled={!videoPlayEnd}
 										style={styles.skipButton}
 										activeOpacity={0.5}
 										onPress={() => {
@@ -179,9 +177,9 @@ export default class CheckEnvGuide extends PureComponent {
 										</Text>
 									</TouchableOpacity>
 								</View>
-							)}
-						</View>
-					</Animated.View>
+							</Animated.View>
+						</>
+					)}
 				</View>
 			</SafeAreaView>
 		);
