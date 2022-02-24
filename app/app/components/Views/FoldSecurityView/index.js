@@ -672,6 +672,8 @@ class FoldSecurityView extends PureComponent {
 			holders
 		} = securityData;
 
+		console.log('===securityData  =', securityData);
+
 		const chainType = getChainTypeByChainId(chainId);
 		const indexOf = ChainTypes.indexOf(chainType);
 		let chainName = ChainTypeNames[0];
@@ -798,13 +800,17 @@ class FoldSecurityView extends PureComponent {
 				>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{holder_count < 10000 ? holder_count : renderCoinValue(holder_count)}
+							{holder_count ? (holder_count < 10000 ? holder_count : renderCoinValue(holder_count)) : '-'}
 						</Text>
 						<Text style={styles.securityItemDesc}>{strings('security.holders')}</Text>
 					</View>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{lp_holder_count < 10000 ? lp_holder_count : renderCoinValue(lp_holder_count)}
+							{lp_holder_count
+								? lp_holder_count < 10000
+									? lp_holder_count
+									: renderCoinValue(lp_holder_count)
+								: '-'}
 						</Text>
 						<Text style={styles.securityItemDesc}>{strings('security.lp')}</Text>
 					</View>
@@ -825,7 +831,7 @@ class FoldSecurityView extends PureComponent {
 				>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{sell_tax * 100}%
+							{sell_tax ? sell_tax * 100 + '%' : '-'}
 						</Text>
 						<Text allowFontScaling={false} style={styles.securityItemDesc}>
 							{strings('security.sell_tax')}
@@ -833,7 +839,7 @@ class FoldSecurityView extends PureComponent {
 					</View>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{buy_tax * 100}%
+							{buy_tax ? buy_tax * 100 + '%' : '-'}
 						</Text>
 						<Text allowFontScaling={false} style={styles.securityItemDesc}>
 							{strings('security.buy_tax')}
