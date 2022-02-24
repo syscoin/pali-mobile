@@ -372,7 +372,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
         if (data.is_open_source === '1') {
           normal.push({ name: 'is_open_source', type: '1' });
         } else if (data.is_open_source === '0') {
-          notice.push({ name: 'is_open_source', type: '2' });
+          risk.push({ name: 'is_open_source', type: '3' });
         }
         if (data.is_proxy === '1') {
           notice.push({ name: 'is_proxy', type: '2' });
