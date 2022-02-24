@@ -409,11 +409,6 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
         } else if (data.is_whitelisted === '0') {
           normal.push({ name: 'is_whitelisted', type: '1' });
         }
-        if (data.is_whitelisted === '1') {
-          notice.push({ name: 'is_whitelisted', type: '2' });
-        } else if (data.is_whitelisted === '0') {
-          normal.push({ name: 'is_whitelisted', type: '1' });
-        }
         if (data.is_in_dex === '1') {
           normal.push({ name: 'is_in_dex', type: '1' });
         } else if (data.is_in_dex === '0') {

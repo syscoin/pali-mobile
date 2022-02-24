@@ -570,7 +570,7 @@
 		"sell_tax": "Sell Tax",
 		"buy_tax": "Buy Tax",
 		"immutable_tax": "Immutable Tax",
-		"total_supply_on": "Total Supply\non {{chain}}",
+		"total_supply_on": "Total Supply",
 		"unmintable": "Unmintable",
 		"top_ten_holders": "Top 10 Holders Share",
 		"top_num": "Top 10",

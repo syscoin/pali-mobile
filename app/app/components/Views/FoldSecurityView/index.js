@@ -27,8 +27,6 @@ import ApprovalEvent from '../../UI/ApprovalEvent';
 import Modal from 'react-native-modal';
 import Engine from '../../../core/Engine';
 import { onEvent } from 'react-native-mumeng';
-import { getChainTypeByChainId } from '../../../util/networks';
-import { ChainTypeNames, ChainTypes } from '../../../util/ChainTypeImages';
 import PercentageCircle from '../../UI/PercentageCircle';
 import LottieView from 'lottie-react-native';
 import { getSecurityData } from '../../../util/security';
@@ -254,18 +252,23 @@ const styles = StyleSheet.create({
 	securityItemTitle: {
 		fontSize: 24,
 		color: colors.$030319,
-		...fontStyles.semibold
+		...fontStyles.semibold,
+		height: 32
 	},
 	securityItemDesc: {
-		marginTop: 8,
 		color: colors.$8F92A1,
 		fontSize: 14,
 		textAlign: 'center',
 		lineHeight: 16
 	},
+	securityItemIcon: {
+		marginTop: 3,
+		width: 22,
+		height: 22,
+		marginBottom: 7
+	},
 	securityItem: {
 		flex: 1,
-		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	securityItemWrap: {
@@ -312,7 +315,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		paddingBottom: 20
+		paddingBottom: 40,
+		paddingTop: 20
 	},
 	fastCheckTitle: {
 		color: colors.$030319,
@@ -650,7 +654,6 @@ class FoldSecurityView extends PureComponent {
 	renderChecked = () => {
 		const securityData = this.state.securityData;
 		const {
-			chainId,
 			is_open_source,
 			is_honeypot,
 			is_proxy,
@@ -673,13 +676,6 @@ class FoldSecurityView extends PureComponent {
 		} = securityData;
 
 		console.log('===securityData  =', securityData);
-
-		const chainType = getChainTypeByChainId(chainId);
-		const indexOf = ChainTypes.indexOf(chainType);
-		let chainName = ChainTypeNames[0];
-		if (indexOf !== -1 && indexOf < ChainTypeNames.length) {
-			chainName = ChainTypeNames[indexOf];
-		}
 
 		let allPercent = 0;
 		if (holders) {
@@ -848,6 +844,7 @@ class FoldSecurityView extends PureComponent {
 					{slippage_modifiable ? (
 						<View style={styles.securityItem}>
 							<Image
+								style={styles.securityItemIcon}
 								source={
 									slippage_modifiable === '1'
 										? require('../../../images/ic_security_unchecked.png')
@@ -875,12 +872,13 @@ class FoldSecurityView extends PureComponent {
 							{renderCoinValue(total_supply)}
 						</Text>
 						<Text style={styles.securityItemDesc} allowFontScaling={false}>
-							{strings('security.total_supply_on', { chain: chainName })}
+							{strings('security.total_supply_on')}
 						</Text>
 					</View>
 					{is_mintable ? (
 						<View style={styles.securityItem}>
 							<Image
+								style={styles.securityItemIcon}
 								source={
 									is_mintable === '1'
 										? require('../../../images/ic_security_unchecked.png')
