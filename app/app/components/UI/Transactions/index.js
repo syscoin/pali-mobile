@@ -698,11 +698,11 @@ class Transactions extends PureComponent {
 		return this.props.ensEntries[address]?.ensName;
 	};
 
-	getRenderData = (tx, main) => {
+	getRenderData = tx => {
 		const { selectedAddress } = this.props;
 		let targetDecimalValue = '';
 		let isETHClaim = false;
-		if (!main && this.ethClaimValues[tx.transactionHash]) {
+		if (this.ethClaimValues[tx.transactionHash] && renderFromWei(this.ethClaimValues[tx.transactionHash]) !== '0') {
 			targetDecimalValue = renderFromWei(this.ethClaimValues[tx.transactionHash]);
 			isETHClaim = true;
 		} else if (tx.amount) {
@@ -744,7 +744,10 @@ class Transactions extends PureComponent {
 		const isApproval = tx.transaction?.data?.startsWith(APPROVE_FUNCTION_SIGNATURE);
 		const spender = '0x' + (tx.transaction?.data?.substr(34, 40) || '');
 
-		const showAmount = !isApproval && (symbol || decimalValue !== '0');
+		let showAmount = !isApproval && (symbol || decimalValue !== '0');
+		if (showAmount && isETHClaim && !symbol) {
+			showAmount = false;
+		}
 
 		return {
 			isETHClaim,
@@ -775,13 +778,13 @@ class Transactions extends PureComponent {
 		return transactions.map(tx => {
 			if (tx.tokenTxs?.length) {
 				tx.tokenTxs.forEach(tokenTx => {
-					const tokenTxData = this.getRenderData(tokenTx, false);
+					const tokenTxData = this.getRenderData(tokenTx);
 					for (const item in tokenTxData) {
 						tokenTx[item] = tokenTxData[item];
 					}
 				});
 			}
-			const txData = this.getRenderData(tx, true);
+			const txData = this.getRenderData(tx);
 			return {
 				...tx,
 				selectedAddress,
