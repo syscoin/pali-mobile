@@ -527,7 +527,7 @@ class TokenList extends PureComponent {
 									this.showDescModal(data, asset);
 								}}
 							>
-								<Text style={styles.dangerLabel}>{data.name}</Text>
+								<Text style={styles.dangerLabel}>{key2Warn(data.name)}</Text>
 								<Image source={require('../../../images/security_arrow_red.png')} />
 							</TouchableOpacity>
 						))}
