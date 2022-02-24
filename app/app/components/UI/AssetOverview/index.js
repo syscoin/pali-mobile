@@ -53,8 +53,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	symbol: {
-		flexDirection: 'row',
-		flex: 1
+		flexDirection: 'row'
 	},
 	symbolText: {
 		fontSize: 24,
@@ -63,6 +62,7 @@ const styles = StyleSheet.create({
 		color: darkBlack
 	},
 	balance: {
+		flex: 1,
 		fontSize: 28,
 		lineHeight: 34,
 		...fontStyles.bold,
@@ -166,9 +166,9 @@ const styles = StyleSheet.create({
 		textAlign: 'center'
 	},
 	networkWrapper: {
+		flex: 1,
 		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between'
+		alignItems: 'center'
 	},
 	txWrapper: {
 		minHeight: 26,
