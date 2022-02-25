@@ -92,7 +92,7 @@ export default class CheckEnvGuide extends PureComponent {
 		if (this.state.type === 2) {
 			setTimeout(() => {
 				this.props.navigation.navigate('Home');
-			}, 1800);
+			}, 3800);
 		}
 	};
 
