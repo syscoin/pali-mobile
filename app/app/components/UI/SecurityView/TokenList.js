@@ -215,6 +215,36 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		marginTop: 14,
 		marginBottom: 20
+	},
+	noDectedModal: {
+		width: 300,
+		alignSelf: 'center',
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		overflow: 'hidden',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	noDetectedTitle: {
+		marginHorizontal: 26,
+		marginVertical: 30,
+		fontSize: 16,
+		color: colors.$030319
+	},
+	noDetectedLine: {
+		height: 1,
+		backgroundColor: colors.$F0F0F0,
+		alignSelf: 'stretch'
+	},
+	noDetectedTouch: {
+		alignSelf: 'stretch',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	tryLaterText: {
+		marginVertical: 15,
+		fontSize: 16,
+		color: colors.$030319
 	}
 });
 
@@ -238,8 +268,11 @@ class TokenList extends PureComponent {
 		searchResult: [],
 		searchLoading: false,
 		initLoaded: false,
-		updateAssets: []
+		updateAssets: [],
+		showNoDetectedModal: false
 	};
+
+	fastCheckCount = 0;
 
 	currentSortType = SORT_NETWORTH;
 	async componentDidMount() {
@@ -274,8 +307,15 @@ class TokenList extends PureComponent {
 				const riskLength = risk ? risk.length : 0;
 				asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
 				this.setState({ showFastCheck: false });
+			} else if (this.fastCheckCount === 1) {
+				this.fastCheckCount = 0;
+				this.setState({ showFastCheck: false });
+				setTimeout(() => {
+					this.setState({ showNoDetectedModal: true });
+				}, 500);
 			} else {
-				this.timeoutFastCheck(10 * 1000);
+				this.fastCheckCount = 1;
+				this.timeoutFastCheck(10 * 1000, asset);
 			}
 		} catch (e) {
 			console.error('cyh@fastCheck error: ', e);
@@ -450,6 +490,7 @@ class TokenList extends PureComponent {
 
 	onSubmitClick = asset => {
 		this.setState({ showFastCheck: true });
+		this.fastCheckCount = 0;
 		this.timeoutFastCheck(0, asset);
 	};
 
@@ -578,6 +619,30 @@ class TokenList extends PureComponent {
 		this.setState({ searchLoading: false, searchQuery, searchResult: results });
 	};
 
+	renderNoDetectedModal = () => (
+		<Modal
+			isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
+			actionContainerStyle={styles.modalNoBorder}
+			backdropOpacity={0.7}
+			animationIn="fadeIn"
+			animationOut="fadeOut"
+			useNativeDriver
+		>
+			<View style={styles.noDectedModal}>
+				<Text style={styles.noDetectedTitle}>{strings('security.detect_no_security')}</Text>
+				<View style={styles.noDetectedLine} />
+				<TouchableOpacity
+					style={styles.noDetectedTouch}
+					onPress={() => {
+						this.setState({ showNoDetectedModal: false });
+					}}
+				>
+					<Text style={styles.tryLaterText}>{strings('security.try_it_later')}</Text>
+				</TouchableOpacity>
+			</View>
+		</Modal>
+	);
+
 	render() {
 		const { tokenList, searchResult, searchQuery, searchLoading, showSecurityDesc, initLoaded } = this.state;
 		const { contactEntry } = this.props;
@@ -606,6 +671,7 @@ class TokenList extends PureComponent {
 					onDismiss={() => this.setState({ showSecurityDesc: false })}
 				/>
 				{this.renderFastCheck()}
+				{this.renderNoDetectedModal()}
 			</View>
 		);
 	}

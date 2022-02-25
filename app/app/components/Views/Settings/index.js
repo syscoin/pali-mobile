@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 	wrapper: {
 		backgroundColor: colors.$F6F6F6,
 		flex: 1,
-		paddingHorizontal: 30,
+		paddingHorizontal: 20,
 		zIndex: 99999999999999
 	},
 	title: {
