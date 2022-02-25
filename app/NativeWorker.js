@@ -97,12 +97,12 @@ class TodoApi {
 			this.engine = EngineImpl.init(...args);
 			// 监听controllers state变化
 			for (const item in EngineImpl.context) {
-				EngineImpl.context[item].subscribe(() => {
-					this.dispatchControllerState(item, EngineImpl.context[item].state);
+				EngineImpl.context[item].subscribe((state, subState) => {
+					this.dispatchControllerState(item, subState, false);
 				});
 			}
 			for (const item in EngineImpl.context) {
-				this.dispatchControllerState(item, EngineImpl.context[item].state);
+				this.dispatchControllerState(item, EngineImpl.context[item].state, true);
 			}
 			this.patchEmitter('TransactionController', 'emit', EngineImpl.context.TransactionController.hub);
 			this.patchEmitter('MessageManager', 'emit', EngineImpl.context.MessageManager.hub);
@@ -142,11 +142,11 @@ class TodoApi {
 			})
 		);
 	}
-	dispatchControllerState(key, state) {
+	dispatchControllerState(key, state, overwrite) {
 		self.postMessage(
 			JSON.stringify({
 				status: 'state',
-				value: { key, state }
+				value: { key, state, overwrite }
 			})
 		);
 	}

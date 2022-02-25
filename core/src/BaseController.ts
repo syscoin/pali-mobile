@@ -4,7 +4,7 @@ import { logDebug } from './util';
 /**
  * State change callbacks
  */
-export type Listener<T> = (state: T) => void;
+export type Listener<T, S> = (state: T, any: S) => void;
 
 /**
  * @type BaseConfig
@@ -72,7 +72,7 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
 
   private internalState: S = this.defaultState;
 
-  private internalListeners: {states: string[]; listener: Listener<S>}[] = [];
+  private internalListeners: {states: string[]; listener: Listener<S, any>}[] = [];
 
   /**
    * Creates a BaseController instance. Both initial state and initial
@@ -151,11 +151,11 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
     this.internalListeners.forEach(({ states, listener }) => {
       try {
         if (!states || states.length <= 0) {
-          listener(this.internalState);
+          listener(this.internalState, state);
         } else if (keys && keys.length > 0) {
           const intersectKey = keys.filter((key) => states.includes(key));
           if (intersectKey && intersectKey.length > 0) {
-            listener(this.internalState);
+            listener(this.internalState, state);
           }
         }
       } catch (e) {
@@ -185,7 +185,7 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
    *
    * @param listener - Callback triggered when state changes
    */
-  subscribe(listener: Listener<S>, states: string[] = []) {
+  subscribe(listener: Listener<S, any>, states: string[] = []) {
     this.internalListeners.push({ states, listener });
   }
 
@@ -195,7 +195,7 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
    * @param listener - Callback to remove
    * @returns - True if a listener is found and unsubscribed
    */
-  unsubscribe(listener: Listener<S>) {
+  unsubscribe(listener: Listener<S, any>) {
     const index = this.internalListeners.findIndex(({ listener: cb }) => listener === cb);
     index > -1 && this.internalListeners.splice(index, 1);
     return index > -1;

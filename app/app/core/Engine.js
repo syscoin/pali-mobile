@@ -230,7 +230,13 @@ class Engine {
 				])
 			};
 			NativeThreads.get().addListener('state', result => {
-				const newState = util.rehydrate(result.key, result.state);
+				let newState;
+				if (result.overwrite) {
+					newState = util.rehydrate(result.key, result.state);
+				} else {
+					const subState = util.rehydrate(result.key, result.state);
+					newState = { ...this.datamodel.context[result.key].state, ...subState };
+				}
 				if (result.key === 'RpcNetworkController' && newState.networks) {
 					const types = Object.keys(newState.networks);
 					if (types?.length) {
