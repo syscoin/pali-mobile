@@ -446,6 +446,20 @@ const styles = StyleSheet.create({
 		marginVertical: 15,
 		fontSize: 16,
 		color: colors.$030319
+	},
+	ownerItemContent: {
+		height: 76,
+		justifyContent: 'center'
+	},
+	ownerItemTitle: {
+		color: colors.$030319,
+		fontSize: 16,
+		...fontStyles.semibold
+	},
+	ownerItemAddr: {
+		fontSize: 12,
+		color: colors.$8F92A1,
+		marginTop: 6
 	}
 });
 
@@ -709,8 +723,11 @@ class FoldSecurityView extends PureComponent {
 			buy_tax,
 			sell_tax,
 			dex,
-			holders
+			holders,
+			owner_address
 		} = securityData;
+
+		console.log('====owner_address = ', owner_address);
 
 		let allPercent = 0;
 		if (holders) {
@@ -723,7 +740,9 @@ class FoldSecurityView extends PureComponent {
 		}
 
 		let noLineKey;
-		if (is_anti_whale) {
+		if (owner_address) {
+			noLineKey = 'owner_address';
+		} else if (is_anti_whale) {
 			noLineKey = 'is_anti_whale';
 		} else if (is_airdrop_scam) {
 			noLineKey = 'is_airdrop_scam';
@@ -819,6 +838,32 @@ class FoldSecurityView extends PureComponent {
 								is_anti_whale === '0',
 								noLineKey !== 'is_anti_whale'
 							)}
+						{!!owner_address && (
+							<TouchableOpacity
+								style={styles.flexOne}
+								activeOpacity={1.0}
+								onPress={() => {
+									this.showInfoModal(
+										strings('security.owner_address'),
+										strings('security.owner_address_desc')
+									);
+								}}
+							>
+								<View style={styles.ownerItemContent}>
+									<Text style={styles.ownerItemTitle} allowFontScaling={false}>
+										{strings('security.owner_address')}
+									</Text>
+									<Text
+										style={styles.ownerItemAddr}
+										allowFontScaling={false}
+										numberOfLines={1}
+										ellipsizeMode={'middle'}
+									>
+										{owner_address}
+									</Text>
+								</View>
+							</TouchableOpacity>
+						)}
 					</View>
 				)}
 
