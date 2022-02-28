@@ -90,7 +90,8 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 				new RandomBytesPackage(),
 				new SQLitePluginPackage(),
 				new TcpSocketsModule(),
-				new RNFetchBlobPackage()
+				new RNFetchBlobPackage(),
+				new PreventScreenshotPackage()
 			));
 			return packages;
 		}
