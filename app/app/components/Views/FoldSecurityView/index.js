@@ -240,13 +240,13 @@ const styles = StyleSheet.create({
 	wrapContent: {
 		flex: 1,
 		borderRadius: 10,
-		backgroundColor: colors.white
+		backgroundColor: colors.$F9F9F9
 	},
 	securityTitle: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 20,
-		backgroundColor: colors.white,
+		backgroundColor: colors.$F9F9F9,
 		borderRadius: 10
 	},
 	securityItemTitle: {
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	securityItemWrap: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.$F9F9F9,
 		borderRadius: 10,
 		flexDirection: 'row',
 		marginTop: 18,
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
 		height: 160
 	},
 	unDetectedWrap: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.$F9F9F9,
 		borderRadius: 10,
 		flex: 1
 	},
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.$F0F0F0
 	},
 	checkItemWrap: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.$F9F9F9,
 		borderRadius: 10,
 		paddingHorizontal: 24
 	},
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
 		fontSize: 12
 	},
 	holderBase: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.$F9F9F9,
 		borderRadius: 10,
 		marginTop: 18,
 		paddingVertical: 20,
@@ -995,7 +995,7 @@ class FoldSecurityView extends PureComponent {
 								percent={allPercent * 100}
 								radius={75}
 								borderWidth={25}
-								innerColor={colors.white}
+								innerColor={colors.$F9F9F9}
 								bgcolor={colors.$E9ECF1}
 								color={colors.$FE6E91}
 							>
