@@ -310,6 +310,15 @@ class CardSwiper extends PureComponent {
 		this.setState({ currentChainType, nftChecked: this.props.contactEntry?.currentTokenType === TokenType.NFT });
 	};
 
+	UNSAFE_componentWillReceiveProps = nextProps => {
+		if (this.state.currentChainType !== ChainType.All) {
+			let favouriteChains = nextProps.contactEntry?.enabledChains || defaultEnabledChains;
+			if (favouriteChains.indexOf(this.state.currentChainType) === -1) {
+				this.setState({ currentChainType: ChainType.All });
+			}
+		}
+	};
+
 	copyAccountToClipboard = async () => {
 		const { contactEntry } = this.props;
 		Clipboard.setString(contactEntry.address);
