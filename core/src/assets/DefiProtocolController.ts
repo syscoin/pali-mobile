@@ -139,7 +139,7 @@ export class DefiProtocolController extends BaseController<DefiProtocolConfig, D
 
   private async getdeBankData(selectedAddress: string) {
     try {
-      const api = `https://api.debank.com/portfolio/project_list?user_addr=${selectedAddress}`;
+      const api = `https://api.debank.com/portfolio/project_list?user_addr=${selectedAddress?.toLowerCase()}`;
       const response = await timeoutFetch(
         api,
         undefined,
