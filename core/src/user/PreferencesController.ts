@@ -338,10 +338,12 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
 
   removeRpcChain(chain: number) {
     const { identities } = this.state;
+    let needUpdate = false;
     if (this.state.allChains.includes(chain)) {
       this.state.allChains.splice(this.state.allChains.findIndex((type) => type === chain), 1);
+      needUpdate = true;
     }
-    let needUpdate = false;
+
     for (const identity in identities) {
       if (identities[identity].enabledChains) {
         const enabledChains = identities[identity].enabledChains.filter((type) => type !== chain);
@@ -351,7 +353,7 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
         identities[identity].enabledChains = enabledChains;
       }
     }
-    needUpdate && this.update({ identities: { ...identities } });
+    needUpdate && this.update({ identities: { ...identities }, allChains: [ ...this.state.allChains ] });
   }
 
   setHideDefiPortfolio(isHide: boolean) {
