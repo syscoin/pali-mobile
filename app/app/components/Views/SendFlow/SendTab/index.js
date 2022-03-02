@@ -576,8 +576,9 @@ class SendTab extends PureComponent {
 			}
 		} catch (e) {
 			this.setState({ error: e?.message });
+		} finally {
+			this.setLoading(false);
 		}
-		this.setLoading(false);
 	};
 
 	onAmountChange = (value, conversion, valueEnable) => {
