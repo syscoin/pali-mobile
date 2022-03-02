@@ -613,7 +613,7 @@
 		"owner_address_desc": "If the owner address is set to 0x00..000 or any blackhole address, then it's unable to execute any special or malicious function manually even if those function exists."
 	},
 	"approval_management": {
-		"tab_token": "Tokens",
+		"tab_token": "Token",
 		"tab_approval": "Approvals",
 		"intro_title": "Token Approval Limit",
 		"intro_text": "Approval sets maximum token amount for certain smart contracts to utilize. Malicious contract usually set this amount to \"UNLIMITED\".   (Note: Unlimited amount does not neccessarily mean that the contract is malicious, many normal contracts also set the token quota as unlimited.)",
