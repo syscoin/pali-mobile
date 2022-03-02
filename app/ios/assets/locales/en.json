@@ -581,7 +581,7 @@
 		"trading_tax_desc": "Trading Tax is the extra slippage traders have to pay when buy/sell. 0 means no tax.\nIf it's mutable, the project team can abuse it to cause traders to pay more or even unable to trade.",
 		"total_supply": "Total Supply",
 		"total_supply_desc": "Total supply on this chain of this token. If unmintable then the total supply can't increase. Beware those mintable tokens, devs could abuse this feature to profit or affect price.",
-		"security_index": "Security\nIndex",
+		"security_index": "Security",
 		"not_open_source": "Not open source",
 		"unable_to_sell": "Unable to sell",
 		"proxy_contract": "Proxy contract",
@@ -613,7 +613,7 @@
 		"owner_address_desc": "If the owner address is set to 0x00..000 or any blackhole address, then it's unable to execute any special or malicious function manually even if those function exists."
 	},
 	"approval_management": {
-		"tab_token": "Tokens",
+		"tab_token": "Token",
 		"tab_approval": "Approvals",
 		"intro_title": "Token Approval Limit",
 		"intro_text": "Approval sets maximum token amount for certain smart contracts to utilize. Malicious contract usually set this amount to \"UNLIMITED\".   (Note: Unlimited amount does not neccessarily mean that the contract is malicious, many normal contracts also set the token quota as unlimited.)",

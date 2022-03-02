@@ -1065,7 +1065,7 @@ class FoldSecurityView extends PureComponent {
 					</View>
 					<View style={styles.maxSymbolWidth}>
 						<Text style={styles.symbolText} numberOfLines={2}>
-							{strings('security.security_index')}
+							{asset.symbol + '\n' + strings('security.security_index')}
 						</Text>
 					</View>
 					<View style={styles.flexOne} />

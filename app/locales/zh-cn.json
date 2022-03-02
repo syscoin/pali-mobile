@@ -581,7 +581,7 @@
 		"trading_tax_desc": "交易税是该币种设置的在交易时需要额外支付的滑点。如果为0则没有滑点。\n如果交易税不是不可修改的，则项目方有滥用可能，会导致用户支持更多费用甚至无法交易代币。",
 		"total_supply": "总供给",
 		"total_supply_desc": "该币种于该链上的总供给。若不可增发则总供给不会增多。请小心可增发币种，开发者有可能滥用增发来获利或影响价格。",
-		"security_index": "安全指数",
+		"security_index": "安全性",
 		"not_open_source": "未开源",
 		"unable_to_sell": "无法卖出",
 		"proxy_contract": "有代理合约",

@@ -581,7 +581,7 @@
 		"trading_tax_desc": "Trading Tax is the extra slippage traders have to pay when buy/sell. 0 means no tax.\nIf it's mutable, the project team can abuse it to cause traders to pay more or even unable to trade.",
 		"total_supply": "Total Supply",
 		"total_supply_desc": "Total supply on this chain of this token. If unmintable then the total supply can't increase. Beware those mintable tokens, devs could abuse this feature to profit or affect price.",
-		"security_index": "Security\nIndex",
+		"security_index": "Security",
 		"not_open_source": "Not open source",
 		"unable_to_sell": "Unable to sell",
 		"proxy_contract": "Proxy contract",
