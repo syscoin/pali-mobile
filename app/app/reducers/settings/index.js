@@ -1,6 +1,7 @@
 import { REHYDRATE } from 'redux-persist';
 import { ChainType, util } from 'gopocket-core';
 import { SORT_NETWORTH } from '../../constants/storage';
+import NativeThreads from '../../threads/NativeThreads';
 
 const initialState = {
 	testnetVisible: false,
@@ -31,6 +32,7 @@ const settingsReducer = (state = initialState, action) => {
 					? action.payload.settings.useTestServer
 					: false;
 				util.setUseTestServer(useTestServer);
+				NativeThreads.get().callEngineAsync('setUseTestServer', useTestServer);
 				return {
 					...state,
 					...action.payload.settings,
@@ -46,6 +48,7 @@ const settingsReducer = (state = initialState, action) => {
 				};
 			}
 			util.setUseTestServer(false);
+			NativeThreads.get().callEngineAsync('setUseTestServer', false);
 			return state;
 		case 'TOGGLE_TESTNET_VISIBILE':
 			return {

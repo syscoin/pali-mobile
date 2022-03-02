@@ -667,6 +667,11 @@ const config = {
   },
 };
 
+let AgentUtil: any = null;
+export function setAgentUtil(agent: any) {
+  AgentUtil = agent;
+}
+
 const g_file_log = logger.createLogger(config);
 let g_is_file_log = false;
 let g_use_test_server = false;
@@ -681,7 +686,9 @@ export function useTestServer() {
 }
 
 export function logInfo(...data: any[]) {
-  if (g_is_file_log) {
+  if (AgentUtil) {
+    AgentUtil.logInfo(...data);
+  } else if (g_is_file_log) {
     g_file_log.info(data);
   } else {
     console.info(data);
@@ -689,7 +696,9 @@ export function logInfo(...data: any[]) {
 }
 
 export function logDebug(...data: any[]) {
-  if (g_is_file_log) {
+  if (AgentUtil) {
+    AgentUtil.logDebug(...data);
+  } else if (g_is_file_log) {
     g_file_log.debug(data);
   } else {
     console.log(data);
@@ -697,7 +706,9 @@ export function logDebug(...data: any[]) {
 }
 
 export function logWarn(...data: any[]) {
-  if (g_is_file_log) {
+  if (AgentUtil) {
+    AgentUtil.logWarn(...data);
+  } else if (g_is_file_log) {
     g_file_log.warn(data);
   } else {
     console.warn(data);
@@ -705,7 +716,9 @@ export function logWarn(...data: any[]) {
 }
 
 export function logError(...data: any[]) {
-  if (g_is_file_log) {
+  if (AgentUtil) {
+    AgentUtil.logError(...data);
+  } else if (g_is_file_log) {
     g_file_log.error(data);
   } else {
     console.error(data);
@@ -1039,4 +1052,5 @@ export default {
   getIpfsUrlContentIdentifier,
   isRpcChainType,
   rehydrate,
+  setAgentUtil
 };

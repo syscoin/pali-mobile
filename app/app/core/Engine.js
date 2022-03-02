@@ -40,7 +40,6 @@ import {
 
 import { store } from '../store';
 import NativeThreads from '../threads/NativeThreads';
-// eslint-disable-next-line import/no-nodejs-modules
 import { EventEmitter } from 'events';
 import { endNetworkChange } from '../actions/settings';
 import WalletConnect from './WalletConnect';

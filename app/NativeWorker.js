@@ -1,7 +1,7 @@
 import './shim.js';
 import { self } from 'react-native-threads';
 import EngineImpl from './app/core/EngineImpl';
-import { Sqlite } from 'gopocket-core';
+import { Sqlite, util } from 'gopocket-core';
 import { randomTransactionId } from './app/util/number';
 import NativeWorker from './NativeWorker';
 
@@ -50,6 +50,9 @@ class TodoApi {
 			);
 			this.agents[obj.name] = agent;
 		});
+		if (this.agents.TsUtils) {
+			util.setAgentUtil(this.agents.TsUtils);
+		}
 	}
 
 	async callTransactionResult(id) {

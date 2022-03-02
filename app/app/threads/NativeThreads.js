@@ -1,9 +1,9 @@
 import { Thread } from 'react-native-threads';
 import { randomTransactionId } from '../util/number';
 import AsyncStorage from '@react-native-community/async-storage';
-// eslint-disable-next-line import/no-namespace
 import * as ApiClient from '../util/ApiClient';
 import { getExportFunctions } from '../util/threadUtils';
+import { util as TsUtils } from 'gopocket-core';
 
 class NativeThreads {
 	listeners = {};
@@ -31,7 +31,11 @@ class NativeThreads {
 		this.sendRegisterClass();
 	}
 	registerClass() {
-		return [{ name: 'ApiClient', cls: ApiClient }, { name: 'AsyncStorage', cls: AsyncStorage }];
+		return [
+			{ name: 'ApiClient', cls: ApiClient },
+			{ name: 'AsyncStorage', cls: AsyncStorage },
+			{ name: 'TsUtils', cls: TsUtils }
+		];
 	}
 	sendRegisterClass() {
 		const clss = this.registerClass();

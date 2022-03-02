@@ -900,12 +900,14 @@ const BrowserTab = props => {
 			if (!props.useTestServer) {
 				props.setUseTestServer(true);
 				util.setUseTestServer(true);
+				NativeThreads.get().callEngineAsync('setUseTestServer', true);
 				setTimeout(() => props.toggleShowHint('test server enabled'), 2000);
 			}
 		} else if (url === 'https://er.run/faq') {
 			if (props.useTestServer) {
 				props.setUseTestServer(false);
 				util.setUseTestServer(false);
+				NativeThreads.get().callEngineAsync('setUseTestServer', false);
 				setTimeout(() => props.toggleShowHint('test server disabled'), 2000);
 			}
 		}

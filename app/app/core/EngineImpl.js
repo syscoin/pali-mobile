@@ -827,6 +827,9 @@ export default {
     setEtherscanAvailable(etherscanAvailable) {
         util.setEtherscanAvailable(etherscanAvailable);
     },
+	setUseTestServer(testServer: boolean) {
+		util.setUseTestServer(testServer);
+	},
     init(state) {
         instance = new EngineImpl(state, strings);
         Object.freeze(instance);
