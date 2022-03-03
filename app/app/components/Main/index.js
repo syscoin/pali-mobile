@@ -534,7 +534,7 @@ const Main = props => {
 			if (backgroundMode.current) {
 				lockTimer.current = Date.now();
 				BackgroundTimer.runBackgroundTimer(async () => {
-					logDebug('PPYang runBackgroundTimer time:', Date.now() - lockTimer.current);
+					// logDebug('PPYang runBackgroundTimer time:', Date.now() - lockTimer.current);
 					if (lockTimer.current && Date.now() - lockTimer.current >= 5 * 60 * 1000) {
 						lockTimer.current = null;
 						await showLoginView();

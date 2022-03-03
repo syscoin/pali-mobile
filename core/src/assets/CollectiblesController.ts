@@ -6,11 +6,8 @@ import PreferencesController from '../user/PreferencesController';
 import NetworkController from '../network/NetworkController';
 import util, {
   CollectibleType,
-  getAvaxscanApiUrl,
-  getBscscanApiUrl,
-  getHecoinfoApiUrl,
   getIpfsUrlContentIdentifier,
-  getPolygonscanApiUrl,
+  getScanApiByType,
   logInfo,
   safelyExecute,
   timeoutFetch,
@@ -306,20 +303,11 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
   async getCollectiblesByType(selectedAddress: string, chainId: string, type: ChainType) {
     const scanKey = await this.getScanKey(type);
-    let apiUrl;
-    if (type === ChainType.Bsc) {
-      apiUrl = getBscscanApiUrl(chainId, selectedAddress, 'tokennfttx', undefined, scanKey);
-    } else if (type === ChainType.Polygon) {
-      apiUrl = getPolygonscanApiUrl(chainId, selectedAddress, 'tokennfttx', undefined, scanKey);
-    } else if (type === ChainType.Heco) {
-      apiUrl = getHecoinfoApiUrl(chainId, selectedAddress, 'tokennfttx', undefined, scanKey);
-    } else if (type === ChainType.Avax) {
-      apiUrl = getAvaxscanApiUrl(chainId, selectedAddress, 'tokennfttx', undefined, scanKey);
-    }
-    if (!apiUrl) {
+    const api = await getScanApiByType(type, chainId, selectedAddress, 'tokennfttx', undefined, scanKey);
+    if (!api?.url) {
       return undefined;
     }
-    const response = await timeoutFetch(apiUrl, undefined, 15000);
+    const response = await timeoutFetch(api.url, api.options, 15000);
     const nftResult = await response.json();
     if (!nftResult || nftResult.status === '0' || !Array.isArray(nftResult.result)) {
       return undefined;

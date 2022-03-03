@@ -238,6 +238,29 @@ export function getAvaxscanApiUrl(
   return url;
 }
 
+export async function getScanApiByType(type: ChainType, chainId: string, address: string, action: string, fromBlock?: string, etherscanApiKey?: string) {
+  let scanUrl = '';
+  if (type === ChainType.Ethereum) {
+    scanUrl = getEtherscanApiUrl(getNetworkType(chainId), address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Bsc) {
+    scanUrl = getBscscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Polygon) {
+    scanUrl = getPolygonscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Arbitrum) {
+    scanUrl = getArbscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Heco) {
+    scanUrl = getHecoinfoApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Optimism) {
+    scanUrl = getOpscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Avax) {
+    scanUrl = getAvaxscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  }
+  if (type === ChainType.Ethereum || type === ChainType.Optimism || type === ChainType.Bsc) {
+    return await getAvailableUrl(scanUrl);
+  }
+  return { url: scanUrl, options: undefined }
+}
+
 /**
  * Handles the fetch of incoming transactions
  *
@@ -262,32 +285,12 @@ export async function handleTransactionFetch(
   } else if (loadToken) {
     action = 'tokentx';
   }
-  let etherscanTxUrl = '';
-  if (type === ChainType.Ethereum) {
-    etherscanTxUrl = getEtherscanApiUrl(getNetworkType(chainId), address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Bsc) {
-    etherscanTxUrl = getBscscanApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Polygon) {
-    etherscanTxUrl = getPolygonscanApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Arbitrum) {
-    etherscanTxUrl = getArbscanApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Heco) {
-    etherscanTxUrl = getHecoinfoApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Optimism) {
-    etherscanTxUrl = getOpscanApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  } else if (type === ChainType.Avax) {
-    etherscanTxUrl = getAvaxscanApiUrl(chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
-  }
+  const api = await getScanApiByType(type, chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
   let etherscanTxResponse;
   try {
-    if (type === ChainType.Ethereum || type === ChainType.Optimism) {
-      const { url, options } = await getAvailableUrl(etherscanTxUrl);
-      etherscanTxResponse = await handleFetch(url, options);
-    } else {
-      etherscanTxResponse = await handleFetch(etherscanTxUrl);
-    }
+    etherscanTxResponse = await handleFetch(api.url, api.options);
   } catch (e) {
-    logInfo(`leon.w@fetch ${etherscanTxUrl} failed. error=${e}`);
+    logInfo(`leon.w@fetch ${api.url} failed. error=${e}`);
   }
   if (!etherscanTxResponse || etherscanTxResponse.status === '0' || !Array.isArray(etherscanTxResponse.result)) {
     etherscanTxResponse = { result: [] };
@@ -1052,5 +1055,6 @@ export default {
   getIpfsUrlContentIdentifier,
   isRpcChainType,
   rehydrate,
-  setAgentUtil
+  setAgentUtil,
+  getScanApiByType
 };
