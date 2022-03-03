@@ -114,6 +114,14 @@ build_core() {
 	cd ./../app
 }
 
+build_thread_android() {
+	node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./android/app/src/main/res/ --entry-file NativeWorker.js --platform android --bundle-output ./android/app/src/main/assets/threads/NativeWorker.bundle
+}
+
+build_thread_ios() {
+	node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./ios --entry-file NativeWorker.js --platform ios --bundle-output ./ios/NativeWorker.jsbundle
+}
+
 buildAndroidRun() {
 	build_core
 	prebuild_android
@@ -134,6 +142,7 @@ buildIosDevice() {
 
 buildIosRelease() {
 	build_core
+	build_thread_ios
 	prebuild_ios
 
 	# Replace release.xcconfig with ENV vars
@@ -158,6 +167,7 @@ buildIosRelease() {
 
 buildAndroidRelease() {
 	build_core
+	build_thread_android
 	prebuild_android
 
 	if [ "$PRE_RELEASE" = true ] ; then

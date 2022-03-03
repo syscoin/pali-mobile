@@ -51,7 +51,6 @@ buck-out/
 
 # bundle artifact
 *.jsbundle
-!/ios/NativeWorker.jsbundle
 
 # testing
 coverage
@@ -69,3 +68,8 @@ coverage
 /ios/Podfile.lock
 
 apikeys
+
+#thread
+/android/app/src/main/assets/threads
+/android/app/src/main/res/raw/locales*
+/android/app/src/main/res/raw/node_modules*
