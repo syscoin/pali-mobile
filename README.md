@@ -9,6 +9,7 @@
 
 #### 2. build
 - cd app && yarn clean
-- yarn build:thread
-- yarn start:android/ios for debug
-- yarn build:android/ios for release
+- yarn start:android for android debug build
+- yarn start:ios for ios debug build
+- yarn build:android for android release build
+- yarn build:ios for ios release build
