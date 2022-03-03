@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "735994113424",
+    "project_id": "gopocket-notification-push",
+    "storage_bucket": "gopocket-notification-push.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735994113424:android:6a5eaaba386c44c6e35715",
+        "android_client_info": {
+          "package_name": "io.gopocket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735994113424-hsk4bhqnkbkcl0sh731vq09vmnci7ime.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArmtnaQ0I1K5JsWFua_6lkRSEqrT4lcRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735994113424-hsk4bhqnkbkcl0sh731vq09vmnci7ime.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "735994113424-gitpct6m2g5f8au9p9igjkuot28cp9m6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tops.gopocket",
+                "app_store_id": "1576488287"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
