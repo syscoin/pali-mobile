@@ -3,6 +3,7 @@ import { self } from 'react-native-threads';
 import EngineImpl from './app/core/EngineImpl';
 import { Sqlite } from 'gopocket-core';
 import { randomTransactionId } from './app/util/number';
+import NativeWorker from './NativeWorker';
 
 function handlePromise(initData: any, p: Promise<any>) {
 	p.then(
@@ -33,10 +34,24 @@ class TodoApi {
 	listeners = {};
 	engine;
 	transactionResult = {};
+	agents = {};
 
-	async test(arg1, arg2) {
-		return `I'm working ${arg1} ${arg2}`;
+	async callRegisterCls(objs) {
+		if (!objs) {
+			return;
+		}
+		objs.forEach(obj => {
+			const agent = [];
+			obj.funcs?.forEach(
+				name =>
+					(agent[name] = function(...args) {
+						return NativeWorker.Api.postAsync('call_register', obj.name, name, ...args);
+					})
+			);
+			this.agents[obj.name] = agent;
+		});
 	}
+
 	async callTransactionResult(id) {
 		if (this.transactionResult[id]) {
 			return this.transactionResult[id];
@@ -159,10 +174,6 @@ class TodoApi {
 			})
 		);
 	}
-	//type: 1 setItem, 0 getItem
-	async callAsyncStorage(type, name, value) {
-		return this.postAsync('async_storage', type, name, value);
-	}
 	async useOffchainEndPoint() {
 		return this.postAsync('useOffchainEndPoint');
 	}
@@ -213,9 +224,6 @@ self.onmessage = message => {
 		return;
 	}
 	switch (data.api) {
-		case 'test':
-			// eslint-disable-next-line prefer-spread
-			return handlePromise(data, api.test.apply(api, data.args));
 		case 'controller':
 			return handlePromise(
 				data,
@@ -246,6 +254,12 @@ self.onmessage = message => {
 				// eslint-disable-next-line no-useless-call,prefer-spread
 				api.callTransactionResult.apply(api, data.args)
 			);
+		case 'register_cls':
+			return handlePromise(
+				data,
+				// eslint-disable-next-line no-useless-call,prefer-spread
+				api.callRegisterCls.apply(api, data.args)
+			);
 		default:
 			handlePromise(data, api.error.apply(api));
 	}
@@ -254,5 +268,8 @@ self.onmessage = message => {
 export default {
 	get Api() {
 		return api;
+	},
+	get Agents() {
+		return api.agents;
 	}
 };

@@ -187,7 +187,10 @@ class EngineImpl {
                     PreferencesController: preferences
                 } = this.datamodel.context;
                 network.refreshNetwork();
-                setTimeout(async() => arbnetwork.refreshNetwork(await NativeWorker.Api.useOffchainEndPoint()), 100);
+                setTimeout(
+                    async() => arbnetwork.refreshNetwork(await NativeWorker.Agents.ApiClient.useOffchainEndPoint()),
+                    100
+                );
                 opnetwork.refreshNetwork();
                 bscnetwork.refreshNetwork();
                 polygonnetwork.refreshNetwork();
@@ -318,7 +321,7 @@ class EngineImpl {
                 );
                 keyring.subscribe(
                     async({ vault }) => {
-                        vault && (await NativeWorker.Api.callAsyncStorage(1, BACKUP_VAULT, vault));
+                        vault && (await NativeWorker.Agents.AsyncStorage.setItem(BACKUP_VAULT, vault));
                     }, ['vault']
                 );
             } catch (e) {
@@ -332,28 +335,28 @@ class EngineImpl {
     async getScanKey(type) {
         if (type === ChainType.Bsc) {
             if (!bscscanKey) {
-                bscscanKey = await NativeWorker.Api.callAsyncStorage(0, BSCSCAN_KEY);
+                bscscanKey = await NativeWorker.Agents.AsyncStorage.getItem(BSCSCAN_KEY);
                 if (!bscscanKey || BSCSCAN_APIKEYS.indexOf(bscscanKey) === -1) {
                     bscscanKey = BSCSCAN_APIKEYS[Math.floor(Math.random() * BSCSCAN_APIKEYS.length)];
-                    await NativeWorker.Api.callAsyncStorage(1, BSCSCAN_KEY, bscscanKey);
+                    await NativeWorker.Agents.AsyncStorage.setItem(BSCSCAN_KEY, bscscanKey);
                 }
             }
             return bscscanKey;
         } else if (type === ChainType.Polygon) {
             if (!polygonscanKey) {
-                polygonscanKey = await NativeWorker.Api.callAsyncStorage(0, POLYGONSCAN_KEY);
+                polygonscanKey = await NativeWorker.Agents.AsyncStorage.getItem(POLYGONSCAN_KEY);
                 if (!polygonscanKey || POLYGONSCAN_APIKEYS.indexOf(polygonscanKey) === -1) {
                     polygonscanKey = POLYGONSCAN_APIKEYS[Math.floor(Math.random() * POLYGONSCAN_APIKEYS.length)];
-                    await NativeWorker.Api.callAsyncStorage(1, POLYGONSCAN_KEY, polygonscanKey);
+                    await NativeWorker.Agents.AsyncStorage.setItem(POLYGONSCAN_KEY, polygonscanKey);
                 }
             }
             return polygonscanKey;
         } else if (type === ChainType.Ethereum || type === ChainType.Optimism) {
             if (!etherscanKey) {
-                etherscanKey = await NativeWorker.Api.callAsyncStorage(0, ETHERSCAN_KEY);
+                etherscanKey = await NativeWorker.Agents.AsyncStorage.getItem(ETHERSCAN_KEY);
                 if (!etherscanKey || ETHERSCAN_APIKEYS.indexOf(etherscanKey) === -1) {
                     etherscanKey = ETHERSCAN_APIKEYS[Math.floor(Math.random() * ETHERSCAN_APIKEYS.length)];
-                    await NativeWorker.Api.callAsyncStorage(1, ETHERSCAN_KEY, etherscanKey);
+                    await NativeWorker.Agents.AsyncStorage.setItem(ETHERSCAN_KEY, etherscanKey);
                 }
             }
             return etherscanKey;
@@ -571,7 +574,7 @@ class EngineImpl {
             infoKey = LAST_AVAX_INCOMING_TX_BLOCK_INFO;
         }
         let changed = false;
-        const lastIncomingTxBlockInfoStr = await NativeWorker.Api.callAsyncStorage(0, infoKey);
+        const lastIncomingTxBlockInfoStr = await NativeWorker.Agents.AsyncStorage.getItem(infoKey);
         const allLastIncomingTxBlocks = (lastIncomingTxBlockInfoStr && JSON.parse(lastIncomingTxBlockInfoStr)) || {};
         Object.keys(allLastIncomingTxBlocks).forEach(address => {
             if (!identities[address]) {
@@ -580,7 +583,7 @@ class EngineImpl {
             }
         });
         if (changed) {
-            await NativeWorker.Api.callAsyncStorage(1, infoKey, JSON.stringify(allLastIncomingTxBlocks));
+            await NativeWorker.Agents.AsyncStorage.setItem(infoKey, JSON.stringify(allLastIncomingTxBlocks));
         }
     };
 
@@ -634,7 +637,7 @@ class EngineImpl {
         }
 
         try {
-            const lastIncomingTxBlockInfoStr = await NativeWorker.Api.callAsyncStorage(0, infoKey);
+            const lastIncomingTxBlockInfoStr = await NativeWorker.Agents.AsyncStorage.getItem(infoKey);
             const allLastIncomingTxBlocks =
                 (lastIncomingTxBlockInfoStr && JSON.parse(lastIncomingTxBlockInfoStr)) || {};
             const incomingKey = txInternal ? `${chainId}txInternal` : `${chainId}${loadToken}`;
@@ -689,7 +692,7 @@ class EngineImpl {
                 blockNumber: latestIncomingTxBlockNumber || blockNumber,
                 lastCheck: Date.now()
             };
-            await NativeWorker.Api.callAsyncStorage(1, infoKey, JSON.stringify(allLastIncomingTxBlocks));
+            await NativeWorker.Agents.AsyncStorage.setItem(infoKey, JSON.stringify(allLastIncomingTxBlocks));
         } catch (e) {
             util.logError('refreshEthTransactionHistory: Error while fetching all txs', type, e);
         }

@@ -1,11 +1,14 @@
 import { Thread } from 'react-native-threads';
 import { randomTransactionId } from '../util/number';
 import AsyncStorage from '@react-native-community/async-storage';
-import { useOffchainEndPoint } from '../util/ApiClient';
+// eslint-disable-next-line import/no-namespace
+import * as ApiClient from '../util/ApiClient';
+import { getExportFunctions } from '../util/threadUtils';
 
 class NativeThreads {
 	listeners = {};
 	thread;
+	registerCls = {};
 	constructor() {
 		// start a new react native JS process
 		this.thread = new Thread('./NativeWorker.js');
@@ -25,20 +28,26 @@ class NativeThreads {
 				this.listeners[end.status](end.value);
 			}
 		};
+		this.sendRegisterClass();
+	}
+	registerClass() {
+		return [{ name: 'ApiClient', cls: ApiClient }, { name: 'AsyncStorage', cls: AsyncStorage }];
+	}
+	sendRegisterClass() {
+		const clss = this.registerClass();
+		clss.forEach(obj => {
+			this.registerCls[obj.name] = obj.cls;
+		});
+		const registerCls = clss.map(obj => ({ name: obj.name, funcs: getExportFunctions(obj.cls) }));
+		this.postAsync('register_cls', registerCls);
 	}
 	handCallback(data) {
 		switch (data.api) {
-			case 'async_storage':
+			case 'call_register':
 				return this.handlePromise(
 					data,
 					// eslint-disable-next-line no-useless-call,prefer-spread
-					this.callAsyncStorage.apply(this, data.args)
-				);
-			case 'useOffchainEndPoint':
-				return this.handlePromise(
-					data,
-					// eslint-disable-next-line no-useless-call,prefer-spread
-					this.callUseOffchainEndPoint.apply(this, data.args)
+					this.callRegisterCls.apply(this, data.args)
 				);
 			default:
 				this.handlePromise(data, this.error.apply(this));
@@ -68,16 +77,8 @@ class NativeThreads {
 			}
 		);
 	}
-	async callAsyncStorage(type, name, value) {
-		if (type === 0) {
-			return await AsyncStorage.getItem(name, value);
-		}
-		return await AsyncStorage.setItem(name, value);
-	}
-
-	async callUseOffchainEndPoint() {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		return await useOffchainEndPoint();
+	async callRegisterCls(name, funcName, ...args) {
+		return this.registerCls[name][funcName](...args);
 	}
 
 	async error() {

@@ -45,6 +45,7 @@ import { EventEmitter } from 'events';
 import { endNetworkChange } from '../actions/settings';
 import WalletConnect from './WalletConnect';
 import NotificationManager from './NotificationManager';
+import { getInternalFunctions } from '../util/threadUtils';
 
 class AgentProvider extends EventEmitter {
 	name;
@@ -110,29 +111,13 @@ class Agent {
 class Engine {
 	datamodel;
 
-	getAllFuncs(cls) {
-		if (!cls) {
-			return [];
-		}
-		const funcs = [];
-		if (cls.prototype) {
-			const props = Object.getOwnPropertyNames(cls.prototype);
-			props && funcs.push(...props);
-		}
-		const obj = Object.getPrototypeOf(cls);
-		if (obj) {
-			funcs.push(...this.getAllFuncs(obj));
-		}
-		return funcs;
-	}
-
 	getAgentController(controllers: []) {
 		const context = {};
 		controllers.forEach(controller => {
 			const cls = controller.cls;
 			const item = controller.name;
 			const agent = new Agent(item);
-			const keys = this.getAllFuncs(cls);
+			const keys = getInternalFunctions(cls);
 			keys?.forEach(key => {
 				if (key !== 'state' && !agent[key]) {
 					agent[key] = function(...args) {
