@@ -22,7 +22,7 @@ import Progress from './progress';
 import AsyncStorage from '@react-native-community/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
-import { util } from 'gopocket-core';
+import { Mutex, util } from 'gopocket-core';
 import { SafeAreaView } from 'react-navigation';
 import NativeThreads from '../../../threads/NativeThreads';
 
@@ -110,6 +110,7 @@ export default class DrawingBoard extends PureComponent {
 		fromWalletManager: this.props.navigation.getParam('fromWalletManager', false)
 	};
 
+	mutex = new Mutex();
 	trueRandomLength = 0;
 
 	progressViewRef = React.createRef();
@@ -210,27 +211,29 @@ export default class DrawingBoard extends PureComponent {
 							// });
 						}}
 						onPathUpdate={path => {
-							if (path.length > 0) {
-								setTimeout(async () => {
-									if (this.trueRandomLength < pathMaxNum) {
-										const {
-											count,
-											true_random,
-											mnemonic
-										} = await Engine.context.KeyringController.appendToTRGenerator(
-											path[path.length - 1][0],
-											path[path.length - 1][1]
-										);
-										this.trueRandomLength = count;
-										if (mnemonic) {
-											this.setState({ drawComplete: true, canDraw: false, mnemonic });
-										}
-
-										if (count % 5 === 0) {
-											this.bytesPanelRef.current.setByteArray(true_random);
-										}
-										this.progressViewRef.current.setProgress(this.trueRandomLength);
+							const appendToTRGenerator = async drawPath => {
+								const releaseLock = await this.mutex.acquire();
+								try {
+									if (this.trueRandomLength >= pathMaxNum) {
+										return;
 									}
+									const {
+										count,
+										true_random,
+										mnemonic
+									} = await Engine.context.KeyringController.appendToTRGenerator(
+										drawPath[drawPath.length - 1][0],
+										drawPath[drawPath.length - 1][1]
+									);
+									this.trueRandomLength = count;
+									if (mnemonic) {
+										this.setState({ drawComplete: true, canDraw: false, mnemonic });
+									}
+
+									if (count % 5 === 0) {
+										this.bytesPanelRef.current.setByteArray(true_random);
+									}
+									this.progressViewRef.current.setProgress(this.trueRandomLength);
 									if (this.trueRandomLength === 1) {
 										this.setState({ drawStart: true });
 										Animated.timing(this.state.bytesPanelOpacity, {
@@ -239,7 +242,12 @@ export default class DrawingBoard extends PureComponent {
 											useNativeDriver: false
 										}).start();
 									}
-								}, 1);
+								} finally {
+									releaseLock();
+								}
+							};
+							if (path.length > 0) {
+								appendToTRGenerator(path);
 							}
 						}}
 						hideBottom
