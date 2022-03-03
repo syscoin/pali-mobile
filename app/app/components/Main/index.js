@@ -80,7 +80,6 @@ import { updateLockScreen } from '../../actions/settings';
 import WalletConnectList from '../UI/WalletConnectList';
 import { hideWalletConnectList, showWalletConnectIcon, hideWalletConnectIcon } from '../../actions/walletconnect';
 import { toggleShowHint } from '../../actions/hint';
-import { encryptString } from '../../util/CryptUtils';
 import { logDebug } from 'gopocket-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
 
@@ -719,58 +718,6 @@ const Main = props => {
 		}
 	};
 
-	const silenceBindInviteCode = async () => {
-		try {
-			const { InviteController, KeyringController } = Engine.context;
-			const { accessToken, userInfo } = InviteController.state;
-			let _userInfo;
-			if (!accessToken) {
-				const accounts = await KeyringController.getAccounts();
-				const mainAddress = accounts.length > 0 ? accounts[0] : '';
-				const deviceInfo = JSON.parse(getDeviceInfo());
-				const deviceId = getDeviceId();
-				deviceInfo.uuid = deviceId;
-				deviceInfo.random = Math.round(Math.random() * 89999999 + 10000000);
-				deviceInfo.address = mainAddress;
-				const params = await encryptString(JSON.stringify(deviceInfo));
-				const ret = await InviteController.requestLogin(params, mainAddress);
-				_userInfo = ret?.data?.user;
-			} else if (userInfo && !userInfo.parent_code) {
-				const ret = await InviteController.fetchUserInfo();
-				_userInfo = ret?.data;
-			}
-			if (_userInfo && !_userInfo.parent_code) {
-				const channel = getChannel();
-				if (channel && channel !== 'official' && channel !== 'googleps') {
-					const ret = await InviteController.bindInviteCode(channel);
-					logDebug('silenceBindInviteCode ret --> ', ret);
-				}
-			}
-		} catch (error) {
-			logDebug('silenceBindInviteCode error --> ', error);
-		}
-	};
-
-	useEffect(() => {
-		async function onIdeititiesChanged() {
-			try {
-				const { InviteController, KeyringController } = Engine.context;
-				const { accessToken, mainAddress } = InviteController.state;
-				if (accessToken) {
-					const accounts = await KeyringController.getAccounts();
-					const newAddress = accounts.length > 0 ? accounts[0] : '';
-					if (mainAddress !== newAddress) {
-						InviteController.clearCache();
-						silenceBindInviteCode();
-					}
-				}
-			} catch (error) {
-				logDebug('error on identities changed --> ', error);
-			}
-		}
-		onIdeititiesChanged();
-	}, [props.identities]);
-
 	const showNotifyDialog = (titleParam, messageParam, urlParam) => {
 		let title = titleParam;
 		let message = messageParam;
@@ -935,7 +882,6 @@ const Main = props => {
 			pollForIncomingTransactions();
 			removeConnectionStatusListener.current = NetInfo.addEventListener(connectionChangeHandler);
 			showUpdateModalIfNeeded();
-			silenceBindInviteCode();
 		}, 200);
 
 		setTimeout(async () => {

@@ -5,15 +5,10 @@ import { onEvent } from 'react-native-mumeng';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
-import { encryptString } from '../../../util/CryptUtils';
-import { util } from 'gopocket-core';
 import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import { isRpcChainId } from '../../../util/ControllerUtils';
 import { toLowerCaseEquals } from '../../../util/general';
-
-const statUrl = 'https://go.morpheuscommunity.net/api/v2/open/event/handle';
-const statUrlForTesting = 'https://go.libsss.com/api/v2/open/event/handle';
 
 const styles = StyleSheet.create({
 	topContainer: {
@@ -113,102 +108,6 @@ class SecurityTop extends Component {
 			this.setState({ checkLoading: false });
 		}, 3000);
 		onEvent('SafetyDetection');
-		this.statDetect();
-	};
-
-	statDetect = async () => {
-		const {
-			KeyringController,
-			NetworkController,
-			BscNetworkController,
-			PolygonNetworkController,
-			TokenBalancesController
-		} = Engine.context;
-		const { contractBalances, bscContractBalances, polygonContractBalances } = TokenBalancesController.state;
-		const wallet_address = [];
-		if (await NetworkController.ismainnet()) {
-			try {
-				for (const addressKey in contractBalances) {
-					let has_balances = false;
-					for (const tokenKey in contractBalances[addressKey]) {
-						const amountBN = contractBalances[addressKey]?.[tokenKey];
-						if (amountBN && amountBN.gtn(0)) {
-							has_balances = true;
-							break;
-						}
-					}
-					if (has_balances) {
-						if (!wallet_address.includes(addressKey)) {
-							wallet_address.push(addressKey);
-						}
-					}
-				}
-			} catch (e) {
-				util.logDebug(e);
-			}
-		}
-		if (await BscNetworkController.ismainnet()) {
-			try {
-				for (const addressKey in bscContractBalances) {
-					let has_balances = false;
-					for (const tokenKey in bscContractBalances[addressKey]) {
-						const amountBN = bscContractBalances[addressKey]?.[tokenKey];
-						if (amountBN && amountBN.gtn(0)) {
-							has_balances = true;
-							break;
-						}
-					}
-					if (has_balances) {
-						if (!wallet_address.includes(addressKey)) {
-							wallet_address.push(addressKey);
-						}
-					}
-				}
-			} catch (e) {
-				util.logDebug(e);
-			}
-		}
-		if (await PolygonNetworkController.ismainnet()) {
-			try {
-				for (const addressKey in polygonContractBalances) {
-					let has_balances = false;
-					for (const tokenKey in polygonContractBalances[addressKey]) {
-						const amountBN = polygonContractBalances[addressKey]?.[tokenKey];
-						if (amountBN && amountBN.gtn(0)) {
-							has_balances = true;
-							break;
-						}
-					}
-					if (has_balances) {
-						if (!wallet_address.includes(addressKey)) {
-							wallet_address.push(addressKey);
-						}
-					}
-				}
-			} catch (e) {
-				util.logDebug(e);
-			}
-		}
-		if (wallet_address.length === 0) {
-			util.logDebug('leon.w@ user has not balances at all.');
-			return;
-		}
-		const accounts = await KeyringController.getAccounts();
-		const body = JSON.stringify({
-			address: accounts[0],
-			event: 'detect',
-			wallet_address
-		});
-		const encrypted_body = await encryptString(body);
-		util.handleFetch(util.useTestServer() ? statUrlForTesting : statUrl, {
-			method: 'POST',
-			body: JSON.stringify({ content: encrypted_body }),
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				'Accept-Language': strings('other.accept_language')
-			}
-		});
 	};
 
 	toDateFormat = timestamp => {
