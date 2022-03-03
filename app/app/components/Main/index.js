@@ -1,0 +1,1377 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+	AppState,
+	StyleSheet,
+	View,
+	Text,
+	TouchableOpacity,
+	DeviceEventEmitter,
+	Image,
+	Linking,
+	Platform,
+	NativeEventEmitter,
+	NativeModules
+} from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import GlobalAlert from '../UI/GlobalAlert';
+import BackgroundTimer from 'react-native-background-timer';
+import Approval from '../Views/Approval';
+import NotificationManager from '../../core/NotificationManager';
+import Engine from '../../core/Engine';
+import AppConstants from '../../core/AppConstants';
+import { colors, fontStyles } from '../../styles/common';
+import FadeOutOverlay from '../UI/FadeOutOverlay';
+import { hexToBN, getTypeByChainId, getTokenDecimals, getAssetSymbol, calcAllAddressPrices } from '../../util/number';
+import { setEtherTransaction, setTransactionObject } from '../../actions/transaction';
+import PersonalSign from '../UI/PersonalSign';
+import TypedSign from '../UI/TypedSign';
+import Modal from 'react-native-modal';
+import WalletConnect from '../../core/WalletConnect';
+import { util, CrossChainType, BN } from 'gopocket-core';
+import { strings } from '../../../locales/i18n';
+
+import {
+	getMethodData,
+	TOKEN_METHOD_TRANSFER,
+	decodeTransferData,
+	APPROVE_FUNCTION_SIGNATURE,
+	equalMethodId,
+	POLYGON_ERC20_WITHDRAW_FUNCTION_SIGNATURE,
+	getTickerByType
+} from '../../util/transactions';
+import { safeToChecksumAddress } from '../../util/address';
+import MessageSign from '../UI/MessageSign';
+import Approve from '../Views/ApproveView/Approve';
+import TransactionTypes from '../../core/TransactionTypes';
+import Notification from '../UI/Notification';
+import TransactionTips from '../UI/TransactionTips';
+import { showTransactionNotification, showSimpleNotification } from '../../actions/notification';
+import {
+	toggleDappTransactionModal,
+	toggleApproveModal,
+	toggleApproveModalInModal,
+	toggleOngoingTransactionsModal
+} from '../../actions/modals';
+import AccountApproval from '../UI/AccountApproval';
+import MainNavigator from './MainNavigator';
+import QrScanner from '../Views/QRScanner';
+import HintView from '../UI/HintView';
+import { hideScanner } from '../../actions/scanner';
+import ElevatedView from 'react-native-elevated-view';
+import LottieView from 'lottie-react-native';
+import OngoingTransactions from '../UI/OngoingTransactions';
+import ShareImageView from '../UI/ShareImageView';
+import { onEvent, onEventWithMap } from 'react-native-mumeng';
+import AsyncStorage from '@react-native-community/async-storage';
+import { getAppVersionCode, getChannel, getDeviceId, getDeviceInfo } from '../../util/ApiClient';
+import Device from '../../util/Device';
+import {
+	BIOMETRY_CHOICE_DISABLED,
+	STORAGE_NEW_VERSION_CODE,
+	STORAGE_UPDATE_VERSION_SHOW_MODAL
+} from '../../constants/storage';
+import { launchAppInGooglePlay, supportGooglePlay, jumpIosApp } from '../../util/NativeUtils';
+import PushNotification from 'react-native-push-notification';
+import SharedDeeplinkManager from '../../core/DeeplinkManager';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { updateLockScreen } from '../../actions/settings';
+import WalletConnectList from '../UI/WalletConnectList';
+import { hideWalletConnectList, showWalletConnectIcon, hideWalletConnectIcon } from '../../actions/walletconnect';
+import { toggleShowHint } from '../../actions/hint';
+import { encryptString } from '../../util/CryptUtils';
+import { logDebug } from 'gopocket-core/dist/util';
+import SecureKeychain from '../../core/SecureKeychain';
+
+const styles = StyleSheet.create({
+	flex: {
+		flex: 1
+	},
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
+	},
+	wcLoadingModal: {
+		margin: 0,
+		width: '100%'
+	},
+	wcLoading: {
+		width: 220,
+		minHeight: 100,
+		backgroundColor: colors.darkAlert,
+		paddingBottom: 14,
+		paddingTop: 14,
+		alignSelf: 'center',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 8
+	},
+	wcLoadingText: {
+		textAlign: 'center',
+		color: colors.white,
+		fontSize: 14,
+		marginHorizontal: 15,
+		lineHeight: 20,
+		...fontStyles.normal
+	},
+	animation: {
+		width: 52,
+		height: 52
+	},
+	shareView: {
+		position: 'absolute',
+		top: 0,
+		left: -1000
+	},
+	versionModal: {
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		width: 280,
+		height: 297,
+		alignSelf: 'center',
+		alignItems: 'center'
+	},
+	closeTouch: {
+		height: 34,
+		width: 43,
+		paddingTop: 10,
+		paddingRight: 19,
+		alignSelf: 'flex-end'
+	},
+	newVersion: {
+		fontSize: 20,
+		...fontStyles.bold,
+		color: colors.$030319,
+		marginTop: 14
+	},
+	versionName: {
+		fontSize: 16,
+		color: colors.$030319,
+		marginBottom: 20,
+		marginTop: 4
+	},
+	line: {
+		backgroundColor: colors.$F0F0F0,
+		width: '100%',
+		height: 0.5
+	},
+	touchBtn: {
+		height: 50,
+		width: 240,
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	updateNow: {
+		fontSize: 16,
+		color: colors.$FE6E91
+	},
+	viewDetail: {
+		fontSize: 16,
+		color: colors.$60657D
+	},
+	notifyModalContainer: {
+		alignSelf: 'center',
+		backgroundColor: colors.white,
+		borderRadius: 10,
+		flexDirection: 'row',
+		paddingVertical: 27,
+		paddingHorizontal: 26,
+		width: '80%'
+	},
+	notifyTitle: {
+		color: colors.$030319,
+		fontSize: 18,
+		...fontStyles.bold,
+		alignSelf: 'center',
+		marginBottom: 12,
+		textAlign: 'center'
+	},
+	notifyDesc: {
+		color: colors.$60657D,
+		fontSize: 13,
+		alignSelf: 'center',
+		lineHeight: 20
+	},
+	notifyTouchOk: {
+		marginTop: 10,
+		height: 44,
+		marginBottom: -10,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	notifyOkLabel: {
+		fontSize: 16,
+		color: colors.$030319
+	},
+	modalMarginTop: {
+		marginTop: 120
+	}
+});
+
+const Main = props => {
+	const [connected, setConnected] = useState(true);
+	const [signMessage, setSignMessage] = useState(false);
+	const [signMessageParams, setSignMessageParams] = useState({ data: '' });
+	const [signType, setSignType] = useState(false);
+	const [walletConnectRequest, setWalletConnectRequest] = useState(false);
+	const [walletConnectRequestInfo, setWalletConnectRequestInfo] = useState({});
+	const [currentPageTitle, setCurrentPageTitle] = useState('');
+	const [currentPageUrl, setCurrentPageUrl] = useState('');
+	const [allSession, setAllSession] = useState([]);
+
+	const backgroundMode = useRef(false);
+	const removeConnectionStatusListener = useRef();
+
+	const lockTimer = useRef(null);
+
+	const setTransactionObject = props.setTransactionObject;
+	const toggleApproveModal = props.toggleApproveModal;
+	const toggleApproveModalInModal = props.toggleApproveModalInModal;
+	const toggleDappTransactionModal = props.toggleDappTransactionModal;
+	const setEtherTransaction = props.setEtherTransaction;
+	const toggleOngoingTransactionsModal = props.toggleOngoingTransactionsModal;
+
+	const [wcLoading, setWcLoading] = useState(0);
+	const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+	const [showShareViewType, setShowShareViewType] = useState(null);
+
+	const [showNotificationModal, setShowNotificationModal] = useState(false);
+	const [notificationTitle, setNotificationTitle] = useState('');
+	const [notificationMessage, setNotificationMessage] = useState('');
+	const [notificationUrl, setNotificationUrl] = useState('');
+
+	let wcLoadingHandler = null;
+
+	const pollForIncomingTransactions = useCallback(async () => {
+		await Engine.refreshTransactionHistory();
+		// Stop polling if the app is in the background
+		if (!backgroundMode.current) {
+			setTimeout(() => {
+				pollForIncomingTransactions();
+			}, AppConstants.TX_CHECK_NORMAL_FREQUENCY);
+		}
+	}, [backgroundMode]);
+
+	const onUnapprovedMessage = (messageParams, type) => {
+		const { title: currentPageTitle, url: currentPageUrl } = messageParams.meta;
+		delete messageParams.meta;
+		setSignMessageParams(messageParams);
+		setSignType(type);
+		setCurrentPageTitle(currentPageTitle);
+		setCurrentPageUrl(currentPageUrl);
+		setSignMessage(true);
+	};
+
+	const connectionChangeHandler = useCallback(
+		state => {
+			if (!state) return;
+			const { isConnected } = state;
+			// Show the modal once the status changes to offline
+			if (connected && isConnected === false) {
+				//props.navigation.navigate('OfflineModeView');
+			}
+			if (connected !== isConnected && isConnected !== null) {
+				setConnected(isConnected);
+			}
+		},
+		[connected, setConnected]
+	);
+
+	const wcLoadingTimeout = () => {
+		if (wcLoadingHandler) {
+			clearTimeout(wcLoadingHandler);
+		}
+		wcLoadingHandler = setTimeout(() => {
+			setWcLoading(2);
+			WalletConnect.finishConnect();
+			setTimeout(() => {
+				setWcLoading(0);
+			}, 1000 * 3);
+		}, 1000 * 15);
+	};
+
+	const initializeWalletConnect = () => {
+		WalletConnect.hub.on('walletconnectSessionRequest', peerInfo => {
+			setWcLoading(0);
+			clearTimeout(wcLoadingHandler);
+			setWalletConnectRequest(true);
+			setWalletConnectRequestInfo(peerInfo);
+		});
+		WalletConnect.hub.on('walletconnectSessionLoading', callback => {
+			setWcLoading(1);
+			wcLoadingTimeout();
+		});
+		WalletConnect.hub.on('walletconnectDataChange', async callback => {
+			setAllSession(await WalletConnect.getSessions());
+		});
+		WalletConnect.hub.on('walletconnectSwitchChainSuccess', async callback => {
+			props.toggleShowHint(strings('accountApproval.network_switched'));
+			setAllSession(await WalletConnect.getSessions());
+		});
+		WalletConnect.hub.on('walletconnectSwitchChainFail', async callback => {
+			props.toggleShowHint(strings('accountApproval.network_not_supported'));
+		});
+		WalletConnect.init();
+	};
+
+	const getAssetByType = useCallback((chainId, form, to) => {
+		const { allTokens } = Engine.context.AssetsController.state;
+		const tokens = allTokens[form]?.[chainId] || [];
+		return tokens.find(({ address }) => address === to);
+	}, []);
+
+	const onUnapprovedTransaction = useCallback(
+		async transactionMeta => {
+			if (transactionMeta.origin === TransactionTypes.MMM) return;
+			const {
+				transaction: { value, gas, gasPrice, data, chainId }
+			} = transactionMeta;
+			const to = safeToChecksumAddress(transactionMeta.transaction.to);
+			util.logDebug('PPYang onUnapprovedTransaction to:', to, data, chainId, transactionMeta.origin);
+
+			const { ArbContractController, PolygonContractController, PolygonNetworkController } = Engine.context;
+			if (!transactionMeta.origin) {
+				const arbEthParam = await ArbContractController.getdepositETHMethodId();
+				const arbParam = await ArbContractController.getdepositMethodId();
+				if (
+					(equalMethodId(data, arbEthParam[1]) && arbEthParam[0] === to) ||
+					(equalMethodId(data, arbParam[1]) && arbParam[0] === to)
+				) {
+					let extraInfo = transactionMeta.extraInfo;
+					if (!extraInfo) {
+						extraInfo = {};
+					}
+					extraInfo.crossChainType = CrossChainType.depositArb;
+					extraInfo.crossChainDone = true;
+					transactionMeta.extraInfo = extraInfo;
+					DeviceEventEmitter.emit('MigrateTransactionMeta', transactionMeta);
+					return;
+				}
+
+				const withdrawEthParam = await ArbContractController.getwithdrawETHMethodId();
+				const withdrawParam = await ArbContractController.getwithdrawERC20MethodId();
+				if (
+					(equalMethodId(data, withdrawEthParam[1]) && withdrawEthParam[0] === to) ||
+					(equalMethodId(data, withdrawParam[1]) && withdrawParam[0] === to)
+				) {
+					let extraInfo = transactionMeta.extraInfo;
+					if (!extraInfo) {
+						extraInfo = {};
+					}
+					extraInfo.crossChainType = CrossChainType.withdrawArb;
+					extraInfo.crossChainDone = true;
+					transactionMeta.extraInfo = extraInfo;
+					DeviceEventEmitter.emit('MigrateTransactionMeta', transactionMeta);
+					return;
+				}
+
+				const polygonEthParam = await PolygonContractController.getdepositEtherForUserMethodId();
+				const polygonParam = await PolygonContractController.getdepositERC20ForUserMethodId();
+				const polygonParam2 = await PolygonContractController.getdepositERC20ForUserMethodId2();
+				if (
+					(equalMethodId(data, polygonEthParam[1]) && polygonEthParam[0] === to) ||
+					(equalMethodId(data, polygonParam[1]) && polygonParam[0] === to) ||
+					(equalMethodId(data, polygonParam2[1]) && polygonParam2[0] === to)
+				) {
+					let extraInfo = transactionMeta.extraInfo;
+					if (!extraInfo) {
+						extraInfo = {};
+					}
+					extraInfo.crossChainType = CrossChainType.depositPolygon;
+					extraInfo.crossChainDone = false;
+					transactionMeta.extraInfo = extraInfo;
+					DeviceEventEmitter.emit('MigrateTransactionMeta', transactionMeta);
+					return;
+				}
+
+				if (
+					transactionMeta.chainId === PolygonNetworkController.state.provider.chainId &&
+					data &&
+					data.substr(0, 10) === POLYGON_ERC20_WITHDRAW_FUNCTION_SIGNATURE
+				) {
+					let extraInfo = transactionMeta.extraInfo;
+					if (!extraInfo) {
+						extraInfo = {};
+					}
+					extraInfo.crossChainType = CrossChainType.withdrawPolygon;
+					extraInfo.crossChainDone = true;
+					transactionMeta.extraInfo = extraInfo;
+					DeviceEventEmitter.emit('MigrateTransactionMeta', transactionMeta);
+					return;
+				}
+			}
+
+			const polygonExitParam = await PolygonContractController.getexitERC20MethodId();
+			if (equalMethodId(data, polygonExitParam[1]) && polygonExitParam[0] === to) {
+				transactionMeta.origin = TransactionTypes.ORIGIN_CLAIM;
+			}
+
+			const claimParam = await ArbContractController.getexecuteTransactionMethodId();
+			if (equalMethodId(data, claimParam[2]) && (claimParam[0] === to || claimParam[1] === to)) {
+				transactionMeta.origin = TransactionTypes.ORIGIN_CLAIM;
+			}
+
+			transactionMeta.transaction.gas = hexToBN(gas);
+			transactionMeta.transaction.gasPrice = hexToBN(gasPrice);
+
+			if (
+				(value === '0x0' || !value) &&
+				data &&
+				data !== '0x' &&
+				to &&
+				(await getMethodData(data)).name === TOKEN_METHOD_TRANSFER
+			) {
+				const from = safeToChecksumAddress(transactionMeta.transaction.from);
+				const type = getTypeByChainId(transactionMeta.chainId);
+				let asset = getAssetByType(transactionMeta.chainId, type, from, to);
+				if (!asset) {
+					try {
+						asset = {};
+						asset.decimals = await getTokenDecimals(type, to);
+						asset.symbol = await getAssetSymbol(type, to);
+					} catch (e) {
+						// This could fail when requesting a transfer in other network
+						asset = { symbol: 'ERC20', decimals: new BN(0) };
+					}
+				}
+
+				const decodedData = decodeTransferData('transfer', data);
+				transactionMeta.transaction.value = hexToBN(decodedData[2]);
+				transactionMeta.transaction.to = decodedData[0];
+
+				asset.type = type;
+				setTransactionObject({
+					type: 'INDIVIDUAL_TOKEN_TRANSACTION',
+					selectedAsset: asset,
+					id: transactionMeta.id,
+					origin: transactionMeta.origin,
+					...transactionMeta.transaction
+				});
+			} else if (transactionMeta.origin === TransactionTypes.ORIGIN_CLAIM) {
+				transactionMeta.transaction.value = hexToBN(value);
+				setTransactionObject({
+					type: 'INDIVIDUAL_TOKEN_TRANSACTION',
+					id: transactionMeta.id,
+					origin: transactionMeta.origin,
+					...transactionMeta.transaction
+				});
+			} else {
+				const type = getTypeByChainId(transactionMeta.chainId);
+				const ticker = getTickerByType(type);
+				transactionMeta.transaction.value = hexToBN(value);
+
+				setEtherTransaction({
+					id: transactionMeta.id,
+					origin: transactionMeta.origin,
+					ticker,
+					...transactionMeta.transaction
+				});
+			}
+
+			if (data && data.substr(0, 10) === APPROVE_FUNCTION_SIGNATURE) {
+				transactionMeta.origin === TransactionTypes.ORIGIN_MOVE_TO_L2 ||
+				transactionMeta.origin === TransactionTypes.ORIGIN_CANCEL_APPROVAL
+					? toggleApproveModalInModal()
+					: toggleApproveModal();
+			} else {
+				toggleDappTransactionModal();
+			}
+		},
+		[
+			getAssetByType,
+			setEtherTransaction,
+			setTransactionObject,
+			toggleApproveModal,
+			toggleApproveModalInModal,
+			toggleDappTransactionModal
+		]
+	);
+
+	const showLoginView = useCallback(async () => {
+		if (props && props.navigation) {
+			const biometryChoice = !(await AsyncStorage.getItem(BIOMETRY_CHOICE_DISABLED));
+			const biometryType = await SecureKeychain.getSupportedBiometryType();
+			const rememberMe = !biometryType && !biometryChoice && !!(await SecureKeychain.getGenericPassword());
+			logDebug(
+				'PPYang biometryChoice:',
+				biometryChoice,
+				' biometryType:',
+				biometryType,
+				' rememberMe:',
+				rememberMe
+			);
+			if (!rememberMe) {
+				props.updateLockScreen(true);
+				setTimeout(() => {
+					props.navigation.navigate('LoginView', { translate: 'forNoAnimation', path: 'Main' });
+				}, 1);
+			}
+		}
+	}, [props]);
+
+	const handleAppStateChange = useCallback(
+		appState => {
+			const newModeIsBackground = appState === 'background';
+			// If it was in background and it's not anymore
+			// we need to stop the Background timer
+			if (backgroundMode.current && !newModeIsBackground) {
+				lockTimer.current = null;
+				BackgroundTimer.stopBackgroundTimer();
+				pollForIncomingTransactions();
+				DeviceEventEmitter.emit('BackgroundMode', false);
+			}
+
+			backgroundMode.current = newModeIsBackground;
+
+			const { TokenBalancesController } = Engine.context;
+			TokenBalancesController.configure({ backgroundMode: newModeIsBackground });
+
+			// If the app is now in background, we need to start
+			// the background timer, which is less intense
+			if (backgroundMode.current) {
+				lockTimer.current = Date.now();
+				BackgroundTimer.runBackgroundTimer(async () => {
+					logDebug('PPYang runBackgroundTimer time:', Date.now() - lockTimer.current);
+					if (lockTimer.current && Date.now() - lockTimer.current >= 5 * 60 * 1000) {
+						lockTimer.current = null;
+						await showLoginView();
+					}
+					await Engine.refreshTransactionHistory();
+				}, AppConstants.TX_CHECK_BACKGROUND_FREQUENCY);
+				DeviceEventEmitter.emit('BackgroundMode', true);
+			}
+		},
+		[showLoginView, pollForIncomingTransactions]
+	);
+
+	const onSignAction = () => setSignMessage(false);
+
+	const renderSigningModal = () => (
+		<Modal
+			isVisible={signMessage && !props.isLockScreen}
+			animationIn="slideInUp"
+			animationOut="slideOutDown"
+			style={styles.bottomModal}
+			backdropOpacity={0.7}
+			animationInTiming={600}
+			animationOutTiming={600}
+			onBackdropPress={onSignAction}
+			onBackButtonPress={onSignAction}
+			onSwipeComplete={onSignAction}
+			swipeDirection={'down'}
+			propagateSwipe
+			useNativeDriver
+		>
+			{signType === 'personal' && (
+				<PersonalSign
+					messageParams={signMessageParams}
+					onCancel={onSignAction}
+					onConfirm={onSignAction}
+					currentPageInformation={{ title: currentPageTitle, url: currentPageUrl }}
+				/>
+			)}
+			{signType === 'typed' && (
+				<TypedSign
+					messageParams={signMessageParams}
+					onCancel={onSignAction}
+					onConfirm={onSignAction}
+					currentPageInformation={{ title: currentPageTitle, url: currentPageUrl }}
+				/>
+			)}
+			{signType === 'eth' && (
+				<MessageSign
+					navigation={props.navigation}
+					messageParams={signMessageParams}
+					onCancel={onSignAction}
+					onConfirm={onSignAction}
+					currentPageInformation={{ title: currentPageTitle, url: currentPageUrl }}
+				/>
+			)}
+		</Modal>
+	);
+
+	const loadSessions = useCallback(async () => {
+		setAllSession(await WalletConnect.getSessions());
+	}, [setAllSession]);
+
+	const onWalletConnectSessionApproval = () => {
+		const { peerId } = walletConnectRequestInfo;
+		setWalletConnectRequest(false);
+		setWalletConnectRequestInfo({});
+		WalletConnect.hub.emit('walletconnectSessionRequest::approved', peerId);
+		setTimeout(() => {
+			loadSessions();
+		}, 1000);
+	};
+
+	const onWalletConnectSessionRejected = () => {
+		const peerId = walletConnectRequestInfo.peerId;
+		setWalletConnectRequest(false);
+		setWalletConnectRequestInfo({});
+		WalletConnect.hub.emit('walletconnectSessionRequest::rejected', peerId);
+	};
+
+	const renderWalletConnectSessionRequestModal = () =>
+		walletConnectRequestInfo.peerMeta && (
+			<Modal
+				isVisible={walletConnectRequest && !props.isLockScreen}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={styles.bottomModal}
+				backdropOpacity={0.7}
+				animationInTiming={300}
+				animationOutTiming={300}
+				onSwipeComplete={onWalletConnectSessionRejected}
+				onBackButtonPress={onWalletConnectSessionRejected}
+				swipeDirection={'down'}
+				propagateSwipe
+				statusBarTranslucent
+				useNativeDriver
+			>
+				<AccountApproval
+					onCancel={onWalletConnectSessionRejected}
+					onConfirm={onWalletConnectSessionApproval}
+					currentPageInformation={walletConnectRequestInfo}
+				/>
+			</Modal>
+		);
+
+	const renderWalletConnectListModal = () =>
+		props.walletConnectListVisible && (
+			<Modal
+				isVisible={!props.isLockScreen}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={[styles.bottomModal, styles.modalMarginTop]}
+				backdropOpacity={0.7}
+				animationInTiming={300}
+				animationOutTiming={300}
+				onBackdropPress={props.hideWalletConnectList}
+				onSwipeComplete={props.hideWalletConnectList}
+				onBackButtonPress={props.hideWalletConnectList}
+				swipeDirection={'down'}
+				propagateSwipe
+				statusBarTranslucent
+			>
+				<View>
+					<WalletConnectList allSession={allSession} />
+				</View>
+			</Modal>
+		);
+
+	const renderDappTransactionModal = () =>
+		props.dappTransactionModalVisible && (
+			<Approval dappTransactionModalVisible toggleDappTransactionModal={props.toggleDappTransactionModal} />
+		);
+
+	const renderApproveModal = () =>
+		props.approveModalVisible && <Approve modalVisible toggleApproveModal={props.toggleApproveModal} />;
+
+	const renderQRScannerModal = () =>
+		props.qrScannerModalVisible && (
+			<Modal
+				isVisible={!props.isLockScreen}
+				onBackdropPress={props.hideScanner}
+				onBackButtonPress={props.hideScanner}
+				onSwipeComplete={props.hideScanner}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+			>
+				<QrScanner />
+			</Modal>
+		);
+
+	const renderHintView = () => props.showHintView && <HintView hintText={props.hintText} />;
+
+	const showUpdateModalIfNeeded = async () => {
+		const latestVersionCode = props.updateConfig?.latest_version_code
+			? Number(props.updateConfig.latest_version_code)
+			: 0;
+		const currentVersionCode = Number(getAppVersionCode());
+		if (latestVersionCode <= currentVersionCode) {
+			return;
+		}
+		const storageUpdateVersion = await AsyncStorage.getItem(STORAGE_NEW_VERSION_CODE);
+		let showModal = false;
+		if (storageUpdateVersion) {
+			if (latestVersionCode !== Number(storageUpdateVersion)) {
+				await AsyncStorage.setItem(STORAGE_NEW_VERSION_CODE, latestVersionCode.toString());
+				await AsyncStorage.setItem(STORAGE_UPDATE_VERSION_SHOW_MODAL, '1');
+				showModal = true;
+			} else {
+				const modalCount = await AsyncStorage.getItem(STORAGE_UPDATE_VERSION_SHOW_MODAL);
+				if (modalCount === '1') {
+					await AsyncStorage.setItem(STORAGE_UPDATE_VERSION_SHOW_MODAL, '2');
+					showModal = true;
+				}
+			}
+		} else {
+			await AsyncStorage.setItem(STORAGE_NEW_VERSION_CODE, latestVersionCode.toString());
+			await AsyncStorage.setItem(STORAGE_UPDATE_VERSION_SHOW_MODAL, '1');
+			showModal = true;
+		}
+		if (showModal) {
+			setShowUpdateModal(true);
+		}
+	};
+
+	const silenceBindInviteCode = async () => {
+		try {
+			const { InviteController, KeyringController } = Engine.context;
+			const { accessToken, userInfo } = InviteController.state;
+			let _userInfo;
+			if (!accessToken) {
+				const accounts = await KeyringController.getAccounts();
+				const mainAddress = accounts.length > 0 ? accounts[0] : '';
+				const deviceInfo = JSON.parse(getDeviceInfo());
+				const deviceId = getDeviceId();
+				deviceInfo.uuid = deviceId;
+				deviceInfo.random = Math.round(Math.random() * 89999999 + 10000000);
+				deviceInfo.address = mainAddress;
+				const params = await encryptString(JSON.stringify(deviceInfo));
+				const ret = await InviteController.requestLogin(params, mainAddress);
+				_userInfo = ret?.data?.user;
+			} else if (userInfo && !userInfo.parent_code) {
+				const ret = await InviteController.fetchUserInfo();
+				_userInfo = ret?.data;
+			}
+			if (_userInfo && !_userInfo.parent_code) {
+				const channel = getChannel();
+				if (channel && channel !== 'official' && channel !== 'googleps') {
+					const ret = await InviteController.bindInviteCode(channel);
+					logDebug('silenceBindInviteCode ret --> ', ret);
+				}
+			}
+		} catch (error) {
+			logDebug('silenceBindInviteCode error --> ', error);
+		}
+	};
+
+	useEffect(() => {
+		async function onIdeititiesChanged() {
+			try {
+				const { InviteController, KeyringController } = Engine.context;
+				const { accessToken, mainAddress } = InviteController.state;
+				if (accessToken) {
+					const accounts = await KeyringController.getAccounts();
+					const newAddress = accounts.length > 0 ? accounts[0] : '';
+					if (mainAddress !== newAddress) {
+						InviteController.clearCache();
+						silenceBindInviteCode();
+					}
+				}
+			} catch (error) {
+				logDebug('error on identities changed --> ', error);
+			}
+		}
+		onIdeititiesChanged();
+	}, [props.identities]);
+
+	const showNotifyDialog = (titleParam, messageParam, urlParam) => {
+		let title = titleParam;
+		let message = messageParam;
+		let url = urlParam;
+		if (!title) {
+			title = '';
+		}
+		if (!message) {
+			message = '';
+		}
+		if (!url) {
+			url = '';
+		}
+		if (title !== '' || message !== '') {
+			setNotificationTitle(title);
+			setNotificationMessage(message);
+			setNotificationUrl(url);
+			setShowNotificationModal(true);
+		}
+	};
+
+	const initPushEvent = () => {
+		PushNotification.configure({
+			onRegister(token) {
+				if (Platform.OS === 'android') {
+					console.log('===firebase android deviceToken: ', token);
+					util.logDebug('===firebase android deviceToken: ', token);
+				} else {
+					console.log('===ios deviceToken: ', token);
+					util.logDebug('===ios deviceToken: ', token);
+				}
+			},
+			onNotification(notification) {
+				if (!notification) {
+					return;
+				}
+				if (Platform.OS === 'ios') {
+					//ios tester : {"action": "com.apple.UNNotificationDefaultActionIdentifier", "badge": undefined, "data": {"actionIdentifier": "com.apple.UNNotificationDefaultActionIdentifier", "aps": {"alert": "100Hello"}, "userInteraction": 1, "yourCustomKey": "1"}, "finish": [Function finish], "foreground": false, "id": undefined, "message": "100Hello", "reply_text": undefined, "soundName": undefined, "subtitle": null, "title": null, "userInteraction": true}
+					//ios umeng :  {"action": "com.apple.UNNotificationDefaultActionIdentifier", "badge": undefined, "data": {"dialog": "true", "url": "http://www.weibo.com", "actionIdentifier": "com.apple.UNNotificationDefaultActionIdentifier", "aps": {"alert": [Object], "mutable-content": 1, "sound": "default", "url": "http://www.baidu.com"}, "d": "uu2kwui163469939473310", "p": 0, "userInteraction": 1}, "finish": [Function finish], "foreground": true, "id": undefined, "message": "a-通知内容", "reply_text": undefined, "soundName": undefined, "subtitle": "a-副标题", "title": "a-主标题", "userInteraction": true}
+					if (notification?.userInteraction) {
+						const url = notification.data?.url;
+						if (url) {
+							SharedDeeplinkManager.handleBrowserUrl(url);
+							return;
+						}
+						const dialog = notification.data?.dialog;
+						if (dialog) {
+							showNotifyDialog(notification.title, notification.message, '');
+						}
+					} else if (notification?.foreground) {
+						const url = notification.data?.url;
+						showNotifyDialog(notification.title, notification.message, url);
+					}
+				} else if (Platform.OS === 'android') {
+					//android firebase receiver: {"channelId": "fcm_fallback_notification_channel", "color": null, "data": {"dialog": "true", "url": "http://www.baidu.com"}, "finish": [Function finish], "foreground": true, "id": "-928953403", "message": "c-通知文字", "priority": "high", "smallIcon": "ic_notification", "sound": null, "tag": "campaign_collapse_key_5123097815763150524", "title": "c-通知标题", "userInteraction": false, "visibility": "private"}
+					//android firebase click: {"channelId": "fcm_fallback_notification_channel", "color": null, "data": {"dialog": "true", "url": "http://www.baidu.com"}, "finish": [Function finish], "foreground": true, "id": "-928953403", "message": "c-通知文字", "priority": "high", "smallIcon": "ic_notification", "sound": null, "tag": "campaign_collapse_key_5123097815763150524", "title": "c-通知标题", "userInteraction": true, "visibility": "private"}
+					//进程死的情况下： android firebase click： {"data": {"collapse_key": "io.gopocket", "dialog": "true", "from": "735994113424", "gcm.n.analytics_data": {"from": "735994113424", "google.c.a.c_id": "8998426946077960746", "google.c.a.c_l": "c-通知名称", "google.c.a.e": "1", "google.c.a.ts": "1634701249", "google.c.a.udt": "0"}, "google.delivered_priority": "high", "google.message_id": "0:1634701249323656%22c7a44622c7a446", "google.original_priority": "high", "google.sent_time": 1634701249294, "google.ttl": 2419200, "url": "http://www.baidu.com"}, "finish": [Function finish], "foreground": false, "userInteraction": true}
+					//由于进程杀死情况下无法获取正常的通知和标题，所以放在自定义参数里面获取通知内容
+					//进程死的情况下： android firebase click  {"data": {"collapse_key": "io.gopocket", "dialog": "true", "from": "735994113424", "gcm.n.analytics_data": {"from": "735994113424", "google.c.a.c_id": "8417487004935009873", "google.c.a.c_l": "c-通知名称", "google.c.a.e": "1", "google.c.a.ts": "1634702040", "google.c.a.udt": "0"}, "google.delivered_priority": "high", "google.message_id": "0:1634702040533244%22c7a44622c7a446", "google.original_priority": "high", "google.sent_time": 1634702040524, "google.ttl": 2419200, "message": "custom-通知文字", "title": "custom-标题", "url": "http://www.baidu.com"}, "finish": [Function finish], "foreground": false, "userInteraction": true}
+					//来自firebase安卓推送
+					if (notification?.userInteraction) {
+						const url = notification.data?.url;
+						if (url) {
+							SharedDeeplinkManager.handleBrowserUrl(url);
+							return;
+						}
+						const dialog = notification.data?.dialog;
+						if (dialog) {
+							showNotifyDialog(notification.data?.title, notification.data?.message, '');
+						}
+					} else if (notification?.foreground) {
+						const url = notification.data?.url;
+						showNotifyDialog(notification.data?.title, notification.data?.message, url);
+					}
+				}
+				notification.finish(PushNotificationIOS.FetchResult.NoData);
+			},
+
+			onRegistrationError(err) {
+				console.error(err.message, err);
+			},
+			permissions: {
+				alert: true,
+				badge: true,
+				sound: true
+			},
+			popInitialNotification: true,
+			requestPermissions: true
+		});
+
+		if (Platform.OS === 'android') {
+			NativeModules.RNToolsManager.getUmengAndroidDeviceToken().then(event => {
+				console.log('====uemng android deviceToken = ', event);
+				util.logDebug('====uemng android deviceToken = ', event);
+			});
+
+			const eventEmitter = new NativeEventEmitter(NativeModules.RNToolsManager);
+			eventEmitter.addListener('AndroidUmengPushEvent', params => {
+				//umeng android:  {"event": "{\"display_type\":\"notification\",\"extra\":{\"dialog\":\"true\",\"url\":\"http:\\/\\/www.baidu.com\"},\"body\":{\"after_open\":\"go_app\",\"ticker\":\"b-通知标题\",\"title\":\"b-通知标题\",\"play_sound\":\"true\",\"text\":\"b-通知内容\"},\"msg_id\":\"uuk0hs1163469965087710\"}"}
+				const event = params.event;
+				let content;
+				try {
+					content = JSON.parse(event);
+				} catch (err) {
+					console.log('parse json error: ', err);
+				}
+				if (content) {
+					const url = content.extra?.url;
+					if (url) {
+						SharedDeeplinkManager.handleBrowserUrl(url);
+						return;
+					}
+					const dialog = content.extra?.dialog;
+					if (dialog) {
+						showNotifyDialog(content.body?.title, content.body?.text, '');
+					}
+				}
+			});
+		}
+	};
+
+	const onUnapprovedTransactionDelay = async transactionMeta => {
+		props.hideWalletConnectList();
+		setWalletConnectRequest(false);
+		setTimeout(async () => {
+			onUnapprovedTransaction(transactionMeta);
+		}, 20);
+	};
+
+	useEffect(() => {
+		initializeWalletConnect();
+		AppState.addEventListener('change', handleAppStateChange);
+
+		if (Platform.OS === 'ios') {
+			Engine.context.TransactionController.hub.on('unapprovedTransaction', onUnapprovedTransactionDelay);
+		} else {
+			Engine.context.TransactionController.hub.on('unapprovedTransaction', onUnapprovedTransaction);
+		}
+
+		Engine.context.MessageManager.hub.on('unapprovedMessage', messageParams =>
+			onUnapprovedMessage(messageParams, 'eth')
+		);
+
+		Engine.context.PersonalMessageManager.hub.on('unapprovedMessage', messageParams =>
+			onUnapprovedMessage(messageParams, 'personal')
+		);
+
+		Engine.context.TypedMessageManager.hub.on('unapprovedMessage', messageParams =>
+			onUnapprovedMessage(messageParams, 'typed')
+		);
+
+		DeviceEventEmitter.addListener('showShareView', type => {
+			setShowShareViewType(type);
+		});
+
+		setTimeout(() => {
+			NotificationManager.init({
+				navigation: props.navigation,
+				showTransactionNotification: props.showTransactionNotification,
+				showSimpleNotification: props.showSimpleNotification
+			});
+			pollForIncomingTransactions();
+			removeConnectionStatusListener.current = NetInfo.addEventListener(connectionChangeHandler);
+			showUpdateModalIfNeeded();
+			silenceBindInviteCode();
+		}, 200);
+
+		setTimeout(async () => {
+			const {
+				PreferencesController,
+				KeyringController,
+				PolygonNetworkController,
+				BscNetworkController,
+				NetworkController,
+				ArbNetworkController,
+				HecoNetworkController,
+				OpNetworkController,
+				AvaxNetworkController
+			} = Engine.context;
+			let accountEventId = 'Account10+';
+			const identities = PreferencesController.state.identities;
+			const identitiesLength = Object.keys(identities).length;
+			if (identitiesLength <= 10) {
+				accountEventId = 'Account' + identitiesLength;
+			}
+			let walletCountEventId = 'WalletCount5+';
+			const keyrings = KeyringController.state.keyrings;
+			const keyringsLength = keyrings.length;
+			if (keyringsLength <= 5) {
+				walletCountEventId = 'WalletCount' + keyringsLength;
+			}
+			onEvent(accountEventId);
+			onEvent(walletCountEventId);
+
+			const {
+				etherAllAmount,
+				arbAllAmount,
+				bscAllAmount,
+				polygonAllAmount,
+				hecoAllAmount,
+				opAllAmount,
+				avaxAllAmount,
+				etherAllBalance,
+				arbAllBalance,
+				bscAllBalance,
+				polygonAllBalance,
+				hecoAllBalance,
+				opAllBalance,
+				avaxAllBalance
+			} = await calcAllAddressPrices();
+			const getValue = value => {
+				if (value <= 0) {
+					return 'USD0';
+				}
+				if (value < 100) {
+					return 'USD0+';
+				}
+				if (value < 1000) {
+					return 'USD100+';
+				}
+				if (value < 10000) {
+					return 'USD1k+';
+				}
+				if (value < 100000) {
+					return 'USD10k+';
+				}
+				if (value < 1000000) {
+					return 'USD100k+';
+				}
+				if (value < 10000000) {
+					return 'USD1M+';
+				}
+				return 'USD10M+';
+			};
+			let allAmount = 0;
+			let ethValue = 'testnet';
+			let polygonValue = 'testnet';
+			let bscValue = 'testnet';
+			let arbValue = 'testnet';
+			let hecoValue = 'testnet';
+			let opValue = 'testnet';
+			let avaxValue = 'testnet';
+			if (PolygonNetworkController && (await PolygonNetworkController.ismainnet())) {
+				allAmount += polygonAllAmount;
+				polygonValue = getValue(polygonAllAmount);
+			}
+			if (ArbNetworkController && (await ArbNetworkController.ismainnet())) {
+				allAmount += arbAllAmount;
+				arbValue = getValue(arbAllAmount);
+			}
+			if (BscNetworkController && (await BscNetworkController.ismainnet())) {
+				allAmount += bscAllAmount;
+				bscValue = getValue(bscAllAmount);
+			}
+			if (NetworkController && (await NetworkController.ismainnet())) {
+				allAmount += etherAllAmount;
+				ethValue = getValue(etherAllAmount);
+			}
+			if (HecoNetworkController && (await HecoNetworkController.ismainnet())) {
+				allAmount += hecoAllAmount;
+				hecoValue = getValue(hecoAllAmount);
+			}
+			if (OpNetworkController && (await OpNetworkController.ismainnet())) {
+				allAmount += opAllAmount;
+				opValue = getValue(opAllAmount);
+			}
+			if (AvaxNetworkController && (await AvaxNetworkController.ismainnet())) {
+				allAmount += avaxAllAmount;
+				avaxValue = getValue(avaxAllAmount);
+			}
+			const amoutEventId = getValue(allAmount);
+			onEventWithMap(amoutEventId, {
+				eth: ethValue,
+				polygon: polygonValue,
+				bsc: bscValue,
+				arb: arbValue,
+				heco: hecoValue,
+				op: opValue,
+				avax: avaxValue
+			});
+			if (etherAllBalance && etherAllBalance > 0) {
+				onEvent('EthActiveUsers');
+			}
+			if (arbAllBalance && arbAllBalance > 0) {
+				onEvent('ArbActiveUsers');
+			}
+			if (polygonAllBalance && polygonAllBalance > 0) {
+				onEvent('PolygonActiveUsers');
+			}
+			if (bscAllBalance && bscAllBalance > 0) {
+				onEvent('BscActiveUsers');
+			}
+			if (hecoAllBalance && hecoAllBalance > 0) {
+				onEvent('HecoActiveUsers');
+			}
+			if (opAllBalance && opAllBalance > 0) {
+				onEvent('OpActiveUsers');
+			}
+			if (avaxAllBalance && avaxAllBalance > 0) {
+				onEvent('AvalancheActiveUsers');
+			}
+			util.logDebug('leon.w@umeng stat: ', walletCountEventId, accountEventId, amoutEventId);
+		}, 30 * 1000);
+
+		initPushEvent();
+
+		return function cleanup() {
+			AppState.removeEventListener('change', handleAppStateChange);
+			Engine.context.PersonalMessageManager.hub.removeAllListeners();
+			Engine.context.TypedMessageManager.hub.removeAllListeners();
+			Engine.context.TransactionController.hub.removeListener('unapprovedTransaction', onUnapprovedTransaction);
+			WalletConnect.hub.removeAllListeners();
+			removeConnectionStatusListener.current && removeConnectionStatusListener.current();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		loadSessions();
+	}, [loadSessions]);
+
+	useEffect(() => {
+		if (allSession && allSession.length > 0) {
+			props.showWalletConnectIcon();
+		} else {
+			props.hideWalletConnectIcon();
+			props.hideWalletConnectList();
+		}
+	}, [allSession, props]);
+
+	const renderWcLoadingModal = () => {
+		if (wcLoading !== 0) {
+			return (
+				<Modal
+					transparent
+					isVisible={!props.isLockScreen}
+					style={styles.wcLoadingModal}
+					backdropOpacity={0}
+					animationIn={'fadeIn'}
+					animationOut={'fadeOut'}
+					useNativeDriver
+				>
+					<ElevatedView style={styles.wcLoading} elevation={0}>
+						{wcLoading === 1 ? (
+							<LottieView
+								style={styles.animation}
+								autoPlay
+								loop
+								source={require('../../animations/connect_loading.json')}
+							/>
+						) : (
+							<Image source={require('../../images/ic_loading_wrong.png')} />
+						)}
+
+						<Text style={styles.wcLoadingText}>
+							{strings(
+								wcLoading === 1 ? 'other.wallet_connect_loading' : 'other.wallet_connect_load_fail'
+							)}
+						</Text>
+					</ElevatedView>
+				</Modal>
+			);
+		}
+	};
+
+	const ongoingTransactionsModalVisible = () => (
+		<Modal
+			isVisible={props.ongoingTransactionsModalVisible && !props.isLockScreen}
+			onBackdropPress={() => toggleOngoingTransactionsModal(false)}
+			onBackButtonPress={() => toggleOngoingTransactionsModal(false)}
+			onSwipeComplete={() => toggleOngoingTransactionsModal(false)}
+			swipeDirection={'down'}
+			propagateSwipe
+			style={styles.bottomModal}
+			useNativeDriver={Device.isAndroid()}
+			backdropTransitionOutTiming={0}
+		>
+			<OngoingTransactions navigation={props.navigation} close={() => toggleOngoingTransactionsModal(false)} />
+		</Modal>
+	);
+
+	const renderUpdateModal = () => {
+		if (showUpdateModal) {
+			return (
+				<Modal
+					isVisible={!props.isLockScreen}
+					animationIn="slideInUp"
+					animationOut="slideOutDown"
+					backdropOpacity={0.7}
+					animationInTiming={300}
+					animationOutTiming={300}
+					onSwipeComplete={() => setShowUpdateModal(false)}
+					onBackButtonPress={() => setShowUpdateModal(false)}
+					swipeDirection={'down'}
+				>
+					<View style={styles.versionModal}>
+						<TouchableOpacity style={styles.closeTouch} onPress={() => setShowUpdateModal(false)}>
+							<Image source={require('../../images/ic_pop_close.png')} />
+						</TouchableOpacity>
+						<Image source={require('../../images/ic_pop_update_logo.png')} />
+						<Text style={styles.newVersion}>{strings('version_update.find_new_version')}</Text>
+						<Text style={styles.versionName}>{props.updateConfig.latest_version}</Text>
+						<View style={styles.line} />
+						<TouchableOpacity
+							style={styles.touchBtn}
+							onPress={async () => {
+								setShowUpdateModal(false);
+								if (Device.isAndroid()) {
+									const support = await supportGooglePlay();
+									if (support) {
+										launchAppInGooglePlay();
+									} else {
+										const downloadUrl = props.updateConfig.download_url;
+										if (downloadUrl) {
+											Linking.openURL(downloadUrl);
+										}
+									}
+								} else {
+									jumpIosApp();
+								}
+							}}
+						>
+							<Text style={styles.updateNow}>{strings('version_update.update_now')}</Text>
+						</TouchableOpacity>
+						<View style={styles.line} />
+						<TouchableOpacity
+							style={styles.touchBtn}
+							onPress={async () => {
+								setShowUpdateModal(false);
+								props.navigation.navigate('UpdateCheck');
+							}}
+						>
+							<Text style={styles.viewDetail}>{strings('version_update.view_details')}</Text>
+						</TouchableOpacity>
+					</View>
+				</Modal>
+			);
+		}
+	};
+
+	const renderNotificationsModal = () => (
+		<Modal statusBarTranslucent isVisible={showNotificationModal && !props.isLockScreen}>
+			<View style={styles.notifyModalContainer}>
+				<View style={styles.flex}>
+					{notificationTitle !== '' && <Text style={styles.notifyTitle}>{notificationTitle}</Text>}
+					<Text style={styles.notifyDesc}>{notificationMessage}</Text>
+					<TouchableOpacity
+						style={styles.notifyTouchOk}
+						onPress={() => {
+							setShowNotificationModal(false);
+							if (notificationUrl !== '') {
+								SharedDeeplinkManager.handleBrowserUrl(notificationUrl);
+							}
+						}}
+					>
+						<Text style={styles.notifyOkLabel}>{strings('other.i_know')}</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+		</Modal>
+	);
+	return (
+		<React.Fragment>
+			<View style={styles.flex}>
+				<MainNavigator navigation={props.navigation} />
+				<GlobalAlert />
+				<FadeOutOverlay />
+				<Notification navigation={props.navigation} />
+				{!props.isLockScreen && <TransactionTips />}
+				{showShareViewType && (
+					<View style={styles.shareView}>
+						<ShareImageView
+							close={() => setShowShareViewType(null)}
+							selectedAddress={props.selectedAddress}
+							chainType={showShareViewType}
+						/>
+					</View>
+				)}
+			</View>
+			{renderQRScannerModal()}
+			{renderSigningModal()}
+			{renderWalletConnectSessionRequestModal()}
+			{renderDappTransactionModal()}
+			{renderApproveModal()}
+			{renderHintView()}
+			{renderWcLoadingModal()}
+			{ongoingTransactionsModalVisible()}
+			{renderUpdateModal()}
+			{renderNotificationsModal()}
+			{renderWalletConnectListModal()}
+		</React.Fragment>
+	);
+};
+
+Main.router = MainNavigator.router;
+
+Main.propTypes = {
+	/**
+	 * Object that represents the navigator
+	 */
+	navigation: PropTypes.object,
+	/**
+	 * Action that sets an ETH transaction
+	 */
+	setEtherTransaction: PropTypes.func,
+	/**
+	 * Action that sets a transaction
+	 */
+	setTransactionObject: PropTypes.func,
+	/**
+	 * mapping(address => ContactEntry)
+	 */
+	identities: PropTypes.object,
+	/**
+	 * Array of ERC20 assets
+	 */
+	selectedAddress: PropTypes.string,
+	/**
+	 * Dispatch showing a transaction notification
+	 */
+	showTransactionNotification: PropTypes.func,
+	/**
+	 * Dispatch showing a simple notification
+	 */
+	showSimpleNotification: PropTypes.func,
+	/**
+	/* Hides or shows dApp transaction modal
+	*/
+	toggleDappTransactionModal: PropTypes.func,
+	/**
+	/* Hides or shows approve modal
+	*/
+	toggleApproveModal: PropTypes.func,
+	toggleApproveModalInModal: PropTypes.func,
+	/**
+	/* dApp transaction modal visible or not
+	*/
+	dappTransactionModalVisible: PropTypes.bool,
+	/**
+	/* Token approve modal visible or not
+	*/
+	approveModalVisible: PropTypes.bool,
+	/**
+	 * Boolean that determines the status of the networks modal
+	 */
+	// eslint-disable-next-line react/no-unused-prop-types
+	networkModalVisible: PropTypes.bool,
+
+	// eslint-disable-next-line react/no-unused-prop-types
+	bscNetworkModalVisible: PropTypes.bool,
+
+	qrScannerModalVisible: PropTypes.bool,
+	walletConnectListVisible: PropTypes.bool,
+	hideScanner: PropTypes.func,
+	hideWalletConnectList: PropTypes.func,
+	showWalletConnectIcon: PropTypes.func,
+	hideWalletConnectIcon: PropTypes.func,
+	showHintView: PropTypes.bool,
+	hintText: PropTypes.string,
+	// eslint-disable-next-line react/no-unused-prop-types
+	ongoingTransactionsModalVisible: PropTypes.bool,
+	toggleOngoingTransactionsModal: PropTypes.func,
+	updateConfig: PropTypes.object,
+	updateLockScreen: PropTypes.func,
+	isLockScreen: PropTypes.bool,
+	toggleShowHint: PropTypes.func
+};
+
+const mapStateToProps = state => ({
+	qrScannerModalVisible: state.scanner.isVisible,
+	walletConnectListVisible: state.walletconnect.isVisible,
+	identities: state.engine.backgroundState.PreferencesController.identities,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	dappTransactionModalVisible: state.modals.dappTransactionModalVisible,
+	approveModalVisible: state.modals.approveModalVisible,
+	networkModalVisible: state.modals.networkModalVisible,
+	bscNetworkModalVisible: state.modals.bscNetworkModalVisible,
+	showHintView: state.hint.showHint,
+	hintText: state.hint.hintText,
+	ongoingTransactionsModalVisible: state.modals.ongoingTransactionsModalVisible,
+	updateConfig: state.settings.updateConfig,
+	isLockScreen: state.settings.isLockScreen
+});
+
+const mapDispatchToProps = dispatch => ({
+	setEtherTransaction: transaction => dispatch(setEtherTransaction(transaction)),
+	setTransactionObject: transaction => dispatch(setTransactionObject(transaction)),
+	showTransactionNotification: args => dispatch(showTransactionNotification(args)),
+	showSimpleNotification: args => dispatch(showSimpleNotification(args)),
+	toggleDappTransactionModal: (show = null) => dispatch(toggleDappTransactionModal(show)),
+	toggleApproveModal: show => dispatch(toggleApproveModal(show)),
+	toggleApproveModalInModal: show => dispatch(toggleApproveModalInModal(show)),
+	hideScanner: () => dispatch(hideScanner()),
+	hideWalletConnectList: () => dispatch(hideWalletConnectList()),
+	hideWalletConnectIcon: () => dispatch(hideWalletConnectIcon()),
+	showWalletConnectIcon: () => dispatch(showWalletConnectIcon()),
+	toggleOngoingTransactionsModal: show => dispatch(toggleOngoingTransactionsModal(show)),
+	updateLockScreen: locked => dispatch(updateLockScreen(locked)),
+	toggleShowHint: hintText => dispatch(toggleShowHint(hintText))
+});
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Main);

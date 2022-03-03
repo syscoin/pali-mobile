@@ -1,0 +1,13 @@
+diff --git a/node_modules/arb-ts/dist/lib/networks.js b/node_modules/arb-ts/dist/lib/networks.js
+index 7035809c..1c09e5c8 100644
+--- a/node_modules/arb-ts/dist/lib/networks.js
++++ b/node_modules/arb-ts/dist/lib/networks.js
+@@ -4,8 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.networks = exports.MAINNET_WHITELIST_ADDRESS = void 0;
+-const dotenv_1 = __importDefault(require("dotenv"));
+-dotenv_1.default.config();
+ exports.MAINNET_WHITELIST_ADDRESS = '0xD485e5c28AA4985b23f6DF13dA03caa766dcd459';
+ const mainnetBridge = {
+     l1GatewayRouter: '0x72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef',

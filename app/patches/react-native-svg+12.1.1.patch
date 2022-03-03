@@ -1,0 +1,165 @@
+diff --git a/node_modules/react-native-svg/apple/Text/RNSVGFontData.m b/node_modules/react-native-svg/apple/Text/RNSVGFontData.m
+index 668cefc..32025a9 100644
+--- a/node_modules/react-native-svg/apple/Text/RNSVGFontData.m
++++ b/node_modules/react-native-svg/apple/Text/RNSVGFontData.m
+@@ -146,7 +146,7 @@ + (instancetype)initWithNSDictionary:(NSDictionary *)font
+     }
+
+     data->fontData = [font objectForKey:FONT_DATA] ? [font objectForKey:FONT_DATA] : parent->fontData;
+-    data->fontFamily = [font objectForKey:FONT_FAMILY] ? [font objectForKey:FONT_FAMILY] : parent->fontFamily;
++//     data->fontFamily = [font objectForKey:FONT_FAMILY] ? [font objectForKey:FONT_FAMILY] : parent->fontFamily;
+     NSString* style = [font objectForKey:FONT_STYLE];
+     data->fontStyle = style ? RNSVGFontStyleFromString(style) : parent->fontStyle;
+     NSString* feature = [font objectForKey:FONT_FEATURE_SETTINGS];
+diff --git a/node_modules/react-native-svg/src/lib/extract/extractText.tsx b/node_modules/react-native-svg/src/lib/extract/extractText.tsx
+index e29bb9d..113ff39 100644
+--- a/node_modules/react-native-svg/src/lib/extract/extractText.tsx
++++ b/node_modules/react-native-svg/src/lib/extract/extractText.tsx
+@@ -162,9 +162,12 @@ export default function extractText(props: TextProps, container: boolean) {
+     ) : (
+       children
+     );
+-
++  	let content = textChildren === null ? String(children) : null;
++  	if (content !== null) {
++		content = content.trim();
++	}
+   return {
+-    content: textChildren === null ? String(children) : null,
++    content: content,
+     children: textChildren,
+     inlineSize,
+     baselineShift,
+diff --git a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/PropHelper.java b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/PropHelper.java
+index 3b4edab..00de272 100644
+--- a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/PropHelper.java
++++ b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/PropHelper.java
+@@ -133,8 +133,16 @@ class PropHelper {
+                     default:
+                         end = stringLength;
+                 }
+-
+-                return Double.valueOf(length.substring(0, end)) * unit * scale;
++                double newValue = Double.valueOf(1) * unit * scale;
++				try {
++					newValue = Double.valueOf(length.substring(0, end)) * unit * scale;
++				} catch (Exception exception) {
++					try {
++						newValue = Double.valueOf(length.substring(0, 4)) * unit * scale;
++					} catch (Exception exception2) {
++					}
++				}
++				return newValue;
+             } else {
+                 return Double.valueOf(length) * scale;
+             }
+diff --git a/node_modules/react-native-svg/src/css.tsx b/node_modules/react-native-svg/src/css.tsx
+index 306eb21..005463c 100644
+--- a/node_modules/react-native-svg/src/css.tsx
++++ b/node_modules/react-native-svg/src/css.tsx
+@@ -711,6 +711,9 @@ export function SvgCssUri(props: UriProps) {
+           .catch(err)
+       : setXml(null);
+   }, [uri]);
++  if (xml && xml.indexOf('�') !== -1) {
++  	return <SvgCss xml={null} override={props} />;
++  }
+   return <SvgCss xml={xml} override={props} />;
+ }
+
+diff --git a/node_modules/react-native-svg/apple/Elements/RNSVGSvgView.m b/node_modules/react-native-svg/apple/Elements/RNSVGSvgView.m
+index c44a775..2d7007d 100644
+--- a/node_modules/react-native-svg/apple/Elements/RNSVGSvgView.m
++++ b/node_modules/react-native-svg/apple/Elements/RNSVGSvgView.m
+@@ -10,6 +10,7 @@
+ #import "RNSVGViewBox.h"
+ #import "RNSVGNode.h"
+ #import <React/RCTLog.h>
++#import <Foundation/Foundation.h>
+
+ @implementation RNSVGSvgView
+ {
+@@ -226,8 +227,13 @@ - (void)drawRect:(CGRect)rect
+             [svg parseReference];
+         }
+     }
+-
+-    [self drawToContext:context withRect:rect];
++    @try
++    {
++   	  [self drawToContext:context withRect:rect];
++   	}
++    @catch (NSException *exception)
++    {
++    }
+ }
+
+ - (RNSVGPlatformView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+diff --git a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
+index 5c792bd..516d43c 100644
+--- a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
++++ b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SvgView.java
+@@ -103,7 +103,11 @@ public class SvgView extends ReactViewGroup implements ReactCompoundView, ReactC
+         }
+         super.onDraw(canvas);
+         if (mBitmap == null) {
+-            mBitmap = drawOutput();
++        	try {
++				mBitmap = drawOutput();
++			} catch (Exception e) {
++        		e.printStackTrace();
++			}
+         }
+         if (mBitmap != null) {
+             canvas.drawBitmap(mBitmap, 0, 0, null);
+diff --git a/node_modules/react-native-svg/src/lib/extract/extractBrush.ts b/node_modules/react-native-svg/src/lib/extract/extractBrush.ts
+index 1bb7e3a..e86b21a 100644
+--- a/node_modules/react-native-svg/src/lib/extract/extractBrush.ts
++++ b/node_modules/react-native-svg/src/lib/extract/extractBrush.ts
+@@ -40,6 +40,6 @@ export default function extractBrush(color?: Color) {
+     return int32ARGBColor;
+   }
+
+-  console.warn(`"${color}" is not a valid color or brush`);
++  // console.warn(`"${color}" is not a valid color or brush`);
+   return null;
+ }
+diff --git a/node_modules/react-native-svg/src/lib/extract/extractTransform.ts b/node_modules/react-native-svg/src/lib/extract/extractTransform.ts
+index c66fb56..2318cfe 100644
+--- a/node_modules/react-native-svg/src/lib/extract/extractTransform.ts
++++ b/node_modules/react-native-svg/src/lib/extract/extractTransform.ts
+@@ -162,7 +162,7 @@ export function transformToMatrix(
+         const t = parse(transform);
+         append(t[0], t[3], t[1], t[4], t[2], t[5]);
+       } catch (e) {
+-        console.error(e);
++        // console.error(e);
+       }
+     } else {
+       const transformProps = props2transform(transform);
+@@ -184,7 +184,7 @@ export default function extractTransform(
+       const t = parse(props);
+       return [t[0], t[3], t[1], t[4], t[2], t[5]];
+     } catch (e) {
+-      console.error(e);
++      // console.error(e);
+       return identity;
+     }
+   }
+diff --git a/node_modules/react-native-svg/src/css.tsx b/node_modules/react-native-svg/src/css.tsx
+index dca0fbc..743816a 100644
+--- a/node_modules/react-native-svg/src/css.tsx
++++ b/node_modules/react-native-svg/src/css.tsx
+@@ -694,6 +694,12 @@ export const inlineStyles: Middleware = function inlineStyles(
+
+ export function SvgCss(props: XmlProps) {
+   const { xml, override } = props;
++  if (xml) {
++  	if (xml.toString()?.toLowerCase().indexOf('<svg') !== 0) {
++	  override.onError && override.onError('parseError');
++	  return null;
++  	}
++  }
+   const ast = useMemo<JsxAST | null>(
+     () => (xml !== null ? parse(xml, inlineStyles) : null),
+     [xml],

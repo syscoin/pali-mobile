@@ -1,0 +1,15 @@
+/android/app/src/main/assets/InpageBridgeWeb3.js
+/app/core/InpageBridgeWeb3.js
+/android/app/src/main/assets/InpageVConsole.js
+/app/core/InpageVConsole.js
+__snapshots__
+android
+coverage
+ios
+node_modules
+package-lock.json
+package.json
+app/util/blockies.js
+/shim.js
+babel.config.js
+metro.config.js

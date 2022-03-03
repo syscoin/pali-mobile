@@ -1,0 +1,175 @@
+{
+  "name": "gopocket-core",
+  "version": "1.0.0",
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "lint": "eslint --ext js,ts .",
+    "test": "jest --coverage",
+    "format": "prettier '**/*.ts' '**/*.js' --check --ignore-path=.gitignore",
+    "format:fix": "prettier '**/*.ts' '**/*.js' --write --ignore-path=.gitignore",
+    "build": "rm -rf dist && patch-package && tsc"
+  },
+  "keywords": [
+    "GoPocket",
+    "Ethereum",
+    "Web3",
+    "Wallet"
+  ],
+  "dependencies": {
+    "@ethereumjs/common": "^2.3.1",
+    "@ethereumjs/tx": "^3.2.1",
+    "@ethersproject/basex": "^5.4.0",
+    "@ethersproject/bytes": "^5.4.0",
+    "@ethersproject/sha2": "^5.4.0",
+    "@maticnetwork/maticjs": "2.0.45",
+    "@maticnetwork/meta": "2.4.16",
+    "@types/uuid": "^8.3.0",
+    "arb-ts": "0.0.38",
+    "async-mutex": "^0.2.6",
+    "axios": "^0.21.1",
+    "babel-runtime": "^6.26.0",
+    "bignumber.js": "8.1.1",
+    "bip39": "^3.0.4",
+    "eth-json-rpc-infura": "^5.1.0",
+    "eth-method-registry": "1.1.0",
+    "eth-query": "^2.1.2",
+    "eth-rpc-errors": "^4.0.0",
+    "eth-sig-util": "^3.0.0",
+    "ethereumjs-util": "^7.0.10",
+    "ethereumjs-wallet": "^1.0.1",
+    "ethers": "^5.4.1",
+    "ethjs-ens": "2.0.1",
+    "ethjs-unit": "^0.1.6",
+    "ethjs-util": "^0.1.6",
+    "human-standard-collectible-abi": "^1.0.2",
+    "human-standard-token-abi": "^2.0.0",
+    "immer": "^8.0.1",
+    "is-ipfs": "^6.0.2",
+    "isomorphic-fetch": "^3.0.0",
+    "jsonschema": "^1.2.4",
+    "nanoid": "^3.1.12",
+    "react-native-fs": "^2.18.0",
+    "react-native-logs": "^3.0.4",
+    "single-call-balance-checker-abi": "^1.0.0",
+    "tronweb": "^4.0.0",
+    "uuid": "^8.3.2",
+    "web3": "^0.20.7",
+    "web3-provider-engine": "16.0.3",
+    "url-parse": "1.4.4",
+    "obs-store": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/node": "^14.14.31",
+    "@types/sinon": "^9.0.10",
+    "@types/web3": "^1.0.6",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "eslint": "^7.20.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.5",
+    "eslint-plugin-node": "^11.1.0",
+    "ethjs-provider-http": "^0.1.6",
+    "jest": "^26.4.2",
+    "jest-environment-jsdom": "^25.0.0",
+    "lint-staged": "^6.1.0",
+    "nock": "^13.0.7",
+    "patch-package": "^6.4.7",
+    "prettier": "^2.2.1",
+    "sinon": "^9.2.4",
+    "ts-jest": "^26.5.2",
+    "typedoc": "^0.20.32",
+    "typescript": "~4.2.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "json",
+      "node"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "**/*.test.ts",
+      "**/*.test.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "tests/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "setupFiles": [
+      "./tests/setupTests.ts"
+    ]
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "parser": "typescript",
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --ignore-path=.gitignore --write **/*.ts",
+      "yarn lint",
+      "git add"
+    ]
+  },
+  "react-native": {
+    "crypto": "react-native-crypto",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify"
+  },
+  "browser": {
+    "crypto": "react-native-crypto",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "vm": "vm-browserify"
+  },
+  "resolutions": {
+    "sha3": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

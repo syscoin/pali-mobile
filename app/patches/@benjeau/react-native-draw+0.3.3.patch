@@ -1,0 +1,44 @@
+diff --git a/node_modules/@benjeau/react-native-draw/src/Draw.tsx b/node_modules/@benjeau/react-native-draw/src/Draw.tsx
+index 5a0fe51..2ed23d1 100644
+--- a/node_modules/@benjeau/react-native-draw/src/Draw.tsx
++++ b/node_modules/@benjeau/react-native-draw/src/Draw.tsx
+@@ -157,6 +157,10 @@ export interface DrawProps {
+    * Automatically close the color picker after selecting a color
+    */
+   autoDismissColorPicker?: boolean;
++
++  onPathUpdate?: (path: PathDataType) => any;
++
++  canDraw?: boolean;
+ }
+
+ export interface DrawRef {
+@@ -242,6 +246,8 @@ const Draw = forwardRef<DrawRef, DrawProps>(
+       hideBottom = false,
+       simplifyOptions = {},
+       autoDismissColorPicker = false,
++      onPathUpdate,
++      canDraw=true
+     } = {},
+     ref
+   ) => {
+@@ -435,6 +441,11 @@ const Draw = forwardRef<DrawRef, DrawProps>(
+       onPathsChange,
+     ]);
+
++    useEffect(() => onPathUpdate && onPathUpdate(path), [
++	  path,
++	  onPathUpdate,
++    ]);
++
+     useImperativeHandle(ref, () => ({
+       undo: handleUndo,
+       clear,
+@@ -450,6 +461,7 @@ const Draw = forwardRef<DrawRef, DrawProps>(
+         <View style={styles.container}>
+           <Animated.View style={canvasContainerStyles}>
+             <PanGestureHandler
++			  enabled={canDraw}
+               maxPointers={1}
+               minDist={0}
+               avgTouches={false}

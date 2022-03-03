@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-native-fast-image/android/build.gradle b/node_modules/react-native-fast-image/android/build.gradle
+index cdbdbf38..ed7d5266 100644
+--- a/node_modules/react-native-fast-image/android/build.gradle
++++ b/node_modules/react-native-fast-image/android/build.gradle
+@@ -52,7 +52,7 @@ repositories {
+     mavenCentral()
+     google()
+     maven {
+-        url "https://maven.google.com"
++        url "https://dl.google.com/dl/android/maven2/"
+     }
+ }
+
+diff --git a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m b/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
+index 032772f..b298f50 100644
+--- a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
++++ b/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
+@@ -31,7 +31,7 @@ - (void)setResizeMode:(RCTResizeMode)resizeMode {
+
+ - (void)setOnFastImageLoadEnd:(RCTDirectEventBlock)onFastImageLoadEnd {
+     _onFastImageLoadEnd = onFastImageLoadEnd;
+-    if (self.hasCompleted) {
++    if (_onFastImageLoadEnd && self.hasCompleted) {
+         _onFastImageLoadEnd(@{});
+     }
+ }

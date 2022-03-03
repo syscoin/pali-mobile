@@ -1,0 +1,16 @@
+# node
+npm-debug.log
+yarn-error.log
+npm-debug.log
+yarn-error.log
+node_modules
+package-lock.json
+
+# tarball from `yarn pack`
+*.tgz
+
+.DS_STORE
+coverage
+dist
+docs
+.idea

@@ -1,0 +1,24 @@
+{
+  "Optimism Mainnet": {
+    "provider": {
+      "rpcTarget": "https://mainnet.optimism.io",
+      "type": "Optimism Mainnet",
+      "chainId": "10",
+      "ticker": "ETH",
+      "nickname": "Optimism"
+    },
+    "partnerChainId": "1",
+    "infuraType": "optimism-mainnet"
+  },
+  "Optimism Testnet Kovan": {
+    "provider": {
+      "rpcTarget": "https://kovan.optimism.io",
+      "type": "Optimism Testnet Kovan",
+      "chainId": "69",
+      "ticker": "ETH",
+      "nickname": "Optimism"
+    },
+    "partnerChainId": "42",
+    "infuraType": "optimism-kovan"
+  }
+}

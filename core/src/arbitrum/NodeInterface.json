@@ -1,0 +1,117 @@
+{
+ "deploy": {
+  "VM:-": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "main:1": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "ropsten:3": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "rinkeby:4": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "kovan:42": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "görli:5": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  },
+  "Custom": {
+   "linkReferences": {},
+   "autoDeployLib": true
+  }
+ },
+ "data": {
+  "bytecode": {
+   "linkReferences": {},
+   "object": "",
+   "opcodes": "",
+   "sourceMap": ""
+  },
+  "deployedBytecode": {
+   "immutableReferences": {},
+   "linkReferences": {},
+   "object": "",
+   "opcodes": "",
+   "sourceMap": ""
+  },
+  "gasEstimates": null,
+  "methodIdentifiers": {
+   "lookupMessageBatchProof(uint256,uint64)": "52d388b8"
+  }
+ },
+ "abi": [
+  {
+   "inputs": [
+    {
+     "internalType": "uint256",
+     "name": "batchNum",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint64",
+     "name": "index",
+     "type": "uint64"
+    }
+   ],
+   "name": "lookupMessageBatchProof",
+   "outputs": [
+    {
+     "internalType": "bytes32[]",
+     "name": "proof",
+     "type": "bytes32[]"
+    },
+    {
+     "internalType": "uint256",
+     "name": "path",
+     "type": "uint256"
+    },
+    {
+     "internalType": "address",
+     "name": "l2Sender",
+     "type": "address"
+    },
+    {
+     "internalType": "address",
+     "name": "l1Dest",
+     "type": "address"
+    },
+    {
+     "internalType": "uint256",
+     "name": "l2Block",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint256",
+     "name": "l1Block",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint256",
+     "name": "timestamp",
+     "type": "uint256"
+    },
+    {
+     "internalType": "uint256",
+     "name": "amount",
+     "type": "uint256"
+    },
+    {
+     "internalType": "bytes",
+     "name": "calldataForL1",
+     "type": "bytes"
+    }
+   ],
+   "stateMutability": "view",
+   "type": "function"
+  }
+ ]
+}

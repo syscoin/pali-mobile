@@ -1,0 +1,71 @@
+# osx
+.DS_Store
+
+# xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+ios/debug.xcconfig
+ios/release.xcconfig
+
+# android / intellij
+build/
+app/bin
+.idea
+.gradle
+local.properties
+*.iml
+android/.project
+android/app/.project
+android/app/bin/
+android/app/gradle*
+android/app/_build*
+
+# if we ever want to add google services
+android/app/google-services.json
+
+# node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# buck
+buck-out/
+\.buckd/
+*.keystore
+!debug.keystore
+
+# bundle artifact
+*.jsbundle
+!/ios/NativeWorker.jsbundle
+
+# testing
+coverage
+
+# app-specific
+/android/app/src/main/assets/InpageBridgeWeb3.js
+/android/app/src/main/assets/InpageVConsole.js
+/android/app/src/main/assets/advanced.html
+
+# editor
+.vscode
+
+# CocoaPods
+/ios/Pods/
+/ios/Podfile.lock
+
+apikeys

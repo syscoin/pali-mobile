@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native-spring-scrollview/SpringScrollView.js b/node_modules/react-native-spring-scrollview/SpringScrollView.js
+index 7d47fe7..b000c90 100644
+--- a/node_modules/react-native-spring-scrollview/SpringScrollView.js
++++ b/node_modules/react-native-spring-scrollview/SpringScrollView.js
+@@ -93,7 +93,9 @@ export class SpringScrollView extends React.PureComponent<SpringScrollViewPropTy
+         loadingFooterHeight={onLoading ? Loading.height : 0}
+         onLayout={this._onWrapperLayoutChange}
+         onTouchBegin={this._onTouchBegin}
++		onTouchEnd={this._onTouchEnd}
+         onScrollBeginDrag={this._onScrollBeginDrag}
++		onScrollEndDrag={this._onScrollEndDrag}
+         onMomentumScrollEnd={this._onMomentumScrollEnd}
+         scrollEventThrottle={1}
+         onStartShouldSetResponderCapture={() => this._dragging}
+@@ -557,6 +559,11 @@ export class SpringScrollView extends React.PureComponent<SpringScrollViewPropTy
+     this.props.onTouchBegin && this.props.onTouchBegin(e);
+   };
+ 
++  _onTouchEnd = (e) => {
++  	this._touching = false;
++  	this.props.onTouchEnd && this.props.onTouchEnd(e);
++  };
++
+   _onMomentumScrollEnd = () => {
+     this._touching = false;
+     this._dragging = false;
+@@ -570,6 +577,11 @@ export class SpringScrollView extends React.PureComponent<SpringScrollViewPropTy
+     this.props.onScrollBeginDrag && this.props.onScrollBeginDrag();
+   };
+ 
++  _onScrollEndDrag = () => {
++	this._dragging = false;
++	this.props.onScrollEndDrag && this.props.onScrollEndDrag();
++  };
++
+   static defaultProps = {
+     bounces: true,
+     scrollEnabled: true,

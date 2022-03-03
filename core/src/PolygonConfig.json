@@ -1,0 +1,24 @@
+{
+  "Polygon Mainnet": {
+    "provider": {
+      "rpcTarget": "https://rpc-mainnet.maticvigil.com",
+      "type": "Polygon Mainnet",
+      "chainId": "137",
+      "ticker": "MATIC",
+      "nickname": "Polygon"
+    },
+    "infuraType": "polygon-mainnet",
+    "partnerChainId": "1"
+  },
+  "Polygon Testnet": {
+    "provider": {
+      "rpcTarget": "https://rpc-mumbai.matic.today",
+      "type": "Polygon Testnet",
+      "chainId": "80001",
+      "ticker": "MATIC",
+      "nickname": "Polygon"
+    },
+    "infuraType": "polygon-mumbai",
+    "partnerChainId": "5"
+  }
+}

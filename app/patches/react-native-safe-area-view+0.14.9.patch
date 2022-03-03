@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native-safe-area-view/index.js b/node_modules/react-native-safe-area-view/index.js
+index a21ff418..f3feb15e 100644
+--- a/node_modules/react-native-safe-area-view/index.js
++++ b/node_modules/react-native-safe-area-view/index.js
+@@ -15,6 +15,10 @@ const X_WIDTH = 375;
+ const X_HEIGHT = 812;
+ const XSMAX_WIDTH = 414;
+ const XSMAX_HEIGHT = 896;
++const X12_WIDTH = 390;
++const X12_HEIGHT = 844;
++const XSMAX12_WIDTH = 428;
++const XSMAX12_HEIGHT = 926;
+ const PAD_WIDTH = 768;
+ const PAD_HEIGHT = 1024;
+ const IPADPRO11_WIDTH = 834;
+@@ -37,12 +41,16 @@ const isIPhoneX = (() => {
+   if (Platform.OS === 'web') return false;
+ 
+   return (
+-    (Platform.OS === 'ios' &&
+-      ((D_HEIGHT === X_HEIGHT && D_WIDTH === X_WIDTH) ||
+-        (D_HEIGHT === X_WIDTH && D_WIDTH === X_HEIGHT))) ||
+-    ((D_HEIGHT === XSMAX_HEIGHT && D_WIDTH === XSMAX_WIDTH) ||
+-      (D_HEIGHT === XSMAX_WIDTH && D_WIDTH === XSMAX_HEIGHT))
+-  );
++    Platform.OS === 'ios' && (
++    	(D_HEIGHT === X_HEIGHT && D_WIDTH === X_WIDTH) ||
++        (D_HEIGHT === X_WIDTH && D_WIDTH === X_HEIGHT) ||
++		(D_HEIGHT === XSMAX_HEIGHT && D_WIDTH === XSMAX_WIDTH) ||
++		(D_HEIGHT === XSMAX_WIDTH && D_WIDTH === XSMAX_HEIGHT) ||
++		(D_HEIGHT === X12_HEIGHT && D_WIDTH === X12_WIDTH) ||
++		(D_HEIGHT === X12_WIDTH && D_WIDTH === X12_HEIGHT) ||
++		(D_HEIGHT === XSMAX12_HEIGHT && D_WIDTH === XSMAX12_WIDTH) ||
++		(D_HEIGHT === XSMAX12_WIDTH && D_WIDTH === XSMAX12_HEIGHT)
++	  ));
+ })();
+ 
+ const isNewIPadPro = (() => {

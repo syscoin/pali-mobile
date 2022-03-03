@@ -1,0 +1,75 @@
+diff --git a/node_modules/eth-block-tracker/src/base.js b/node_modules/eth-block-tracker/src/base.js
+index 8c6de302..ffdf0a13 100644
+--- a/node_modules/eth-block-tracker/src/base.js
++++ b/node_modules/eth-block-tracker/src/base.js
+@@ -20,6 +20,7 @@ class BaseBlockTracker extends SafeEventEmitter {
+     // state
+     this._blockResetTimeout
+     this._currentBlock = null
++    this._currentBlockTimestamp = 0;
+     this._isRunning = false
+     // bind functions for internal use
+     this._onNewListener = this._onNewListener.bind(this)
+@@ -33,17 +34,19 @@ class BaseBlockTracker extends SafeEventEmitter {
+     return this._isRunning
+   }
+ 
+-  getCurrentBlock () {
+-    return this._currentBlock
++  async _updateLatestBlock () {
+   }
+ 
+   async getLatestBlock () {
+     // return if available
+-    if (this._currentBlock) return this._currentBlock
++    if (this._currentBlock && Date.now() - this._currentBlockTimestamp < 3000) return this._currentBlock
+     // wait for a new latest block
+-    const latestBlock = await new Promise(resolve => this.once('latest', resolve))
+-    // return newly set current block
+-    return latestBlock
++    try {
++      await this._updateLatestBlock();
++    } catch (e) {
++      console.log(`_updateLatestBlock error: ${e}`);
++    }
++    return this._currentBlock;
+   }
+ 
+   // dont allow module consumer to remove our internal event listeners
+@@ -128,6 +131,7 @@ class BaseBlockTracker extends SafeEventEmitter {
+   _setCurrentBlock (newBlock) {
+     const oldBlock = this._currentBlock
+     this._currentBlock = newBlock
++    this._currentBlockTimestamp = Date.now();
+     this.emit('latest', newBlock)
+     this.emit('sync', { oldBlock, newBlock })
+   }
+diff --git a/node_modules/eth-block-tracker/src/polling.js b/node_modules/eth-block-tracker/src/polling.js
+index 1cc8ba78..e6281ee2 100644
+--- a/node_modules/eth-block-tracker/src/polling.js
++++ b/node_modules/eth-block-tracker/src/polling.js
+@@ -24,16 +24,6 @@ class PollingBlockTracker extends BaseBlockTracker {
+     this._setSkipCacheFlag = setSkipCacheFlag
+   }
+ 
+-  //
+-  // public
+-  //
+-
+-  // trigger block polling
+-  async checkForLatestBlock () {
+-    await this._updateLatestBlock()
+-    return await this.getLatestBlock()
+-  }
+-
+   //
+   // private
+   //
+@@ -56,6 +46,7 @@ class PollingBlockTracker extends BaseBlockTracker {
+         }
+         await timeout(this._retryTimeout, !this._keepEventLoopActive)
+       }
++      break;
+     }
+   }
+ 

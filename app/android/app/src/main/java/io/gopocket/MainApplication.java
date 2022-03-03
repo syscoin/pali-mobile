@@ -1,0 +1,230 @@
+package io.gopocket;
+
+import com.facebook.react.ReactApplication;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.github.wuxudong.rncharts.MPAndroidChartPackage;
+import android.content.Context;
+import com.facebook.react.PackageList;
+import com.facebook.react.ReactInstanceManager;
+import com.airbnb.android.react.lottie.LottiePackage;
+import com.leon.channel.helper.ChannelReaderUtil;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.soloader.SoLoader;
+import cl.json.ShareApplication;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import io.gopocket.nativeModules.PreventScreenshotPackage;
+
+import android.text.TextUtils;
+
+import androidx.multidex.MultiDexApplication;
+
+import android.database.CursorWindow;
+import java.lang.reflect.Field;
+import com.maochunjie.mumeng.RNReactNativeMumengModule;
+import io.gopocket.nativeModules.RNToolsPackage;
+import io.gopocket.utils.GooglePlayUtils;
+
+import com.cmcewen.blurview.BlurViewPackage;
+import com.brentvatne.react.ReactVideoPackage;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
+import com.umeng.message.UmengNotificationClickHandler;
+import com.umeng.message.entity.UMessage;
+
+import com.reactlibrary.RNThreadPackage;
+
+// @react-native-community/async-storage
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+// react-native-aes-crypto
+import com.tectiv3.aes.RCTAesPackage;
+// react-native-fs
+import com.rnfs.RNFSPackage;
+// react-native-i18n
+import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
+// react-native-keychain
+import com.oblador.keychain.KeychainPackage;
+// react-native-os
+import com.peel.react.rnos.RNOSModule;
+// react-native-randombytes
+import com.bitgo.randombytes.RandomBytesPackage;
+// react-native-sqlite-storage
+import org.pgsqlite.SQLitePluginPackage;
+// react-native-tcp
+import com.peel.react.TcpSocketsModule;
+// rn-fetch-blob
+import com.RNFetchBlob.RNFetchBlobPackage;
+
+public class MainApplication extends MultiDexApplication implements ShareApplication, ReactApplication {
+	private String mChannel;
+
+	private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+		@Override
+		public boolean getUseDeveloperSupport() {
+			return BuildConfig.DEBUG;
+		}
+
+		@Override
+		protected List<ReactPackage> getPackages() {
+			@SuppressWarnings("UnnecessaryLocalVariable")
+			List<ReactPackage> packages = new PackageList(this).getPackages();
+			packages.add(new LottiePackage());
+			packages.add(new RNGestureHandlerPackage());
+			packages.add(new PreventScreenshotPackage());
+			packages.add(new RNToolsPackage());
+			packages.add(new MPAndroidChartPackage());
+			packages.add(new BlurViewPackage());
+			packages.add(new ReactVideoPackage());
+			packages.add(new RNThreadPackage(
+				mReactNativeHost,
+				new AsyncStoragePackage(),
+				new RCTAesPackage(),
+				new RNFSPackage(),
+				new RNI18nPackage(),
+				new KeychainPackage(),
+				new RNOSModule(),
+				new RandomBytesPackage(),
+				new SQLitePluginPackage(),
+				new TcpSocketsModule(),
+				new RNFetchBlobPackage()
+			));
+			return packages;
+		}
+
+		@Override
+		protected String getJSMainModuleName() {
+			return "index";
+		}
+  	};
+
+	@Override
+	public ReactNativeHost getReactNativeHost() {
+		return mReactNativeHost;
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+  		RNReactNativeMumengModule.init(this, "60af0eccdd01c71b57c73c81", getChannel(), "8c4de563e0a52d684ec06e2aa0c43205");
+		try {
+			Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+			field.setAccessible(true);
+			field.set(null, 10 * 1024 * 1024); //the 10MB is the new size
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+//		if (BuildConfig.DEBUG) {
+//			WebView.setWebContentsDebuggingEnabled(true);
+//		}
+		SoLoader.init(this, /* native exopackage */ false);
+
+		initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+		boolean isSupport = GooglePlayUtils.isGooglePlayCanResolved(this);
+		if (!isSupport || BuildConfig.DEBUG) {
+			initPushSDK();
+		}
+    }
+
+	private void initPushSDK() {
+		registerPushAgent(this);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				registerPushAgent(getApplicationContext());
+			}
+		}).start();
+
+		PushAgent pushAgent = PushAgent.getInstance(getApplicationContext());
+		UmengNotificationClickHandler notificationClickHandler = new UmengNotificationClickHandler() {
+			@Override
+			public void dealWithCustomAction(final Context context, final UMessage msg) {
+				super.dealWithCustomAction(context, msg);
+			}
+
+			@Override
+			public void launchApp(Context context, UMessage msg) {
+				super.launchApp(context, msg);
+				WritableMap params = Arguments.createMap();
+				params.putString("event", msg.getRaw().toString());
+				sendEvent("AndroidUmengPushEvent", params);
+			}
+		};
+		pushAgent.setNotificationClickHandler(notificationClickHandler);
+	}
+
+	private void registerPushAgent(Context context) {
+		PushAgent pushAgent = PushAgent.getInstance(context);
+		pushAgent.register(new IUmengRegisterCallback() {
+
+			@Override
+			public void onSuccess(String deviceToken) {
+				android.util.Log.e("===registerPushAgent", deviceToken);
+			}
+
+			@Override
+			public void onFailure(String errCode, String errDesc) {
+			}
+		});
+	}
+
+	private void sendEvent(String eventName, WritableMap params) {
+		try {
+			getReactNativeHost().getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+				.emit(eventName, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+    /**
+     * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+     * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+     *
+     * @param context
+     * @param reactInstanceManager
+     */
+    private static void initializeFlipper(
+    	Context context, ReactInstanceManager reactInstanceManager) {
+    	if (BuildConfig.DEBUG) {
+    		try {
+    		  /*
+    		   We use reflection here to pick up the class that initializes Flipper,
+    		  since Flipper library is not available in release mode
+    		  */
+    		  Class<?> aClass = Class.forName("io.gopocket.ReactNativeFlipper");
+    		  aClass
+    		      .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+    		      .invoke(null, context, reactInstanceManager);
+    		} catch (ClassNotFoundException e) {
+    		  e.printStackTrace();
+    		} catch (NoSuchMethodException e) {
+    		  e.printStackTrace();
+    		} catch (IllegalAccessException e) {
+    		  e.printStackTrace();
+    		} catch (InvocationTargetException e) {
+    		  e.printStackTrace();
+    		}
+		}
+	}
+
+	@Override
+	public String getFileProviderAuthority() {
+		return BuildConfig.APPLICATION_ID + ".provider";
+	}
+
+	public String getChannel() {
+    	if (TextUtils.isEmpty(mChannel)) {
+    		mChannel = ChannelReaderUtil.getChannel(this);
+			if (TextUtils.isEmpty(mChannel)) {
+				mChannel = "official";
+			}
+		}
+    	return mChannel;
+	}
+}

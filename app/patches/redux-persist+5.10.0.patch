@@ -1,0 +1,14 @@
+diff --git a/node_modules/redux-persist/lib/persistReducer.js b/node_modules/redux-persist/lib/persistReducer.js
+index ac776090..72ff71ec 100644
+--- a/node_modules/redux-persist/lib/persistReducer.js
++++ b/node_modules/redux-persist/lib/persistReducer.js
+@@ -70,8 +70,8 @@ function persistReducer(config, baseReducer) {
+
+         // only rehydrate if we are not already sealed
+         if (!_sealed) {
+-          action.rehydrate(config.key, payload, err);
+           _sealed = true;
++          action.rehydrate(config.key, payload, err);
+         }
+       };
+       timeout && setTimeout(function () {

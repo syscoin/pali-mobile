@@ -1,0 +1,15 @@
+diff --git a/node_modules/web3-provider-engine/zero.js b/node_modules/web3-provider-engine/zero.js
+index f884bf2d..8bcad8c2 100644
+--- a/node_modules/web3-provider-engine/zero.js
++++ b/node_modules/web3-provider-engine/zero.js
+@@ -31,10 +31,6 @@ function ZeroClientProvider(opts = {}){
+   const sanitizer = new SanitizingSubprovider()
+   engine.addProvider(sanitizer)
+ 
+-  // cache layer
+-  const cacheSubprovider = new CacheSubprovider()
+-  engine.addProvider(cacheSubprovider)
+-
+   // filters + subscriptions
+   // only polyfill if not websockets
+   if (connectionType !== 'ws') {

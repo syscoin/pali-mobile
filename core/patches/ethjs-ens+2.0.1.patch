@@ -1,0 +1,34 @@
+diff --git a/node_modules/ethjs-ens/abis/resolver.json b/node_modules/ethjs-ens/abis/resolver.json
+index 2a35853e..9293c2a9 100644
+--- a/node_modules/ethjs-ens/abis/resolver.json
++++ b/node_modules/ethjs-ens/abis/resolver.json
+@@ -144,5 +144,27 @@
+     ],
+     "payable": false,
+     "type": "function"
++  },
++  {
++    "constant": true,
++    "inputs": [
++      {
++        "name": "node",
++        "type": "bytes32"
++      },
++      {
++        "name": "key",
++        "type": "string"
++      }
++    ],
++    "name": "text",
++    "outputs": [
++      {
++        "name": "",
++        "type": "string"
++      }
++    ],
++    "payable": false,
++    "type": "function"
+   }
+-]
+\ No newline at end of file
++]

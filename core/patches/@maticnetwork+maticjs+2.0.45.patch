@@ -1,0 +1,48 @@
+diff --git a/node_modules/@maticnetwork/maticjs/dist/matic.node.js b/node_modules/@maticnetwork/maticjs/dist/matic.node.js
+index 4a046d1c..ee3edaff 100644
+--- a/node_modules/@maticnetwork/maticjs/dist/matic.node.js
++++ b/node_modules/@maticnetwork/maticjs/dist/matic.node.js
+@@ -6291,7 +6291,6 @@ if (typeof process === 'undefined' || process.type === 'renderer' || process.bro
+  * Module dependencies.
+  */
+
+-const tty = __webpack_require__(/*! tty */ "tty");
+ const util = __webpack_require__(/*! util */ "util");
+
+ /**
+@@ -6442,9 +6441,7 @@ exports.inspectOpts = Object.keys(process.env).filter(key => {
+  */
+
+ function useColors() {
+-	return 'colors' in exports.inspectOpts ?
+-		Boolean(exports.inspectOpts.colors) :
+-		tty.isatty(process.stderr.fd);
++	return false;
+ }
+
+ /**
+@@ -12277,17 +12274,6 @@ module.exports = require("os");
+
+ /***/ }),
+
+-/***/ "tty":
+-/*!**********************!*\
+-  !*** external "tty" ***!
+-  \**********************/
+-/*! no static exports found */
+-/***/ (function(module, exports) {
+-
+-module.exports = require("tty");
+-
+-/***/ }),
+-
+ /***/ "util":
+ /*!***********************!*\
+   !*** external "util" ***!
+@@ -12311,4 +12297,4 @@ module.exports = require("web3");
+ /***/ })
+
+ /******/ });
+-//# sourceMappingURL=matic.node.js.map
+\ No newline at end of file
++//# sourceMappingURL=matic.node.js.map
