@@ -1064,8 +1064,11 @@ class FoldSecurityView extends PureComponent {
 						<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
 					</View>
 					<View style={styles.maxSymbolWidth}>
-						<Text style={styles.symbolText} numberOfLines={2}>
-							{asset.symbol + '\n' + strings('security.security_index')}
+						<Text style={styles.symbolText} numberOfLines={1} ellipsizeMode={'middle'}>
+							{asset.symbol}
+						</Text>
+						<Text style={styles.symbolText} numberOfLines={1}>
+							{strings('security.security_index')}
 						</Text>
 					</View>
 					<View style={styles.flexOne} />
