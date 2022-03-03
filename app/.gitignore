@@ -70,6 +70,6 @@ coverage
 apikeys
 
 #thread
-/android/app/src/main/assets/threads
+*.bundle
 /android/app/src/main/res/raw/locales*
 /android/app/src/main/res/raw/node_modules*
