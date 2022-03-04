@@ -351,16 +351,16 @@ class EngineImpl {
 					const keysJson = JSON.parse(BSCSCAN_APIKEYS);
 					if (Array.isArray(keysJson)) {
 						bscscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
-					} else {
-						bscscanKey = String(keysJson);
 					}
-					await NativeWorker.Agents.AsyncStorage.setItem(BSCSCAN_KEY, bscscanKey);
 				} catch (e) {
 					bscscanKey = BSCSCAN_APIKEYS;
 				}
+				if (bscscanKey) {
+					await NativeWorker.Agents.AsyncStorage.setItem(BSCSCAN_KEY, bscscanKey);
+				}
 			} while (false);
 			if (!bscscanKey) {
-				console.error(`key for bscscan.com not configured. ${BSCSCAN_APIKEYS}`);
+				util.logError(`key for bscscan.com not configured. ${BSCSCAN_APIKEYS}`);
 			}
 			return bscscanKey;
 		} else if (type === ChainType.Polygon) {
@@ -376,16 +376,16 @@ class EngineImpl {
 					const keysJson = JSON.parse(POLYGONSCAN_APIKEYS);
 					if (Array.isArray(keysJson)) {
 						polygonscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
-					} else {
-						polygonscanKey = String(keysJson);
 					}
-					await NativeWorker.Agents.AsyncStorage.setItem(POLYGONSCAN_KEY, polygonscanKey);
 				} catch (e) {
 					polygonscanKey = POLYGONSCAN_APIKEYS;
 				}
+				if (polygonscanKey) {
+					await NativeWorker.Agents.AsyncStorage.setItem(POLYGONSCAN_KEY, polygonscanKey);
+				}
 			} while (false);
 			if (!polygonscanKey) {
-				console.error(`key for polygonscan.com not configured. ${POLYGONSCAN_APIKEYS}`);
+				util.logError(`key for polygonscan.com not configured. ${POLYGONSCAN_APIKEYS}`);
 			}
 			return polygonscanKey;
 		} else if (type === ChainType.Ethereum || type === ChainType.Optimism) {
@@ -401,16 +401,16 @@ class EngineImpl {
 					const keysJson = JSON.parse(ETHERSCAN_APIKEYS);
 					if (Array.isArray(keysJson)) {
 						etherscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
-					} else {
-						etherscanKey = String(keysJson);
 					}
-					await NativeWorker.Agents.AsyncStorage.setItem(ETHERSCAN_KEY, etherscanKey);
 				} catch (e) {
 					etherscanKey = ETHERSCAN_APIKEYS;
 				}
+				if (etherscanKey) {
+					await NativeWorker.Agents.AsyncStorage.setItem(ETHERSCAN_KEY, etherscanKey);
+				}
 			} while (false);
 			if (!etherscanKey) {
-				console.error(`key for etherscan.com not configured. ${ETHERSCAN_APIKEYS}`);
+				util.logError(`key for etherscan.com not configured. ${ETHERSCAN_APIKEYS}`);
 			}
 			return etherscanKey;
 		}
