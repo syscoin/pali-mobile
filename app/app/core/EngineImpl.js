@@ -339,30 +339,78 @@ class EngineImpl {
 
 	async getScanKey(type) {
 		if (type === ChainType.Bsc) {
-			if (!bscscanKey) {
-				bscscanKey = await NativeWorker.Agents.AsyncStorage.getItem(BSCSCAN_KEY);
-				if (!bscscanKey || BSCSCAN_APIKEYS.indexOf(bscscanKey) === -1) {
-					bscscanKey = BSCSCAN_APIKEYS[Math.floor(Math.random() * BSCSCAN_APIKEYS.length)];
-					await NativeWorker.Agents.AsyncStorage.setItem(BSCSCAN_KEY, bscscanKey);
+			do {
+				if (bscscanKey) {
+					break;
 				}
+				bscscanKey = await NativeWorker.Agents.AsyncStorage.getItem(BSCSCAN_KEY);
+				if (bscscanKey) {
+					break;
+				}
+				try {
+					const keysJson = JSON.parse(BSCSCAN_APIKEYS);
+					if (Array.isArray(keysJson)) {
+						bscscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
+					} else {
+						bscscanKey = String(keysJson);
+					}
+					await NativeWorker.Agents.AsyncStorage.setItem(BSCSCAN_KEY, bscscanKey);
+				} catch (e) {
+					bscscanKey = BSCSCAN_APIKEYS;
+				}
+			} while (false);
+			if (!bscscanKey) {
+				console.error(`key for bscscan.com not configured. ${BSCSCAN_APIKEYS}`);
 			}
 			return bscscanKey;
 		} else if (type === ChainType.Polygon) {
-			if (!polygonscanKey) {
-				polygonscanKey = await NativeWorker.Agents.AsyncStorage.getItem(POLYGONSCAN_KEY);
-				if (!polygonscanKey || POLYGONSCAN_APIKEYS.indexOf(polygonscanKey) === -1) {
-					polygonscanKey = POLYGONSCAN_APIKEYS[Math.floor(Math.random() * POLYGONSCAN_APIKEYS.length)];
-					await NativeWorker.Agents.AsyncStorage.setItem(POLYGONSCAN_KEY, polygonscanKey);
+			do {
+				if (polygonscanKey) {
+					break;
 				}
+				polygonscanKey = await NativeWorker.Agents.AsyncStorage.getItem(POLYGONSCAN_KEY);
+				if (polygonscanKey) {
+					break;
+				}
+				try {
+					const keysJson = JSON.parse(POLYGONSCAN_APIKEYS);
+					if (Array.isArray(keysJson)) {
+						polygonscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
+					} else {
+						polygonscanKey = String(keysJson);
+					}
+					await NativeWorker.Agents.AsyncStorage.setItem(POLYGONSCAN_KEY, polygonscanKey);
+				} catch (e) {
+					polygonscanKey = POLYGONSCAN_APIKEYS;
+				}
+			} while (false);
+			if (!polygonscanKey) {
+				console.error(`key for polygonscan.com not configured. ${POLYGONSCAN_APIKEYS}`);
 			}
 			return polygonscanKey;
 		} else if (type === ChainType.Ethereum || type === ChainType.Optimism) {
-			if (!etherscanKey) {
-				etherscanKey = await NativeWorker.Agents.AsyncStorage.getItem(ETHERSCAN_KEY);
-				if (!etherscanKey || ETHERSCAN_APIKEYS.indexOf(etherscanKey) === -1) {
-					etherscanKey = ETHERSCAN_APIKEYS[Math.floor(Math.random() * ETHERSCAN_APIKEYS.length)];
-					await NativeWorker.Agents.AsyncStorage.setItem(ETHERSCAN_KEY, etherscanKey);
+			do {
+				if (etherscanKey) {
+					break;
 				}
+				etherscanKey = await NativeWorker.Agents.AsyncStorage.getItem(ETHERSCAN_KEY);
+				if (etherscanKey) {
+					break;
+				}
+				try {
+					const keysJson = JSON.parse(ETHERSCAN_APIKEYS);
+					if (Array.isArray(keysJson)) {
+						etherscanKey = keysJson[Math.floor(Math.random() * keysJson.length)];
+					} else {
+						etherscanKey = String(keysJson);
+					}
+					await NativeWorker.Agents.AsyncStorage.setItem(ETHERSCAN_KEY, etherscanKey);
+				} catch (e) {
+					etherscanKey = ETHERSCAN_APIKEYS;
+				}
+			} while (false);
+			if (!etherscanKey) {
+				console.error(`key for etherscan.com not configured. ${ETHERSCAN_APIKEYS}`);
 			}
 			return etherscanKey;
 		}

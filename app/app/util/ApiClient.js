@@ -1,5 +1,5 @@
 import { getInfo } from 'react-native-mumeng';
-import { util } from 'gopocket-core';
+import { ChainType, util } from 'gopocket-core';
 import { NativeModules, Platform } from 'react-native';
 import { getVersion, getBuildNumber } from 'react-native-device-info';
 import PreventScreenshot from '../core/PreventScreenshot';
@@ -12,7 +12,7 @@ import { addFavouriteDapps, updateDappPage, updateDefaultTypes } from '../action
 import { SetAppstoreBaseVersion, SetUpdateConfig, updateContractList, updateFamousAccounts } from '../actions/settings';
 import Engine from '../core/Engine';
 import NativeThreads from '../threads/NativeThreads';
-import { API_KEY, ETHERSCAN_APIKEYS } from '@env';
+import { API_KEY } from '@env';
 
 const TEST_INVITE_URL = 'http://pocket.libsss.com';
 const RELEASE_INVITE_URL = 'https://community.gopocket.xyz';
@@ -118,7 +118,8 @@ export async function initApiClient() {
 
 	global.useOffchainEndPoint = false;
 	await fetchConfig();
-	util.checkEtherscanAvailable('0xd8da6bf26964af9d7eed9e03e53415d37aa96045', ETHERSCAN_APIKEYS[0]).then(
+	const etherscan_key = await Engine.getScanKey(ChainType.Ethereum);
+	util.checkEtherscanAvailable('0xd8da6bf26964af9d7eed9e03e53415d37aa96045', etherscan_key).then(
 		etherscanAvailable => {
 			NativeThreads.get().callEngineAsync('setEtherscanAvailable', etherscanAvailable);
 			util.setEtherscanAvailable(etherscanAvailable);
