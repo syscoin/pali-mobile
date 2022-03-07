@@ -606,7 +606,7 @@
 		"counterfeit_token": "假币",
 		"counterfeit_token_desc": "该代币为假冒币种。",
 		"airdrop_scam": "空投诈骗",
-		"airdrop_scam_desc": "该币种为空投诈骗。",
+		"airdrop_scam_desc": "诈骗者向用户空投垃圾代币，引诱用户购买。",
 		"detect_no_security": "暂时没获取到检测结果。",
 		"try_it_later": "稍后再试",
 		"owner_address": "Onwer 地址",

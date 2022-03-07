@@ -871,11 +871,13 @@ class Tokens extends PureComponent {
 		if (!securityData) {
 			return;
 		}
-		if (securityData.risk?.length > 0) {
-			return <Image source={require('../../../images/tag_danger.png')} style={styles.tagPosition} />;
-		}
-		if (securityData.notice?.length > 0) {
-			return <Image source={require('../../../images/tag_warning.png')} style={styles.tagPosition} />;
+		if (securityData.trust_list !== '1') {
+			if (securityData.risk?.length > 0) {
+				return <Image source={require('../../../images/tag_danger.png')} style={styles.tagPosition} />;
+			}
+			if (securityData.notice?.length > 0) {
+				return <Image source={require('../../../images/tag_warning.png')} style={styles.tagPosition} />;
+			}
 		}
 	};
 

@@ -61,6 +61,7 @@ export interface SecurityToken {
   sell_tax: string;
   total_supply: string;
   transfer_pausable: string;
+  trust_list: string;
   dex: Dex[];
   holders: Holder[];
   lp_holders: Holder[];

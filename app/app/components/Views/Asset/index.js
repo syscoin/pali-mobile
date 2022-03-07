@@ -235,14 +235,14 @@ class Asset extends PureComponent {
 	renderUnfold = (unFoldOpacity, moveHeight) => {
 		const { asset } = this.state;
 		const securityData = getSecurityData(asset);
-		const { notice, risk, normal } = securityData;
+		const { notice, risk, normal, trust_list } = securityData;
 		const riskNum = risk ? risk.length : 0;
 		const noticeNum = notice ? notice.length : 0;
 		const normalNum = normal ? normal.length : 0;
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		if (checked && riskNum === 0 && noticeNum === 0) {
+		if (trust_list === '1' || (checked && riskNum === 0 && noticeNum === 0)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
 		} else if (checked && riskNum > 0) {

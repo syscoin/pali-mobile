@@ -596,7 +596,10 @@ class TokenList extends PureComponent {
 		if (asset.nativeCurrency) {
 			return <Image source={require('../../../images/tag_safe.png')} style={flagStyle} />;
 		}
-		const { normalLength, noticeLength, riskLength } = asset.securityData;
+		const { normalLength, noticeLength, riskLength, trust_list } = asset.securityData;
+		if (trust_list === '1') {
+			return <Image source={require('../../../images/tag_safe.png')} style={flagStyle} />;
+		}
 		if (riskLength > 0) {
 			return <Image source={require('../../../images/tag_danger.png')} style={flagStyle} />;
 		}

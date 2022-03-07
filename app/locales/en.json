@@ -606,7 +606,7 @@
 		"counterfeit_token": "Counterfeit  Token",
 		"counterfeit_token_desc": "The token is a counterfeit.",
 		"airdrop_scam": "Airdrop Scam",
-		"airdrop_scam_desc": "The token is airdrop scam.",
+		"airdrop_scam_desc": "Scammers send airdrops to users and lure them to buy worthless token.",
 		"detect_no_security": "Security result not available for now.",
 		"try_it_later": "Try it later",
 		"owner_address": "Owner Address",
