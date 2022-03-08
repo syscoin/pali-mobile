@@ -68,6 +68,7 @@ export interface SecurityToken {
   normal: SecurityContent[];
   notice: SecurityContent[];
   risk: SecurityContent[];
+  isTrust: boolean
 }
 
 export interface SecurityNft {
@@ -425,7 +426,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
         } else if (data.is_airdrop_scam === '0') {
           normal.push({ name: 'is_airdrop_scam', type: '1' });
         }
-        securityTokens.push({ address, chainId, normal, notice, risk, ...data });
+        securityTokens.push({ address, chainId, normal, notice, risk, ...data, isTrust: data.trust_list === '1' });
       }
     });
     return securityTokens;

@@ -235,14 +235,14 @@ class Asset extends PureComponent {
 	renderUnfold = (unFoldOpacity, moveHeight) => {
 		const { asset } = this.state;
 		const securityData = getSecurityData(asset);
-		const { notice, risk, normal, trust_list } = securityData;
+		const { notice, risk, normal, isTrust } = securityData;
 		const riskNum = risk ? risk.length : 0;
 		const noticeNum = notice ? notice.length : 0;
 		const normalNum = normal ? normal.length : 0;
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		if (trust_list === '1' || (checked && riskNum === 0 && noticeNum === 0)) {
+		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
 		} else if (checked && riskNum > 0) {
@@ -287,10 +287,10 @@ class Asset extends PureComponent {
 			bgImg = require('../../../images/img_coin_bg_safe.png');
 		} else {
 			const securityData = getSecurityData(asset);
-			const { notice, risk } = securityData;
+			const { notice, risk, isTrust } = securityData;
 			const noticeNum = notice && notice.length ? notice.length : 0;
 			const riskNum = risk && risk.length ? risk.length : 0;
-			if (risk && riskNum === 0 && (notice && noticeNum === 0)) {
+			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0)) {
 				bgColor = '#91D752';
 				bgImg = require('../../../images/img_coin_bg_safe.png');
 			} else if (riskNum > 0) {

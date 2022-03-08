@@ -460,11 +460,13 @@ class AddAsset extends PureComponent {
 		if (!securityData) {
 			return;
 		}
-		if (securityData.risk?.length > 0) {
-			return <Image source={require('../../../images/tag_danger.png')} style={styles.tagPosition} />;
-		}
-		if (securityData.notice?.length > 0) {
-			return <Image source={require('../../../images/tag_warning.png')} style={styles.tagPosition} />;
+		if (!securityData.isTrust) {
+			if (securityData.risk?.length > 0) {
+				return <Image source={require('../../../images/tag_danger.png')} style={styles.tagPosition} />;
+			}
+			if (securityData.notice?.length > 0) {
+				return <Image source={require('../../../images/tag_warning.png')} style={styles.tagPosition} />;
+			}
 		}
 	};
 
@@ -568,6 +570,7 @@ class AddAsset extends PureComponent {
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 		const isRpc = getIsRpc(asset.type);
 		const isDefi = asset.isDefi;
+		const isRisk = securityData?.risk?.length > 0 && !securityData?.isTrust;
 		return (
 			<AssetElement
 				key={'renderItem' + index}
@@ -612,17 +615,12 @@ class AddAsset extends PureComponent {
 							asset.lockType && <Image source={require('../../../images/lock_icon.png')} />
 						)}
 						<View style={styles.flexOne} />
-						<Text
-							style={[
-								styles.textItemBalance,
-								securityData?.risk?.length > 0 && !isAmountHide ? styles.strikethrough : {}
-							]}
-						>
+						<Text style={[styles.textItemBalance, isRisk && !isAmountHide ? styles.strikethrough : {}]}>
 							{isAmountHide ? '***' : balanceFiat}
 						</Text>
 					</View>
 					{!isDefi &&
-						(securityData?.risk?.length > 0 ? (
+						(isRisk ? (
 							<View style={styles.flexDir}>
 								<Text style={styles.textItemAmount}>
 									{isAmountHide ? '***' : renderAmount(balance)}

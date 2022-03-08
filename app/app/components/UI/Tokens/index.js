@@ -871,7 +871,7 @@ class Tokens extends PureComponent {
 		if (!securityData) {
 			return;
 		}
-		if (securityData.trust_list !== '1') {
+		if (!securityData.isTrust) {
 			if (securityData.risk?.length > 0) {
 				return <Image source={require('../../../images/tag_danger.png')} style={styles.tagPosition} />;
 			}
@@ -892,6 +892,7 @@ class Tokens extends PureComponent {
 		const isEnd = index + 1 === allLength;
 		const isRpc = getIsRpc(asset.type);
 		const isDefi = asset.isDefi;
+		const isRisk = securityData?.risk?.length > 0 && !securityData?.isTrust;
 		return (
 			<AssetElement
 				key={index}
@@ -940,17 +941,14 @@ class Tokens extends PureComponent {
 							asset.lockType && <Image source={require('../../../images/lock_icon.png')} />
 						)}
 						<Text
-							style={[
-								styles.textItemBalance,
-								securityData?.risk?.length > 0 && !isAmountHide ? styles.strikethrough : {}
-							]}
+							style={[styles.textItemBalance, isRisk && !isAmountHide ? styles.strikethrough : {}]}
 							numberOfLines={1}
 						>
 							{isAmountHide ? '***' : balanceFiat}
 						</Text>
 					</View>
 					{!isDefi &&
-						(securityData?.risk?.length > 0 ? (
+						(isRisk ? (
 							<View style={styles.flexDir}>
 								<Text style={styles.textItemAmount}>
 									{isAmountHide ? '***' : renderAmount(balance)}
@@ -1068,7 +1066,9 @@ class Tokens extends PureComponent {
 		let newTokens = this.state.allToken;
 		if (startIndex === 0 || focusUpdate) {
 			const { tokens, currentSortType, hideRiskTokens } = this.props;
-			newTokens = hideRiskTokens ? tokens.filter(token => !(token.securityData?.risk?.length > 0)) : tokens;
+			newTokens = hideRiskTokens
+				? tokens.filter(token => !(token.securityData?.risk?.length > 0) || token.securityData?.isTrust)
+				: tokens;
 			if (currentSortType === SORT_NETWORK) {
 				newTokens.sort((x, y) => x.type - y.type);
 			} else if (currentSortType === SORT_NAME) {

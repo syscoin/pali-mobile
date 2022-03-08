@@ -893,6 +893,7 @@ export function calcAssetPrices(asset, opt) {
 	const risk_token =
 		!asset.nativeCurrency &&
 		!asset.lockType &&
+		!asset.isTrust &&
 		!!securityTokens.find(
 			securityToken =>
 				getChainIdByType(type) === securityToken.chainId &&

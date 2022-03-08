@@ -1036,7 +1036,7 @@ class FoldSecurityView extends PureComponent {
 	renderSecurityView = () => {
 		const { asset } = this.props;
 
-		const { risk, notice, normal, trust_list } = this.state.securityData;
+		const { risk, notice, normal, isTrust } = this.state.securityData;
 		const noticeNum = notice ? notice.length : 0;
 		const riskNum = risk ? risk.length : 0;
 		const normalNum = normal ? normal.length : 0;
@@ -1044,7 +1044,7 @@ class FoldSecurityView extends PureComponent {
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
 		let riskTextColor = colors.$60657D;
-		if (trust_list === '1' || (checked && riskNum === 0 && noticeNum === 0)) {
+		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
 			riskTextColor = colors.$09C285;
