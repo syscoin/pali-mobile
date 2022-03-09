@@ -12,7 +12,9 @@ import {
 	Dimensions,
 	PanResponder,
 	TouchableWithoutFeedback,
-	DeviceEventEmitter
+	DeviceEventEmitter,
+	Platform,
+	Share
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -123,14 +125,16 @@ const styles = StyleSheet.create({
 	},
 	tabTop: {
 		backgroundColor: colors.transparent,
-		paddingHorizontal: 30,
-		justifyContent: 'space-between',
+		paddingLeft: 20,
+		paddingRight: 30,
 		flexDirection: 'row',
 		alignItems: 'center',
 		paddingTop: 10
 	},
-	flexRow: {
-		flexDirection: 'row'
+	tabTabSwitch: {
+		flexDirection: 'row',
+		flex: 1,
+		justifyContent: 'flex-start'
 	},
 	scrollWrap: {
 		marginHorizontal: 30,
@@ -460,6 +464,23 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: colors.$8F92A1,
 		marginTop: 6
+	},
+	coinShareTouch: {
+		marginRight: 12
+	},
+	shareItemWrap: {
+		backgroundColor: colors.$F9F9F9,
+		borderRadius: 10,
+		flexDirection: 'row',
+		marginTop: 18,
+		paddingVertical: 12,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	shareText: {
+		fontSize: 16,
+		color: colors.$FE6E91,
+		marginLeft: 10
 	}
 });
 
@@ -1029,6 +1050,17 @@ class FoldSecurityView extends PureComponent {
 						</View>
 					</View>
 				)}
+
+				<TouchableOpacity
+					style={styles.shareItemWrap}
+					activeOpacity={1.0}
+					onPress={() => {
+						this.shareSecurityLink();
+					}}
+				>
+					<Image source={require('../../../images/ic_share_pink.png')} />
+					<Text style={styles.shareText}>{strings('security.share_security_report')}</Text>
+				</TouchableOpacity>
 			</View>
 		);
 	};
@@ -1068,7 +1100,9 @@ class FoldSecurityView extends PureComponent {
 							{asset.symbol}
 						</Text>
 						<Text style={styles.symbolText} numberOfLines={1}>
-							{strings('security.security_index')}
+							{asset.address?.toLowerCase().substring(0, 6) +
+								'...' +
+								asset.address?.toLowerCase().substring(asset.address.length - 4)}
 						</Text>
 					</View>
 					<View style={styles.flexOne} />
@@ -1211,6 +1245,16 @@ class FoldSecurityView extends PureComponent {
 		</Modal>
 	);
 
+	shareSecurityLink = () => {
+		const chainId = getChainIdByType(this.props.asset.type);
+		const url = 'https://gopluslabs.io/token-security/' + chainId + '/' + this.props.asset.address?.toLowerCase();
+		if (Platform.OS === 'ios') {
+			Share.share({ message: strings('security.token_security'), url });
+		} else {
+			Share.share({ message: url, title: strings('security.token_security') });
+		}
+	};
+
 	render = () => {
 		const { securityViewOpacity, closeSecurityView } = this.props;
 		const { IOSStatusBarHeight, tabIndex } = this.state;
@@ -1237,7 +1281,7 @@ class FoldSecurityView extends PureComponent {
 						]}
 					>
 						<View style={styles.tabTop}>
-							<View style={styles.flexRow}>
+							<View style={styles.tabTabSwitch}>
 								<TouchableOpacity
 									style={styles.tabItem}
 									onPress={() => {
@@ -1281,6 +1325,14 @@ class FoldSecurityView extends PureComponent {
 									{tabIndex === 1 && <View style={styles.tabItemLine} />}
 								</TouchableOpacity>
 							</View>
+							<TouchableOpacity
+								style={styles.coinShareTouch}
+								onPress={() => {
+									this.shareSecurityLink();
+								}}
+							>
+								<Image source={require('../../../images/ic_coin_share.png')} />
+							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={() => {
 									closeSecurityView && closeSecurityView();
