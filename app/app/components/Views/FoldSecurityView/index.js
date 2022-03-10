@@ -745,10 +745,15 @@ class FoldSecurityView extends PureComponent {
 			sell_tax,
 			dex,
 			holders,
-			owner_address
+			owner_address,
+			risk,
+			notice,
+			normal
 		} = securityData;
-
-		console.log('====owner_address = ', owner_address);
+		const noticeNum = notice ? notice.length : 0;
+		const riskNum = risk ? risk.length : 0;
+		const normalNum = normal ? normal.length : 0;
+		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 
 		let allPercent = 0;
 		if (holders) {
@@ -1051,16 +1056,18 @@ class FoldSecurityView extends PureComponent {
 					</View>
 				)}
 
-				<TouchableOpacity
-					style={styles.shareItemWrap}
-					activeOpacity={1.0}
-					onPress={() => {
-						this.shareSecurityLink();
-					}}
-				>
-					<Image source={require('../../../images/ic_share_pink.png')} />
-					<Text style={styles.shareText}>{strings('security.share_security_report')}</Text>
-				</TouchableOpacity>
+				{checked && (
+					<TouchableOpacity
+						style={styles.shareItemWrap}
+						activeOpacity={1.0}
+						onPress={() => {
+							this.shareSecurityLink();
+						}}
+					>
+						<Image source={require('../../../images/ic_share_pink.png')} />
+						<Text style={styles.shareText}>{strings('security.share_security_report')}</Text>
+					</TouchableOpacity>
+				)}
 			</View>
 		);
 	};
@@ -1257,7 +1264,13 @@ class FoldSecurityView extends PureComponent {
 
 	render = () => {
 		const { securityViewOpacity, closeSecurityView } = this.props;
-		const { IOSStatusBarHeight, tabIndex } = this.state;
+		const { IOSStatusBarHeight, tabIndex, securityData } = this.state;
+		const { risk, notice, normal } = securityData;
+		const noticeNum = notice ? notice.length : 0;
+		const riskNum = risk ? risk.length : 0;
+		const normalNum = normal ? normal.length : 0;
+		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
+
 		let barHeight = 0;
 		if (Device.isAndroid()) {
 			barHeight = StatusBar.currentHeight;
@@ -1325,14 +1338,16 @@ class FoldSecurityView extends PureComponent {
 									{tabIndex === 1 && <View style={styles.tabItemLine} />}
 								</TouchableOpacity>
 							</View>
-							<TouchableOpacity
-								style={styles.coinShareTouch}
-								onPress={() => {
-									this.shareSecurityLink();
-								}}
-							>
-								<Image source={require('../../../images/ic_coin_share.png')} />
-							</TouchableOpacity>
+							{checked && (
+								<TouchableOpacity
+									style={styles.coinShareTouch}
+									onPress={() => {
+										this.shareSecurityLink();
+									}}
+								>
+									<Image source={require('../../../images/ic_coin_share.png')} />
+								</TouchableOpacity>
+							)}
 							<TouchableOpacity
 								onPress={() => {
 									closeSecurityView && closeSecurityView();
