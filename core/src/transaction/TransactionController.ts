@@ -703,7 +703,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       this.updateTransaction(transactionMeta);
       const transactionHash = await query(useEthQuery, 'sendRawTransaction', [rawTransaction]);
       logDebug(`Yu sendRawTransactionTxHash: ${transactionHash}`);
-      if (!transactionHash) {
+      if (!transactionHash || !transactionHash.startsWith('0x') || transactionHash.length != 66) {
         throw ethErrors.rpc.internal('The hash returned by sendRawTransaction is null!');
       }
       transactionMeta.transactionHash = transactionHash;
@@ -1222,6 +1222,14 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       latestIncomingTxBlockNumber,
       needUpdate: commonChanged,
     };
+  }
+
+  async getTransactionByHash(chainId: string, hash: string) {
+    const useEthQuery = this.getETHQueryByChainId(chainId);
+    if (!useEthQuery) {
+      return undefined;
+    }
+    return await query(useEthQuery, 'getTransactionByHash', [hash]);
   }
 
   async getCodeByChainId(chainId: string, address: string) {
