@@ -148,7 +148,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     if (chainId === '4') {
       return { api: `https://rinkeby-api.opensea.io/api/v1/assets?owner=${address}&offset=${offset}&limit=50`, key: openSeaApiKeyForRinkeby, version: 'v1' };
     } else if (chainId === '137') {
-      return { api: `https://api.opensea.io/api/v2/assets/matic?owner_address=${address}&offset=${offset}&limit=50`, key: openSeaApiKey, version: 'v2' };
+      return { api: `https://api.opensea.io/api/v2/assets/matic?owner_address=${address}`, key: openSeaApiKey, version: 'v2' };
     }
     return { api: `https://api.opensea.io/api/v1/assets?owner=${address}&offset=${offset}&limit=50`, key: openSeaApiKey, version: 'v1' };
   }
@@ -159,10 +159,11 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     try {
       let offset = 0;
       let pagingFinish = false;
+      let api;
       do {
         const openseaApi = this.getOwnerCollectiblesApi(chainId, selectedAddress, offset);
         response = await timeoutFetch(
-          openseaApi.api,
+          api || openseaApi.api,
           openseaApi.key ? { headers: { 'X-API-KEY': openseaApi.key } } : {},
           15000,
         );
@@ -176,8 +177,21 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         if (results?.length) {
           collectibles = [...collectibles, ...results];
         }
-        if (!results || results.length <= 0 || results.length < 50) {
+        if (!results || results.length <= 0) {
           pagingFinish = true;
+        }
+        if (openseaApi.version === 'v1') {
+          if (results.length < 50) {
+            pagingFinish = true;
+          }
+        } else if (openseaApi.version === 'v2') {
+          if (collectiblesArray.next) {
+            api = collectiblesArray.next;
+            api = 'https://api.opensea.io/api/v2/assets/matic' + api.substring(api.indexOf('?'), api.length);
+          } else {
+            api = undefined;
+            pagingFinish = true;
+          }
         }
         offset += 50;
         if (offset >= LOAD_NFT_MAX) {
@@ -464,7 +478,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
             continue;
           }
         } catch (e) {
-          logInfo('PPYang detectCollectiblesByType getCollectibleType error:', e);
+          logInfo('PPYang detectCollectiblesByType getCollectibleType chainId:', chainId, ' error:', e);
           continue;
         }
         asset_contract = {

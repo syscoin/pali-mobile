@@ -7,14 +7,30 @@ import createInfuraProvider from 'eth-json-rpc-infura/src/createProvider';
 import Subprovider from 'web3-provider-engine/subproviders/provider';
 import BaseController from '../BaseController';
 import PolygonConfig from '../PolygonConfig.json';
-import { logWarn, queryEIP1559Compatibility } from '../util';
+import {handleFetch, logInfo, queryEIP1559Compatibility} from '../util';
 import { NetworkConfig, NetworkState } from './NetworkController';
+
+const mainnetRpcTarget = [
+  'https://polygon-rpc.com/',
+  'https://rpc-mainnet.matic.network',
+  'https://matic-mainnet.chainstacklabs.com',
+  'https://rpc-mainnet.maticvigil.com',
+  'https://rpc-mainnet.matic.quiknode.pro',
+  'https://matic-mainnet-full-rpc.bwarelabs.com'
+];
+
 
 const mainChainId = '137';
 export class PolygonNetworkController extends BaseController<NetworkConfig, NetworkState> {
   private ethQuery: any;
 
   private mutex = new Mutex();
+
+  private mainRpcTarget: string | undefined;
+
+  private block_number = 0;
+
+  private target_rpc = '';
 
   private initializeProvider(
     chainId: string,
@@ -34,12 +50,54 @@ export class PolygonNetworkController extends BaseController<NetworkConfig, Netw
     if (this.state.network !== 'loading') {
       this.update({ network: 'loading' });
     }
-    const { rpcTarget, chainId, ticker, nickname } = this.state.provider;
     this.unRegisterProvider();
-    this.initializeProvider(chainId, rpcTarget, ticker, nickname);
-    this.lookupNetwork();
-    this.initEIP1559Compatibility().catch((e) => {
-      logWarn('PPYang, ArbNetworkController getEIP1559Compatibility e', e);
+    this.checkRpcTargets().then(() => {
+      this.lookupNetwork();
+      this.initEIP1559Compatibility().catch((e) => {
+        logInfo('PPYang, PolygonNetworkController getEIP1559Compatibility e', e);
+      });
+    });
+  }
+
+  async checkRpcTargets() {
+    return new Promise((resolve) => {
+      const { rpcTarget, chainId, ticker, nickname } = this.state.provider;
+      if (!this.ismainnet()) {
+        this.initializeProvider(chainId, rpcTarget, ticker, nickname);
+        resolve(true);
+        return;
+      }
+      if (this.mainRpcTarget) {
+        this.initializeProvider(chainId, this.mainRpcTarget, ticker, nickname);
+        resolve(true);
+        return;
+      }
+      this.mainRpcTarget = mainnetRpcTarget[mainnetRpcTarget.length - 1];
+      mainnetRpcTarget.forEach((rpc) => {
+        handleFetch(rpc, { method: 'POST', body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_blockNumber', params: [] }) }).then((res: any) => {
+          logInfo('PPYang checkRpcTargets for PolygonRpc: ', rpc, ' with result: ', res);
+          try {
+            if (res?.result) {
+              if (Number(res.result) > this.block_number) {
+                this.block_number = Number(res.result);
+                this.target_rpc = rpc;
+              }
+            }
+          } catch (e) {
+            logInfo('PPYang checkRpcTargets fail for PolygonRpc: ', rpc, e);
+          }
+        }).catch((e) => {
+          logInfo('PPYang checkRpcTargets fail for PolygonRpc:', rpc, e);
+        });
+      });
+      setTimeout(() => {
+        if (this.target_rpc) {
+          this.mainRpcTarget = this.target_rpc;
+        }
+        logInfo('PPYang checkRpcTargets success for PolygonRpc:', this.mainRpcTarget);
+        this.initializeProvider(chainId, this.mainRpcTarget, ticker, nickname);
+        resolve(true);
+      }, 5000);
     });
   }
 

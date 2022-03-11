@@ -52,7 +52,7 @@ export class BscNetworkController extends BaseController<NetworkConfig, NetworkS
     this.checkRpcTargets().then(() => {
       this.lookupNetwork();
       this.initEIP1559Compatibility().catch((e) => {
-        logWarn('PPYang, ArbNetworkController getEIP1559Compatibility e', e);
+        logWarn('PPYang, BscNetworkController getEIP1559Compatibility e', e);
       });
     });
   }
