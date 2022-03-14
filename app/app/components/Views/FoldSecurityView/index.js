@@ -1254,11 +1254,12 @@ class FoldSecurityView extends PureComponent {
 
 	shareSecurityLink = () => {
 		const chainId = getChainIdByType(this.props.asset.type);
+		const title = strings('security.token_security', { symbol: this.props.asset.symbol });
 		const url = 'https://gopluslabs.io/token-security/' + chainId + '/' + this.props.asset.address?.toLowerCase();
 		if (Platform.OS === 'ios') {
-			Share.share({ message: strings('security.token_security'), url });
+			Share.share({ message: title, url });
 		} else {
-			Share.share({ message: url, title: strings('security.token_security') });
+			Share.share({ message: url, title });
 		}
 	};
 

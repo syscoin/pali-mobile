@@ -611,7 +611,7 @@
 		"try_it_later": "稍后再试",
 		"owner_address": "Onwer 地址",
 		"owner_address_desc": "如果Owner地址为0x00..000或任何黑洞地址，则合约中的特殊或恶意方法都无法被手动调起，即使这些方法的确存在。",
-		"token_security": "代币安全",
+		"token_security": "{{symbol}}安全报告 - 来自Go Pocket代币安全检测",
 		"share_security_report": "分享安全报告"
 	},
 	"approval_management": {

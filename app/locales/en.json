@@ -611,7 +611,7 @@
 		"try_it_later": "Try it later",
 		"owner_address": "Owner Address",
 		"owner_address_desc": "If the owner address is set to 0x00..000 or any blackhole address, then it's unable to execute any special or malicious function manually even if those function exists.",
-		"token_security": "Token Security",
+		"token_security": "{{symbol}} Security - Token security report by Go Pocket",
 		"share_security_report": "Share Security Report"
 	},
 	"approval_management": {
