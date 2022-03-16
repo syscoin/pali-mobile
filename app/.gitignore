@@ -35,9 +35,6 @@ android/app/bin/
 android/app/gradle*
 android/app/_build*
 
-# if we ever want to add google services
-android/app/google-services.json
-
 # node.js
 node_modules/
 npm-debug.log
@@ -73,3 +70,4 @@ apikeys
 *.bundle
 /android/app/src/main/res/raw/locales*
 /android/app/src/main/res/raw/node_modules*
+/ios/assets/locales/
