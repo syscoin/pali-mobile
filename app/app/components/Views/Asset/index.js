@@ -371,6 +371,9 @@ class Asset extends PureComponent {
 									contentOffset: { x, y }
 								}
 							}) => {
+								if (!this.clickCloseBtn && y === 0 && isSecurityViewShowed) {
+									this.closeSecurityView();
+								}
 								if (y >= -60) {
 									this.setState({ navBackColorOffset: new Animated.Value(y) });
 									if (y > this.changeNavHeight / 2) {
@@ -487,12 +490,12 @@ class Asset extends PureComponent {
 		onEvent('check_coin_security_info');
 	};
 
-	clicked = false;
+	clickCloseBtn = false;
 	closeSecurityView = () => {
-		if (this.clicked) {
+		if (this.clickCloseBtn) {
 			return;
 		}
-		this.clicked = true;
+		this.clickCloseBtn = true;
 		// this.securityViewOpacity.setValue(0.9);
 		Animated.timing(this.securityViewOpacity, {
 			toValue: 0,
@@ -503,7 +506,7 @@ class Asset extends PureComponent {
 			this._scrollView
 				.scrollTo({ x: 0, y: 0 })
 				.then(() => {
-					this.clicked = false;
+					this.clickCloseBtn = false;
 					this.setState({ isSecurityViewShowed: false });
 				})
 				.catch();
