@@ -88,10 +88,7 @@ export default class SearchView extends PureComponent {
 	};
 
 	localSearch = async (searchQuery, chainType) => {
-		const contractMap = await getContractMap(chainType);
-		const contractList = contractMap.map(token => {
-			return { type: chainType, ...token };
-		});
+		const contractList = await getContractMap(chainType);
 
 		const fuse = new Fuse(contractList, {
 			shouldSort: true,

@@ -251,7 +251,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
             item.destination?.toLowerCase() !== selectedAddress.toLowerCase() ||
             (item.unconfirmed_timestamp && Date.now() - item.unconfirmed_timestamp < arb_unconfirmed_interval)
           ) {
-            return;
+            continue;
           }
           const lockToken = item.token;
           const arbWithdrawObj = this.config.numberUtil.calcAssetPrices({
@@ -278,7 +278,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
             item.destination?.toLowerCase() !== selectedAddress.toLowerCase() ||
             (item.unconfirmed_timestamp && Date.now() - item.unconfirmed_timestamp < polygon_unconfirmed_interval)
           ) {
-            return;
+            continue;
           }
           const lockToken = item.token;
           const polygonWithdrawObj = this.config.numberUtil.calcAssetPrices({

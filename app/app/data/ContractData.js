@@ -1,4 +1,4 @@
-import { ChainType } from 'gopocket-core';
+import { ChainType, toChecksumAddress } from 'gopocket-core';
 import Engine from '../core/Engine';
 import {
 	callSqlite,
@@ -47,7 +47,18 @@ export async function getContractMap(type) {
 		}
 	}
 
-	const tokens = await callSqlite('getStaticTokens', type);
+	let tokens = await callSqlite('getStaticTokens', type);
+	if (tokens) {
+		tokens = tokens.map(token => {
+			return {
+				...token,
+				type: type,
+				logo: token.image,
+				address: toChecksumAddress(token.address),
+				l1Address: token.l1_address ? toChecksumAddress(token.l1_address) : undefined
+			};
+		});
+	}
 	return tokens || [];
 }
 
