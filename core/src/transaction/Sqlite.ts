@@ -227,6 +227,9 @@ export class Sqlite {
   }
 
   getStaticToken(type: number, address: string, l1_address: string | undefined = undefined) {
+    if (!type || !address) {
+      return undefined;
+    }
     return new Promise<any>((resolve) => {
       let sql;
       let values;
@@ -294,7 +297,7 @@ export class Sqlite {
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, tokens, (item) => [
           item.address, item.l1_address, item.coin_id, item.chain_type, item.image, item.name, item.decimals, item.symbol
-        ], 200);
+        ]);
       },
       (error: any) => {
         this._errorLog('insetStaticTokens', error);

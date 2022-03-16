@@ -759,7 +759,7 @@ class Transactions extends PureComponent {
 		}
 		const { selectedAddress } = this.props;
 		const newTransactions = [];
-		for (const tx of newTransactions) {
+		for (const tx of transactions) {
 			if (tx.tokenTxs?.length) {
 				for (const tokenTx of tx.tokenTxs) {
 					const tokenTxData = await this.getRenderData(tokenTx);
