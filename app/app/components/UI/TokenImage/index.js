@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import AssetIcon from '../AssetIcon';
 import Identicon from '../Identicon';
 import { connect } from 'react-redux';
+import NFTImage from '../NFTImage';
 
 const styles = StyleSheet.create({
 	itemLogoWrapper: {
@@ -23,7 +24,7 @@ export function TokenImage({ asset, containerStyle, iconStyle, logoDefined, fade
 				typeof asset.logo !== 'string' ? (
 					<AssetIcon logo_number={asset.logo} customStyle={iconStyle} fadeIn={fadeIn} />
 				) : (
-					<AssetIcon logo={asset.logo} customStyle={iconStyle} fadeIn={fadeIn} />
+					<NFTImage style={iconStyle} imageUrl={asset.logo} />
 				)
 			) : (
 				<Identicon
