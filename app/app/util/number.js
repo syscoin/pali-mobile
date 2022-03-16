@@ -12,12 +12,12 @@ import {
 } from 'gopocket-core';
 import numberToBN from 'number-to-bn';
 import { safeToChecksumAddress } from './address';
-import { getContractMap } from '../data/ContractData';
 import Engine from '../core/Engine';
 import { CURRENCIES } from './currencies';
 import { strings } from '../../locales/i18n';
 import { RPC } from '../constants/network';
 import {
+	callSqlite,
 	EngineContext,
 	getRpcChainTypeByChainId,
 	getRpcNickname,
@@ -1268,7 +1268,7 @@ const htLogo = 'https://cdn.gopocket.finance/files/ht_logo.png';
 const avaxLogo = 'https://cdn.gopocket.finance/files/avax_logo.png';
 const rpcLogo = 'https://cdn.gopocket.finance/files/rpc.png';
 
-export function getAssetLogo(asset) {
+export async function getAssetLogo(asset) {
 	const type = asset.type ? asset.type : ChainType.Ethereum;
 	if (type === ChainType.Arbitrum) {
 		if (asset.nativeCurrency) {
@@ -1305,11 +1305,8 @@ export function getAssetLogo(asset) {
 	} else if (asset.nativeCurrency) {
 		return ethLogo;
 	}
-	const result =
-		(asset.address && getContractMap(type)[asset.address.toLowerCase()]?.image) ||
-		(type === ChainType.Arbitrum && asset.l1Address
-			? getContractMap(ChainType.Ethereum)[asset.l1Address.toLowerCase()]?.image
-			: null);
+	const token = await callSqlite('getStaticToken', type, asset.address, asset.l1Address);
+	const result = token?.image;
 	if (!util.isEtherscanAvailable() && result && result.includes('coingecko.com')) {
 		return `https://api.gopocket.finance/proxy-png?url=${result}`;
 	}

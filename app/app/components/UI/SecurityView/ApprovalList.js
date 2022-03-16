@@ -206,48 +206,10 @@ class ApprovalList extends Component {
 
 	initData = async props => {
 		const tokenList = this.getTokenApprovalList(props) || [];
+		for (const token of tokenList) {
+			token.tokenInfo.logo = await getAssetLogo(token.tokenInfo);
+		}
 		this.setState({ tokenList, loading: false });
-	};
-
-	renderCoins = () => {
-		const { tokens } = this.props;
-		const coins = tokens.filter(t => {
-			t.logo = getAssetLogo(t);
-			return t.nativeCurrency;
-		});
-		return (
-			<View style={styles.listWrapper}>
-				{coins.map((asset, i) => (
-					<View key={i} style={styles.coinItem}>
-						<View style={styles.iconLayout}>
-							<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-							<Image
-								style={styles.tagView}
-								source={
-									asset.type === ChainType.Ethereum
-										? require('../../../images/ic_eth_tag.png')
-										: asset.type === ChainType.Polygon
-										? require('../../../images/ic_polygon_tag.png')
-										: asset.type === ChainType.Arbitrum
-										? require('../../../images/ic_arb_tag.png')
-										: asset.type === ChainType.Heco
-										? require('../../../images/ic_heco_tag.png')
-										: asset.type === ChainType.Optimism
-										? require('../../../images/ic_op_tag.png')
-										: asset.type === ChainType.Avax
-										? require('../../../images/ic_avax_tag.png')
-										: util.isRpcChainType(asset.type)
-										? getIcTagResource(asset.type)
-										: require('../../../images/ic_bsc_tag.png')
-								}
-							/>
-						</View>
-						<Text style={styles.symbol}>{asset.symbol}</Text>
-						<Text style={styles.coinDesc}>{`${asset.name}原生代币，无需授权`}</Text>
-					</View>
-				))}
-			</View>
-		);
 	};
 
 	getTokenInfo(token: string, chainId: string, props): Token | undefined {
@@ -342,7 +304,7 @@ class ApprovalList extends Component {
 	};
 
 	onItemTokenClick = token => {
-		const newToken = { ...token, logo: getAssetLogo(token) };
+		const newToken = { ...token };
 		this.props.onItemPress(newToken);
 	};
 
@@ -367,7 +329,7 @@ class ApprovalList extends Component {
 							>
 								<View style={styles.iconLayout}>
 									<TokenImage
-										asset={{ ...v.tokenInfo, logo: getAssetLogo(v.tokenInfo) }}
+										asset={{ ...v.tokenInfo }}
 										containerStyle={styles.ethLogo}
 										iconStyle={styles.iconStyle}
 									/>
@@ -441,7 +403,6 @@ class ApprovalList extends Component {
 						<ActivityIndicator size="large" color={colors.$FE6E91} />
 					</View>
 				)}
-				{/* {this.renderCoins()} */}
 				{this.renderTokens()}
 				{!loading && updateTime !== 0 && tokenList.length === 0 && this.renderEmpty()}
 			</TouchableOpacity>

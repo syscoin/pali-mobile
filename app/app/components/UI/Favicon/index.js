@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import NFTImage, { convertImageUrl } from '../NFTImage';
 import { URL } from 'gopocket-core';
-import NativeThreads from '../../../threads/NativeThreads';
+import { callSqlite } from '../../../util/ControllerUtils';
 
 const styles = StyleSheet.create({
 	absolutePos: {
@@ -38,12 +38,12 @@ export default class Favicon extends PureComponent {
 		const { url } = this.props;
 		if (url) {
 			const hName = new URL(url).hostname;
-			const dapp = await NativeThreads.get().callSqliteAsync('getWhitelistDapp', url, hName);
+			const dapp = await callSqlite('getWhitelistDapp', url, hName);
 			if (dapp?.img) {
 				this.setState({ newUrl: dapp?.img });
 				return;
 			}
-			const history = await NativeThreads.get().callSqliteAsync('getBrowserHistory');
+			const history = await callSqlite('getBrowserHistory');
 			for (const subHistory of history) {
 				const hostName = new URL(subHistory.url).hostname;
 				if (hostName === hName) {

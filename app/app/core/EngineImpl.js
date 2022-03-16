@@ -39,7 +39,8 @@ import {
 	Mutex,
 	RpcNetworkController,
 	InviteController,
-	DefiProtocolController
+	DefiProtocolController,
+	StaticTokenController
 } from 'gopocket-core';
 
 import Encryptor from './Encryptor';
@@ -169,7 +170,8 @@ class EngineImpl {
 					new AssetsDataModel({ numberUtil }),
 					new EnsController(),
 					new InviteController(),
-					new DefiProtocolController()
+					new DefiProtocolController(),
+					new StaticTokenController()
 				],
 				initialState
 			);

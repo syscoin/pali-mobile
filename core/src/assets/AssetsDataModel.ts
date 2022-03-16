@@ -231,19 +231,19 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        ethObj.logo = this.config.numberUtil.getAssetLogo(ethObj);
+        ethObj.logo = await this.config.numberUtil.getAssetLogo(ethObj);
         assets.push(ethObj);
-        tokens.forEach((token) => {
+        for (const token of tokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: mainChainId,
             type: ChainType.Ethereum, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         const { unconfirmed_interval: arb_unconfirmed_interval } = arbContractController.config;
         const { withdraws: arbWithdraws } = arbContractController.state;
-        arbWithdraws.forEach((item) => {
+        for (const item of arbWithdraws) {
           if (
             item.chainId !== arbChainId ||
             mainChainId !== arbPartnerChainId ||
@@ -265,13 +265,12 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
             amount: lockToken.amount,
             nativeCurrency: lockToken.nativeCurrency,
           }, opt);
-          arbWithdrawObj.logo = this.config.numberUtil.getAssetLogo(arbWithdrawObj);
+          arbWithdrawObj.logo = await this.config.numberUtil.getAssetLogo(arbWithdrawObj);
           assets.push(arbWithdrawObj);
-        });
-
+        }
         const { unconfirmed_interval: polygon_unconfirmed_interval } = polygonContractController.config;
         const { withdraws: polygonWithdraws } = polygonContractController.state;
-        polygonWithdraws.forEach((item) => {
+        for (const item of polygonWithdraws) {
           if (
             item.chainId !== polygonChainId ||
             polygonPartnerChainId !== mainChainId ||
@@ -293,9 +292,9 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
             amount: lockToken.amount,
             nativeCurrency: lockToken.nativeCurrency,
           }, opt);
-          polygonWithdrawObj.logo = this.config.numberUtil.getAssetLogo(polygonWithdrawObj);
+          polygonWithdrawObj.logo = await this.config.numberUtil.getAssetLogo(polygonWithdrawObj);
           assets.push(polygonWithdrawObj);
-        });
+        }
         defiTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: mainChainId,
@@ -316,16 +315,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        polygonObj.logo = this.config.numberUtil.getAssetLogo(polygonObj);
+        polygonObj.logo = await this.config.numberUtil.getAssetLogo(polygonObj);
         assets.push(polygonObj);
-        polygonTokens.forEach((token) => {
+        for (const token of polygonTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: polygonChainId,
             type: ChainType.Polygon, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiPolygonTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: polygonChainId,
@@ -346,16 +345,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        arbEthObj.logo = this.config.numberUtil.getAssetLogo(arbEthObj);
+        arbEthObj.logo = await this.config.numberUtil.getAssetLogo(arbEthObj);
         assets.push(arbEthObj);
-        arbTokens.forEach((token) => {
+        for (const token of arbTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: arbChainId,
             type: ChainType.Arbitrum, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiArbTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: arbChainId,
@@ -376,16 +375,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        opEthObj.logo = this.config.numberUtil.getAssetLogo(opEthObj);
+        opEthObj.logo = await this.config.numberUtil.getAssetLogo(opEthObj);
         assets.push(opEthObj);
-        opTokens.forEach((token) => {
+        for (const token of opTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: opChainId,
             type: ChainType.Optimism, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiOpTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: opChainId,
@@ -406,16 +405,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        bnbObj.logo = this.config.numberUtil.getAssetLogo(bnbObj);
+        bnbObj.logo = await this.config.numberUtil.getAssetLogo(bnbObj);
         assets.push(bnbObj);
-        bscTokens.forEach((token) => {
+        for (const token of bscTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: bscChainId,
             type: ChainType.Bsc, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiBscTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: bscChainId,
@@ -436,16 +435,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        hecoObj.logo = this.config.numberUtil.getAssetLogo(hecoObj);
+        hecoObj.logo = await this.config.numberUtil.getAssetLogo(hecoObj);
         assets.push(hecoObj);
-        hecoTokens.forEach((token) => {
+        for (const token of hecoTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: hecoChainId,
             type: ChainType.Heco, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiHecoTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: hecoChainId,
@@ -467,16 +466,16 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
           decimals: 18,
           nativeCurrency: true,
         }, opt);
-        avaxObj.logo = this.config.numberUtil.getAssetLogo(avaxObj);
+        avaxObj.logo = await this.config.numberUtil.getAssetLogo(avaxObj);
         assets.push(avaxObj);
-        avaxTokens.forEach((token) => {
+        for (const token of avaxTokens) {
           const tokenObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: avaxChainId,
             type: ChainType.Avax, ...token,
           }, opt);
-          tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
           assets.push(tokenObj);
-        });
+        }
         defiAvaxTokens.forEach((token) => {
           const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
             assetChainId: avaxChainId,
@@ -491,7 +490,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       }
 
       if (rpcChain?.length > 0) {
-        rpcChain.forEach((chain: { chainId: any; type: any }) => {
+        for (const chain of rpcChain) {
           const rpcObj = this.config.numberUtil.calcAssetPrices({
             assetChainId: chain.chainId,
             type: chain.type,
@@ -499,18 +498,18 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
             decimals: 18,
             nativeCurrency: true,
           }, opt);
-          rpcObj.logo = this.config.numberUtil.getAssetLogo(rpcObj);
+          rpcObj.logo = await this.config.numberUtil.getAssetLogo(rpcObj);
           assets.push(rpcObj);
           const rpcChainTokens = rpcTokens[chain.chainId] || [];
-          rpcChainTokens.forEach((token) => {
+          for (const token of rpcChainTokens) {
             const tokenObj = this.config.numberUtil.calcAssetPrices({
               assetChainId: chain.chainId,
               type: chain.type, ...token,
             }, opt);
-            tokenObj.logo = this.config.numberUtil.getAssetLogo(tokenObj);
+            tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
             assets.push(tokenObj);
-          });
-        });
+          }
+        }
       }
 
       assets.forEach((asset) => {

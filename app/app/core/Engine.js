@@ -35,7 +35,8 @@ import {
 	RpcNetworkController,
 	InviteController,
 	util,
-	DefiProtocolController
+	DefiProtocolController,
+	StaticTokenController
 } from 'gopocket-core';
 
 import { store } from '../store';
@@ -225,7 +226,8 @@ class Engine {
 					{ cls: AssetsDataModel, name: 'AssetsDataModel' },
 					{ cls: EnsController, name: 'EnsController' },
 					{ cls: InviteController, name: 'InviteController' },
-					{ cls: DefiProtocolController, name: 'DefiProtocolController' }
+					{ cls: DefiProtocolController, name: 'DefiProtocolController' },
+					{ cls: StaticTokenController, name: 'StaticTokenController' }
 				])
 			};
 			NativeThreads.get().addListener('state', result => {

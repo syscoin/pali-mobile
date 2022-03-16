@@ -24,13 +24,12 @@ import Modal from 'react-native-modal';
 import Popover from '../../UI/Popover';
 import { strings } from '../../../../locales/i18n';
 import AsyncStorage from '@react-native-community/async-storage';
-// eslint-disable-next-line import/no-nodejs-modules
 import { getActiveTabId, getStorageActiveTabId, setActiveTab } from '../../../util/browser';
 import SuggestPage from '../../UI/SuggestPage';
 import { AutoCompleteType_DAPP } from '../../../core/AutoCompleteController';
 import TabPageView from '../../UI/TabPageView';
 import SafeArea from 'react-native-safe-area';
-import NativeThreads from '../../../threads/NativeThreads';
+import { callSqlite } from '../../../util/ControllerUtils';
 
 const screenWidth = Dimensions.get('window').width;
 const tabSpaceSize = 20;
@@ -478,15 +477,7 @@ class Browser extends PureComponent {
 
 	openSuggestUrl = async (item: AutoCompleteResult) => {
 		if (item.type === AutoCompleteType_DAPP) {
-			NativeThreads.get().callSqliteAsync(
-				'updateWhitelistDapp',
-				item.url,
-				item.title,
-				item.desc,
-				item.chain,
-				item.img,
-				Date.now()
-			);
+			callSqlite('updateWhitelistDapp', item.url, item.title, item.desc, item.chain, item.img, Date.now());
 		}
 		this.setState({ showSuggestPage: false });
 		DeviceEventEmitter.emit('AddressbarStateEmitter', { state: 'go', url: item.url, title: item.title });

@@ -14,7 +14,7 @@ import img_approve from '../../../images/img_approve.png';
 import img_claim from '../../../images/imtoken.png';
 import TransactionTypes from '../../../core/TransactionTypes';
 import { strings } from '../../../../locales/i18n';
-import { Sqlite } from 'gopocket-core';
+import { callSqlite } from '../../../util/ControllerUtils';
 
 const { ORIGIN_DEEPLINK, ORIGIN_QR_CODE } = AppConstants.DEEPLINKS;
 
@@ -78,7 +78,7 @@ const TransactionHeader = props => {
 		if (!url) {
 			return;
 		}
-		const dapp = await Sqlite.getInstance().getWhitelistDapp(getHost(url)?.toLowerCase());
+		const dapp = await callSqlite('getWhitelistDapp', getHost(url)?.toLowerCase());
 		if (dapp?.img) {
 			setDappImg(dapp?.img);
 		}
@@ -127,10 +127,15 @@ const TransactionHeader = props => {
 	const renderTitle = () => {
 		const { url, currentEnsName, spenderAddress, origin } = props.currentPageInformation;
 		let title = '';
-		if (originIsDeeplink) title = renderShortAddress(spenderAddress);
-		else if (originIsMoveToL2 || originIsClaim) title = origin;
-		else if (originIsWalletConnect) title = getHost(origin.split(WALLET_CONNECT_ORIGIN)[1]);
-		else title = getHost(currentEnsName || url || origin);
+		if (originIsDeeplink) {
+			title = renderShortAddress(spenderAddress);
+		} else if (originIsMoveToL2 || originIsClaim) {
+			title = origin;
+		} else if (originIsWalletConnect) {
+			title = getHost(origin.split(WALLET_CONNECT_ORIGIN)[1]);
+		} else {
+			title = getHost(currentEnsName || url || origin);
+		}
 		if (title === TransactionTypes.ORIGIN_CLAIM) {
 			title = strings('other.claim');
 		}

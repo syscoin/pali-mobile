@@ -21,7 +21,6 @@ import Modal from 'react-native-modal';
 import {
 	addCurrencySymbol,
 	balanceToFiatNumber,
-	getAssetLogo,
 	getAssetSymbol,
 	getTokenDecimals,
 	renderAmount
@@ -481,12 +480,6 @@ class AddAsset extends PureComponent {
 
 	renderSearchItem = (asset, index) => {
 		const isLoading = this.containLoadingToken(asset.address, asset.type);
-		const logo = getAssetLogo({
-			type: asset.type,
-			address: asset.address,
-			l1Address: asset.l1Address
-		});
-		asset = { ...asset, logo };
 		const addressLabel = asset.address
 			? asset.address.substring(0, 6) + '...' + asset.address.substring(asset.address.length - 6)
 			: '';

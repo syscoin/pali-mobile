@@ -2,6 +2,7 @@ import { strings } from '../../locales/i18n';
 import TopDomains from './TopDomains';
 import { util, URL } from 'gopocket-core';
 import NativeThreads from '../threads/NativeThreads';
+import { callSqlite } from '../util/ControllerUtils';
 
 export const AutoCompleteType_URL = 1;
 export const AutoCompleteType_SEARCH = 2;
@@ -41,16 +42,12 @@ export class AutoCompleteController {
 		this.text_ = text;
 		this.results_ = [];
 		if (!this.text_ || !this.text_.trim()) {
-			const history = await NativeThreads.get().callSqliteAsync('getBrowserHistory');
+			const history = await callSqlite('getBrowserHistory');
 			const results = [];
 			for (const subHistory of history) {
 				const hostName = new URL(subHistory.url).hostname;
 				if (!results.find(result => result.hostName === hostName)) {
-					const dapp = await NativeThreads.get().callSqliteAsync(
-						'getWhitelistDapp',
-						subHistory.url,
-						hostName.toLowerCase()
-					);
+					const dapp = await callSqlite('getWhitelistDapp', subHistory.url, hostName.toLowerCase());
 					results.push({
 						type: AutoCompleteType_RECENT,
 						url: subHistory.url,
@@ -115,8 +112,8 @@ export class AutoCompleteController {
 			return [];
 		}
 		const lowText = text.toLowerCase();
-		const history = await NativeThreads.get().callSqliteAsync('getBrowserHistory');
-		const blacklistDapps = await NativeThreads.get().callSqliteAsync('getBlacklistDapps');
+		const history = await callSqlite('getBrowserHistory');
+		const blacklistDapps = await callSqlite('getBlacklistDapps');
 		const results = [];
 		for (const subHistory of history) {
 			const hostName = new URL(subHistory.url).hostname;
@@ -127,11 +124,7 @@ export class AutoCompleteController {
 				continue;
 			}
 			if (hostName.toLowerCase().includes(lowText)) {
-				const dapp = await NativeThreads.get().callSqliteAsync(
-					'getWhitelistDapp',
-					subHistory.url,
-					hostName.toLowerCase()
-				);
+				const dapp = await callSqlite('getWhitelistDapp', subHistory.url, hostName.toLowerCase());
 				results.push({
 					type: AutoCompleteType_SEARCH_RECENT,
 					url: subHistory.url,
@@ -174,7 +167,9 @@ export class AutoCompleteController {
 			const hostname = url.hostname;
 			const re = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
 			if (re.test(hostname)) {
-				if (RegExp.$1 < 256 && RegExp.$2 < 256 && RegExp.$3 < 256 && RegExp.$4 < 256) return true;
+				if (RegExp.$1 < 256 && RegExp.$2 < 256 && RegExp.$3 < 256 && RegExp.$4 < 256) {
+					return true;
+				}
 			}
 			return false;
 		} catch (error) {

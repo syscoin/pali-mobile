@@ -1,5 +1,5 @@
 import { ChainType } from 'gopocket-core';
-import NativeThreads from '../threads/NativeThreads';
+import { callSqlite } from '../util/ControllerUtils';
 
 export const migrations = {
 	2: state => {
@@ -52,12 +52,7 @@ export const migrations = {
 			const keys = Object.keys(txState.transactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Ethereum,
-						txState.transactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Ethereum, txState.transactions[key]);
 				}
 			}
 			delete txState.transactions;
@@ -66,12 +61,7 @@ export const migrations = {
 			const keys = Object.keys(txState.bscTransactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Bsc,
-						txState.bscTransactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Bsc, txState.bscTransactions[key]);
 				}
 			}
 			delete txState.bscTransactions;
@@ -80,12 +70,7 @@ export const migrations = {
 			const keys = Object.keys(txState.polygonTransactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Polygon,
-						txState.polygonTransactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Polygon, txState.polygonTransactions[key]);
 				}
 			}
 			delete txState.polygonTransactions;
@@ -94,12 +79,7 @@ export const migrations = {
 			const keys = Object.keys(txState.arbTransactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Arbitrum,
-						txState.arbTransactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Arbitrum, txState.arbTransactions[key]);
 				}
 			}
 			delete txState.arbTransactions;
@@ -108,12 +88,7 @@ export const migrations = {
 			const keys = Object.keys(txState.opTransactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Optimism,
-						txState.opTransactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Optimism, txState.opTransactions[key]);
 				}
 			}
 			delete txState.opTransactions;
@@ -122,12 +97,7 @@ export const migrations = {
 			const keys = Object.keys(txState.hecoTransactions);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTransactions',
-						key,
-						ChainType.Heco,
-						txState.hecoTransactions[key]
-					);
+					callSqlite('insertTransactions', key, ChainType.Heco, txState.hecoTransactions[key]);
 				}
 			}
 			delete txState.hecoTransactions;
@@ -137,12 +107,7 @@ export const migrations = {
 			const keys = Object.keys(txState.tokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Ethereum,
-						txState.tokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Ethereum, txState.tokenTxInfos[key]);
 				}
 			}
 			delete txState.tokenTxInfos;
@@ -151,12 +116,7 @@ export const migrations = {
 			const keys = Object.keys(txState.bscTokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Bsc,
-						txState.bscTokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Bsc, txState.bscTokenTxInfos[key]);
 				}
 			}
 			delete txState.bscTokenTxInfos;
@@ -165,12 +125,7 @@ export const migrations = {
 			const keys = Object.keys(txState.polygonTokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Polygon,
-						txState.polygonTokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Polygon, txState.polygonTokenTxInfos[key]);
 				}
 			}
 			delete txState.polygonTokenTxInfos;
@@ -179,12 +134,7 @@ export const migrations = {
 			const keys = Object.keys(txState.arbTokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Arbitrum,
-						txState.arbTokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Arbitrum, txState.arbTokenTxInfos[key]);
 				}
 			}
 			delete txState.arbTokenTxInfos;
@@ -193,12 +143,7 @@ export const migrations = {
 			const keys = Object.keys(txState.opTokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Optimism,
-						txState.opTokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Optimism, txState.opTokenTxInfos[key]);
 				}
 			}
 			delete txState.opTokenTxInfos;
@@ -207,12 +152,7 @@ export const migrations = {
 			const keys = Object.keys(txState.hecoTokenTxInfos);
 			if (keys?.length > 0) {
 				for (const key of keys) {
-					NativeThreads.get().callSqliteAsync(
-						'insertTokenTransactions',
-						key,
-						ChainType.Heco,
-						txState.hecoTokenTxInfos[key]
-					);
+					callSqlite('insertTokenTransactions', key, ChainType.Heco, txState.hecoTokenTxInfos[key]);
 				}
 			}
 			delete txState.hecoTokenTxInfos;
@@ -239,7 +179,7 @@ export const migrations = {
 		}
 		if (state?.browser) {
 			if (state.browser.history) {
-				NativeThreads.get().callSqliteAsync('insertBrowserHistory', state.browser.history);
+				callSqlite('insertBrowserHistory', state.browser.history);
 				delete state.browser.history;
 			}
 			if (state.browser.userSelectedChainTypes) {
@@ -247,7 +187,7 @@ export const migrations = {
 				for (const url in state.browser.userSelectedChainTypes) {
 					userSelectedChainTypes.push({ url, chainType: state.browser.userSelectedChainTypes[url] });
 				}
-				NativeThreads.get().callSqliteAsync('insertUserSelectedChainTypes', userSelectedChainTypes);
+				callSqlite('insertUserSelectedChainTypes', userSelectedChainTypes);
 				delete state.browser.userSelectedChainTypes;
 			}
 			if (state.browser.whitelistDapps) {
@@ -255,7 +195,7 @@ export const migrations = {
 				for (const key in state.browser.whitelistDapps) {
 					whitelistDapps.push({ key, ...state.browser.whitelistDapps[key] });
 				}
-				NativeThreads.get().callSqliteAsync('insertWhitelistDapps', whitelistDapps);
+				callSqlite('insertWhitelistDapps', whitelistDapps);
 				delete state.browser.whitelistDapps;
 			}
 			if (state.browser.blacklistDapps) {
@@ -263,7 +203,7 @@ export const migrations = {
 				for (const key in state.browser.blacklistDapps) {
 					blacklistDapps.push({ ...state.browser.blacklistDapps[key] });
 				}
-				NativeThreads.get().callSqliteAsync('insertBlacklistDapps', blacklistDapps);
+				callSqlite('insertBlacklistDapps', blacklistDapps);
 				delete state.browser.blacklistDapps;
 			}
 		}

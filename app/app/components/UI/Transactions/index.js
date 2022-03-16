@@ -24,8 +24,8 @@ import { connect } from 'react-redux';
 import { getChainTypeByChainId } from '../../../util/networks';
 import { colors } from '../../../styles/common';
 import { APPROVE_FUNCTION_SIGNATURE, getSymbol } from '../../../util/transactions';
-import NativeThreads from '../../../threads/NativeThreads';
 import { toDateFormatMonthDayYear } from '../../../util/date';
+import { callSqlite } from '../../../util/ControllerUtils';
 
 const noTxColor = '#404040';
 const styles = StyleSheet.create({
@@ -164,19 +164,9 @@ class Transactions extends PureComponent {
 		if (asset) {
 			const type = asset.type ? asset.type : ChainType.Ethereum;
 			const chainId = getChainIdByType(type);
-			ethClaimTxs = await NativeThreads.get().callSqliteAsync(
-				'findMigrationTxs',
-				selectedAddress,
-				chainId,
-				type,
-				claimContracts
-			);
+			ethClaimTxs = await callSqlite('findMigrationTxs', selectedAddress, chainId, type, claimContracts);
 		} else {
-			ethClaimTxs = await NativeThreads.get().callSqliteAsync(
-				'findAllMigrationTxs',
-				selectedAddress,
-				claimContracts
-			);
+			ethClaimTxs = await callSqlite('findAllMigrationTxs', selectedAddress, claimContracts);
 		}
 
 		this.ethClaimValues = getClaimValues(ethClaimTxs);
@@ -206,7 +196,7 @@ class Transactions extends PureComponent {
 				this.allLoadCount += targetTx.length;
 			} else if (asset.nativeCurrency) {
 				if (txType === 1 || txType === 2) {
-					targetTx = await NativeThreads.get().callSqliteAsync(
+					targetTx = await callSqlite(
 						'getActionTx',
 						selectedAddress,
 						type,
@@ -217,7 +207,7 @@ class Transactions extends PureComponent {
 						loadCount + 10
 					);
 				} else if (txType === 3) {
-					targetTx = await NativeThreads.get().callSqliteAsync(
+					targetTx = await callSqlite(
 						'getGasUsedHistory',
 						selectedAddress,
 						type,
@@ -226,7 +216,7 @@ class Transactions extends PureComponent {
 						loadCount + 10
 					);
 				} else {
-					targetTx = await NativeThreads.get().callSqliteAsync(
+					targetTx = await callSqlite(
 						'getTransactionsHistory',
 						selectedAddress,
 						type,
@@ -277,7 +267,7 @@ class Transactions extends PureComponent {
 			}
 		}
 
-		targetTx = this.loadRenderData(targetTx);
+		targetTx = await this.loadRenderData(targetTx);
 		targetTx = this.loadTime(this.state.transactions, targetTx);
 		this.setState({ transactions: targetTx, loadEnd }, () => {
 			this.isEndReached = false;
@@ -288,7 +278,7 @@ class Transactions extends PureComponent {
 		const { selectedAddress } = this.props;
 		let tempTx = [];
 		if (txType !== 3) {
-			let tokens = await NativeThreads.get().callSqliteAsync(
+			let tokens = await callSqlite(
 				'getTokenHistory',
 				selectedAddress,
 				chainId,
@@ -305,7 +295,7 @@ class Transactions extends PureComponent {
 			}
 		}
 		if (txType === 0 || txType === 3) {
-			let approveTx = await NativeThreads.get().callSqliteAsync(
+			let approveTx = await callSqlite(
 				'getTransactionsByMethodId',
 				selectedAddress,
 				chainId,
@@ -329,12 +319,7 @@ class Transactions extends PureComponent {
 
 		if (tokenTxs.length) {
 			const allHash = tokenTxs.map(tx => tx.transactionHash);
-			const txs = await NativeThreads.get().callSqliteAsync(
-				'getTransactionsByHash',
-				selectedAddress,
-				chainId,
-				allHash
-			);
+			const txs = await callSqlite('getTransactionsByHash', selectedAddress, chainId, allHash);
 			if (txs.length > 0) {
 				txs.forEach(tx => {
 					const tokens = tokenTxs.find(tokenTx => tokenTx.transactionHash === tx.transactionHash);
@@ -353,12 +338,7 @@ class Transactions extends PureComponent {
 
 		if (approveTx.length) {
 			const allHash = approveTx.map(tx => tx.transactionHash);
-			const addressTokenTx = await NativeThreads.get().callSqliteAsync(
-				'getTokenByHash',
-				selectedAddress,
-				chainId,
-				allHash
-			);
+			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, chainId, allHash);
 			approveTx.forEach(tx => {
 				const tokenTxs = addressTokenTx.filter(tokenTx => tokenTx.transactionHash === tx.transactionHash);
 				if (tokenTxs?.length) {
@@ -407,7 +387,7 @@ class Transactions extends PureComponent {
 
 		let txs;
 		if (txType === 1) {
-			txs = await NativeThreads.get().callSqliteAsync(
+			txs = await callSqlite(
 				'getReceiveTx',
 				selectedAddress,
 				chainId,
@@ -416,7 +396,7 @@ class Transactions extends PureComponent {
 				loadCount + 10
 			);
 		} else {
-			txs = await NativeThreads.get().callSqliteAsync(
+			txs = await callSqlite(
 				'getTransactionsByAddress',
 				selectedAddress,
 				chainId,
@@ -432,7 +412,7 @@ class Transactions extends PureComponent {
 		}
 
 		if (txType !== 2) {
-			let receiveToken = await NativeThreads.get().callSqliteAsync(
+			let receiveToken = await callSqlite(
 				'getReceiveTokenTx',
 				selectedAddress,
 				chainId,
@@ -476,12 +456,7 @@ class Transactions extends PureComponent {
 			});
 
 			const allHash = tempTxs.map(tx => tx.transactionHash);
-			const addressTokenTx = await NativeThreads.get().callSqliteAsync(
-				'getTokenByHash',
-				selectedAddress,
-				chainId,
-				allHash
-			);
+			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, chainId, allHash);
 
 			tempTxs.forEach(tx => {
 				const tokenTxs = addressTokenTx.filter(tokenTx => tokenTx.transactionHash === tx.transactionHash);
@@ -516,31 +491,39 @@ class Transactions extends PureComponent {
 
 		let tempTxs = [...rpcTx, ...rpcTokenTx, ...addressTxs, ...receiveToken];
 		if (txType !== 0) {
-			tempTxs = tempTxs.filter(tx => {
-				const isETHClaim = this.ethClaimValues[tx.transactionHash];
-				const isNativeCurrency =
-					(isETHClaim && tx.isGasItem) || (tx.transaction?.value && !hexToBN(tx.transaction?.value).isZero());
-
-				const toAddress = safeToChecksumAddress(tx.to) || safeToChecksumAddress(tx.transaction?.to);
-				const type = getChainTypeByChainId(tx.chainId);
-
-				if (!isNativeCurrency && !(tx.transferInformation?.symbol || getSymbol(toAddress, type))) {
-					return txType === 3;
+			const filterTx = [];
+			for (const tx of tempTxs) {
+				if (await this.filterType(txType, tx)) {
+					filterTx.push(tx);
 				}
-				if (tx.tokenTxs?.length) {
-					return txType === 3;
-				}
-				if (tx.transaction?.data?.startsWith(APPROVE_FUNCTION_SIGNATURE)) {
-					return txType === 3;
-				}
-				return txType !== 3;
-			});
+			}
+			tempTxs = filterTx;
 		}
 
 		return {
 			txs: tempTxs.sort((a, b) => b.time - a.time),
 			loadEnd
 		};
+	};
+
+	filterType = async (txType, tx) => {
+		const isETHClaim = this.ethClaimValues[tx.transactionHash];
+		const isNativeCurrency =
+			(isETHClaim && tx.isGasItem) || (tx.transaction?.value && !hexToBN(tx.transaction?.value).isZero());
+
+		const toAddress = safeToChecksumAddress(tx.to) || safeToChecksumAddress(tx.transaction?.to);
+		const type = getChainTypeByChainId(tx.chainId);
+
+		if (!isNativeCurrency && !(tx.transferInformation?.symbol || (await getSymbol(toAddress, type)))) {
+			return txType === 3;
+		}
+		if (tx.tokenTxs?.length) {
+			return txType === 3;
+		}
+		if (tx.transaction?.data?.startsWith(APPROVE_FUNCTION_SIGNATURE)) {
+			return txType === 3;
+		}
+		return txType !== 3;
 	};
 
 	loadGasTx = (targetTx, txType) => {
@@ -698,7 +681,7 @@ class Transactions extends PureComponent {
 		return this.props.ensEntries[address]?.ensName;
 	};
 
-	getRenderData = tx => {
+	getRenderData = async tx => {
 		const { selectedAddress } = this.props;
 		let targetDecimalValue = '';
 		let isETHClaim = false;
@@ -734,12 +717,12 @@ class Transactions extends PureComponent {
 
 		const toContract = tx.transferInformation?.contractAddress || toAddress;
 		const logo = !isGasItem
-			? getAssetLogo({ nativeCurrency: isNativeCurrency, type, address: toContract, l1Address: toContract })
+			? await getAssetLogo({ nativeCurrency: isNativeCurrency, type, address: toContract, l1Address: toContract })
 			: null;
 
 		const symbol = isNativeCurrency
 			? getCurrency(type)
-			: tx.transferInformation?.symbol || getSymbol(toAddress, type);
+			: tx.transferInformation?.symbol || (await getSymbol(toAddress, type));
 
 		const isApproval = tx.transaction?.data?.startsWith(APPROVE_FUNCTION_SIGNATURE);
 		const spender = '0x' + (tx.transaction?.data?.substr(34, 40) || '');
@@ -770,27 +753,29 @@ class Transactions extends PureComponent {
 		};
 	};
 
-	loadRenderData = transactions => {
+	loadRenderData = async transactions => {
 		if (!transactions || transactions.length <= 0) {
 			return [];
 		}
 		const { selectedAddress } = this.props;
-		return transactions.map(tx => {
+		const newTransactions = [];
+		for (const tx of newTransactions) {
 			if (tx.tokenTxs?.length) {
-				tx.tokenTxs.forEach(tokenTx => {
-					const tokenTxData = this.getRenderData(tokenTx);
+				for (const tokenTx of tx.tokenTxs) {
+					const tokenTxData = await this.getRenderData(tokenTx);
 					for (const item in tokenTxData) {
 						tokenTx[item] = tokenTxData[item];
 					}
-				});
+				}
 			}
-			const txData = this.getRenderData(tx);
-			return {
+			const txData = await this.getRenderData(tx);
+			newTransactions.push({
 				...tx,
 				selectedAddress,
 				...txData
-			};
-		});
+			});
+		}
+		return newTransactions;
 	};
 
 	loadTime = (transactions, newTxs) => {

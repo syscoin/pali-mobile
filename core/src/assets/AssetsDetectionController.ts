@@ -8,7 +8,7 @@ import BscNetworkController from '../network/BscNetworkController';
 import NetworkController from '../network/NetworkController';
 import PolygonNetworkController from '../network/PolygonNetworkController';
 import ArbNetworkController from '../network/ArbNetworkController';
-import { getContractController } from '../ControllerUtils';
+import { getContractController, getStaticTokenByChainId } from '../ControllerUtils';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import { Sqlite } from '../transaction/Sqlite';
@@ -93,7 +93,7 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
       const assetsController = this.context.AssetsController as AssetsController;
       const tokenBalancesController = this.context.TokenBalancesController as TokenBalancesController;
       const needToAdd: string[] = [];
-      const { type, contractController, localTokenInfos } = getContractController(this.context, chainId);
+      const { type, contractController } = getContractController(this.context, chainId);
       if (!contractController || !type) {
         return;
       }
@@ -150,7 +150,7 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
       for (const tokenAddress in balances) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        let { decimals, symbol } = localTokenInfos?.[tokenAddress.toLowerCase()] || {};
+        let { decimals, symbol } = await getStaticTokenByChainId(chainId, tokenAddress);
         if (!decimals || !symbol) {
           try {
             decimals = await contractController.getTokenDecimals(tokenAddress, chainId);

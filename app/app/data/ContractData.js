@@ -1,16 +1,7 @@
-import {
-	ETH_JSON,
-	BSC_JSON,
-	POLYGON_JSON,
-	ChainType,
-	HECO_JSON,
-	TRON_JSON,
-	OP_JSON,
-	AVAX_JSON,
-	ARB_JSON
-} from 'gopocket-core';
+import { ChainType } from 'gopocket-core';
 import Engine from '../core/Engine';
 import {
+	callSqlite,
 	isMainnetArb,
 	isMainnetAvax,
 	isMainnetBsc,
@@ -21,43 +12,43 @@ import {
 	isMainnetTron
 } from '../util/ControllerUtils';
 
-// eslint-disable-next-line import/prefer-default-export
-export function getContractMap(type) {
+export async function getContractMap(type) {
 	if (type === ChainType.Polygon) {
-		if (isMainnetPolygon()) {
-			return POLYGON_JSON;
+		if (!isMainnetPolygon()) {
+			return [];
 		}
 	} else if (type === ChainType.Bsc) {
-		if (isMainnetBsc()) {
-			return BSC_JSON;
+		if (!isMainnetBsc()) {
+			return [];
 		}
 	} else if (type === ChainType.Arbitrum) {
-		if (isMainnetArb()) {
-			return ARB_JSON;
+		if (!isMainnetArb()) {
+			return [];
 		}
-		return {};
 	} else if (type === ChainType.Ethereum) {
-		if (isMainnetEthereum()) {
-			return ETH_JSON;
+		if (!isMainnetEthereum()) {
+			return [];
 		}
 	} else if (type === ChainType.Heco) {
-		if (isMainnetHeco()) {
-			return HECO_JSON;
+		if (!isMainnetHeco()) {
+			return [];
 		}
 	} else if (type === ChainType.Tron) {
-		if (isMainnetTron()) {
-			return TRON_JSON;
+		if (!isMainnetTron()) {
+			return [];
 		}
 	} else if (type === ChainType.Optimism) {
-		if (isMainnetOp()) {
-			return OP_JSON;
+		if (!isMainnetOp()) {
+			return [];
 		}
 	} else if (type === ChainType.Avax) {
-		if (isMainnetAvax()) {
-			return AVAX_JSON;
+		if (!isMainnetAvax()) {
+			return [];
 		}
 	}
-	return {};
+
+	const tokens = await callSqlite('getStaticTokens', type);
+	return tokens || [];
 }
 
 export async function getQueryId(type, nativeCurrency, address) {
@@ -121,8 +112,8 @@ export async function getQueryId(type, nativeCurrency, address) {
 		}
 	}
 	if (address) {
-		const contractMap = getContractMap(type);
-		return contractMap[address?.toLowerCase()]?.id;
+		const token = await callSqlite('getStaticToken', type, address);
+		return token?.coin_id;
 	}
 	return undefined;
 }

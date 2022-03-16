@@ -9,14 +9,6 @@ import { Mutex } from 'async-mutex';
 import URL from 'url-parse';
 import * as ArbConfig from './ArbConfig.json';
 import * as util from './util';
-import * as ETH_JSON from './static-token/ethereum.json';
-import * as BSC_JSON from './static-token/binance-smart-chain.json';
-import * as POLYGON_JSON from './static-token/polygon-pos.json';
-import * as HECO_JSON from './static-token/huobi-token.json';
-import * as TRON_JSON from './static-token/tron.json';
-import * as OP_JSON from './static-token/optimistic-ethereum.json';
-import * as AVAX_JSON from './static-token/avalanche.json';
-import * as ARB_JSON from './static-token/arbitrum.json';
 
 export * from './approval/ApprovalEventsController';
 export * from './assets/AssetsContractController';
@@ -57,11 +49,12 @@ export * from './assets/AssetsDataModel';
 export * from './user/EnsController';
 export * from './transaction/Sqlite';
 export * from './assets/DefiProtocolController';
+export * from './assets/StaticTokenController';
 
 // ethers
 export { BigNumber, EthersUtils };
 
-export { util, ETH_JSON, BSC_JSON, POLYGON_JSON, HECO_JSON, TRON_JSON, OP_JSON, AVAX_JSON, ARB_JSON, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL };
+export { util, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL };
 // ethereumjs-util
 export { BN, toChecksumAddress, stripHexPrefix, isValidAddress, addHexPrefix, isZeroAddress };
 

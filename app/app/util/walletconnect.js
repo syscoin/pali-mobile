@@ -1,6 +1,6 @@
-import { ChainType, Sqlite, util } from 'gopocket-core';
+import { ChainType, util } from 'gopocket-core';
 import Engine from '../core/Engine';
-import { getRpcProviderChainId } from './ControllerUtils';
+import { callSqlite, getRpcProviderChainId } from './ControllerUtils';
 
 export const CLIENT_OPTIONS = {
 	clientMeta: {
@@ -36,7 +36,7 @@ export const matchDefaultChainType = (_url, _hostname, defaultChainTypes) => {
 };
 
 export const matchUserSelectedChainType = async _hostname => {
-	const chain_type = await Sqlite.getInstance().getUserSelectedChainType(_hostname);
+	const chain_type = await callSqlite('getUserSelectedChainType', _hostname);
 	if (chain_type) {
 		return { found: true, chain_type };
 	}
@@ -94,7 +94,7 @@ export const chainTypeTochain = chainType => {
 };
 
 export const matchWhitelistDapps = async _hostname => {
-	const dapp = await Sqlite.getInstance().getWhitelistDapp(_hostname);
+	const dapp = await callSqlite('getWhitelistDapp', _hostname);
 	if (dapp && dapp.chain) {
 		return { found: true, chain_type: chainToChainType(dapp.chain) };
 	}

@@ -159,6 +159,25 @@ export class Sqlite {
             this._errorLog('create table BLACK_LIST_DAPPS', err);
           }
         );
+        // static tokens
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS STATIC_TOKENS(' +
+          'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+          'address VARCHAR NOT NULL,' +
+          'l1_address VARCHAR,' +
+          'coin_id VARCHAR,' +
+          'chain_type INTEGER NOT NULL,' +
+          'image TEXT,' +
+          'name VARCHAR,' +
+          'decimals INTEGER,' +
+          'symbol VARCHAR,' +
+          'UNIQUE(address, chain_type))',
+          [],
+          undefined,
+          (err: any) => {
+            this._errorLog('create table STATIC_TOKENS', err);
+          }
+        );
       },
       (err: any) => {
         this._errorLog('init', err);
@@ -167,6 +186,119 @@ export class Sqlite {
         this._successLog('init');
       }
     );
+  }
+
+  clearStaticTokens() {
+    return new Promise((resolve => {
+      const sql = 'DELETE FROM STATIC_TOKENS';
+      this.db.executeSql(
+        sql,
+        [],
+        () => {
+          resolve(true);
+        },
+        (error: any) => {
+          this._errorLog('clearStaticTokens', error);
+          resolve(false);
+        }
+      );
+    }));
+  }
+
+  getStaticTokenCount() {
+    return new Promise<any>((resolve) => {
+      let sql = 'SELECT COUNT(*) AS count FROM STATIC_TOKENS';
+      this.db.executeSql(
+        sql,
+        [],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            resolve(results.rows.item(0)?.count || 0);
+          } else {
+            resolve(undefined);
+          }
+        },
+        (error: any) => {
+          this._errorLog('getStaticTokenCount', error);
+          resolve(undefined);
+        }
+      );
+    });
+  }
+
+  getStaticToken(type: number, address: string, l1_address: string | undefined = undefined) {
+    return new Promise<any>((resolve) => {
+      let sql;
+      let values;
+      if (type === ChainType.Arbitrum && l1_address) {
+        sql = 'SELECT * FROM STATIC_TOKENS WHERE (chain_type=? AND address=?) OR (chain_type=? AND address=?)';
+        values = [type, address.toLowerCase(), ChainType.Ethereum, l1_address.toLowerCase()];
+      } else {
+        sql = 'SELECT * FROM STATIC_TOKENS WHERE chain_type=? AND address=?';
+        values = [type, address.toLowerCase()];
+      }
+      this.db.executeSql(
+        sql,
+        values,
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item } = results.rows;
+            resolve(item(0));
+          } else {
+            resolve(undefined);
+          }
+        },
+        (error: any) => {
+          this._errorLog('getStaticToken', error);
+          resolve(undefined);
+        }
+      );
+    });
+  }
+
+  getStaticTokens(type: number) {
+    return new Promise<any[]>((resolve) => {
+      const sql = 'SELECT * FROM STATIC_TOKENS WHERE chain_type=?';
+      const values = [type];
+      this.db.executeSql(
+        sql,
+        values,
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item, length } = results.rows;
+            const tokens = [];
+            for (let index = 0; index < length; index++) {
+              const data = item(index);
+              tokens.push(data);
+            }
+            resolve(tokens);
+          } else {
+            resolve([]);
+          }
+        },
+        (error: any) => {
+          this._errorLog('getStaticTokens', error);
+          resolve([]);
+        }
+      );
+    });
+  }
+
+  insetStaticTokens(tokens: any[]) {
+    if (!tokens || tokens.length <= 0) {
+      return;
+    }
+    const baseSql = 'INSERT OR REPLACE INTO STATIC_TOKENS(address, l1_address, coin_id, chain_type, image, name, decimals, symbol) VALUES';
+    const valuesSql = '(?,?,?,?,?,?,?,?)';
+    this.db.transaction(
+      (cursor: any) => {
+        this.execBatchInsert(cursor, baseSql, valuesSql, tokens, (item) => [
+          item.address, item.l1_address, item.coin_id, item.chain_type, item.image, item.name, item.decimals, item.symbol
+        ], 200);
+      },
+      (error: any) => {
+        this._errorLog('insetStaticTokens', error);
+      });
   }
 
   addBrowserHistory(url: string, name: string, icon: string) {

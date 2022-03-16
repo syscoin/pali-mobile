@@ -13,6 +13,7 @@ import { SetAppstoreBaseVersion, SetUpdateConfig, updateContractList, updateFamo
 import Engine from '../core/Engine';
 import NativeThreads from '../threads/NativeThreads';
 import { API_KEY } from '@env';
+import { callSqlite } from './ControllerUtils';
 
 const TEST_INVITE_URL = 'http://pocket.libsss.com';
 const RELEASE_INVITE_URL = 'https://community.gopocket.xyz';
@@ -52,7 +53,7 @@ const fetchConfig = async () => {
 				}
 				if (dappPage) {
 					store.dispatch(updateDappPage(dappPage));
-					NativeThreads.get().callSqliteAsync('updateWhitelistDapps', getDapp(dappPage));
+					callSqlite('updateWhitelistDapps', getDapp(dappPage));
 					const lDapp = getLanguageDapp(dappPage);
 					lDapp?.favourites && store.dispatch(addFavouriteDapps(lDapp?.favourites));
 				}

@@ -15,7 +15,7 @@ import TransactionController, {
 } from '../transaction/TransactionController';
 import { BaseConfig, BaseState } from '../BaseController';
 import { Sqlite } from '../transaction/Sqlite';
-import { getContractController } from '../ControllerUtils';
+import {getContractController, getStaticTokenByChainId} from '../ControllerUtils';
 import AssetsContractController from './AssetsContractController';
 import { ContractController } from './ContractController';
 import { ChainType } from './TokenRatesController';
@@ -347,7 +347,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         done_block_number = item.block_number;
       }
     }
-    const { contractController, localTokenInfos } = getContractController(this.context, partnerChainId);
+    const { contractController } = getContractController(this.context, partnerChainId);
     if (!contractController) {
       return;
     }
@@ -401,7 +401,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         address = toChecksumAddress(address);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        let { decimals, symbol } = localTokenInfos?.[address.toLowerCase()] || {};
+        let { decimals, symbol } = await getStaticTokenByChainId(chainId, tokenAddress);
         if (!decimals || !symbol) {
           try {
             symbol = await contractController.getAssetSymbol(address, partnerChainId);

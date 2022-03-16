@@ -99,12 +99,9 @@ export default class AssetSearch extends PureComponent {
 	};
 
 	searchByChainTYpe = async (currentChainType, trimedSearchQuery) => {
-		const contractMap = getContractMap(currentChainType);
-		const contractList = Object.entries(contractMap).map(([address, tokenData]) => {
-			tokenData.address = address;
-			tokenData.type = currentChainType;
-			tokenData.fromSearch = true;
-			return tokenData;
+		const contractMap = await getContractMap(currentChainType);
+		const contractList = contractMap.map(token => {
+			return { type: currentChainType, fromSearch: true, logo: token.image, ...token };
 		});
 
 		let addressSearchResult =

@@ -87,12 +87,10 @@ export default class SearchView extends PureComponent {
 		return validated;
 	};
 
-	localSearch = (searchQuery, chainType) => {
-		const contractMap = getContractMap(chainType);
-		const contractList = Object.entries(contractMap).map(([address, tokenData]) => {
-			tokenData.address = address;
-			tokenData.type = chainType;
-			return tokenData;
+	localSearch = async (searchQuery, chainType) => {
+		const contractMap = await getContractMap(chainType);
+		const contractList = contractMap.map(token => {
+			return { type: chainType, ...token };
 		});
 
 		const fuse = new Fuse(contractList, {
@@ -113,12 +111,12 @@ export default class SearchView extends PureComponent {
 		return ret;
 	};
 
-	addSecurityTokens = tokenList => {
+	addSecurityTokens = async tokenList => {
 		if (tokenList.length === 0) {
 			return;
 		}
-		tokenList.forEach(asset => {
-			asset.logo = getAssetLogo({
+		for (const asset of tokenList) {
+			asset.logo = await getAssetLogo({
 				type: asset.type,
 				address: asset.address,
 				l1Address: asset.l1Address
@@ -130,7 +128,7 @@ export default class SearchView extends PureComponent {
 			const noticeLength = notice ? notice.length : 0;
 			const riskLength = risk ? risk.length : 0;
 			asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
-		});
+		}
 	};
 
 	sortResult = result => {
@@ -174,37 +172,37 @@ export default class SearchView extends PureComponent {
 		let opAddressArray = [];
 		let avaxAddressArray = [];
 		if (enabledChains.includes(ChainType.Arbitrum)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Arbitrum);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Arbitrum);
 			results = [...results, ...fuseRet, ...addrRet];
 			arbAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Bsc)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Bsc);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Bsc);
 			results = [...results, ...fuseRet, ...addrRet];
 			bscAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Ethereum)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Ethereum);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Ethereum);
 			results = [...results, ...fuseRet, ...addrRet];
 			ethAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Polygon)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Polygon);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Polygon);
 			results = [...results, ...fuseRet, ...addrRet];
 			polyAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Heco)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Heco);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Heco);
 			results = [...results, ...fuseRet, ...addrRet];
 			hecoAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Optimism)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Optimism);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Optimism);
 			results = [...results, ...fuseRet, ...addrRet];
 			opAddressArray = addrs;
 		}
 		if (enabledChains.includes(ChainType.Avax)) {
-			const { fuseRet, addrRet, addrs } = this.localSearch(searchQuery, ChainType.Avax);
+			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Avax);
 			results = [...results, ...fuseRet, ...addrRet];
 			avaxAddressArray = addrs;
 		}
@@ -212,7 +210,7 @@ export default class SearchView extends PureComponent {
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
 			if (results.length > 0) {
-				this.addSecurityTokens(results);
+				await this.addSecurityTokens(results);
 				this.sortResult(results);
 			}
 			this.props.onSearch({ searchQuery, results });
@@ -407,7 +405,7 @@ export default class SearchView extends PureComponent {
 		results = [...results, ...chainSearchResult];
 		if (results.length > 0) {
 			this.sortResult(results);
-			this.addSecurityTokens(results);
+			await this.addSecurityTokens(results);
 		}
 		this.props.onSearch({ searchQuery, results });
 	};

@@ -1,6 +1,7 @@
-import { ArbConfig } from 'gopocket-core';
+import { ArbConfig, Sqlite } from 'gopocket-core';
 import Engine from '../core/Engine';
 import EngineImpl from '../core/EngineImpl';
+import NativeThreads from '../threads/NativeThreads';
 
 export function arbNetworkConfig(chainId: string) {
 	const arbConfig: { [index: string]: any } = ArbConfig;
@@ -101,4 +102,12 @@ export function isMainnetOp() {
 
 export function isMainnetAvax() {
 	return EngineContext().AvaxNetworkController.state.provider?.chainId === '43114';
+}
+
+export async function callSqlite(method, ...args) {
+	if (EngineImpl?.context) {
+		return Sqlite.getInstance()[method]?.(...args);
+	} else {
+		return NativeThreads.get().callSqliteAsync(method, ...args);
+	}
 }

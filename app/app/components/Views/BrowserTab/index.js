@@ -64,6 +64,7 @@ import { getIsRpc, getDefiIcon, getRpcName } from '../../../util/rpcUtil';
 import NFTImage from '../../UI/NFTImage';
 import { getActiveTabId } from '../../../util/browser';
 import NativeThreads from '../../../threads/NativeThreads';
+import { callSqlite } from '../../../util/ControllerUtils';
 
 const { HOMEPAGE_URL, USER_AGENT } = AppConstants;
 
@@ -384,7 +385,7 @@ const BrowserTab = props => {
 				} else {
 					_title = hostname;
 				}
-				const dapp_info = await NativeThreads.get().callSqliteAsync('getWhitelistDapp', _url, hostname);
+				const dapp_info = await callSqlite('getWhitelistDapp', _url, hostname);
 				if (dapp_info?.title) {
 					_title = dapp_info.title;
 				}
@@ -424,15 +425,7 @@ const BrowserTab = props => {
 
 	const openHomepageUrl = async (item: AutoCompleteResult) => {
 		if (item.type === AutoCompleteType_HOMEPAGE) {
-			NativeThreads.get().callSqliteAsync(
-				'updateWhitelistDapp',
-				item.url,
-				item.title,
-				item.desc,
-				item.chain,
-				item.img,
-				Date.now()
-			);
+			callSqlite('updateWhitelistDapp', item.url, item.title, item.desc, item.chain, item.img, Date.now());
 		}
 		go(item.url, item.title);
 	};
@@ -461,7 +454,7 @@ const BrowserTab = props => {
 		if (result.found) {
 			user_selected_chain_type_once.current = chainType;
 		} else {
-			NativeThreads.get().callSqliteAsync('updateUserSelectedChainTypes', hostname, chainType);
+			callSqlite('updateUserSelectedChainTypes', hostname, chainType);
 		}
 		load_start_called.current = false;
 		reload();
@@ -513,19 +506,17 @@ const BrowserTab = props => {
 					chainType: null
 				});
 				const hostname = String(new URL(currentUrl).hostname);
-				NativeThreads.get()
-					.callSqliteAsync('getWhitelistDapp', currentUrl, hostname)
-					.then(dapp_info => {
-						NativeThreads.get().callSqliteAsync(
-							'updateWhitelistDapp',
-							currentUrl,
-							dapp_info ? dapp_info.title : currentUrl,
-							dapp_info ? dapp_info.desc : currentUrl,
-							chainTypeTochain(Number(chainType)),
-							dapp_info?.img,
-							dapp_info ? dapp_info.timestamp : 0
-						);
-					});
+				callSqlite('getWhitelistDapp', currentUrl, hostname).then(dapp_info => {
+					callSqlite(
+						'updateWhitelistDapp',
+						currentUrl,
+						dapp_info ? dapp_info.title : currentUrl,
+						dapp_info ? dapp_info.desc : currentUrl,
+						chainTypeTochain(Number(chainType)),
+						dapp_info?.img,
+						dapp_info ? dapp_info.timestamp : 0
+					);
+				});
 			}
 			go(currentUrl);
 			if (reloadOnce) {
@@ -973,7 +964,7 @@ const BrowserTab = props => {
 			}
 		}
 
-		let result = await NativeThreads.get().callSqliteAsync('getWhitelistDapp', currentHostname)?.timestamp;
+		let result = await callSqlite('getWhitelistDapp', currentHostname)?.timestamp;
 		if (result) {
 			const dif = Date.now() - result;
 			if (dif < 1000 * 60 * 1) {
@@ -986,7 +977,7 @@ const BrowserTab = props => {
 				return;
 			}
 		}
-		result = await NativeThreads.get().callSqliteAsync('getBlacklistDappByUrl', currentHostname);
+		result = await callSqlite('getBlacklistDappByUrl', currentHostname);
 		if (result) {
 			if (Date.now() - result.timestamp < 1000 * 60 * 1) {
 				// setSafeLevel(result.level);
@@ -1032,19 +1023,17 @@ const BrowserTab = props => {
 					const content = data.dapp[0];
 					if (content && content.safe_level === 1) {
 						const hostname = new URL(content.url).hostname;
-						NativeThreads.get()
-							.callSqliteAsync('getWhitelistDapp', hostname)
-							.then(dapp_info => {
-								NativeThreads.get().callSqliteAsync(
-									'updateWhitelistDapp',
-									urlStr,
-									content.title,
-									content.desc,
-									dapp_info ? dapp_info.chain : content.chain,
-									content.img,
-									Date.now()
-								);
-							});
+						callSqlite('getWhitelistDapp', hostname).then(dapp_info => {
+							callSqlite(
+								'updateWhitelistDapp',
+								urlStr,
+								content.title,
+								content.desc,
+								dapp_info ? dapp_info.chain : content.chain,
+								content.img,
+								Date.now()
+							);
+						});
 					}
 				}
 				const checkHostname = new URL(data.url).hostname;
@@ -1053,7 +1042,7 @@ const BrowserTab = props => {
 					const safeDesc = data.safe_desc;
 					const safeHosturl = checkHostname;
 					if (safeLevel === 2 || safeLevel === 3) {
-						NativeThreads.get().callSqliteAsync('updateBlacklistDapps', safeHosturl, safeLevel, safeDesc);
+						callSqlite('updateBlacklistDapps', safeHosturl, safeLevel, safeDesc);
 					}
 					// setSafeLevel(safeLevel);
 					// setsafeDesc(safeDesc);
@@ -1098,7 +1087,9 @@ const BrowserTab = props => {
 	};
 
 	const onLoadEnd = ({ nativeEvent }) => {
-		if (nativeEvent.loading) return;
+		if (nativeEvent.loading) {
+			return;
+		}
 		const { current } = webviewRef;
 		let javascriptString = JS_WEBVIEW_URL;
 		if (Device.isAndroid()) {
@@ -1119,8 +1110,10 @@ const BrowserTab = props => {
 				props.addressBarRef.current?.setBackEnabled(nativeEvent.canGoBack);
 				setForwardEnabled(nativeEvent.canGoForward);
 				updateUrlAndTitle(nativeEvent.url);
-				if (info.icon) icon.current = info.icon;
-				NativeThreads.get().callSqliteAsync('addBrowserHistory', nativeEvent.url, nativeEvent.title, info.icon);
+				if (info.icon) {
+					icon.current = info.icon;
+				}
+				callSqlite('addBrowserHistory', nativeEvent.url, nativeEvent.title, info.icon);
 			}
 		});
 		if (reload_once_when_load_end_url.current) {
@@ -1150,9 +1143,10 @@ const BrowserTab = props => {
 			switch (data.type) {
 				case 'GET_WEBVIEW_URL': {
 					const { url } = data.payload;
-					if (url === nativeEvent.url)
+					if (url === nativeEvent.url) {
 						webviewUrlPostMessagePromiseResolve.current &&
 							webviewUrlPostMessagePromiseResolve.current(data.payload);
+					}
 					break;
 				}
 				case 'NAVIGATION_STATE_CHANGED': {
@@ -1335,11 +1329,11 @@ const BrowserTab = props => {
 
 	const getFavicon = async url => {
 		const hName = new URL(url).hostname;
-		const dapp = await NativeThreads.get().callSqliteAsync('getWhitelistDapp', url, hName);
+		const dapp = await callSqlite('getWhitelistDapp', url, hName);
 		if (dapp?.img) {
 			return dapp?.img;
 		}
-		const history = await NativeThreads.get().callSqliteAsync('getBrowserHistory');
+		const history = await callSqlite('getBrowserHistory');
 		for (const subHistory of history) {
 			const hostName = new URL(subHistory.url).hostname;
 			if (hostName === hName) {

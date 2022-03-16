@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { LAST_NOTIFICATION_INFO } from '../constants/storage';
 import { ChainType, TxChangedType } from 'gopocket-core';
 import { getTicker } from '../util/transactions';
-import NativeThreads from '../threads/NativeThreads';
+import { callSqlite } from '../util/ControllerUtils';
 
 /**
  * Singleton class responsible for managing all the
@@ -105,7 +105,7 @@ class NotificationManager {
 			changedType
 		);
 		const txType = !isToken ? 'tx' : 'tokentx';
-		const allTx = await NativeThreads.get().callSqliteAsync(
+		const allTx = await callSqlite(
 			'findReceiveTransactions',
 			selectedAddress,
 			networkId,
@@ -116,7 +116,7 @@ class NotificationManager {
 		);
 		if (type === ChainType.Ethereum) {
 			const claimContracts = await getClaimContracts();
-			const ethClaimValues = await NativeThreads.get().callSqliteAsync(
+			const ethClaimValues = await callSqlite(
 				'findReceiveMigrationTxs',
 				selectedAddress,
 				networkId,

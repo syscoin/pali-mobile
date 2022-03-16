@@ -19,15 +19,7 @@ import AvaxContractController from './assets/AvaxContractController';
 import RpcNetworkController from './network/RpcNetworkController';
 import RpcContractController from './assets/RpcContractController';
 import { isRpcChainType } from './util';
-import {
-  BSC_JSON,
-  ETH_JSON,
-  HECO_JSON,
-  POLYGON_JSON,
-  OP_JSON,
-  AVAX_JSON,
-  ARB_JSON,
-} from '.';
+import {Sqlite} from "./transaction/Sqlite";
 
 export function getContractController(context: ChildControllerContext, chainId: string) {
   const rpcNetwork = context.RpcNetworkController as RpcNetworkController;
@@ -36,57 +28,50 @@ export function getContractController(context: ChildControllerContext, chainId: 
     if (chainId !== arbNetwork.state.provider.chainId) {
       return { type: ChainType.Arbitrum };
     }
-    const localTokenInfos = chainId === '42161' ? ARB_JSON : {};
     const contractController = context.ArbContractController as ArbContractController;
-    return { type: ChainType.Arbitrum, contractController, localTokenInfos };
+    return { type: ChainType.Arbitrum, contractController };
   } else if (chainId === '10' || chainId === '69') {
     const opNetwork = context.OpNetworkController as OpNetworkController;
     if (chainId !== opNetwork.state.provider.chainId) {
       return { type: ChainType.Optimism };
     }
     const contractController = context.OpContractController as OpContractController;
-    const localTokenInfos = chainId === '10' ? OP_JSON : {};
-    return { type: ChainType.Optimism, contractController, localTokenInfos };
+    return { type: ChainType.Optimism, contractController };
   } else if (chainId === '56' || chainId === '97') {
     const bscNetwork = context.BscNetworkController as BscNetworkController;
     if (chainId !== bscNetwork.state.provider.chainId) {
       return { type: ChainType.Bsc };
     }
     const contractController = context.BscContractController as BscContractController;
-    const localTokenInfos = chainId === '56' ? BSC_JSON : {};
-    return { type: ChainType.Bsc, contractController, localTokenInfos };
+    return { type: ChainType.Bsc, contractController };
   } else if (chainId === '137' || chainId === '80001') {
     const polygonNetwork = context.PolygonNetworkController as PolygonNetworkController;
     if (chainId !== polygonNetwork.state.provider.chainId) {
       return { type: ChainType.Polygon };
     }
     const contractController = context.PolygonContractController as PolygonContractController;
-    const localTokenInfos = chainId === '137' ? POLYGON_JSON : {};
-    return { type: ChainType.Polygon, contractController, localTokenInfos };
+    return { type: ChainType.Polygon, contractController };
   } else if (getNetworkType(chainId)) {
     const etherNetwork = context.NetworkController as NetworkController;
     if (chainId !== etherNetwork.state.provider.chainId) {
       return { type: ChainType.Ethereum };
     }
     const contractController = context.AssetsContractController as AssetsContractController;
-    const localTokenInfos = chainId === '1' ? ETH_JSON : {};
-    return { type: ChainType.Ethereum, contractController, localTokenInfos };
+    return { type: ChainType.Ethereum, contractController };
   } else if (chainId === '128' || chainId === '256') {
     const hecoNetwork = context.HecoNetworkController as HecoNetworkController;
     if (chainId !== hecoNetwork.state.provider.chainId) {
       return { type: ChainType.Heco };
     }
     const contractController = context.HecoContractController as HecoContractController;
-    const localTokenInfos = chainId === '128' ? HECO_JSON : {};
-    return { type: ChainType.Heco, contractController, localTokenInfos };
+    return { type: ChainType.Heco, contractController };
   } else if (chainId === '43114' || chainId === '43113') {
     const avaxNetwork = context.AvaxNetworkController as AvaxNetworkController;
     if (chainId !== avaxNetwork.state.provider.chainId) {
       return { type: ChainType.Avax };
     }
     const contractController = context.AvaxContractController as AvaxContractController;
-    const localTokenInfos = chainId === '43114' ? AVAX_JSON : {};
-    return { type: ChainType.Avax, contractController, localTokenInfos };
+    return { type: ChainType.Avax, contractController };
   } else if (rpcNetwork.isRpcChainId(chainId)) {
     const rpcContract = context.RpcContractController as RpcContractController;
     const chainType = rpcNetwork.getChainTypeByChainId(chainId);
@@ -97,6 +82,41 @@ export function getContractController(context: ChildControllerContext, chainId: 
     return { type: chainType, contractController };
   }
   return {};
+}
+
+export async function getStaticTokenByChainId(chainId: string, address: string) {
+  if (!chainId || !address) {
+    return {};
+  }
+  let type;
+  switch (chainId) {
+    case '1':
+      type = ChainType.Ethereum;
+      break;
+    case '42161':
+      type = ChainType.Arbitrum;
+      break;
+    case '10':
+      type = ChainType.Optimism;
+      break;
+    case '56':
+      type = ChainType.Bsc;
+      break;
+    case '137':
+      type = ChainType.Polygon;
+      break;
+    case '128':
+      type = ChainType.Heco;
+      break;
+    case '43114':
+      type = ChainType.Avax;
+      break;
+  }
+  if (!type) {
+    return {};
+  }
+  const token = await Sqlite.getInstance().getStaticToken(type, address);
+  return token || {};
 }
 
 export function getControllerFromType(context: ChildControllerContext, chainType: ChainType) {

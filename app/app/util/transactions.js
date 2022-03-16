@@ -6,8 +6,7 @@ import { ChainType, util, addHexPrefix, toChecksumAddress, BN } from 'gopocket-c
 import { getChainIdByType, hexToBN } from './number';
 import AppConstants from '../core/AppConstants';
 const { SAI_ADDRESS } = AppConstants;
-import { getContractMap } from '../data/ContractData';
-import { getRpcProviderTicker } from './ControllerUtils';
+import { callSqlite, getRpcProviderTicker } from './ControllerUtils';
 
 export const TOKEN_METHOD_TRANSFER = 'transfer';
 export const TOKEN_METHOD_APPROVE = 'approve';
@@ -288,12 +287,12 @@ export function equalMethodId(data, methodId) {
 	return fourByteSignature === '0x' + methodId;
 }
 
-export function getSymbol(address, chainType) {
+export async function getSymbol(address, chainType) {
 	if (!address) return null;
 	address = toChecksumAddress(address);
-	const contractMap = getContractMap(chainType);
-	if (contractMap[address.toLowerCase()]) {
-		return contractMap[address.toLowerCase()].symbol;
+	const token = await callSqlite('getStaticToken', chainType, address);
+	if (token?.symbol) {
+		return token.symbol;
 	}
 	const { AssetsController } = Engine.context;
 	const allTokens = AssetsController.state.allTokens || {};
@@ -318,8 +317,8 @@ export async function isSmartContractAddress(address, chainType) {
 	if (!address) return false;
 	address = toChecksumAddress(address);
 	// If in contract map we don't need to cache it
-	const contractMap = getContractMap(chainType);
-	if (contractMap[address.toLowerCase()]) {
+	const token = await callSqlite('getStaticToken', chainType, address);
+	if (token) {
 		return Promise.resolve(true);
 	}
 	const { AssetsController } = Engine.context;
