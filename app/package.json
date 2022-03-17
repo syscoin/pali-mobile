@@ -77,7 +77,6 @@
         "ethjs-contract": "0.2.3",
         "ethjs-query": "0.3.8",
         "events": "3.0.0",
-        "fuse.js": "3.4.4",
         "gopocket-core": "file:./../core/",
         "https-browserify": "0.0.1",
         "json-rpc-engine": "^6.1.0",

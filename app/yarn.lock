@@ -6760,6 +6760,7 @@ globals@^12.1.0:
     ethjs-ens "2.0.1"
     ethjs-unit "^0.1.6"
     ethjs-util "^0.1.6"
+    fuse.js "3.4.4"
     human-standard-collectible-abi "^1.0.2"
     human-standard-token-abi "^2.0.0"
     immer "^8.0.1"

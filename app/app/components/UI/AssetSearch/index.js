@@ -3,11 +3,10 @@ import { TextInput, View, StyleSheet, Image, TouchableOpacity, Text } from 'reac
 import { colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
-import { getContractMap } from '../../../data/ContractData';
-import Fuse from 'fuse.js';
+import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
-import { ChainType, defaultEnabledChains, isValidAddress, util } from 'gopocket-core';
+import { ChainType, defaultEnabledChains, isValidAddress, util, Fuse } from 'gopocket-core';
 
 const styles = StyleSheet.create({
 	searchSection: {
@@ -99,41 +98,18 @@ export default class AssetSearch extends PureComponent {
 	};
 
 	searchByChainTYpe = async (currentChainType, trimedSearchQuery) => {
-		const contractMap = await getContractMap(currentChainType);
-		const contractList = contractMap.map(token => {
+		let { queryAddress, querySymbol } = await queryContractMap(currentChainType, trimedSearchQuery, false, 20);
+		if (queryAddress) {
+			queryAddress = queryAddress.map(token => {
+				return { ...token, searchByAddress: true };
+			});
+		}
+		let queryResult = [...queryAddress, ...querySymbol];
+		queryResult = queryResult.map(token => {
 			return { ...token, fromSearch: true };
 		});
 
-		let addressSearchResult =
-			trimedSearchQuery.length < 8
-				? []
-				: contractList.filter(token => {
-						const isSearchByAddress = token.address.toLowerCase() === trimedSearchQuery.toLowerCase();
-						if (isSearchByAddress) {
-							token.searchByAddress = isSearchByAddress;
-						}
-						return isSearchByAddress;
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
-				  });
-
-		let fuseSearchResult = [];
-		if (!addressSearchResult || addressSearchResult.length <= 0) {
-			const fuse = new Fuse(contractList, {
-				shouldSort: true,
-				threshold: 0.3,
-				location: 0,
-				distance: 100,
-				maxPatternLength: 32,
-				minMatchCharLength: 1,
-				keys: [{ name: 'symbol', weight: 0.8 }]
-			});
-			fuseSearchResult = fuse.search(trimedSearchQuery, { limit: 20 });
-		}
-
-		if (
-			(!addressSearchResult || addressSearchResult.length === 0) &&
-			(!fuseSearchResult || fuseSearchResult.length === 0)
-		) {
+		if (queryResult.length === 0) {
 			let address = trimedSearchQuery;
 			let decimals;
 			let symbol;
@@ -232,7 +208,7 @@ export default class AssetSearch extends PureComponent {
 					symbol = await AssetsContractController.getAssetSymbol(address);
 				}
 				if (this.validateCustomTokenSymbol(symbol) && this.validateCustomTokenDecimals(decimals)) {
-					addressSearchResult =
+					queryResult =
 						currentChainType === ChainType.Arbitrum
 							? [
 									{
@@ -262,8 +238,7 @@ export default class AssetSearch extends PureComponent {
 				util.logDebug('leon.w@ search failed: ', trimedSearchQuery);
 			}
 		}
-		const results = [...addressSearchResult, ...fuseSearchResult];
-		return results;
+		return queryResult;
 	};
 
 	handleSearch = async searchQuery => {

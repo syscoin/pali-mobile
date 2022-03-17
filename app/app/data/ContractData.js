@@ -12,44 +12,44 @@ import {
 	isMainnetTron
 } from '../util/ControllerUtils';
 
-export async function getContractMap(type) {
+export async function queryContractMap(type, query, needFuse, fuseCount) {
 	if (type === ChainType.Polygon) {
 		if (!isMainnetPolygon()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Bsc) {
 		if (!isMainnetBsc()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Arbitrum) {
 		if (!isMainnetArb()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Ethereum) {
 		if (!isMainnetEthereum()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Heco) {
 		if (!isMainnetHeco()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Tron) {
 		if (!isMainnetTron()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Optimism) {
 		if (!isMainnetOp()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	} else if (type === ChainType.Avax) {
 		if (!isMainnetAvax()) {
-			return [];
+			return { queryAddress: [], querySymbol: [] };
 		}
 	}
 
-	let tokens = await callSqlite('getStaticTokens', type);
-	if (tokens) {
-		tokens = tokens.map(token => {
+	let { queryAddress, querySymbol } = await callSqlite('findStaticToken', type, query, needFuse, fuseCount);
+	if (queryAddress) {
+		queryAddress = queryAddress.map(token => {
 			return {
 				...token,
 				type: type,
@@ -59,7 +59,18 @@ export async function getContractMap(type) {
 			};
 		});
 	}
-	return tokens || [];
+	if (querySymbol) {
+		querySymbol = querySymbol.map(token => {
+			return {
+				...token,
+				type: type,
+				logo: token.image,
+				address: toChecksumAddress(token.address),
+				l1Address: token.l1_address ? toChecksumAddress(token.l1_address) : undefined
+			};
+		});
+	}
+	return { queryAddress, querySymbol };
 }
 
 export async function getQueryId(type, nativeCurrency, address) {

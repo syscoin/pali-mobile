@@ -9,6 +9,7 @@ import { Mutex } from 'async-mutex';
 import URL from 'url-parse';
 import * as ArbConfig from './ArbConfig.json';
 import * as util from './util';
+import * as Fuse from 'fuse.js';
 
 export * from './approval/ApprovalEventsController';
 export * from './assets/AssetsContractController';
@@ -54,7 +55,7 @@ export * from './assets/StaticTokenController';
 // ethers
 export { BigNumber, EthersUtils };
 
-export { util, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL };
+export { util, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL, Fuse };
 // ethereumjs-util
 export { BN, toChecksumAddress, stripHexPrefix, isValidAddress, addHexPrefix, isZeroAddress };
 

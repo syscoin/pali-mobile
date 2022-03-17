@@ -14,7 +14,7 @@ import Engine from '../../../core/Engine';
 import { connect } from 'react-redux';
 import TokenImage from '../../UI/TokenImage';
 import { strings } from '../../../../locales/i18n';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util, Fuse } from 'gopocket-core';
 import LottieView from 'lottie-react-native';
 import ElevatedView from 'react-native-elevated-view';
 import Modal from 'react-native-modal';
@@ -28,7 +28,6 @@ import {
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { CURRENCIES } from '../../../util/currencies';
 import AssetElement from '../../UI/AssetElement';
-import Fuse from 'fuse.js';
 import { fontStyles, colors } from '../../../styles/common';
 import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
 import { getSecurityData } from '../../../util/security';

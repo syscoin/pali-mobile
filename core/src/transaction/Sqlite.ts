@@ -3,6 +3,7 @@ import URL from 'url-parse';
 import { ChainType } from '../assets/TokenRatesController';
 import { util } from '..';
 import { TokenTransactionInfo, TransactionInfo } from './TransactionController';
+import Fuse from 'fuse.js';
 
 SQLiteStorage.DEBUG(false);
 SQLiteStorage.enablePromise(false);
@@ -203,6 +204,55 @@ export class Sqlite {
         }
       );
     }));
+  }
+
+  async findStaticToken(type: number, query: string, needFuse = false, fuseCount = 0) {
+    query = query?.trim()?.toLowerCase();
+    if (!query || !type) {
+      return { queryAddress: [], querySymbol: [] };
+    }
+    const queryAddress = await new Promise<any[]>((resolve) => {
+      const sql = `SELECT * FROM STATIC_TOKENS WHERE address=? AND chain_type=?`;
+      const values = [query, type];
+      this.db.executeSql(
+        sql,
+        values,
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item, length } = results.rows;
+            const tokens = [];
+            for (let index = 0; index < length; index++) {
+              const data = item(index);
+              tokens.push(data);
+            }
+            resolve(tokens);
+          } else {
+            resolve([]);
+          }
+        },
+        (error: any) => {
+          this._errorLog('findStaticToken address', error);
+          resolve([]);
+        }
+      );
+    });
+    if (queryAddress?.length && !needFuse && fuseCount > 0) {
+      return { queryAddress, querySymbol: [] };
+    }
+    let querySymbol = await this.getStaticTokens(type);
+    if (querySymbol.length) {
+      const fuse = new Fuse(querySymbol, {
+        shouldSort: true,
+        threshold: 0.3,
+        location: 0,
+        distance: 100,
+        maxPatternLength: 32,
+        minMatchCharLength: 1,
+        keys: [{ name: 'symbol', weight: 0.8 }]
+      });
+      querySymbol = fuse.search(query, { limit: fuseCount });
+    }
+    return { queryAddress, querySymbol };
   }
 
   getStaticTokenCount() {

@@ -3,8 +3,7 @@ import { TextInput, View, StyleSheet, Image, TouchableOpacity, Text } from 'reac
 import { colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
-import { getContractMap } from '../../../data/ContractData';
-import Fuse from 'fuse.js';
+import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
 import { ChainType, isValidAddress, util } from 'gopocket-core';
@@ -88,16 +87,9 @@ export default class SearchView extends PureComponent {
 	};
 
 	localSearch = async (searchQuery, chainType) => {
-		const contractList = await getContractMap(chainType);
-
-		const fuse = new Fuse(contractList, {
-			shouldSort: true,
-			threshold: 0,
-			minMatchCharLength: searchQuery?.length || 1,
-			keys: [{ name: 'symbol', weight: 1 }]
-		});
-		const fuseRet = fuse.search(searchQuery, { limit: 10 });
-		const addrRet = contractList.filter(token => token.address.toLowerCase() === searchQuery.toLowerCase());
+		const { queryAddress, querySymbol } = await queryContractMap(chainType, searchQuery, true, 10);
+		const fuseRet = querySymbol;
+		const addrRet = queryAddress;
 		const list = [...fuseRet, ...addrRet];
 		const addrs = list.map(v => v.address);
 		return { fuseRet, addrRet, addrs };
