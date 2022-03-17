@@ -206,14 +206,24 @@ export class Sqlite {
     }));
   }
 
-  async findStaticToken(type: number, query: string, needFuse = false, fuseCount = 0) {
+  async findStaticToken(types: number[], query: string, needFuse = false, fuseCount = 0) {
     query = query?.trim()?.toLowerCase();
-    if (!query || !type) {
+    if (!query || !types?.length) {
       return { queryAddress: [], querySymbol: [] };
     }
+    let validTypes = types;
+    let typeSql: any;
+    for (const type of validTypes) {
+      if (!typeSql) {
+        typeSql = `(${type}`;
+      } else {
+        typeSql = `${typeSql}, ${type}`;
+      }
+    }
+    typeSql = `${typeSql})`;
     const queryAddress = await new Promise<any[]>((resolve) => {
-      const sql = `SELECT * FROM STATIC_TOKENS WHERE address=? AND chain_type=?`;
-      const values = [query, type];
+      const sql = `SELECT * FROM STATIC_TOKENS WHERE address=? AND chain_type IN ${typeSql}`;
+      const values = [query];
       this.db.executeSql(
         sql,
         values,
@@ -236,11 +246,69 @@ export class Sqlite {
         }
       );
     });
-    if (queryAddress?.length && !needFuse && fuseCount > 0) {
-      return { queryAddress, querySymbol: [] };
+    if (!needFuse && queryAddress?.length) {
+      validTypes = types.filter(type => {
+        return !queryAddress.includes((token: any) => token.chain_type == type);
+      });
+      if (!validTypes?.length) {
+        return { queryAddress, querySymbol: [] };
+      }
+      typeSql = undefined;
+      for (const type of validTypes) {
+        if (!typeSql) {
+          typeSql = `(${type}`;
+        } else {
+          typeSql = `${typeSql}, ${type}`;
+        }
+      }
+      typeSql = `${typeSql})`;
     }
-    let querySymbol = await this.getStaticTokens(type);
+
+    let querySymbol = await new Promise<any[]>((resolve) => {
+      const sql = `SELECT * FROM STATIC_TOKENS WHERE chain_type IN ${typeSql} AND lower(symbol) GLOB '*${query}*'`;
+      this.db.executeSql(
+        sql,
+        [],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item, length } = results.rows;
+            const tokens = [];
+            for (let index = 0; index < length; index++) {
+              const data = item(index);
+              tokens.push(data);
+            }
+            resolve(tokens);
+          } else {
+            resolve([]);
+          }
+        },
+        (error: any) => {
+          this._errorLog('findStaticToken symbol', error);
+          resolve([]);
+        }
+      );
+    });
     if (querySymbol.length) {
+      const tempSymbols: any[] = [];
+      validTypes.forEach(type => {
+        let typeSymbols = querySymbol.filter(token => token.chain_type == type);
+        if (typeSymbols.length) {
+          const fuse = new Fuse(typeSymbols, {
+            shouldSort: true,
+            threshold: 0.3,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [{ name: 'symbol', weight: 0.8 }]
+          });
+          typeSymbols = fuse.search(query, { limit: fuseCount });
+          tempSymbols.push(...typeSymbols);
+        }
+      });
+      querySymbol = tempSymbols;
+    }
+    if (validTypes.length > 1) {
       const fuse = new Fuse(querySymbol, {
         shouldSort: true,
         threshold: 0.3,
@@ -250,7 +318,7 @@ export class Sqlite {
         minMatchCharLength: 1,
         keys: [{ name: 'symbol', weight: 0.8 }]
       });
-      querySymbol = fuse.search(query, { limit: fuseCount });
+      querySymbol = fuse.search(query);
     }
     return { queryAddress, querySymbol };
   }

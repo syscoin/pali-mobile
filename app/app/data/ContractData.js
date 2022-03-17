@@ -12,47 +12,57 @@ import {
 	isMainnetTron
 } from '../util/ControllerUtils';
 
-export async function queryContractMap(type, query, needFuse, fuseCount) {
-	if (type === ChainType.Polygon) {
-		if (!isMainnetPolygon()) {
-			return { queryAddress: [], querySymbol: [] };
+export async function queryContractMap(types, query, needFuse, fuseCount) {
+	if (!types?.length || !query) {
+		return { queryAddress: [], querySymbol: [] };
+	}
+	const validTypes = types?.filter(type => {
+		if (type === ChainType.Polygon) {
+			if (isMainnetPolygon()) {
+				return true;
+			}
+		} else if (type === ChainType.Bsc) {
+			if (isMainnetBsc()) {
+				return true;
+			}
+		} else if (type === ChainType.Arbitrum) {
+			if (isMainnetArb()) {
+				return true;
+			}
+		} else if (type === ChainType.Ethereum) {
+			if (isMainnetEthereum()) {
+				return true;
+			}
+		} else if (type === ChainType.Heco) {
+			if (isMainnetHeco()) {
+				return true;
+			}
+		} else if (type === ChainType.Tron) {
+			if (isMainnetTron()) {
+				return true;
+			}
+		} else if (type === ChainType.Optimism) {
+			if (isMainnetOp()) {
+				return true;
+			}
+		} else if (type === ChainType.Avax) {
+			if (isMainnetAvax()) {
+				return true;
+			}
 		}
-	} else if (type === ChainType.Bsc) {
-		if (!isMainnetBsc()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Arbitrum) {
-		if (!isMainnetArb()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Ethereum) {
-		if (!isMainnetEthereum()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Heco) {
-		if (!isMainnetHeco()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Tron) {
-		if (!isMainnetTron()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Optimism) {
-		if (!isMainnetOp()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
-	} else if (type === ChainType.Avax) {
-		if (!isMainnetAvax()) {
-			return { queryAddress: [], querySymbol: [] };
-		}
+		return false;
+	});
+
+	if (!validTypes?.length) {
+		return { queryAddress: [], querySymbol: [] };
 	}
 
-	let { queryAddress, querySymbol } = await callSqlite('findStaticToken', type, query, needFuse, fuseCount);
+	let { queryAddress, querySymbol } = await callSqlite('findStaticToken', validTypes, query, needFuse, fuseCount);
 	if (queryAddress) {
 		queryAddress = queryAddress.map(token => {
 			return {
 				...token,
-				type: type,
+				type: token.chain_type,
 				logo: token.image,
 				address: toChecksumAddress(token.address),
 				l1Address: token.l1_address ? toChecksumAddress(token.l1_address) : undefined
@@ -63,7 +73,7 @@ export async function queryContractMap(type, query, needFuse, fuseCount) {
 		querySymbol = querySymbol.map(token => {
 			return {
 				...token,
-				type: type,
+				type: token.chain_type,
 				logo: token.image,
 				address: toChecksumAddress(token.address),
 				l1Address: token.l1_address ? toChecksumAddress(token.l1_address) : undefined

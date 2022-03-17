@@ -97,8 +97,11 @@ export default class AssetSearch extends PureComponent {
 		return validated;
 	};
 
-	searchByChainTYpe = async (currentChainType, trimedSearchQuery) => {
-		let { queryAddress, querySymbol } = await queryContractMap(currentChainType, trimedSearchQuery, false, 20);
+	searchByChainTYpe = async (types: [], trimedSearchQuery) => {
+		if (!trimedSearchQuery) {
+			return [];
+		}
+		let { queryAddress, querySymbol } = await queryContractMap(types, trimedSearchQuery, false, 20);
 		if (queryAddress) {
 			queryAddress = queryAddress.map(token => {
 				return { ...token, searchByAddress: true };
@@ -109,7 +112,10 @@ export default class AssetSearch extends PureComponent {
 			return { ...token, fromSearch: true };
 		});
 
-		if (queryResult.length === 0) {
+		for (const currentChainType of types) {
+			if (queryResult.find(token => token.type === currentChainType)) {
+				continue;
+			}
 			let address = trimedSearchQuery;
 			let decimals;
 			let symbol;
@@ -208,34 +214,29 @@ export default class AssetSearch extends PureComponent {
 					symbol = await AssetsContractController.getAssetSymbol(address);
 				}
 				if (this.validateCustomTokenSymbol(symbol) && this.validateCustomTokenDecimals(decimals)) {
-					queryResult =
+					const searchToken =
 						currentChainType === ChainType.Arbitrum
-							? [
-									{
-										address: l2Address,
-										l1Address: address,
-										decimals,
-										symbol,
-										type: currentChainType,
-										fromSearch: true,
-										searchByAddress: true
-									}
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  ]
-							: [
-									{
-										address,
-										decimals,
-										symbol,
-										type: currentChainType,
-										fromSearch: true,
-										searchByAddress: true
-									}
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  ];
+							? {
+									address: l2Address,
+									l1Address: address,
+									decimals,
+									symbol,
+									type: currentChainType,
+									fromSearch: true,
+									searchByAddress: true
+							  }
+							: {
+									address,
+									decimals,
+									symbol,
+									type: currentChainType,
+									fromSearch: true,
+									searchByAddress: true
+							  };
+					queryResult.push(searchToken);
 				}
 			} catch (e) {
-				util.logDebug('leon.w@ search failed: ', trimedSearchQuery);
+				util.logDebug('leon.w@ search failed: ', trimedSearchQuery, currentChainType);
 			}
 		}
 		return queryResult;
@@ -253,24 +254,9 @@ export default class AssetSearch extends PureComponent {
 		let newResult = [];
 		if (currentChainType === ChainType.All) {
 			const enabledChains = contactEntry.enabledChains || defaultEnabledChains;
-			for (const item of enabledChains) {
-				const result = await this.searchByChainTYpe(item, trimedSearchQuery);
-				newResult = [...newResult, ...result];
-			}
-			if (newResult.length > 0 && !newResult[0].searchByAddress) {
-				const fuse = new Fuse(newResult, {
-					shouldSort: true,
-					threshold: 0.3,
-					location: 0,
-					distance: 100,
-					maxPatternLength: 32,
-					minMatchCharLength: 1,
-					keys: [{ name: 'symbol', weight: 0.8 }]
-				});
-				newResult = fuse.search(trimedSearchQuery);
-			}
+			newResult = await this.searchByChainTYpe(enabledChains, trimedSearchQuery);
 		} else {
-			newResult = await this.searchByChainTYpe(currentChainType, trimedSearchQuery);
+			newResult = await this.searchByChainTYpe([currentChainType], trimedSearchQuery);
 		}
 		this.props.onSearch({ searchQuery: trimedSearchQuery, results: newResult });
 	};

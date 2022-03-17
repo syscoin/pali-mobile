@@ -86,15 +86,6 @@ export default class SearchView extends PureComponent {
 		return validated;
 	};
 
-	localSearch = async (searchQuery, chainType) => {
-		const { queryAddress, querySymbol } = await queryContractMap(chainType, searchQuery, true, 10);
-		const fuseRet = querySymbol;
-		const addrRet = queryAddress;
-		const list = [...fuseRet, ...addrRet];
-		const addrs = list.map(v => v.address);
-		return { fuseRet, addrRet, addrs };
-	};
-
 	inLocalResult = (addressArray, address) => {
 		const ret = addressArray.find(addr => util.toLowerCaseEquals(addr, address));
 		return ret;
@@ -152,49 +143,15 @@ export default class SearchView extends PureComponent {
 			RpcContractController
 		} = Engine.context;
 
-		let results = [];
-		let ethAddressArray = [];
-		let bscAddressArray = [];
-		let arbAddressArray = [];
-		let polyAddressArray = [];
-		let hecoAddressArray = [];
-		let opAddressArray = [];
-		let avaxAddressArray = [];
-		if (enabledChains.includes(ChainType.Arbitrum)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Arbitrum);
-			results = [...results, ...fuseRet, ...addrRet];
-			arbAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Bsc)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Bsc);
-			results = [...results, ...fuseRet, ...addrRet];
-			bscAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Ethereum)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Ethereum);
-			results = [...results, ...fuseRet, ...addrRet];
-			ethAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Polygon)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Polygon);
-			results = [...results, ...fuseRet, ...addrRet];
-			polyAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Heco)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Heco);
-			results = [...results, ...fuseRet, ...addrRet];
-			hecoAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Optimism)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Optimism);
-			results = [...results, ...fuseRet, ...addrRet];
-			opAddressArray = addrs;
-		}
-		if (enabledChains.includes(ChainType.Avax)) {
-			const { fuseRet, addrRet, addrs } = await this.localSearch(searchQuery, ChainType.Avax);
-			results = [...results, ...fuseRet, ...addrRet];
-			avaxAddressArray = addrs;
-		}
+		const { queryAddress, querySymbol } = await queryContractMap(enabledChains, searchQuery, true, 10);
+		let results = [...querySymbol, ...queryAddress];
+		const arbAddressArray = results.filter(token => token.type === ChainType.Arbitrum);
+		const bscAddressArray = results.filter(token => token.type === ChainType.Bsc);
+		const ethAddressArray = results.filter(token => token.type === ChainType.Ethereum);
+		const polyAddressArray = results.filter(token => token.type === ChainType.Polygon);
+		const hecoAddressArray = results.filter(token => token.type === ChainType.Heco);
+		const opAddressArray = results.filter(token => token.type === ChainType.Optimism);
+		const avaxAddressArray = results.filter(token => token.type === ChainType.Avax);
 
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
