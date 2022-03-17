@@ -9,7 +9,7 @@ import { Mutex } from 'async-mutex';
 import URL from 'url-parse';
 import * as ArbConfig from './ArbConfig.json';
 import * as util from './util';
-import * as Fuse from 'fuse.js';
+import Fuse from 'fuse.js';
 
 export * from './approval/ApprovalEventsController';
 export * from './assets/AssetsContractController';
