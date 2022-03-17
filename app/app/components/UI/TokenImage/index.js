@@ -24,7 +24,11 @@ export function TokenImage({ asset, containerStyle, iconStyle, logoDefined, fade
 				typeof asset.logo !== 'string' ? (
 					<AssetIcon logo_number={asset.logo} customStyle={iconStyle} fadeIn={fadeIn} />
 				) : (
-					<NFTImage style={iconStyle} imageUrl={asset.logo} />
+					<NFTImage
+						style={iconStyle}
+						imageUrl={asset.logo}
+						defaultImg={require('../../../images/img_default.png')}
+					/>
 				)
 			) : (
 				<Identicon
