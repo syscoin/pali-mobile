@@ -6,7 +6,7 @@ import { strings } from '../../../../locales/i18n';
 import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
-import { ChainType, defaultEnabledChains, isValidAddress, util, Fuse } from 'gopocket-core';
+import { ChainType, defaultEnabledChains, isValidAddress, util } from 'gopocket-core';
 
 const styles = StyleSheet.create({
 	searchSection: {
@@ -257,6 +257,9 @@ export default class AssetSearch extends PureComponent {
 			newResult = await this.searchByChainTYpe(enabledChains, trimedSearchQuery);
 		} else {
 			newResult = await this.searchByChainTYpe([currentChainType], trimedSearchQuery);
+		}
+		if (searchQuery !== this.state.searchQuery || currentChainType !== this.props.contactEntry?.currentChain) {
+			return;
 		}
 		this.props.onSearch({ searchQuery: trimedSearchQuery, results: newResult });
 	};
