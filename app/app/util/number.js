@@ -58,7 +58,7 @@ export function fromTokenMinimalUnit(minimalInput, decimals) {
 	minimalInput = toPlainString(minimalInput);
 	let minimal = numberToBN(minimalInput);
 	const negative = minimal.lt(new BN(0));
-	const base = toBN(Math.pow(10, decimals).toString());
+	const base = new BN(Math.pow(10, decimals).toString(16), 16);
 
 	if (negative) {
 		minimal = minimal.mul(negative);
@@ -115,7 +115,7 @@ export function fromTokenMinimalUnitString(minimalInput, decimals) {
  * @returns {Object} - BN instance containing the new number
  */
 export function toTokenMinimalUnit(tokenValue, decimals) {
-	const base = toBN(Math.pow(10, decimals).toString());
+	const base = new BN(Math.pow(10, decimals).toString(16), 16);
 	let value = convert.numberToString(tokenValue);
 	const negative = value.substring(0, 1) === '-';
 	if (negative) {
