@@ -401,7 +401,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         address = toChecksumAddress(address);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        let { decimals, symbol } = await getStaticTokenByChainId(chainId, tokenAddress);
+        let { decimals, symbol } = await getStaticTokenByChainId(chainId, address);
         if (!decimals || !symbol) {
           try {
             symbol = await contractController.getAssetSymbol(address, partnerChainId);
