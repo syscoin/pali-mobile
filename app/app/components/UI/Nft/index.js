@@ -446,21 +446,8 @@ class Nft extends PureComponent {
 				}
 				for (const item of allContracts) {
 					const isFavorite = item.favoriteAddr === favoriteAddr;
-
 					let items = [];
-					if (isFavorite) {
-						item.favorites.forEach(favorite => {
-							const tempItem = collectibles.filter(
-								asset =>
-									asset.chainId === favorite.chainId &&
-									asset.token_id === favorite.token_id &&
-									asset.address === favorite.address
-							);
-							if (tempItem && tempItem.length > 0) {
-								items.push(tempItem[0]);
-							}
-						});
-					} else {
+					if (!isFavorite) {
 						items = collectibles.filter(
 							asset => asset.address?.toLowerCase() === item.address?.toLowerCase()
 						);
