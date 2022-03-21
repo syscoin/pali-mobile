@@ -283,6 +283,8 @@ export const isHecoMainnetByChainId = chainId => getDecimalChainId(String(chainI
 
 export const isAvaxMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(43114);
 
+export const isPolygonMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(137);
+
 export const getNetworkName = id => NetworkListKeys.find(key => NetworkList[key].networkId === Number(id));
 
 export function getNetworkTypeByChainId(id) {

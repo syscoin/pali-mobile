@@ -6,7 +6,8 @@ import {
 	isAvaxMainnetByChainId,
 	isBSCMainnetByChainId,
 	isHecoMainnetByChainId,
-	isMainnetByChainId
+	isMainnetByChainId,
+	isPolygonMainnetByChainId
 } from '../util/networks';
 import { BN, ChainType, util } from 'gopocket-core';
 import { conversionUtil } from './conversion-util';
@@ -313,10 +314,30 @@ export async function fetchSuggestedGasFees(chainId: string | number) {
 	]);
 }
 
+export async function fetchPolygonSuggestedGasFees() {
+	// Timeout in 7 seconds
+	const timeout = 14000;
+
+	const EIP1559APIEndpoint = `https://gasstation-mainnet.matic.network/v2`;
+	const fetchPromise = fetch(EIP1559APIEndpoint).then(r => r.json());
+
+	return Promise.race([
+		fetchPromise,
+		new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+	]);
+}
+
 let getSuggestedGasFees_timestamp = 0;
 let temp_suggestedGasFees = null;
 
 export async function getSuggestedGasFees(chainId: string | number) {
+	if (isPolygonMainnetByChainId(chainId)) {
+		return getPolygonSuggestedGasFees();
+	}
+	return getOtherSuggestedGasFees(chainId);
+}
+
+export async function getOtherSuggestedGasFees(chainId: string | number) {
 	try {
 		if (temp_suggestedGasFees && Date.now() - getSuggestedGasFees_timestamp <= 3000) {
 			return temp_suggestedGasFees;
@@ -338,7 +359,29 @@ export async function getSuggestedGasFees(chainId: string | number) {
 		getSuggestedGasFees_timestamp = Date.now();
 		return suggestedGasFees;
 	} catch (e) {
-		util.logDebug('getSuggestedGasFees error:', e);
+		util.logDebug('getOtherSuggestedGasFees error:', e);
+	}
+	return null;
+}
+
+export async function getPolygonSuggestedGasFees() {
+	try {
+		const fetchGas = await fetchPolygonSuggestedGasFees();
+		const allGwei = [
+			decGWEIToBNWEI(fetchGas.fast.maxPriorityFee),
+			decGWEIToBNWEI(fetchGas.standard.maxPriorityFee),
+			decGWEIToBNWEI(fetchGas.safeLow.maxPriorityFee)
+		];
+		allGwei.sort((a, b) => a.lt(b));
+		const suggestedGasFees = {
+			averageGwei: allGwei[1],
+			fastGwei: allGwei[0],
+			safeLowGwei: allGwei[2],
+			estimatedBaseFee: decGWEIToBNWEI(fetchGas.estimatedBaseFee)
+		};
+		return suggestedGasFees;
+	} catch (e) {
+		util.logDebug('getPolygonSuggestedGasFees error:', e);
 	}
 	return null;
 }

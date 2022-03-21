@@ -715,6 +715,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       this.hub.emit(`submittedTransaction`, transactionMeta);
     } catch (error) {
       this.failTransaction(transactionMeta, error);
+      throw error;
     } finally {
       releaseLock();
     }
