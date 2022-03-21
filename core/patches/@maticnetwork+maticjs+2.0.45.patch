@@ -1,5 +1,3 @@
-diff --git a/node_modules/@maticnetwork/maticjs/dist/matic.node.js b/node_modules/@maticnetwork/maticjs/dist/matic.node.js
-index 4a046d1c..ee3edaff 100644
 --- a/node_modules/@maticnetwork/maticjs/dist/matic.node.js
 +++ b/node_modules/@maticnetwork/maticjs/dist/matic.node.js
 @@ -6291,7 +6291,6 @@ if (typeof process === 'undefined' || process.type === 'renderer' || process.bro
@@ -21,7 +19,71 @@ index 4a046d1c..ee3edaff 100644
  }
 
  /**
-@@ -12277,17 +12274,6 @@ module.exports = require("os");
+@@ -10282,7 +10279,7 @@ var ProofsUtil = /** @class */ (function () {
+                 switch (_a.label) {
+                     case 0:
+                         headers = new Array(end - start + 1);
+-                        return [4 /*yield*/, MapPromise_1.mapPromise(headers,
++                        return [4 /*yield*/, MapPromise_1.mapPromise(headers,
+                             // eslint-disable-next-line
+                             function (_, i) { return __awaiter(_this, void 0, void 0, function () {
+                                 var _a, _b, _c, _d;
+@@ -10353,7 +10350,7 @@ var ProofsUtil = /** @class */ (function () {
+                     case 3:
+                         i++;
+                         return [3 /*break*/, 1];
+-                    case 4:
++                    case 4:
+                     // promise
+                     return [2 /*return*/, new Promise(function (resolve, reject) {
+                             txTrie.findPath(rlp.encode(tx.transactionIndex), function (err, rawTxNode, reminder, stack) {
+@@ -10457,7 +10454,7 @@ var ProofsUtil = /** @class */ (function () {
+                     case 5:
+                         i++;
+                         return [3 /*break*/, 3];
+-                    case 6:
++                    case 6:
+                     // promise
+                     return [2 /*return*/, new Promise(function (resolve, reject) {
+                             receiptsTrie.findPath(rlp.encode(receipt.transactionIndex), function (err, rawReceiptNode, reminder, stack) {
+@@ -10472,7 +10469,7 @@ var ProofsUtil = /** @class */ (function () {
+                                     parentNodes: stack.map(function (s) { return s.raw; }),
+                                     root: ProofsUtil.getRawHeader(block).receiptTrie,
+                                     path: rlp.encode(receipt.transactionIndex),
+-                                    value: rlp.decode(rawReceiptNode.value),
++                                    value: ProofUtil.isTypedReceipt(receipt) ? rawReceiptNode.value : rlp.decode(rawReceiptNode.value),
+                                 };
+                                 resolve(prf);
+                             });
+@@ -10481,6 +10478,27 @@ var ProofsUtil = /** @class */ (function () {
+             });
+         });
+     };
++    ProofsUtil.isTypedReceipt = function (receipt) {
++      const hexType = ProofsUtil.toHex(receipt.type);
++      return receipt.status != null && hexType !== "0x0" && hexType !== "0x";
++    };
++    ProofsUtil.toHex = function (amount) {
++      const dataType = typeof amount;
++      if (dataType === 'number') {
++        amount = new BN(amount);
++      } else if (dataType === 'string') {
++        if (amount.slice(0, 2) === '0x') {
++          return amount;
++        }
++        amount = new BN(amount);
++      }
++      if (BN.isBN(amount)) {
++        return '0x' + amount.toString(16);
++      }
++      else {
++        throw new Error(`Invalid value ${amount}, value is not a number.`);
++      }
++    };
+     ProofsUtil.getReceiptBytes = function (receipt) {
+         var encodedData = rlp.encode([
+             ethUtils.toBuffer(receipt.status !== undefined && receipt.status != null ? (receipt.status ? '0x1' : '0x') : receipt.root),
+@@ -12277,17 +12295,6 @@ module.exports = require("os");
 
  /***/ }),
 
@@ -39,7 +101,7 @@ index 4a046d1c..ee3edaff 100644
  /***/ "util":
  /*!***********************!*\
    !*** external "util" ***!
-@@ -12311,4 +12297,4 @@ module.exports = require("web3");
+@@ -12311,4 +12318,4 @@ module.exports = require("web3");
  /***/ })
 
  /******/ });
