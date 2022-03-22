@@ -1,27 +1,16 @@
 import BaseController, {BaseConfig, BaseState} from "../BaseController";
 import {Mutex} from "async-mutex";
 import { Sqlite } from '../transaction/Sqlite';
+import RNFS from 'react-native-fs';
 
-import ETH_JSON from '../static-token/ethereum.json';
-import BSC_JSON from '../static-token/binance-smart-chain.json';
-import POLYGON_JSON from '../static-token/polygon-pos.json';
-import HECO_JSON from '../static-token/huobi-token.json';
-import OP_JSON from '../static-token/optimistic-ethereum.json';
-import AVAX_JSON from '../static-token/avalanche.json';
-import ARB_JSON from '../static-token/arbitrum.json';
-
-import {ChainType} from "./TokenRatesController";
-import {handleFetch, logInfo} from "../util";
+import {handleFetch, logInfo, logWarn} from "../util";
 
 export interface StaticTokenConfig extends BaseConfig {
+  isIos: boolean;
   interval: number;
 }
 
-export interface StaticTokenState extends BaseState {
-  tokenId: number;
-}
-
-export class StaticTokenController extends BaseController<StaticTokenConfig, StaticTokenState> {
+export class StaticTokenController extends BaseController<StaticTokenConfig, BaseState> {
   private handle?: NodeJS.Timer;
 
   private mutex = new Mutex();
@@ -33,13 +22,11 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Sta
    */
   name = 'StaticTokenController';
 
-  constructor(config?: Partial<StaticTokenConfig>, state?: Partial<StaticTokenState>) {
+  constructor(config?: Partial<StaticTokenConfig>, state?: Partial<BaseState>) {
     super(config, state);
     this.defaultConfig = {
+      isIos: false,
       interval: 6 * 60 * 60 * 1000
-    };
-    this.defaultState = {
-      tokenId: -1,
     };
     this.initialize();
   }
@@ -67,27 +54,24 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Sta
     }
     const releaseLock = await this.mutex.acquire();
     try {
-      logInfo('PPYang start load static token, id:', this.state.tokenId);
-      let loadTokenId = this.state.tokenId + 1;
       const maxLoadCount = 500;
       let loadCount = 0;
       do {
-        const url = `https://relayer.gopocket.finance/api/v1/getTokens?startId=${loadTokenId}&count=${maxLoadCount}`;
+        const maxTokenId = await Sqlite.getInstance().getStaticTokensMaxId();
+        logInfo('PPYang start load static token, id:', maxTokenId);
+        const url = `https://relayer.gopocket.finance/api/v1/getTokens?startId=${maxTokenId + 1}&count=${maxLoadCount}`;
         const response: any = await handleFetch(url);
         if (!response || response.errmsg != 'ok' || !response.data || !Array.isArray(response.data) || !response.data.length) {
           break;
         }
         loadCount = response.data.length;
+        logInfo('PPYang load static token loadCount:', loadCount);
         const tokens = response.data;
         await Sqlite.getInstance().insetStaticTokens(tokens);
-        const endId = tokens[tokens.length - 1].id;
-        this.update({ tokenId: endId });
-        loadTokenId = endId + 1;
         await new Promise((resolve => {
           setTimeout(() => resolve(true), 3000);
         }));
       } while (loadCount >= maxLoadCount);
-      logInfo('PPYang load static token end, id:', this.state.tokenId);
     } catch (e) {
       logInfo('PPYang getTokens fail', e);
     } finally {
@@ -96,34 +80,24 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Sta
   }
 
   async startLoadBaseStaticTokensIfNeed() {
+    await Sqlite.getInstance().clearStaticTokens();
     const count = await Sqlite.getInstance().getStaticTokenCount();
     if (count == 0) {
-      await this.loadBaseStaticTokens(ChainType.Ethereum, ETH_JSON);
-      await this.loadBaseStaticTokens(ChainType.Bsc, BSC_JSON);
-      await this.loadBaseStaticTokens(ChainType.Polygon, POLYGON_JSON);
-      await this.loadBaseStaticTokens(ChainType.Heco, HECO_JSON);
-      await this.loadBaseStaticTokens(ChainType.Optimism, OP_JSON);
-      await this.loadBaseStaticTokens(ChainType.Avax, AVAX_JSON);
-      await this.loadBaseStaticTokens(ChainType.Arbitrum, ARB_JSON);
+      let dbPath;
+      if (this.config.isIos) {
+        dbPath = `${RNFS.MainBundlePath}/tempdb.db`;
+      } else {
+        dbPath = RNFS.DocumentDirectoryPath + '/tempdb.db';
+        try {
+          await RNFS.copyFileAssets('db/tempdb.db', dbPath);
+        } catch (e) {
+          logWarn('PPYang copy db fail, e:', e);
+        }
+      }
+      const exists = await RNFS.exists(dbPath);
+      logInfo('PPYang dbPath:', dbPath, exists, this.config.isIos);
+      await Sqlite.getInstance().copyTempTokens(dbPath);
     }
-  }
-
-  async loadBaseStaticTokens(type: number, tokens: any) {
-    const keys = Object.keys(tokens);
-    const allToken = [];
-    for (let index = 0; index < keys.length; index++) {
-      const key = keys[index];
-      const address = key.toLowerCase();
-      const l1_address = tokens[key].l1Address ? tokens[key].l1Address.toLowerCase() : undefined;
-      const coin_id = tokens[key].id || undefined;
-      const chain_type = type;
-      const image = tokens[key].image || undefined;
-      const name = tokens[key].name || undefined;
-      const decimals = tokens[key].decimals || 0;
-      const symbol = tokens[key].symbol || undefined;
-      allToken.push({ address, l1_address, coin_id, chain_type, image, name, decimals, symbol });
-    }
-    await Sqlite.getInstance().insetStaticTokens(allToken);
   }
 
   onComposed() {

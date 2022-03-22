@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0417412427E9A32500C54857 /* tempdb.db in Resources */ = {isa = PBXBuildFile; fileRef = 0417412027E9A32500C54857 /* tempdb.db */; };
 		04D092DD277EA4F300DE4DCB /* NativeWorker.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -82,6 +83,7 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		0417412027E9A32500C54857 /* tempdb.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = tempdb.db; sourceTree = "<group>"; };
 		04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NativeWorker.jsbundle; sourceTree = "<group>"; };
 		05ED435BC1B685AAFF1770AD /* Pods-GoPocket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.debug.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* GoPocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoPocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -154,6 +156,7 @@
 		13B07FAE1A68108700A75B9A /* GoPocket */ = {
 			isa = PBXGroup;
 			children = (
+				0417412027E9A32500C54857 /* tempdb.db */,
 				04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */,
 				1B4628A726DE271F0096E17E /* splash_screen.json */,
 				AA9EDF17249955C7005D89EE /* GoPocketDebug.entitlements */,
@@ -400,6 +403,7 @@
 				1B0BF5032653AB9900AFC828 /* GoPocket.entitlements in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				B579CECA27145E9700D045FB /* advanced.html in Resources */,
+				0417412427E9A32500C54857 /* tempdb.db in Resources */,
 				15ACC9FB226555820063978B /* LaunchScreen.xib in Resources */,
 				04D092DD277EA4F300DE4DCB /* NativeWorker.jsbundle in Resources */,
 			);

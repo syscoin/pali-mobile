@@ -64,6 +64,7 @@ import importAdditionalAccounts from '../util/importAdditionalAccounts';
 import { strings } from '../../locales/i18n';
 
 import { INFURA_PROJECTID, OPENSEA_APIKEY, ETHERSCAN_APIKEYS, BSCSCAN_APIKEYS, POLYGONSCAN_APIKEYS } from '@env';
+import Device from '../util/Device';
 
 const encryptor = new Encryptor();
 let currentChainId;
@@ -171,7 +172,9 @@ class EngineImpl {
 					new EnsController(),
 					new InviteController(),
 					new DefiProtocolController(),
-					new StaticTokenController()
+					new StaticTokenController({
+						isIos: Device.isIos()
+					})
 				],
 				initialState
 			);

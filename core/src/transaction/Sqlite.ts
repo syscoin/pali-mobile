@@ -189,6 +189,42 @@ export class Sqlite {
     );
   }
 
+  copyTempTokens(path: string) {
+    return new Promise((resolve => {
+      this.db.executeSql(
+        `ATTACH DATABASE '${path}' AS tempDB`,
+        [],
+        () => {
+          this.db.executeSql(
+            `INSERT INTO STATIC_TOKENS SELECT * FROM tempDB.temp_token`,
+            [],
+            () => {
+              this.db.executeSql(
+                `DETACH DATABASE tempDB`,
+                [],
+                () => {
+                  resolve(true);
+                },
+                (error: any) => {
+                  this._errorLog('detach tempDB', error);
+                  resolve(false);
+                }
+              );
+            },
+            (error: any) => {
+              this._errorLog('copy tempDB', error);
+              resolve(false);
+            }
+          );
+        },
+        (error: any) => {
+          this._errorLog('attach tempDB', error);
+          resolve(false);
+        }
+      );
+    }));
+  }
+
   clearStaticTokens() {
     return new Promise((resolve => {
       const sql = 'DELETE FROM STATIC_TOKENS';
@@ -204,6 +240,27 @@ export class Sqlite {
         }
       );
     }));
+  }
+
+  getStaticTokensMaxId() {
+    return new Promise<any>((resolve) => {
+      let sql = 'SELECT MAX(id) AS max_id FROM STATIC_TOKENS';
+      this.db.executeSql(
+        sql,
+        [],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            resolve(results.rows.item(0)?.max_id || 0);
+          } else {
+            resolve(0);
+          }
+        },
+        (error: any) => {
+          this._errorLog('getStaticTokenCount', error);
+          resolve(0);
+        }
+      );
+    });
   }
 
   async findStaticToken(types: number[], query: string, needFuse = false, fuseCount = 0) {
