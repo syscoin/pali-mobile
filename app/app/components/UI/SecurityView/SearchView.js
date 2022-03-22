@@ -145,13 +145,13 @@ export default class SearchView extends PureComponent {
 
 		const { queryAddress, querySymbol } = await queryContractMap(enabledChains, searchQuery, true, 10);
 		let results = [...querySymbol, ...queryAddress];
-		const arbAddressArray = results.filter(token => token.type === ChainType.Arbitrum);
-		const bscAddressArray = results.filter(token => token.type === ChainType.Bsc);
-		const ethAddressArray = results.filter(token => token.type === ChainType.Ethereum);
-		const polyAddressArray = results.filter(token => token.type === ChainType.Polygon);
-		const hecoAddressArray = results.filter(token => token.type === ChainType.Heco);
-		const opAddressArray = results.filter(token => token.type === ChainType.Optimism);
-		const avaxAddressArray = results.filter(token => token.type === ChainType.Avax);
+		const arbAddressArray = results.filter(token => token.type === ChainType.Arbitrum).map(token => token.address);
+		const bscAddressArray = results.filter(token => token.type === ChainType.Bsc).map(token => token.address);
+		const ethAddressArray = results.filter(token => token.type === ChainType.Ethereum).map(token => token.address);
+		const polyAddressArray = results.filter(token => token.type === ChainType.Polygon).map(token => token.address);
+		const hecoAddressArray = results.filter(token => token.type === ChainType.Heco).map(token => token.address);
+		const opAddressArray = results.filter(token => token.type === ChainType.Optimism).map(token => token.address);
+		const avaxAddressArray = results.filter(token => token.type === ChainType.Avax).map(token => token.address);
 
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
