@@ -80,7 +80,6 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Bas
   }
 
   async startLoadBaseStaticTokensIfNeed() {
-    await Sqlite.getInstance().clearStaticTokens();
     const count = await Sqlite.getInstance().getStaticTokenCount();
     if (count == 0) {
       let dbPath;
