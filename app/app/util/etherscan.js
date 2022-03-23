@@ -10,7 +10,9 @@ import {
 	OptimismMainnet,
 	OptimismTestnetKovan,
 	AvaxMainnet,
-	AvaxTestnet
+	AvaxTestnet,
+	SyscoinMainnet,
+	SyscoinTestnet
 } from '../constants/network';
 
 /**
@@ -62,6 +64,9 @@ export function getEtherscanBaseUrl(network) {
 	if (network === AvaxMainnet || network === AvaxTestnet) {
 		const subdomain = network === AvaxMainnet ? '' : `testnet.`;
 		return `https://${subdomain}snowtrace.io`;
+	}
+	if (network === SyscoinMainnet || network === SyscoinTestnet) {
+		return network === SyscoinMainnet ? 'https://explorer.syscoin.org' : `https://tanenbaum.io`;
 	}
 	if (network === OptimismMainnet || network === OptimismTestnetKovan) {
 		const subdomain = network === OptimismMainnet ? 'optimistic' : 'kovan-optimistic';

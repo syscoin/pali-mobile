@@ -13,6 +13,7 @@ import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import { Sqlite } from '../transaction/Sqlite';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import { ChainType, Token } from './TokenRatesController';
 import AssetsController from './AssetsController';
 import ArbContractController from './ArbContractController';
@@ -76,6 +77,10 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
     await safelyExecute(async () => {
       const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
       await this.addTokenByTransactionHistory(avaxNetwork.state.provider.chainId, selectedAddress);
+    });
+    await safelyExecute(async () => {
+      const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
+      await this.addTokenByTransactionHistory(syscoinNetwork.state.provider.chainId, selectedAddress);
     });
   }
 
@@ -198,6 +203,7 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
     const opNetwork = this.context.OpNetworkController as OpNetworkController;
     const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
     const network = this.context.NetworkController as NetworkController;
     transaction.subscribe(async ({ txChangedType, addressWithChanged }) => {
       safelyExecute(async () => {
@@ -215,6 +221,8 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
           await this.addTokenByTransactionHistory(hecoNetwork.state.provider.chainId, addressWithChanged);
         } else if (bitAND(txChangedType, TxChangedType.AvaxTokenTxChanged) !== 0) {
           await this.addTokenByTransactionHistory(avaxNetwork.state.provider.chainId, addressWithChanged);
+        } else if (bitAND(txChangedType, TxChangedType.SyscoinTokenTxChanged) !== 0) {
+          await this.addTokenByTransactionHistory(syscoinNetwork.state.provider.chainId, addressWithChanged);
         }
       }, true);
     });

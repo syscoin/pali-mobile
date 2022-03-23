@@ -11,6 +11,7 @@ import TronNetworkController from '../network/TronNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import util, { isRpcChainType } from '../util';
 import { RpcNetworkController } from '../network/RpcNetworkController';
 import { ChainType, Token } from './TokenRatesController';
@@ -31,6 +32,7 @@ export interface AssetsConfig extends BaseConfig {
   hecoChainId: string;
   opChainId: string;
   avaxChainId: string;
+  syscoinChainId: string;
 }
 
 export enum TokenChangedType {
@@ -43,6 +45,7 @@ export enum TokenChangedType {
   HecoTokenChanged = 0x40,
   TronTokenChanged = 0x80,
   AvaxTokenChanged = 0x100,
+  SyscoinTokenChanged = 0x100,
   RpcTokenChanged = 0x200,
 }
 
@@ -105,6 +108,7 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       hecoChainId: '',
       opChainId: '',
       avaxChainId: '',
+      syscoinChainId: '',
     };
     this.defaultState = {
       tokenChangedType: TokenChangedType.NoChange,
@@ -162,6 +166,9 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       } else if (chainType === ChainType.Avax) {
         chainId = this.config.avaxChainId;
         tokenChangedType = TokenChangedType.AvaxTokenChanged;
+      } else if (chainType === ChainType.Syscoin) {
+        chainId = this.config.syscoinChainId;
+        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
       } else if (isRpcChainType(chainType)) {
         const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
         chainId = rpcNetwork.getProviderChainId(chainType);
@@ -222,6 +229,8 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
         tokenChangedType = TokenChangedType.OpTokenChanged;
       } else if (chainType === ChainType.Avax) {
         tokenChangedType = TokenChangedType.AvaxTokenChanged;
+      } else if (chainType === ChainType.Syscoin) {
+        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
       } else if (isRpcChainType(chainType)) {
         tokenChangedType = TokenChangedType.RpcTokenChanged;
       } else {
@@ -265,6 +274,9 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       } else if (chainType === ChainType.Avax) {
         chainId = this.config.avaxChainId;
         tokenChangedType = TokenChangedType.AvaxTokenChanged;
+      } else if (chainType === ChainType.Syscoin) {
+        chainId = this.config.syscoinChainId;
+        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
       } else if (isRpcChainType(chainType)) {
         const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
         chainId = rpcNetwork.getProviderChainId(chainType);
@@ -352,6 +364,12 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
     const { chainId } = avaxNetwork.state.provider;
     this.configure({ avaxChainId: chainId });
+  }
+
+  async onSyscoinNetworkChange() {
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
+    const { chainId } = syscoinNetwork.state.provider;
+    this.configure({ syscoinChainId: chainId });
   }
 
   rehydrate(state: Partial<AssetsState>) {

@@ -9,6 +9,7 @@ import tabEth from '../../../../images/ic_tab_eth.png';
 import tabBsc from '../../../../images/ic_tab_bsc.png';
 import tabPolygon from '../../../../images/ic_tab_polygon.png';
 import tabAvax from '../../../../images/ic_tab_avax.png';
+import tabSyscoin from '../../../../images/ic_tab_syscoin.png';
 import tabArb from '../../../../images/ic_tab_arb.png';
 
 const bgColor = '#FE6E9129';
@@ -126,6 +127,8 @@ class NetworkTabBar extends PureComponent {
 			return tabArb;
 		} else if (chain === 8) {
 			return tabAvax;
+		} else if (chain === 9) {
+			return tabSyscoin;
 		}
 		return tabEth;
 	}

@@ -238,6 +238,27 @@ export function getAvaxscanApiUrl(
   return url;
 }
 
+export function getSyscoinscanApiUrl(
+  chainId: string,
+  address: string,
+  action: string,
+  fromBlock?: string,
+  etherscanApiKey?: string,
+): string {
+  let apiUrl = 'https://explorer.syscoin.org';
+  if (chainId === '5700') {
+    apiUrl = 'https://tanenbaum.io';
+  }
+  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
+  if (fromBlock) {
+    url += `&startBlock=${fromBlock}`;
+  }
+  if (etherscanApiKey) {
+    url += `&apikey=${etherscanApiKey}`;
+  }
+  return url;
+}
+
 export async function getScanApiByType(type: ChainType, chainId: string, address: string, action: string, fromBlock?: string, etherscanApiKey?: string) {
   let scanUrl = '';
   if (type === ChainType.Ethereum) {
@@ -254,6 +275,8 @@ export async function getScanApiByType(type: ChainType, chainId: string, address
     scanUrl = getOpscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
   } else if (type === ChainType.Avax) {
     scanUrl = getAvaxscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  } else if (type === ChainType.Syscoin) {
+    scanUrl = getSyscoinscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
   }
   if (type === ChainType.Ethereum || type === ChainType.Optimism || type === ChainType.Bsc) {
     return await getAvailableUrl(scanUrl);
@@ -919,6 +942,15 @@ export function rehydrate(name: string, state: any) {
           for (const key2 in new_state.avaxContractBalances[key]) {
             if (new_state.avaxContractBalances[key][key2]) {
               new_state.avaxContractBalances[key][key2] = hexToBN(String(new_state.avaxContractBalances[key][key2]));
+            }
+          }
+        }
+      }
+      if (new_state.syscoinContractBalances) {
+        for (const key in new_state.syscoinContractBalances) {
+          for (const key2 in new_state.syscoinContractBalances[key]) {
+            if (new_state.syscoinContractBalances[key][key2]) {
+              new_state.syscoinContractBalances[key][key2] = hexToBN(String(new_state.syscoinContractBalances[key][key2]));
             }
           }
         }

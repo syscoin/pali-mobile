@@ -49,7 +49,7 @@ export enum TokenType {
   NFT = 0x02,
 }
 
-export const defaultEnabledChains = [ChainType.Ethereum, ChainType.Polygon, ChainType.Arbitrum, ChainType.Bsc, ChainType.Avax];
+export const defaultEnabledChains = [ChainType.Ethereum, ChainType.Polygon, ChainType.Arbitrum, ChainType.Bsc, ChainType.Avax, ChainType.Syscoin];
 
 /**
  * Controller that stores shared settings and exposes convenience methods

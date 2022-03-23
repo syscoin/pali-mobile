@@ -13,7 +13,9 @@ export const LAST_POLYGON_INCOMING_TX_BLOCK_INFO = `${prefix}lastPolgyonIncoming
 export const LAST_ARB_INCOMING_TX_BLOCK_INFO = `${prefix}lastArbIncomingTxBlockInfo`;
 export const LAST_OP_INCOMING_TX_BLOCK_INFO = `${prefix}lastOpIncomingTxBlockInfo`;
 export const LAST_HECO_INCOMING_TX_BLOCK_INFO = `${prefix}lastHecoIncomingTxBlockInfo`;
-export const LAST_AVAX_INCOMING_TX_BLOCK_INFO = `${prefix}lastOpIncomingTxBlockInfo`;
+export const LAST_AVAX_INCOMING_TX_BLOCK_INFO = `${prefix}lastAvaxIncomingTxBlockInfo`;
+export const LAST_SYSCOIN_INCOMING_TX_BLOCK_INFO = `${prefix}lastSyscoinIncomingTxBlockInfo`;
+
 export const LAST_NOTIFICATION_INFO = `${prefix}lastNotificationInfo`;
 export const ETHERSCAN_KEY = `${prefix}etherscanKey`;
 export const BSCSCAN_KEY = `${prefix}bscscanKey`;

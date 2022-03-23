@@ -1407,7 +1407,8 @@ const BrowserTab = props => {
 			ChainType.Arbitrum,
 			ChainType.Heco,
 			ChainType.Optimism,
-			ChainType.Avax
+			ChainType.Avax,
+			ChainType.Syscoin
 		];
 		const defiNetImgSource = [
 			require('../../../images/ic_defi_eth.png'),
@@ -1416,7 +1417,8 @@ const BrowserTab = props => {
 			require('../../../images/ic_defi_arb.png'),
 			require('../../../images/ic_defi_heco.png'),
 			require('../../../images/ic_defi_op.png'),
-			require('../../../images/ic_defi_avax.png')
+			require('../../../images/ic_defi_avax.png'),
+			require('../../../images/ic_defi_syscoin.png')
 		];
 		const defiNetName = [
 			strings('other.ethereum'),
@@ -1425,7 +1427,8 @@ const BrowserTab = props => {
 			strings('other.arbitrum'),
 			strings('other.heco'),
 			strings('other.optimism'),
-			strings('other.avalanche')
+			strings('other.avalanche'),
+			strings('other.syscoin')
 		];
 
 		let firstItem = 0;

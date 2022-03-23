@@ -554,6 +554,8 @@ class HomePage extends PureComponent {
 			return require('../../../images/ic_op_tag.png');
 		} else if (chain === 8) {
 			return require('../../../images/ic_avax_tag.png');
+		} else if (chain === 9) {
+			return require('../../../images/ic_syscoin_tag.png');
 		} else if (util.isRpcChainType(chain)) {
 			return getIcTagResource(chain);
 		}

@@ -65,6 +65,9 @@ export const chainToChainType = chain => {
 	if (chain === 8) {
 		return ChainType.Avax;
 	}
+	if (chain === 9) {
+		return ChainType.Syscoin;
+	}
 	return chain;
 };
 

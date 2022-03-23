@@ -925,6 +925,8 @@ class Tokens extends PureComponent {
 								? require('../../../images/ic_op_tag.png')
 								: asset.type === ChainType.Avax
 								? require('../../../images/ic_avax_tag.png')
+								: asset.type === ChainType.Syscoin
+								? require('../../../images/ic_syscoin_tag.png')
 								: require('../../../images/ic_bsc_tag.png')
 						}
 					/>

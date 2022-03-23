@@ -249,6 +249,7 @@ class Nft extends PureComponent {
 		const hecoChainId = getChainIdByType(ChainType.Heco);
 		const opChainId = getChainIdByType(ChainType.Optimism);
 		const avaxChainId = getChainIdByType(ChainType.Avax);
+		const syscoinChainId = getChainIdByType(ChainType.Syscoin);
 		const rpcChainIds = await RpcNetworkController.getEnabledChain();
 
 		const allContracts = this.state.allContracts;
@@ -306,6 +307,17 @@ class Nft extends PureComponent {
 							avaxFavorites && avaxFavorites.length > 0 && favorites.push(...avaxFavorites);
 						}
 					}
+					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin))) {
+						if (
+							allCollectibleContracts[syscoinChainId] &&
+							allCollectibleContracts[syscoinChainId].length > 0
+						) {
+							const syscoinFavorites = favoriteCollectibles.filter(
+								token => token.chainId === syscoinChainId
+							);
+							syscoinFavorites && syscoinFavorites.length > 0 && favorites.push(...syscoinFavorites);
+						}
+					}
 					if (rpcChainIds?.length > 0) {
 						rpcChainIds.forEach(chain => {
 							const rpcFavorites = favoriteCollectibles.filter(token => token.chainId === chain.chainId);
@@ -358,6 +370,12 @@ class Nft extends PureComponent {
 				) {
 					allContracts.push(...allCollectibleContracts[avaxChainId]);
 				}
+				if (
+					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin)) &&
+					allCollectibleContracts[syscoinChainId]
+				) {
+					allContracts.push(...allCollectibleContracts[syscoinChainId]);
+				}
 				if (rpcChainIds?.length > 0) {
 					rpcChainIds.forEach(chain => {
 						if (allCollectibleContracts[chain.chainId]) {
@@ -388,6 +406,7 @@ class Nft extends PureComponent {
 				const hecoChainId = getChainIdByType(ChainType.Heco);
 				const opChainId = getChainIdByType(ChainType.Optimism);
 				const avaxChainId = getChainIdByType(ChainType.Avax);
+				const syscoinChainId = getChainIdByType(ChainType.Syscoin);
 				const rpcChainIds = await RpcNetworkController.getEnabledChain();
 				const collectibles = [];
 				if (currentChainType === ChainType.All) {
@@ -433,6 +452,12 @@ class Nft extends PureComponent {
 					) {
 						collectibles.push(...allCollectibles[avaxChainId]);
 					}
+					if (
+						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin)) &&
+						allCollectibles[syscoinChainId]
+					) {
+						collectibles.push(...allCollectibles[syscoinChainId]);
+					}
 					rpcChainIds?.forEach(chain => {
 						if (allCollectibles[chain.chainId]) {
 							collectibles.push(...allCollectibles[chain.chainId]);
@@ -467,6 +492,8 @@ class Nft extends PureComponent {
 							type = ChainType.Heco;
 						} else if (token.chainId === avaxChainId) {
 							type = ChainType.Avax;
+						} else if (token.chainId === syscoinChainId) {
+							type = ChainType.Syscoin;
 						} else if (isRpcChainId(token.chainId)) {
 							type = getRpcChainTypeByChainId(token.chainId);
 						} else {
@@ -529,6 +556,7 @@ class Nft extends PureComponent {
 		const hecoChainId = getChainIdByType(ChainType.Heco);
 		const opChainId = getChainIdByType(ChainType.Optimism);
 		const avaxChainId = getChainIdByType(ChainType.Avax);
+		const syscoinChainId = getChainIdByType(ChainType.Syscoin);
 		const collectibles = this.state.dataCollectibles;
 
 		const isFavorite = item.favoriteAddr === favoriteAddr;
@@ -602,6 +630,8 @@ class Nft extends PureComponent {
 										? require('../../../images/ic_op_tag.png')
 										: item.chainId === avaxChainId
 										? require('../../../images/ic_avax_tag.png')
+										: item.chainId === syscoinChainId
+										? require('../../../images/ic_syscoin_tag.png')
 										: isRpcChainId(item.chainId)
 										? getIcTagResource(getRpcChainTypeByChainId(item.chainId))
 										: require('../../../images/ic_bsc_tag.png')

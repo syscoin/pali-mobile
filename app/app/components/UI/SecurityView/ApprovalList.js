@@ -295,6 +295,8 @@ class ApprovalList extends Component {
 						? require('../../../images/ic_op_tag.png')
 						: chainType === ChainType.Avax
 						? require('../../../images/ic_avax_tag.png')
+						: chainType === ChainType.Syscoin
+						? require('../../../images/ic_syscoin_tag.png')
 						: util.isRpcChainType(chainType)
 						? getIcTagResource(chainType)
 						: require('../../../images/ic_bsc_tag.png')

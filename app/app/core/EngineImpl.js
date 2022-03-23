@@ -7,6 +7,7 @@ import {
 	TronContractController,
 	HecoContractController,
 	AvaxContractController,
+	SyscoinContractController,
 	AssetsController,
 	AssetsDetectionController,
 	ComposableController,
@@ -27,6 +28,7 @@ import {
 	TronNetworkController,
 	HecoNetworkController,
 	AvaxNetworkController,
+	SyscoinNetworkController,
 	BscBridgeController,
 	ChainType,
 	SecurityController,
@@ -56,6 +58,7 @@ import {
 	LAST_HECO_INCOMING_TX_BLOCK_INFO,
 	LAST_OP_INCOMING_TX_BLOCK_INFO,
 	LAST_AVAX_INCOMING_TX_BLOCK_INFO,
+	LAST_SYSCOIN_INCOMING_TX_BLOCK_INFO,
 	BACKUP_VAULT
 } from '../constants/storage';
 import numberUtil from '../util/number';
@@ -75,6 +78,7 @@ let currentOpChainId;
 let currentTronChainId;
 let currentHecoChainId;
 let currentAvaxChainId;
+let currentSyscoinChainId;
 let etherHandle: NodeJS.Timer = null;
 let bscHandle: NodeJS.Timer = null;
 let polygonHandle: NodeJS.Timer = null;
@@ -83,6 +87,7 @@ let opHandle: NodeJS.Timer = null;
 let tronHandle: NodeJS.Timer = null;
 let hecoHandle: NodeJS.Timer = null;
 let avaxHandle: NodeJS.Timer = null;
+let syscoinHandle: NodeJS.Timer = null;
 let addresses;
 const mutex = new Mutex();
 let etherscanKey = null;
@@ -106,6 +111,7 @@ class EngineImpl {
 					new TronContractController(),
 					new HecoContractController(),
 					new AvaxContractController(),
+					new SyscoinContractController(),
 					new RpcContractController(),
 					new AssetsController(),
 					new AssetsDetectionController(),
@@ -141,6 +147,10 @@ class EngineImpl {
 						getProviderConfig: this.getProviderConfig.bind(this)
 					}),
 					new AvaxNetworkController({
+						infuraProjectId: '',
+						getProviderConfig: this.getProviderConfig.bind(this)
+					}),
+					new SyscoinNetworkController({
 						infuraProjectId: '',
 						getProviderConfig: this.getProviderConfig.bind(this)
 					}),
@@ -190,6 +200,7 @@ class EngineImpl {
 					TronNetworkController: tronnetwork,
 					HecoNetworkController: heconetwork,
 					AvaxNetworkController: avaxnetwork,
+					SyscoinNetworkController: syscoinnetwork,
 					RpcNetworkController: rpcnetwork,
 					TransactionController: transaction,
 					PreferencesController: preferences
@@ -207,6 +218,7 @@ class EngineImpl {
 				}
 				heconetwork.refreshNetwork();
 				avaxnetwork.refreshNetwork();
+				syscoinnetwork.refreshNetwork();
 				rpcnetwork.refreshNetwork();
 				transaction.configure({ sign: keyring.signTransaction.bind(keyring) });
 				network.subscribe(state => {
@@ -310,6 +322,19 @@ class EngineImpl {
 							this.configureControllersOnAvaxNetworkChange();
 						}, 800);
 						NativeWorker.Api.patchEmitter(avaxnetwork.name, 'provider_emit', avaxnetwork.provider);
+					}
+				});
+
+				syscoinnetwork.subscribe(state => {
+					if (state.network !== 'loading' && state.provider.chainId !== currentSyscoinChainId) {
+						currentSyscoinChainId = state.provider.chainId;
+						syscoinHandle && clearTimeout(syscoinHandle);
+						NativeWorker.Api.dispatchEndNetworkChange(ChainType.Syscoin, state.provider.type);
+						// We should add a state or event emitter saying the provider changed
+						syscoinHandle = setTimeout(() => {
+							this.configureControllersOnSyscoinNetworkChange();
+						}, 800);
+						NativeWorker.Api.patchEmitter(syscoinnetwork.name, 'provider_emit', syscoinnetwork.provider);
 					}
 				});
 				addresses = Object.keys(preferences.state.identities);
@@ -431,6 +456,7 @@ class EngineImpl {
 			TronContractController,
 			HecoContractController,
 			AvaxContractController,
+			SyscoinContractController,
 			RpcContractController,
 			NetworkController,
 			TransactionController,
@@ -457,6 +483,7 @@ class EngineImpl {
 		}
 		HecoContractController.onL1NetworkChange(provider, chainId);
 		AvaxContractController.onL1NetworkChange(provider, chainId);
+		SyscoinContractController.onL1NetworkChange(provider, chainId);
 		RpcContractController.onL1NetworkChange(provider, chainId);
 
 		TransactionController.hub.emit('networkChange');
@@ -614,6 +641,27 @@ class EngineImpl {
 		setTimeout(() => AssetsDataModel.poll(), 100);
 	}
 
+	configureControllersOnSyscoinNetworkChange() {
+		const {
+			SyscoinNetworkController,
+			SyscoinContractController,
+			AssetsController,
+			TransactionController,
+			AssetsDataModel
+		} = this.datamodel.context;
+		const { provider } = SyscoinNetworkController;
+		const {
+			state: {
+				provider: { chainId }
+			}
+		} = SyscoinNetworkController;
+		NativeWorker.Api.dispatchNetworkChanged(ChainType.Syscoin, chainId);
+		SyscoinContractController.onL2NetworkChange(provider, chainId);
+		AssetsController.onSyscoinNetworkChange();
+		TransactionController.onSyscoinNetworkChange();
+		setTimeout(() => AssetsDataModel.poll(), 100);
+	}
+
 	removeTxInfoIfNecessary = async type => {
 		const { PreferencesController } = this.datamodel.context;
 		const { identities } = PreferencesController.state;
@@ -630,6 +678,8 @@ class EngineImpl {
 			infoKey = LAST_OP_INCOMING_TX_BLOCK_INFO;
 		} else if (type === ChainType.Avax) {
 			infoKey = LAST_AVAX_INCOMING_TX_BLOCK_INFO;
+		} else if (type === ChainType.Syscoin) {
+			infoKey = LAST_SYSCOIN_INCOMING_TX_BLOCK_INFO;
 		}
 		let changed = false;
 		const lastIncomingTxBlockInfoStr = await NativeWorker.Agents.AsyncStorage.getItem(infoKey);
@@ -657,6 +707,7 @@ class EngineImpl {
 		await this.removeTxInfoIfNecessary(ChainType.Heco);
 		await this.removeTxInfoIfNecessary(ChainType.Optimism);
 		await this.removeTxInfoIfNecessary(ChainType.Avax);
+		await this.removeTxInfoIfNecessary(ChainType.Syscoin);
 	};
 
 	refreshEthTransactionHistory = async (forceCheck, type, selectedAddress, loadToken, txInternal = false) => {
@@ -669,7 +720,8 @@ class EngineImpl {
 			ArbNetworkController,
 			OpNetworkController,
 			HecoNetworkController,
-			AvaxNetworkController
+			AvaxNetworkController,
+			SyscoinNetworkController
 		} = this.datamodel.context;
 		let chainId = NetworkController.state.provider.chainId;
 		let infoKey = LAST_INCOMING_TX_BLOCK_INFO;
@@ -692,6 +744,9 @@ class EngineImpl {
 		} else if (type === ChainType.Avax) {
 			chainId = AvaxNetworkController.state.provider.chainId;
 			infoKey = LAST_AVAX_INCOMING_TX_BLOCK_INFO;
+		} else if (type === ChainType.Syscoin) {
+			chainId = SyscoinNetworkController.state.provider.chainId;
+			infoKey = LAST_SYSCOIN_INCOMING_TX_BLOCK_INFO;
 		}
 
 		try {
@@ -772,6 +827,7 @@ class EngineImpl {
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Polygon, selectedAddress, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Bsc, selectedAddress, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Avax, selectedAddress, true);
+			await this.refreshEthTransactionHistory(forceCheck, ChainType.Syscoin, selectedAddress, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Arbitrum, selectedAddress, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Optimism, selectedAddress, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Heco, selectedAddress, true);
@@ -780,6 +836,7 @@ class EngineImpl {
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Polygon, selectedAddress, false);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Bsc, selectedAddress, false);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Avax, selectedAddress, false);
+			await this.refreshEthTransactionHistory(forceCheck, ChainType.Syscoin, selectedAddress, false);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Arbitrum, selectedAddress, false);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Optimism, selectedAddress, false);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Heco, selectedAddress, false);
@@ -788,6 +845,7 @@ class EngineImpl {
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Polygon, selectedAddress, false, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Bsc, selectedAddress, false, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Avax, selectedAddress, false, true);
+			await this.refreshEthTransactionHistory(forceCheck, ChainType.Syscoin, selectedAddress, false, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Arbitrum, selectedAddress, false, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Optimism, selectedAddress, false, true);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Heco, selectedAddress, false, true);

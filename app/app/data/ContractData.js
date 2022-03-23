@@ -4,6 +4,7 @@ import {
 	callSqlite,
 	isMainnetArb,
 	isMainnetAvax,
+	isMainnetSyscoin,
 	isMainnetBsc,
 	isMainnetEthereum,
 	isMainnetHeco,
@@ -47,6 +48,10 @@ export async function queryContractMap(types, query, needFuse, fuseCount) {
 			}
 		} else if (type === ChainType.Avax) {
 			if (isMainnetAvax()) {
+				return true;
+			}
+		} else if (type === ChainType.Syscoin) {
+			if (isMainnetSyscoin()) {
 				return true;
 			}
 		}
@@ -141,6 +146,13 @@ export async function getQueryId(type, nativeCurrency, address) {
 		}
 		if (nativeCurrency) {
 			return 'avalanche-2';
+		}
+	} else if (type === ChainType.Syscoin) {
+		if (!isMainnetSyscoin()) {
+			return undefined;
+		}
+		if (nativeCurrency) {
+			return 'syscoin';
 		}
 	}
 	if (address) {

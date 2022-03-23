@@ -208,7 +208,25 @@ export const migrations = {
 			}
 		}
 		return state;
+	},
+	6: state => {
+		const identities = state?.engine?.backgroundState?.PreferencesController?.identities;
+		if (identities) {
+			const keys = Object.keys(identities);
+			if (keys?.length > 0) {
+				for (const key of keys) {
+					if (identities[key]?.enabledChains && !identities[key].enabledChains.includes(ChainType.Syscoin)) {
+						identities[key].enabledChains = [...identities[key].enabledChains, ChainType.Syscoin];
+					}
+				}
+			}
+		}
+		const allChains = state?.engine?.backgroundState?.PreferencesController?.allChains;
+		if (allChains && !allChains.includes(ChainType.Syscoin)) {
+			allChains.push(ChainType.Syscoin);
+		}
+		return state;
 	}
 };
 
-export const version = 5;
+export const version = 6;

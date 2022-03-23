@@ -71,6 +71,11 @@ const chainItems = [
 		text: strings('wallet.avalanche_network'),
 		icon: require('../../../images/img_asset_avax.png'),
 		chainType: ChainType.Avax
+	},
+	{
+		text: strings('wallet.syscoin_network'),
+		icon: require('../../../images/img_asset_syscoin.png'),
+		chainType: ChainType.Syscoin
 	}
 ];
 

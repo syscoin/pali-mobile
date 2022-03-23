@@ -40,6 +40,7 @@ export interface TokenBalancesState extends BaseState {
   hecoContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
   tronContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
   avaxContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
+  syscoinContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
   rpcContractBalances: {[selectedAddress: string]: {[chainId: string]: {[address: string]: BN}}};
 }
 
@@ -85,6 +86,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       hecoContractBalances: {},
       tronContractBalances: {},
       avaxContractBalances: {},
+      syscoinContractBalances: {},
       rpcContractBalances: {},
     };
     this.initialize();
@@ -158,6 +160,10 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
 
       !preferences.isDisabledChain(selectedAddress, ChainType.Avax) &&
       await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Avax));
+      intervals.push(Date.now() - start);
+
+      !preferences.isDisabledChain(selectedAddress, ChainType.Syscoin) &&
+      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Syscoin));
       intervals.push(Date.now() - start);
 
       if (TRON_ENABLED) {
@@ -235,6 +241,13 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
           this.update({ avaxContractBalances: { ...this.state.avaxContractBalances }});
           break;
         }
+        case ChainType.Syscoin: {
+          const oldBalances = this.state.syscoinContractBalances[selectedAddress] || {};
+          const newBalances = { ...oldBalances, ...balances };
+          this.state.syscoinContractBalances[selectedAddress] = newBalances;
+          this.update({ syscoinContractBalances: { ...this.state.syscoinContractBalances }});
+          break;
+        }
         default:
           break;
       }
@@ -293,6 +306,9 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       case ChainType.Avax:
         oldBalances = this.state.avaxContractBalances[selectedAddress] || {};
         break;
+      case ChainType.Syscoin:
+        oldBalances = this.state.syscoinContractBalances[selectedAddress] || {};
+        break;
       default:
         if (isRpcChainType(chainType)) {
           oldBalances = this.state.rpcContractBalances[selectedAddress]?.[chainId] || {};
@@ -349,6 +365,11 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
           const avaxContractBalances = { ...this.state.avaxContractBalances };
           avaxContractBalances[selectedAddress] = newContractBalances;
           this.update({ avaxContractBalances });
+          break;
+        case ChainType.Syscoin:
+          const syscoinContractBalances = { ...this.state.syscoinContractBalances };
+          syscoinContractBalances[selectedAddress] = newContractBalances;
+          this.update({ syscoinContractBalances });
           break;
         default:
           if (isRpcChainType(chainType)) {
@@ -465,6 +486,12 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     Object.keys(avaxContractBalances).forEach((address) => {
       if (!identities[address]) {
         delete avaxContractBalances[address];
+      }
+    });
+    const syscoinContractBalances = this.state.syscoinContractBalances || {};
+    Object.keys(syscoinContractBalances).forEach((address) => {
+      if (!identities[address]) {
+        delete syscoinContractBalances[address];
       }
     });
     const rpcContractBalances = this.state.rpcContractBalances || {};

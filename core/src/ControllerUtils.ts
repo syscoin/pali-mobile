@@ -16,6 +16,8 @@ import TronContractController from './assets/TronContractController';
 import TronNetworkController from './network/TronNetworkController';
 import AvaxNetworkController from './network/AvaxNetworkController';
 import AvaxContractController from './assets/AvaxContractController';
+import SyscoinNetworkController from './network/SyscoinNetworkController';
+import SyscoinContractController from './assets/SyscoinContractController';
 import RpcNetworkController from './network/RpcNetworkController';
 import RpcContractController from './assets/RpcContractController';
 import { isRpcChainType } from './util';
@@ -72,6 +74,13 @@ export function getContractController(context: ChildControllerContext, chainId: 
     }
     const contractController = context.AvaxContractController as AvaxContractController;
     return { type: ChainType.Avax, contractController };
+  } else if (chainId === '57' || chainId === '5700') {
+    const syscoinNetwork = context.SyscoinNetworkController as SyscoinNetworkController;
+    if (chainId !== syscoinNetwork.state.provider.chainId) {
+      return { type: ChainType.Syscoin };
+    }
+    const contractController = context.SyscoinContractController as SyscoinContractController;
+    return { type: ChainType.Syscoin, contractController };
   } else if (rpcNetwork.isRpcChainId(chainId)) {
     const rpcContract = context.RpcContractController as RpcContractController;
     const chainType = rpcNetwork.getChainTypeByChainId(chainId);
@@ -111,6 +120,9 @@ export async function getStaticTokenByChainId(chainId: string, address: string) 
     case '43114':
       type = ChainType.Avax;
       break;
+    case '57':
+      type = ChainType.Syscoin;
+      break;
   }
   if (!type) {
     return {};
@@ -136,6 +148,8 @@ export function getControllerFromType(context: ChildControllerContext, chainType
     return { chainType, contractController: context.TronContractController as TronContractController, networkController: context.TronNetworkController as TronNetworkController, chainId: context.TronNetworkController.state.provider.chainId };
   } else if (chainType === ChainType.Avax) {
     return { chainType, contractController: context.AvaxContractController as AvaxContractController, networkController: context.AvaxNetworkController as AvaxNetworkController, chainId: context.AvaxNetworkController.state.provider.chainId };
+  } else if (chainType === ChainType.Syscoin) {
+    return { chainType, contractController: context.SyscoinContractController as SyscoinContractController, networkController: context.SyscoinNetworkController as SyscoinNetworkController, chainId: context.SyscoinNetworkController.state.provider.chainId };
   } else if (isRpcChainType(chainType)) {
     const rpcNetwork = context.RpcNetworkController as RpcNetworkController;
     const rpcContract = context.RpcContractController as RpcContractController;

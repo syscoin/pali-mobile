@@ -253,6 +253,13 @@ export default {
 			if ((changedType & TxChangedType.AvaxTokenTxChanged) !== 0) {
 				instance?.gotIncomingTransaction(type, TxChangedType.AvaxTokenTxChanged, true);
 			}
+		} else if (type === ChainType.Syscoin) {
+			if ((changedType & TxChangedType.SyscoinTxChanged) !== 0) {
+				instance?.gotIncomingTransaction(type, TxChangedType.SyscoinTxChanged, false);
+			}
+			if ((changedType & TxChangedType.SyscoinTokenTxChanged) !== 0) {
+				instance?.gotIncomingTransaction(type, TxChangedType.SyscoinTokenTxChanged, true);
+			}
 		} else {
 			if ((changedType & TxChangedType.TxChanged) !== 0) {
 				instance?.gotIncomingTransaction(type, TxChangedType.TxChanged, false);

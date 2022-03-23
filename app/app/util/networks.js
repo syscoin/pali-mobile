@@ -19,7 +19,9 @@ import {
 	OptimismMainnet,
 	OptimismTestnetKovan,
 	AvaxMainnet,
-	AvaxTestnet
+	AvaxTestnet,
+	SyscoinMainnet,
+	SyscoinTestnet
 } from '../constants/network';
 import { ChainType, URL } from 'gopocket-core';
 import { getRpcChainTypeByChainId } from './ControllerUtils';
@@ -232,6 +234,27 @@ export const AvaxNetworks = {
 	}
 };
 
+export const SyscoinNetworks = {
+	[SyscoinMainnet]: {
+		name: 'Syscoin Mainnet',
+		shortName: 'Syscoin Mainnet',
+		networkId: 57,
+		chainId: 57,
+		hexChainId: '0X39',
+		color: '#1F5EFF',
+		networkType: 'Syscoin Mainnet'
+	},
+	[SyscoinTestnet]: {
+		name: 'Syscoin Tanenbaum Testnet',
+		shortName: 'Syscoin Tanenbaum Testnet',
+		networkId: 5700,
+		chainId: 5700,
+		hexChainId: '0X1644',
+		color: '#1F5EFF',
+		networkType: 'Syscoin Tanenbaum Testnet'
+	}
+};
+
 const NetworkListKeys = Object.keys(NetworkList);
 
 const BscNetworkListKeys = Object.keys(BscNetworks);
@@ -247,6 +270,8 @@ const TronNetworkListKeys = Object.keys(TronNetworks);
 const HecoNetworkListKeys = Object.keys(HecoNetworks);
 
 const AvaxNetworkListKeys = Object.keys(AvaxNetworks);
+
+const SyscoinNetworkListKeys = Object.keys(SyscoinNetworks);
 
 export default NetworkList;
 
@@ -266,6 +291,8 @@ export const getHecoAllNetworks = () => HecoNetworkListKeys;
 
 export const getAvaxAllNetworks = () => AvaxNetworkListKeys;
 
+export const getSyscoinAllNetworks = () => SyscoinNetworkListKeys;
+
 export const isMainNet = network => network?.provider?.type === MAINNET || network === String(1);
 
 export const getDecimalChainId = chainId => {
@@ -282,6 +309,8 @@ export const isBSCMainnetByChainId = chainId => getDecimalChainId(String(chainId
 export const isHecoMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(128);
 
 export const isAvaxMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(43114);
+
+export const isSyscoinMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(57);
 
 export const isPolygonMainnetByChainId = chainId => getDecimalChainId(String(chainId)) === String(137);
 
@@ -323,6 +352,10 @@ export function getNetworkTypeByChainId(id) {
 	if (network.length > 0) {
 		return network[0];
 	}
+	network = SyscoinNetworkListKeys.filter(key => SyscoinNetworks[key].chainId === parseInt(id, 10));
+	if (network.length > 0) {
+		return network[0];
+	}
 	throw new Error(`Unknown network with chain id ${id}`);
 }
 
@@ -358,6 +391,10 @@ export function getChainTypeByChainId(chainId) {
 	network = AvaxNetworkListKeys.filter(key => AvaxNetworks[key].chainId === chainIdInt);
 	if (network.length > 0) {
 		return ChainType.Avax;
+	}
+	network = SyscoinNetworkListKeys.filter(key => SyscoinNetworks[key].chainId === chainIdInt);
+	if (network.length > 0) {
+		return ChainType.Syscoin;
 	}
 	const rpcType = getRpcChainTypeByChainId(chainId);
 	if (rpcType) {

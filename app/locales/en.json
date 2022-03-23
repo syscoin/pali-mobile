@@ -89,6 +89,7 @@
 		"arbitrum_network": "Arbitrum",
 		"optimism_network": "Optimism",
 		"avalanche_network": "Avalanche",
+		"syscoin_network": "Syscoin",
 		"bsc_network": "BSC",
 		"heco_network": "HECO"
 	},
@@ -349,6 +350,7 @@
 		"heco": "HECO",
 		"optimism": "Optimism",
 		"avalanche": "Avalanche",
+		"syscoin": "Syscoin",
 		"no_token_found": "Ooops, no token found",
 		"cancel": "Cancel",
 		"copy": "Copy",
@@ -516,7 +518,8 @@
 		"polygon_network": "Polygon Network",
 		"tron_network": "Tron Network",
 		"heco_network": "Heco Network",
-		"avax_network": "Avalanche Network"
+		"avax_network": "Avalanche Network",
+		"syscoin_network": "Syscoin Network"
 	},
 	"security": {
 		"security_title": "Security",

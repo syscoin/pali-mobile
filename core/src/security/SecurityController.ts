@@ -9,6 +9,7 @@ import ArbNetworkController from '../network/ArbNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 
 export enum SecurityChangedType {
   NoChange = 0x00,
@@ -173,6 +174,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     const hecoNetworkController = this.context.HecoNetworkController as HecoNetworkController;
     const opNetworkController = this.context.OpNetworkController as OpNetworkController;
     const avaxNetworkController = this.context.AvaxNetworkController as AvaxNetworkController;
+    const syscoinNetworkController = this.context.SyscoinNetworkController as SyscoinNetworkController;
     const chainId = networkController.getMainChainId();
     const bscChainId = bscNetworkController.getMainChainId();
     const polygonChainId = polygonNetworkController.getMainChainId();
@@ -180,6 +182,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     const hecoChainId = hecoNetworkController.getMainChainId();
     const opChainId = opNetworkController.getMainChainId();
     const avaxChainId = avaxNetworkController.getMainChainId();
+    const syscoinChainId = syscoinNetworkController.getMainChainId();
 
     const tokenArray = [];
     const addressArray: string[] = [];
@@ -256,13 +259,24 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       }
     }
 
+    const syscoinAddressArray: string[] = [];
+    for (const addressKey in allTokens) {
+      const tokens = allTokens[addressKey]?.[syscoinChainId] || [];
+      for (const token of tokens) {
+        if (!syscoinAddressArray.includes(token.address)) {
+          syscoinAddressArray.push(token.address);
+          tokenArray.push({ address: token.address, chainId: syscoinChainId });
+        }
+      }
+    }
+
     if (addressArray.length === 0 && bscAddressArray.length === 0 &&
       polygonAddressArray.length === 0 && arbAddressArray &&
-      hecoAddressArray.length === 0 && opAddressArray.length === 0 && avaxAddressArray.length === 0) {
+      hecoAddressArray.length === 0 && opAddressArray.length === 0 && avaxAddressArray.length === 0 && syscoinAddressArray.length === 0) {
       return;
     }
 
-    const chainIdList = { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId };
+    const chainIdList = { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId, syscoinChainId };
     const ethSecurityTokens = await this.fetchInfo(addressArray, chainId);
     const bscSecurityTokens = await this.fetchInfo(bscAddressArray, bscChainId);
     const polygonSecurityTokens = await this.fetchInfo(polygonAddressArray, polygonChainId);
@@ -270,7 +284,8 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     const hecoSecurityTokens = await this.fetchInfo(hecoAddressArray, hecoChainId);
     const opSecurityTokens = await this.fetchInfo(opAddressArray, opChainId);
     const avaxSecurityTokens = await this.fetchInfo(avaxAddressArray, avaxChainId);
-    const securityTokens = [...ethSecurityTokens, ...bscSecurityTokens, ...polygonSecurityTokens, ...arbSecurityTokens, ...hecoSecurityTokens, ...opSecurityTokens, ...avaxSecurityTokens];
+    const syscoinSecurityTokens = await this.fetchInfo(syscoinAddressArray, syscoinChainId);
+    const securityTokens = [...ethSecurityTokens, ...bscSecurityTokens, ...polygonSecurityTokens, ...arbSecurityTokens, ...hecoSecurityTokens, ...opSecurityTokens, ...avaxSecurityTokens, ...syscoinSecurityTokens];
 
     const newSecurityTokens = [...securityTokens];
     const oldSecurityTokens = this.state.securityTokens;
@@ -303,7 +318,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
 
   updateRedDotData(securityTokens: SecurityToken[], params: any) {
     const riskTokens = securityTokens.filter((t) => (t.risk && t.risk.length > 0) || (t.notice && t.notice.length > 0));
-    const { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId } = params;
+    const { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId, syscoinChainId } = params;
     const assetsController = this.context.AssetsController as AssetsController;
     const { allTokens } = assetsController.state;
     const accounts = Object.keys(allTokens);
@@ -319,6 +334,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       const hecoTokens = allTokens[accounts[i]]?.[hecoChainId] || [];
       const opTokens = allTokens[accounts[i]]?.[opChainId] || [];
       const avaxTokens = allTokens[accounts[i]]?.[avaxChainId] || [];
+      const syscoinTokens = allTokens[accounts[i]]?.[syscoinChainId] || [];
       const newRiskList: any = [];
       riskTokens.forEach((token) => {
         const { address } = token;
@@ -349,6 +365,10 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
         } else if (token.chainId === avaxChainId) {
           if (this.isNewRiskToken(avaxTokens, address, lastRiskList, avaxChainId)) {
             newRiskList.push({ address, chainId: avaxChainId });
+          }
+        } else if (token.chainId === syscoinChainId) {
+          if (this.isNewRiskToken(syscoinTokens, address, lastRiskList, syscoinChainId)) {
+            newRiskList.push({ address, chainId: syscoinChainId });
           }
         }
       });

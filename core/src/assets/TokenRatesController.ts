@@ -19,6 +19,7 @@ import ArbNetworkController from '../network/ArbNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import AssetsController, { TokenChangedType } from './AssetsController';
 import TokenBalancesController from './TokenBalancesController';
 
@@ -88,6 +89,7 @@ export enum ChainType {
   Heco = 0x20,
   Optimism = 0x40,
   Avax = 0x80,
+  Syscoin = 0x100,
   RPCBase = 0x10000000000000,
 }
 
@@ -160,11 +162,13 @@ export interface TokenRatesState extends BaseState {
   hecoContractExchangeRates: { [address: string]: TokenPrice };
   opContractExchangeRates: { [address: string]: TokenPrice };
   avaxContractExchangeRates: { [address: string]: TokenPrice };
+  syscoinContractExchangeRates: { [address: string]: TokenPrice };
   ethPrice: TokenPrice;
   bnbPrice: TokenPrice;
   polygonPrice: TokenPrice;
   hecoPrice: TokenPrice;
   avaxPrice: TokenPrice;
+  syscoinPrice: TokenPrice;
   bitcoinPrice: TokenPrice;
   usdRates: { [code: string]: number};
   currencyCodeRate: number;
@@ -197,7 +201,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
   }
 
   private getBasicPricingURL() {
-    return 'https://api.coingecko.com/api/v3/simple/price?ids=wbnb%2Cethereum%2Cmatic-network%2Chuobi-token%2Cavalanche-2%2Cbitcoin&vs_currencies=usd&include_24hr_change=true';
+    return 'https://api.coingecko.com/api/v3/simple/price?ids=wbnb%2Cethereum%2Cmatic-network%2Chuobi-token%2Cavalanche-2%2Cbitcoin%2Csyscoin&vs_currencies=usd&include_24hr_change=true';
   }
 
   private getUsdRateURL() {
@@ -235,6 +239,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       hecoContractExchangeRates: {},
       opContractExchangeRates: {},
       avaxContractExchangeRates: {},
+      syscoinContractExchangeRates: {},
       ethPrice: {
         usd: 0,
         usd_24h_change: 0,
@@ -256,6 +261,11 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
         timestamp: 0,
       },
       avaxPrice: {
+        usd: 0,
+        usd_24h_change: 0,
+        timestamp: 0,
+      },
+      syscoinPrice: {
         usd: 0,
         usd_24h_change: 0,
         timestamp: 0,
@@ -326,13 +336,16 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     const { addresses: avaxPrice0Addresses, success: avaxSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Avax));
     avaxSuccess && this.fixExtendExchangeRates(avaxPrice0Addresses, ChainType.Avax);
     intervals.push(Date.now() - start);
+    const { addresses: syscoinPrice0Addresses, success: syscoinSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Syscoin));
+    syscoinSuccess && this.fixExtendExchangeRates(syscoinPrice0Addresses, ChainType.Syscoin);
+    intervals.push(Date.now() - start);
     price0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(price0Addresses));
     intervals.push(Date.now() - start);
     polygonPrice0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(polygonPrice0Addresses, ChainType.Polygon));
     intervals.push(Date.now() - start);
     bscPrice0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(bscPrice0Addresses, ChainType.Bsc));
     intervals.push(Date.now() - start);
-    logDebug(`leon.w@${this.name} refresh: intervals=${intervals}, ${success},${arbSuccess},${bscSuccess},${polygonSuccess},${hecoSuccess},${opSuccess},${avaxSuccess}`);
+    logDebug(`leon.w@${this.name} refresh: intervals=${intervals}, ${success},${arbSuccess},${bscSuccess},${polygonSuccess},${hecoSuccess},${opSuccess},${avaxSuccess},${syscoinSuccess}`);
     releaseLock();
   }
 
@@ -724,6 +737,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     const hecoNetworkController = this.context.HecoNetworkController as HecoNetworkController;
     const opNetwork = this.context.OpNetworkController as OpNetworkController;
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
 
     const assetsController = this.context.AssetsController as AssetsController;
 
@@ -748,6 +762,9 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     } else if (chainType === ChainType.Avax) {
       mainChainId = avaxNetwork.getMainChainId();
       currentRates = this.state.avaxContractExchangeRates;
+    } else if (chainType === ChainType.Syscoin) {
+      mainChainId = syscoinNetwork.getMainChainId();
+      currentRates = this.state.syscoinContractExchangeRates;
     }
     const coingecko_path = baseConfig[mainChainId]?.coingecko_path;
 
@@ -827,6 +844,8 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       this.update({ opContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
     } else if (chainType === ChainType.Avax) {
       this.update({ avaxContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
+    } else if (chainType === ChainType.Syscoin) {
+      this.update({ syscoinContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
     }
     return { addresses: price0Addresses, success };
   }
@@ -937,6 +956,8 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       this.update({ opContractExchangeRates: { ...this.state.opContractExchangeRates, ...zero_prices } });
     } else if (chainType === ChainType.Avax) {
       this.update({ avaxContractExchangeRates: { ...this.state.avaxContractExchangeRates, ...zero_prices } });
+    } else if (chainType === ChainType.Syscoin) {
+      this.update({ syscoinContractExchangeRates: { ...this.state.syscoinContractExchangeRates, ...zero_prices } });
     }
   }
 
@@ -949,10 +970,10 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     if (!prices) {
       return;
     }
-    if (prices.ethereum && prices.wbnb && prices['matic-network'] && prices['huobi-token'] && prices['avalanche-2'] && prices.bitcoin) {
+    if (prices.ethereum && prices.wbnb && prices['matic-network'] && prices['huobi-token'] && prices['avalanche-2'] && prices['syscoin'] && prices.bitcoin) {
       this.configure({ basic_price_timestamp: Date.now() }, false, false);
     }
-    this.update({ ethPrice: prices.ethereum, bnbPrice: prices.wbnb, polygonPrice: prices['matic-network'], hecoPrice: prices['huobi-token'], avaxPrice: prices['avalanche-2'], bitcoinPrice: prices.bitcoin });
+    this.update({ ethPrice: prices.ethereum, bnbPrice: prices.wbnb, polygonPrice: prices['matic-network'], hecoPrice: prices['huobi-token'], avaxPrice: prices['avalanche-2'], syscoinPrice: prices['syscoin'], bitcoinPrice: prices.bitcoin });
     const bitcoinPrices = 1 / prices.bitcoin.usd;
     this.update({ usdRates: { ...this.state.usdRates, 'XBT': bitcoinPrices } });
     if (this.state.currencyCode === 'XBT') {

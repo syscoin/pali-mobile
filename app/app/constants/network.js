@@ -18,3 +18,5 @@ export const HecoMainnet = 'Heco Mainnet';
 export const HecoTestnet = 'Heco Testnet';
 export const AvaxMainnet = 'Avalanche Mainnet C-Chain';
 export const AvaxTestnet = 'Avalanche FUJI C-Chain';
+export const SyscoinMainnet = 'Syscoin Mainnet';
+export const SyscoinTestnet = 'Syscoin Tanenbaum Testnet';

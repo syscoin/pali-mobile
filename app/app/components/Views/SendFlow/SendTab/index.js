@@ -1040,6 +1040,8 @@ class SendTab extends PureComponent {
 			return [{ type: ChainType.Optimism, name: strings('other.optimism') }];
 		} else if (type === ChainType.Avax) {
 			return [{ type: ChainType.Avax, name: strings('other.avalanche') }];
+		} else if (type === ChainType.Syscoin) {
+			return [{ type: ChainType.Syscoin, name: strings('other.syscoin') }];
 		} else if (util.isRpcChainType(type)) {
 			const name = getRpcNickname(type);
 			return [{ type, name }];

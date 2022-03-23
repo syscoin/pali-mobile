@@ -310,6 +310,7 @@ class NftView extends PureComponent {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		favoriteCollectibles: PropTypes.array,
 		showAlert: PropTypes.func,
 		allCollectibles: PropTypes.object,
@@ -723,6 +724,8 @@ class NftView extends PureComponent {
 																	? require('../../../images/ic_defi_op.png')
 																	: nftToken.chainId === this.props.avaxChainId
 																	? require('../../../images/ic_defi_avax.png')
+																	: nftToken.chainId === this.props.syscoinChainId
+																	? require('../../../images/ic_defi_syscoin.png')
 																	: require('../../../images/ic_defi_bsc.png')
 															}
 														/>
@@ -921,6 +924,8 @@ class NftView extends PureComponent {
 															? strings('other.optimism')
 															: nftToken.chainId === this.props.avaxChainId
 															? strings('other.avalanche')
+															: nftToken.chainId === this.props.syscoinChainId
+															? strings('other.syscoin')
 															: isRpcChainId(nftToken.chainId)
 															? getRpcNickname(nftToken.chainId)
 															: strings('other.bsc')}
@@ -951,6 +956,7 @@ const mapStateToProps = state => ({
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	favoriteCollectibles:
 		state.engine.backgroundState.CollectiblesController.favoriteCollectibles[
 			state.engine.backgroundState.PreferencesController.selectedAddress

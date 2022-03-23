@@ -30,6 +30,7 @@ const bscBg = '#FEBF27';
 const hecoBg = '#47A150';
 const opBg = '#FF0420';
 const avaxBg = '#000000';
+const syscoinBg = '#1F5EFF';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -280,6 +281,9 @@ class AssetOverview extends PureComponent {
 		} else if (type === ChainType.Avax) {
 			backgroundColor = avaxBg;
 			text = strings('other.avalanche');
+		} else if (type === ChainType.Syscoin) {
+			backgroundColor = syscoinBg;
+			text = strings('other.syscoin');
 		} else if (util.isRpcChainType(type)) {
 			backgroundColor = getTagColor(type);
 			text = getRpcNickname(type) || RPC;

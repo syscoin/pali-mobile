@@ -401,6 +401,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginLeft: -8
 	},
+	chainTypeBaseWrap: {
+		height: 55
+	},
 	paddingVertical7: {
 		paddingVertical: 7
 	},
@@ -832,38 +835,44 @@ class WalletManagement extends PureComponent {
 						</Text>
 					</View>
 
-					<View style={styles.chainTypeBase}>
-						{favouriteChains.map((chainType, index) => {
-							const translateIndex = util.isRpcChainType(chainType)
-								? ChainTypes.indexOf(ChainType.RPCBase)
-								: ChainTypes.indexOf(chainType);
-							return (
-								<TouchableOpacity
-									style={styles.networkTouch}
-									onPress={() => {
-										if (currentTranslateIndex !== translateIndex) {
-											currentChainTypes[address] = translateIndex;
-											this.setState({ currentChainTypes });
-											this.forceUpdate();
-										}
-									}}
-									activeOpacity={1.0}
-									key={'chain-type-' + index}
-								>
-									<Image
-										style={
-											currentTranslateIndex === translateIndex
-												? styles.networkSelected
-												: styles.networkNormal
-										}
-										source={ChainTypeIcons[translateIndex]}
-									/>
-									<Text style={styles.chainName} allowFontScaling={false}>
-										{currentTranslateIndex === translateIndex ? ChainTypeNames[translateIndex] : ''}
-									</Text>
-								</TouchableOpacity>
-							);
-						})}
+					<View style={styles.chainTypeBaseWrap}>
+						<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+							<View style={styles.chainTypeBase}>
+								{favouriteChains.map((chainType, index) => {
+									const translateIndex = util.isRpcChainType(chainType)
+										? ChainTypes.indexOf(ChainType.RPCBase)
+										: ChainTypes.indexOf(chainType);
+									return (
+										<TouchableOpacity
+											style={styles.networkTouch}
+											onPress={() => {
+												if (currentTranslateIndex !== translateIndex) {
+													currentChainTypes[address] = translateIndex;
+													this.setState({ currentChainTypes });
+													this.forceUpdate();
+												}
+											}}
+											activeOpacity={1.0}
+											key={'chain-type-' + index}
+										>
+											<Image
+												style={
+													currentTranslateIndex === translateIndex
+														? styles.networkSelected
+														: styles.networkNormal
+												}
+												source={ChainTypeIcons[translateIndex]}
+											/>
+											<Text style={styles.chainName} allowFontScaling={false}>
+												{currentTranslateIndex === translateIndex
+													? ChainTypeNames[translateIndex]
+													: ''}
+											</Text>
+										</TouchableOpacity>
+									);
+								})}
+							</View>
+						</ScrollView>
 					</View>
 				</View>
 			</View>

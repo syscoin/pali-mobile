@@ -16,6 +16,7 @@ const initialState = {
 	tronNetworkChanging: null,
 	hecoNetworkChanging: null,
 	avaxNetworkChanging: null,
+	syscoinNetworkChanging: null,
 	contractList: [],
 	approveList: [],
 	isLockScreen: false,
@@ -44,6 +45,7 @@ const settingsReducer = (state = initialState, action) => {
 					tronNetworkChanging: null,
 					hecoNetworkChanging: null,
 					avaxNetworkChanging: null,
+					syscoinNetworkChanging: null,
 					isLockScreen: false
 				};
 			}
@@ -120,6 +122,12 @@ const settingsReducer = (state = initialState, action) => {
 						avaxNetworkChanging: action.change
 					};
 				}
+				case ChainType.Syscoin: {
+					return {
+						...state,
+						syscoinNetworkChanging: action.change
+					};
+				}
 			}
 			return state;
 		case 'END_NETWORK_CHANGE':
@@ -192,6 +200,15 @@ const settingsReducer = (state = initialState, action) => {
 						return {
 							...state,
 							avaxNetworkChanging: null
+						};
+					}
+					break;
+				}
+				case ChainType.Syscoin: {
+					if (state.syscoinNetworkChanging === action.change) {
+						return {
+							...state,
+							syscoinNetworkChanging: null
 						};
 					}
 					break;

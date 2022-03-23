@@ -34,6 +34,7 @@ import PreferencesController from '../user/PreferencesController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import RpcNetworkController from '../network/RpcNetworkController';
 import { Sqlite } from './Sqlite';
 
@@ -200,6 +201,9 @@ export enum TxChangedType {
 
   AvaxTxChanged = 0x1000,
   AvaxTokenTxChanged = 0x2000,
+
+  SyscoinTxChanged = 0x4000,
+  SyscoinTokenTxChanged = 0x8000,
 }
 
 /**
@@ -316,6 +320,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   private hecoEthQuery: any;
 
   private avaxEthQuery: any;
+
+  private syscoinEthQuery: any;
 
   private registry: any;
 
@@ -470,6 +476,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
     const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
     const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
     const {
       state: {
@@ -513,6 +520,12 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       },
     } = avaxNetwork;
 
+    const {
+      state: {
+        provider: { chainId: syscoinChainId },
+      },
+    } = syscoinNetwork;
+
     if (chainId === commonChainId) {
       return this.ethQuery;
     } else if (chainId === arbChainId) {
@@ -527,6 +540,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       return this.hecoEthQuery;
     } else if (chainId === avaxChainId) {
       return this.avaxEthQuery;
+    } else if (chainId === syscoinChainId) {
+      return this.syscoinEthQuery;
     } else if (rpcNetwork.isRpcChainId(chainId)) {
       const type = rpcNetwork.getChainTypeByChainId(chainId);
       if (type) {
@@ -990,6 +1005,11 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     this.avaxEthQuery = avaxNetwork.provider ? new EthQuery(avaxNetwork.provider) : /* istanbul ignore next */ null;
   }
 
+  async onSyscoinNetworkChange() {
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
+    this.syscoinEthQuery = syscoinNetwork.provider ? new EthQuery(syscoinNetwork.provider) : /* istanbul ignore next */ null;
+  }
+
   /**
    * Resiliently checks all submitted transactions on the blockchain
    * and verifies that it has been included in a block
@@ -1079,6 +1099,9 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     } else if (type === ChainType.Avax) {
       const network = this.context.AvaxNetworkController;
       return opt?.chainId ? opt.chainId : network.state.provider.chainId;
+    } else if (type === ChainType.Syscoin) {
+      const network = this.context.SyscoinNetworkController;
+      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
     } else if (util.isRpcChainType(type)) {
       return opt?.chainId ? opt.chainId : (this.context.RpcNetworkController as RpcNetworkController).getProviderChainId(type);
     }
@@ -1099,6 +1122,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       return TxChangedType.OpTxChanged;
     } else if (type === ChainType.Avax) {
       return TxChangedType.AvaxTxChanged;
+    } else if (type === ChainType.Syscoin) {
+      return TxChangedType.SyscoinTxChanged;
     }
     return TxChangedType.TxChanged;
   }
@@ -1116,6 +1141,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       return TxChangedType.OpTokenTxChanged;
     } else if (type === ChainType.Avax) {
       return TxChangedType.AvaxTokenTxChanged;
+    } else if (type === ChainType.Syscoin) {
+      return TxChangedType.SyscoinTokenTxChanged;
     }
     return TxChangedType.TokenTxChanged;
   }
@@ -1255,6 +1282,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       code = await util.query(this.opEthQuery, 'getCode', [address]);
     } else if (chainType === ChainType.Avax) {
       code = await util.query(this.avaxEthQuery, 'getCode', [address]);
+    } else if (chainType === ChainType.Syscoin) {
+      code = await util.query(this.syscoinEthQuery, 'getCode', [address]);
     } else if (util.isRpcChainType(chainType)) {
       const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
       const ethQuery = rpcNetwork.allEthQuery[chainType];

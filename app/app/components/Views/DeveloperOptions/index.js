@@ -14,13 +14,15 @@ import Networks, {
 	getTronAllNetworks,
 	getHecoAllNetworks,
 	getAvaxAllNetworks,
+	getSyscoinAllNetworks,
 	BscNetworks,
 	ArbNetworks,
 	OpNetworks,
 	PolygonNetworks,
 	TronNetworks,
 	HecoNetworks,
-	AvaxNetworks
+	AvaxNetworks,
+	SyscoinNetworks
 } from '../../../util/networks';
 import checkIcon from '../../../images/network_check.png';
 import { connect } from 'react-redux';
@@ -34,7 +36,8 @@ import {
 	PolygonMainnet,
 	TronMainnet,
 	HecoMainnet,
-	AvaxMainnet
+	AvaxMainnet,
+	SyscoinMainnet
 } from '../../../constants/network';
 import MStatusBar from '../../UI/MStatusBar';
 import { ChainType, util } from 'gopocket-core';
@@ -121,6 +124,7 @@ class DeveloperOptions extends PureComponent {
 		tronProvider: PropTypes.object,
 		hecoProvider: PropTypes.object,
 		avaxProvider: PropTypes.object,
+		syscoinProvider: PropTypes.object,
 		testnetVisible: PropTypes.bool,
 		toggleTestnetVisible: PropTypes.func,
 		startNetworkChange: PropTypes.func,
@@ -131,7 +135,8 @@ class DeveloperOptions extends PureComponent {
 		optimismNetworkChanging: PropTypes.string,
 		tronNetworkChanging: PropTypes.string,
 		hecoNetworkChanging: PropTypes.string,
-		avaxNetworkChanging: PropTypes.string
+		avaxNetworkChanging: PropTypes.string,
+		syscoinNetworkChanging: PropTypes.string
 	};
 
 	getEthNetworks = () => getAllNetworks();
@@ -142,6 +147,7 @@ class DeveloperOptions extends PureComponent {
 	getTronNetworks = () => getTronAllNetworks();
 	getHecoNetworks = () => getHecoAllNetworks();
 	getAvaxNetworks = () => getAvaxAllNetworks();
+	getSyscoinNetworks = () => getSyscoinAllNetworks();
 
 	networkElement = (selected, onPress, shortName, color, i, network) => (
 		<TouchableOpacity
@@ -226,6 +232,15 @@ class DeveloperOptions extends PureComponent {
 		this.props.startNetworkChange(ChainType.Avax, type);
 		const { AvaxNetworkController } = Engine.context;
 		AvaxNetworkController.setProviderType(type);
+	};
+
+	onSyscoinNetworkChange = (type, force = false) => {
+		if (!force && this.props.syscoinNetworkChanging) {
+			return;
+		}
+		this.props.startNetworkChange(ChainType.Syscoin, type);
+		const { SyscoinNetworkController } = Engine.context;
+		SyscoinNetworkController.setProviderType(type);
 	};
 
 	renderEthNetworks = () => {
@@ -410,6 +425,30 @@ class DeveloperOptions extends PureComponent {
 		});
 	};
 
+	renderSyscoinNetworks = () => {
+		const { syscoinProvider, syscoinNetworkChanging } = this.props;
+		return this.getSyscoinNetworks().map((network, i) => {
+			const { color, shortName } = SyscoinNetworks[network];
+			let selected;
+			if (syscoinNetworkChanging) {
+				selected =
+					syscoinNetworkChanging === network ? (
+						<ActivityIndicator size="small" color={colors.$FE6E91} />
+					) : null;
+			} else {
+				selected = syscoinProvider.type === network ? <Image source={checkIcon} /> : null;
+			}
+			return this.networkElement(
+				selected,
+				selected ? null : this.onSyscoinNetworkChange,
+				shortName,
+				color,
+				i,
+				network
+			);
+		});
+	};
+
 	setDefaultNetwork = () => {
 		const {
 			ethProvider,
@@ -419,7 +458,8 @@ class DeveloperOptions extends PureComponent {
 			opProvider,
 			tronProvider,
 			hecoProvider,
-			avaxProvider
+			avaxProvider,
+			syscoinProvider
 		} = this.props;
 		ethProvider.type !== MAINNET && this.onEthNetworkChange(MAINNET, true);
 		bscProvider.type !== BSCMAINNET && this.onBscNetworkChange(BSCMAINNET, true);
@@ -431,6 +471,7 @@ class DeveloperOptions extends PureComponent {
 		}
 		hecoProvider.type !== HecoMainnet && this.onHecoNetworkChange(HecoMainnet, true);
 		avaxProvider.type !== AvaxMainnet && this.onAvaxNetworkChange(AvaxMainnet, true);
+		syscoinProvider.type !== SyscoinMainnet && this.onSyscoinNetworkChange(SyscoinMainnet, true);
 	};
 
 	render() {
@@ -494,6 +535,9 @@ class DeveloperOptions extends PureComponent {
 								<View style={styles.line} />
 								<Text style={styles.titleHead}>{strings('developer_options.avax_network')}</Text>
 								{this.renderAvaxNetworks()}
+								<View style={styles.line} />
+								<Text style={styles.titleHead}>{strings('developer_options.syscoin_network')}</Text>
+								{this.renderSyscoinNetworks()}
 							</React.Fragment>
 						)}
 						<View style={styles.bottomHeght} />
@@ -513,6 +557,7 @@ const mapStateToProps = state => ({
 	tronProvider: state.engine.backgroundState.TronNetworkController.provider,
 	hecoProvider: state.engine.backgroundState.HecoNetworkController.provider,
 	avaxProvider: state.engine.backgroundState.AvaxNetworkController.provider,
+	syscoinProvider: state.engine.backgroundState.SyscoinNetworkController.provider,
 	testnetVisible: state.settings.testnetVisible,
 	etherNetworkChanging: state.settings.etherNetworkChanging,
 	bscNetworkChanging: state.settings.bscNetworkChanging,
@@ -521,7 +566,8 @@ const mapStateToProps = state => ({
 	optimismNetworkChanging: state.settings.optimismNetworkChanging,
 	tronNetworkChanging: state.settings.tronNetworkChanging,
 	hecoNetworkChanging: state.settings.hecoNetworkChanging,
-	avaxNetworkChanging: state.settings.avaxNetworkChanging
+	avaxNetworkChanging: state.settings.avaxNetworkChanging,
+	syscoinNetworkChanging: state.settings.syscoinNetworkChanging
 });
 
 const mapDispatchToProps = dispatch => ({

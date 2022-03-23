@@ -8,6 +8,7 @@ import PolygonNetworkController from '../network/PolygonNetworkController';
 import ArbNetworkController from '../network/ArbNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import RpcNetworkController from '../network/RpcNetworkController';
 import util, { isEtherscanAvailableAsync, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
 import { BN } from '..';
@@ -114,6 +115,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       const bscNetworkController = this.context.BscNetworkController as BscNetworkController;
       const hecoNetworkController = this.context.HecoNetworkController as HecoNetworkController;
       const avaxNetworkController = this.context.AvaxNetworkController as AvaxNetworkController;
+      const syscoinNetworkController = this.context.SyscoinNetworkController as SyscoinNetworkController;
       const rpcNetworkController = this.context.RpcNetworkController as RpcNetworkController;
       const tokenRatesController = this.context.TokenRatesController as TokenRatesController;
       const arbContractController = this.context.ArbContractController as ArbContractController;
@@ -142,6 +144,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       const { chainId: bscChainId } = bscNetworkController.state.provider;
       const { chainId: hecoChainId } = hecoNetworkController.state.provider;
       const { chainId: avaxChainId } = avaxNetworkController.state.provider;
+      const { chainId: syscoinChainId } = syscoinNetworkController.state.provider;
       const rpcChain = rpcNetworkController.getEnabledChain(selectedAddress);
       const { partnerChainId: arbPartnerChainId } = arbNetworkController.arbNetworkConfig(arbChainId);
       const { partnerChainId: polygonPartnerChainId } = polygonNetworkController.polygonNetworkConfig(polygonChainId);
@@ -152,6 +155,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       const polygonTokens = allTokens[selectedAddress]?.[polygonChainId] || [];
       const hecoTokens = allTokens[selectedAddress]?.[hecoChainId] || [];
       const avaxTokens = allTokens[selectedAddress]?.[avaxChainId] || [];
+      const syscoinTokens = allTokens[selectedAddress]?.[syscoinChainId] || [];
       const rpcTokens = allTokens[selectedAddress] || [];
       const collectibles = allCollectibles[selectedAddress]?.[mainChainId] || [];
       const bscCollectibles = allCollectibles[selectedAddress]?.[bscChainId] || [];
@@ -160,6 +164,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       const polygonCollectibles = allCollectibles[selectedAddress]?.[polygonChainId] || [];
       const hecoCollectibles = allCollectibles[selectedAddress]?.[hecoChainId] || [];
       const avaxCollectibles = allCollectibles[selectedAddress]?.[avaxChainId] || [];
+      const syscoinCollectibles = allCollectibles[selectedAddress]?.[syscoinChainId] || [];
       const defiTokens = allDefiTokens[selectedAddress]?.[mainChainId] || [];
       const defiBscTokens = allDefiTokens[selectedAddress]?.[bscChainId] || [];
       const defiArbTokens = allDefiTokens[selectedAddress]?.[arbChainId] || [];
@@ -167,6 +172,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       const defiPolygonTokens = allDefiTokens[selectedAddress]?.[polygonChainId] || [];
       const defiHecoTokens = allDefiTokens[selectedAddress]?.[hecoChainId] || [];
       const defiAvaxTokens = allDefiTokens[selectedAddress]?.[avaxChainId] || [];
+      const defiSyscoinTokens = allDefiTokens[selectedAddress]?.[syscoinChainId] || [];
       const {
         contractBalances,
         arbContractBalances,
@@ -175,6 +181,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         polygonContractBalances,
         hecoContractBalances,
         avaxContractBalances,
+        syscoinContractBalances,
         rpcContractBalances,
       } = tokenBalancesController.state;
       const {
@@ -185,11 +192,13 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         hecoContractExchangeRates,
         opContractExchangeRates,
         avaxContractExchangeRates,
+        syscoinContractExchangeRates,
         ethPrice,
         bnbPrice,
         polygonPrice,
         hecoPrice,
         avaxPrice,
+        syscoinPrice,
         currencyCodeRate,
         currencyCode,
       } = tokenRatesController.state;
@@ -202,6 +211,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         polygonContractBalances: polygonContractBalances[selectedAddress] || {},
         hecoContractBalances: hecoContractBalances[selectedAddress] || {},
         avaxContractBalances: avaxContractBalances[selectedAddress] || {},
+        syscoinContractBalances: syscoinContractBalances[selectedAddress] || {},
         rpcContractBalances: rpcContractBalances[selectedAddress] || {},
         contractExchangeRates,
         arbContractExchangeRates,
@@ -210,19 +220,21 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         hecoContractExchangeRates,
         opContractExchangeRates,
         avaxContractExchangeRates,
+        syscoinContractExchangeRates,
         ethPrice,
         bnbPrice,
         polygonPrice,
         hecoPrice,
         avaxPrice,
+        syscoinPrice,
         currencyCode,
         currencyCodeRate,
         isController: true,
       };
 
       const assets = [];
-      const tokenAmount: {[chainType: number]: number} = { [ChainType.All]: 0, [ChainType.Ethereum]: 0, [ChainType.Polygon]: 0, [ChainType.Bsc]: 0, [ChainType.Heco]: 0, [ChainType.Arbitrum]: 0, [ChainType.Optimism]: 0, [ChainType.Avax]: 0 };
-      const nftAmount: {[chainType: number]: number} = { [ChainType.All]: 0, [ChainType.Ethereum]: 0, [ChainType.Polygon]: 0, [ChainType.Bsc]: 0, [ChainType.Heco]: 0, [ChainType.Arbitrum]: 0, [ChainType.Optimism]: 0, [ChainType.Avax]: 0 };
+      const tokenAmount: {[chainType: number]: number} = { [ChainType.All]: 0, [ChainType.Ethereum]: 0, [ChainType.Polygon]: 0, [ChainType.Bsc]: 0, [ChainType.Heco]: 0, [ChainType.Arbitrum]: 0, [ChainType.Optimism]: 0, [ChainType.Avax]: 0, [ChainType.Syscoin]: 0 };
+      const nftAmount: {[chainType: number]: number} = { [ChainType.All]: 0, [ChainType.Ethereum]: 0, [ChainType.Polygon]: 0, [ChainType.Bsc]: 0, [ChainType.Heco]: 0, [ChainType.Arbitrum]: 0, [ChainType.Optimism]: 0, [ChainType.Avax]: 0, [ChainType.Syscoin]: 0 };
       if (!preferencesController.isDisabledChain(selectedAddress, ChainType.Ethereum)) {
         const ethObj = this.config.numberUtil.calcAssetPrices({
           assetChainId: mainChainId,
@@ -489,6 +501,37 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
         nftAmount[ChainType.All] += avaxCollectibles.length;
       }
 
+      if (!preferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin)) {
+        const syscoinObj = this.config.numberUtil.calcAssetPrices({
+          assetChainId: syscoinChainId,
+          type: ChainType.Syscoin,
+          symbol: 'SYS',
+          decimals: 18,
+          nativeCurrency: true,
+        }, opt);
+        syscoinObj.logo = await this.config.numberUtil.getAssetLogo(syscoinObj);
+        assets.push(syscoinObj);
+        for (const token of syscoinTokens) {
+          const tokenObj = this.config.numberUtil.calcAssetPrices({
+            assetChainId: syscoinChainId,
+            type: ChainType.Syscoin, ...token,
+          }, opt);
+          tokenObj.logo = await this.config.numberUtil.getAssetLogo(tokenObj);
+          assets.push(tokenObj);
+        }
+        defiSyscoinTokens.forEach((token) => {
+          const tokenObj = this.config.numberUtil.calcDefiTokenPrices({
+            assetChainId: syscoinChainId,
+            type: ChainType.Syscoin, ...token,
+          }, opt);
+          tokenObj.symbol = token.name;
+          tokenObj.isDefi = true;
+          assets.push(tokenObj);
+        });
+        nftAmount[ChainType.Syscoin] = syscoinCollectibles.length;
+        nftAmount[ChainType.All] += syscoinCollectibles.length;
+      }
+
       if (rpcChain?.length > 0) {
         for (const chain of rpcChain) {
           const rpcObj = this.config.numberUtil.calcAssetPrices({
@@ -621,11 +664,13 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       'hecoContractExchangeRates',
       'opContractExchangeRates',
       'avaxContractExchangeRates',
+      'syscoinContractExchangeRates',
       'ethPrice',
       'bnbPrice',
       'polygonPrice',
       'hecoPrice',
       'avaxPrice',
+      'syscoinPrice',
       'currencyCodeRate',
       'currencyCode',
     ]);
@@ -641,6 +686,7 @@ export class AssetsDataModel extends BaseController<DataModelConfig, DataModelSt
       'polygonContractBalances',
       'hecoContractBalances',
       'avaxContractBalances',
+      'syscoinContractBalances',
       'rpcContractBalances',
     ]);
 

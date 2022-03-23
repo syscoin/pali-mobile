@@ -894,7 +894,8 @@ const Main = props => {
 				ArbNetworkController,
 				HecoNetworkController,
 				OpNetworkController,
-				AvaxNetworkController
+				AvaxNetworkController,
+				SyscoinNetworkController
 			} = Engine.context;
 			let accountEventId = 'Account10+';
 			const identities = PreferencesController.state.identities;
@@ -919,13 +920,15 @@ const Main = props => {
 				hecoAllAmount,
 				opAllAmount,
 				avaxAllAmount,
+				syscoinAllAmount,
 				etherAllBalance,
 				arbAllBalance,
 				bscAllBalance,
 				polygonAllBalance,
 				hecoAllBalance,
 				opAllBalance,
-				avaxAllBalance
+				avaxAllBalance,
+				syscoinAllBalance
 			} = await calcAllAddressPrices();
 			const getValue = value => {
 				if (value <= 0) {
@@ -959,6 +962,7 @@ const Main = props => {
 			let hecoValue = 'testnet';
 			let opValue = 'testnet';
 			let avaxValue = 'testnet';
+			let syscoinValue = 'testnet';
 			if (PolygonNetworkController && (await PolygonNetworkController.ismainnet())) {
 				allAmount += polygonAllAmount;
 				polygonValue = getValue(polygonAllAmount);
@@ -987,6 +991,10 @@ const Main = props => {
 				allAmount += avaxAllAmount;
 				avaxValue = getValue(avaxAllAmount);
 			}
+			if (SyscoinNetworkController && (await SyscoinNetworkController.ismainnet())) {
+				allAmount += syscoinAllAmount;
+				syscoinValue = getValue(syscoinAllAmount);
+			}
 			const amoutEventId = getValue(allAmount);
 			onEventWithMap(amoutEventId, {
 				eth: ethValue,
@@ -995,7 +1003,8 @@ const Main = props => {
 				arb: arbValue,
 				heco: hecoValue,
 				op: opValue,
-				avax: avaxValue
+				avax: avaxValue,
+				syscoin: syscoinValue
 			});
 			if (etherAllBalance && etherAllBalance > 0) {
 				onEvent('EthActiveUsers');
@@ -1017,6 +1026,9 @@ const Main = props => {
 			}
 			if (avaxAllBalance && avaxAllBalance > 0) {
 				onEvent('AvalancheActiveUsers');
+			}
+			if (syscoinAllBalance && syscoinAllBalance > 0) {
+				onEvent('SyscoinActiveUsers');
 			}
 			util.logDebug('leon.w@umeng stat: ', walletCountEventId, accountEventId, amoutEventId);
 		}, 30 * 1000);

@@ -11,6 +11,7 @@ export const ChainTypes = [
 	ChainType.Heco,
 	ChainType.Optimism,
 	ChainType.Avax,
+	ChainType.Syscoin,
 	ChainType.RPCBase
 ];
 export const ChainTypeNames = [
@@ -22,6 +23,7 @@ export const ChainTypeNames = [
 	strings('wallet.heco_network'),
 	strings('wallet.optimism_network'),
 	strings('wallet.avalanche_network'),
+	strings('wallet.syscoin_network'),
 	RPC
 ];
 export const ChainTypeIcons = [
@@ -33,6 +35,7 @@ export const ChainTypeIcons = [
 	require('../images/ic_card_heco.png'),
 	require('../images/ic_card_op.png'),
 	require('../images/ic_card_avax.png'),
+	require('../images/ic_card_syscoin.png'),
 	require('../images/ic_card_other.png')
 ];
 export const ChainTypeMoreIcons = [
@@ -44,6 +47,7 @@ export const ChainTypeMoreIcons = [
 	require('../images/ic_card_more_heco.png'),
 	require('../images/ic_card_more_op.png'),
 	require('../images/ic_card_more_avax.png'),
+	require('../images/ic_card_more_syscoin.png'),
 	require('../images/ic_card_more_other.png')
 ];
 export const ChainTypeBg = [
@@ -55,6 +59,7 @@ export const ChainTypeBg = [
 	require('../images/img_card_heco.png'),
 	require('../images/img_card_op.png'),
 	require('../images/img_card_avax.png'),
+	require('../images/img_card_syscoin.png'),
 	require('../images/img_card_other.png')
 ];
 export const ChainTypeBgWithoutShadows = [
@@ -66,6 +71,7 @@ export const ChainTypeBgWithoutShadows = [
 	require('../images/img_card_heco_nsd.png'),
 	require('../images/img_card_op_nsd.png'),
 	require('../images/img_card_avax_nsd.png'),
+	require('../images/img_card_syscoin_nsd.png'),
 	require('../images/img_card_other_nsd.png')
 ];
 export const ChainTypeCheckColorStyle = [
@@ -77,5 +83,6 @@ export const ChainTypeCheckColorStyle = [
 	{ color: '#17A878' },
 	{ color: '#A5212F' },
 	{ color: '#2D374F' },
+	{ color: '#030363' },
 	{ color: '#9D7DF8' }
 ];

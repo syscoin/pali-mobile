@@ -739,18 +739,21 @@ export function calcAssetPrices(asset, opt) {
 		hecoContractExchangeRates,
 		opContractExchangeRates,
 		avaxContractExchangeRates,
+		syscoinContractExchangeRates,
 		arbContractBalances,
 		opContractBalances,
 		bscContractBalances,
 		polygonContractBalances,
 		hecoContractBalances,
 		avaxContractBalances,
+		syscoinContractBalances,
 		rpcContractBalances,
 		ethPrice,
 		bnbPrice,
 		polygonPrice,
 		hecoPrice,
 		avaxPrice,
+		syscoinPrice,
 		currencyCode,
 		currencyCodeRate
 	} = opt;
@@ -808,6 +811,22 @@ export function calcAssetPrices(asset, opt) {
 			balance =
 				itemAddress in avaxContractBalances
 					? renderFromTokenMinimalUnit(avaxContractBalances[itemAddress], asset.decimals)
+					: 0;
+		}
+	} else if (type === ChainType.Syscoin) {
+		if (asset.nativeCurrency) {
+			price = syscoinPrice.usd;
+			priceChange = syscoinPrice.usd_24h_change;
+			balance = '0x0' in syscoinContractBalances ? renderFromWei(syscoinContractBalances['0x0']) : 0;
+		} else {
+			price = itemAddress in syscoinContractExchangeRates ? syscoinContractExchangeRates[itemAddress].usd : 0;
+			priceChange =
+				itemAddress in syscoinContractExchangeRates
+					? syscoinContractExchangeRates[itemAddress].usd_24h_change
+					: 0;
+			balance =
+				itemAddress in syscoinContractBalances
+					? renderFromTokenMinimalUnit(syscoinContractBalances[itemAddress], asset.decimals)
 					: 0;
 		}
 	} else if (type === ChainType.Bsc) {
@@ -933,13 +952,15 @@ export async function calcAllAddressPrices() {
 		hecoAllAmount = 0,
 		opAllAmount = 0,
 		avaxAllAmount = 0,
+		syscoinAllAmount = 0,
 		etherAllBalance = 0,
 		arbAllBalance = 0,
 		bscAllBalance = 0,
 		polygonAllBalance = 0,
 		hecoAllBalance = 0,
 		opAllBalance = 0,
-		avaxAllBalance = 0;
+		avaxAllBalance = 0,
+		syscoinAllBalance = 0;
 	const keys = Object.keys(identities);
 	for (const ids of keys) {
 		if (!(await Engine.context.PreferencesController.isObserveAddress(ids))) {
@@ -951,13 +972,15 @@ export async function calcAllAddressPrices() {
 				hecoAmount,
 				opAmount,
 				avaxAmount,
+				syscoinAmount,
 				etherTotalBalance,
 				arbTotalBalance,
 				bscTotalBalance,
 				polygonTotalBalance,
 				hecoTotalBalance,
 				opTotalBalance,
-				avaxTotalBalance
+				avaxTotalBalance,
+				syscoinTotalBalance
 			} = calcAddressPrices(ids);
 			etherAllAmount += etherAmount;
 			arbAllAmount += arbAmount;
@@ -966,6 +989,7 @@ export async function calcAllAddressPrices() {
 			hecoAllAmount += hecoAmount;
 			opAllAmount += opAmount;
 			avaxAllAmount += avaxAmount;
+			syscoinAllAmount += syscoinAmount;
 			etherAllBalance += etherTotalBalance;
 			arbAllBalance += arbTotalBalance;
 			bscAllBalance += bscTotalBalance;
@@ -973,10 +997,18 @@ export async function calcAllAddressPrices() {
 			hecoAllBalance += hecoTotalBalance;
 			opAllBalance += opTotalBalance;
 			avaxAllBalance += avaxTotalBalance;
+			syscoinAllBalance += syscoinTotalBalance;
 		}
 	}
 	const allAmount =
-		etherAllAmount + arbAllAmount + bscAllAmount + polygonAllAmount + hecoAllAmount + opAllAmount + avaxAllAmount;
+		etherAllAmount +
+		arbAllAmount +
+		bscAllAmount +
+		polygonAllAmount +
+		hecoAllAmount +
+		opAllAmount +
+		avaxAllAmount +
+		syscoinAllAmount;
 	return {
 		allAmount,
 		etherAllAmount,
@@ -986,13 +1018,15 @@ export async function calcAllAddressPrices() {
 		hecoAllAmount,
 		opAllAmount,
 		avaxAllAmount,
+		syscoinAllAmount,
 		etherAllBalance,
 		arbAllBalance,
 		bscAllBalance,
 		polygonAllBalance,
 		hecoAllBalance,
 		opAllBalance,
-		avaxAllBalance
+		avaxAllBalance,
+		syscoinAllBalance
 	};
 }
 
@@ -1009,7 +1043,8 @@ export function calcAddressPrices(selectedAddress) {
 		PolygonContractController,
 		HecoNetworkController,
 		OpNetworkController,
-		AvaxNetworkController
+		AvaxNetworkController,
+		SyscoinNetworkController
 	} = Engine.context;
 	const etherChainId = NetworkController.state.provider.chainId;
 	const bscChainId = BscNetworkController.state.provider.chainId;
@@ -1018,6 +1053,7 @@ export function calcAddressPrices(selectedAddress) {
 	const hecoChainId = HecoNetworkController.state.provider.chainId;
 	const opChainId = OpNetworkController.state.provider.chainId;
 	const avaxChainId = AvaxNetworkController.state.provider.chainId;
+	const syscoinChainId = SyscoinNetworkController.state.provider.chainId;
 	const allTokens = AssetsController.state.allTokens;
 	const tokens = allTokens[selectedAddress]?.[etherChainId] || [];
 	const bscTokens = allTokens[selectedAddress]?.[bscChainId] || [];
@@ -1026,6 +1062,7 @@ export function calcAddressPrices(selectedAddress) {
 	const hecoTokens = allTokens[selectedAddress]?.[hecoChainId] || [];
 	const opTokens = allTokens[selectedAddress]?.[opChainId] || [];
 	const avaxTokens = allTokens[selectedAddress]?.[avaxChainId] || [];
+	const syscoinTokens = allTokens[selectedAddress]?.[syscoinChainId] || [];
 	const contractBalances = TokenBalancesController.state.contractBalances[selectedAddress] || {};
 	const arbContractBalances = TokenBalancesController.state.arbContractBalances[selectedAddress] || {};
 	const bscContractBalances = TokenBalancesController.state.bscContractBalances[selectedAddress] || {};
@@ -1033,6 +1070,7 @@ export function calcAddressPrices(selectedAddress) {
 	const hecoContractBalances = TokenBalancesController.state.hecoContractBalances[selectedAddress] || {};
 	const opContractBalances = TokenBalancesController.state.opContractBalances[selectedAddress] || {};
 	const avaxContractBalances = TokenBalancesController.state.avaxContractBalances[selectedAddress] || {};
+	const syscoinContractBalances = TokenBalancesController.state.syscoinContractBalances[selectedAddress] || {};
 	const rpcContractBalances = TokenBalancesController.state.rpcContractBalances[selectedAddress] || {};
 	const contractExchangeRates = TokenRatesController.state.contractExchangeRates;
 	const arbContractExchangeRates = TokenRatesController.state.arbContractExchangeRates;
@@ -1041,11 +1079,13 @@ export function calcAddressPrices(selectedAddress) {
 	const hecoContractExchangeRates = TokenRatesController.state.hecoContractExchangeRates;
 	const opContractExchangeRates = TokenRatesController.state.opContractExchangeRates;
 	const avaxContractExchangeRates = TokenRatesController.state.avaxContractExchangeRates;
+	const syscoinContractExchangeRates = TokenRatesController.state.syscoinContractExchangeRates;
 	const ethPrice = TokenRatesController.state.ethPrice;
 	const bnbPrice = TokenRatesController.state.bnbPrice;
 	const polygonPrice = TokenRatesController.state.polygonPrice;
 	const hecoPrice = TokenRatesController.state.hecoPrice;
 	const avaxPrice = TokenRatesController.state.avaxPrice;
+	const syscoinPrice = TokenRatesController.state.syscoinPrice;
 	const currencyCodeRate = TokenRatesController.state.currencyCodeRate;
 	const currencyCode = TokenRatesController.state.currencyCode;
 
@@ -1081,18 +1121,21 @@ export function calcAddressPrices(selectedAddress) {
 		hecoContractExchangeRates,
 		opContractExchangeRates,
 		avaxContractExchangeRates,
+		syscoinContractExchangeRates,
 		arbContractBalances,
 		bscContractBalances,
 		polygonContractBalances,
 		hecoContractBalances,
 		opContractBalances,
 		avaxContractBalances,
+		syscoinContractBalances,
 		rpcContractBalances,
 		ethPrice,
 		bnbPrice,
 		polygonPrice,
 		hecoPrice,
 		avaxPrice,
+		syscoinPrice,
 		currencyCode,
 		currencyCodeRate
 	};
@@ -1207,6 +1250,15 @@ export function calcAddressPrices(selectedAddress) {
 		totalCurrencyAmount: avaxCurrencyAmount,
 		totalBalance: avaxTotalBalance
 	} = calcAddressSinglePrices(avaxAsset, avaxTokens, ChainType.Avax, opt);
+	const syscoinAsset = {
+		type: ChainType.Syscoin,
+		nativeCurrency: true
+	};
+	const {
+		totalUsdAmount: syscoinAmount,
+		totalCurrencyAmount: syscoinCurrencyAmount,
+		totalBalance: syscoinTotalBalance
+	} = calcAddressSinglePrices(syscoinAsset, syscoinTokens, ChainType.Syscoin, opt);
 
 	return {
 		etherAmount,
@@ -1216,6 +1268,7 @@ export function calcAddressPrices(selectedAddress) {
 		hecoAmount,
 		opAmount,
 		avaxAmount,
+		syscoinAmount,
 		etherCurrencyAmount,
 		arbCurrencyAmount,
 		bscCurrencyAmount,
@@ -1223,13 +1276,15 @@ export function calcAddressPrices(selectedAddress) {
 		hecoCurrencyAmount,
 		opCurrencyAmount,
 		avaxCurrencyAmount,
+		syscoinCurrencyAmount,
 		etherTotalBalance,
 		arbTotalBalance,
 		bscTotalBalance,
 		polygonTotalBalance,
 		hecoTotalBalance,
 		opTotalBalance,
-		avaxTotalBalance
+		avaxTotalBalance,
+		syscoinTotalBalance
 	};
 }
 
@@ -1266,6 +1321,7 @@ const bnbLogo = 'https://cdn.gopocket.finance/files/bnb.png';
 const polygonLogo = 'https://cdn.gopocket.finance/files/matic_network_logo.png';
 const htLogo = 'https://cdn.gopocket.finance/files/ht_logo.png';
 const avaxLogo = 'https://cdn.gopocket.finance/files/avax_logo.png';
+const syscoinLogo = 'https://cdn.gopocket.finance/files/syscoin_logo.png';
 const rpcLogo = 'https://cdn.gopocket.finance/files/rpc.png';
 
 export async function getAssetLogo(asset) {
@@ -1293,6 +1349,10 @@ export async function getAssetLogo(asset) {
 	} else if (asset.type === ChainType.Avax) {
 		if (asset.nativeCurrency) {
 			return avaxLogo;
+		}
+	} else if (asset.type === ChainType.Syscoin) {
+		if (asset.nativeCurrency) {
+			return syscoinLogo;
 		}
 	} else if (util.isRpcChainType(asset.type)) {
 		if (asset.nativeCurrency) {
@@ -1322,6 +1382,7 @@ export function getNativeCurrencyBalance(type, opt) {
 		polygonContractBalances,
 		hecoContractBalances,
 		avaxContractBalances,
+		syscoinContractBalances,
 		rpcContractBalances
 	} = opt;
 	let balanceBN;
@@ -1337,6 +1398,8 @@ export function getNativeCurrencyBalance(type, opt) {
 		balanceBN = '0x0' in hecoContractBalances ? hecoContractBalances['0x0'] : new BN(0);
 	} else if (type === ChainType.Avax) {
 		balanceBN = '0x0' in avaxContractBalances ? avaxContractBalances['0x0'] : new BN(0);
+	} else if (type === ChainType.Syscoin) {
+		balanceBN = '0x0' in syscoinContractBalances ? syscoinContractBalances['0x0'] : new BN(0);
 	} else if (util.isRpcChainType(type)) {
 		const chainId = getRpcProviderChainId(type);
 		const rpcBalances = rpcContractBalances[chainId] || [];
@@ -1356,6 +1419,7 @@ export function getTokenBalance(asset, opt) {
 		polygonContractBalances,
 		hecoContractBalances,
 		avaxContractBalances,
+		syscoinContractBalances,
 		rpcContractBalances
 	} = opt;
 	const { type, address } = asset;
@@ -1372,6 +1436,8 @@ export function getTokenBalance(asset, opt) {
 		weiBalance = address in hecoContractBalances ? hecoContractBalances[address] : new BN(0);
 	} else if (type === ChainType.Avax) {
 		weiBalance = address in avaxContractBalances ? avaxContractBalances[address] : new BN(0);
+	} else if (type === ChainType.Syscoin) {
+		weiBalance = address in syscoinContractBalances ? syscoinContractBalances[address] : new BN(0);
 	} else if (util.isRpcChainType(type)) {
 		const chainId = getRpcProviderChainId(type);
 		const rpcBalances = rpcContractBalances[chainId] || [];
@@ -1401,6 +1467,9 @@ export const getTokenDecimals = async (type, to) => {
 	} else if (type === ChainType.Avax) {
 		const { AvaxContractController } = Engine.context;
 		return await AvaxContractController.getTokenDecimals(to);
+	} else if (type === ChainType.Syscoin) {
+		const { SyscoinContractController } = Engine.context;
+		return await SyscoinContractController.getTokenDecimals(to);
 	} else if (util.isRpcChainType(type)) {
 		const { RpcContractController } = Engine.context;
 		return await RpcContractController.callContract(type, 'getTokenDecimals', to);
@@ -1428,6 +1497,9 @@ export const getAssetSymbol = async (type, to) => {
 	} else if (type === ChainType.Avax) {
 		const { AvaxContractController } = Engine.context;
 		return await AvaxContractController.getAssetSymbol(to);
+	} else if (type === ChainType.Syscoin) {
+		const { SyscoinContractController } = Engine.context;
+		return await SyscoinContractController.getAssetSymbol(to);
 	} else if (util.isRpcChainType(type)) {
 		const { RpcContractController } = Engine.context;
 		return await RpcContractController.callContract(type, 'getAssetSymbol', to);
@@ -1468,6 +1540,11 @@ export function getTypeByChainId(chainId) {
 			provider: { chainId: avaxChainId }
 		}
 	} = Engine.context.AvaxNetworkController;
+	const {
+		state: {
+			provider: { chainId: syscoinChainId }
+		}
+	} = Engine.context.SyscoinNetworkController;
 	if (chainId === arbChainId) {
 		return ChainType.Arbitrum;
 	} else if (chainId === opChainId) {
@@ -1480,6 +1557,8 @@ export function getTypeByChainId(chainId) {
 		return ChainType.Heco;
 	} else if (chainId === avaxChainId) {
 		return ChainType.Avax;
+	} else if (chainId === syscoinChainId) {
+		return ChainType.Syscoin;
 	}
 	const type = getRpcChainTypeByChainId(chainId);
 	if (type) {
@@ -1501,6 +1580,8 @@ export function getChainIdByType(type) {
 		return EngineContext().OpNetworkController.state.provider.chainId;
 	} else if (type === ChainType.Avax) {
 		return EngineContext().AvaxNetworkController.state.provider.chainId;
+	} else if (type === ChainType.Syscoin) {
+		return EngineContext().SyscoinNetworkController.state.provider.chainId;
 	} else if (util.isRpcChainType(type)) {
 		return getRpcProviderChainId(type);
 	}
@@ -1544,6 +1625,11 @@ export function getNetworkController(chainId) {
 			provider: { chainId: avaxChainId }
 		}
 	} = Engine.context.AvaxNetworkController;
+	const {
+		state: {
+			provider: { chainId: syscoinChainId }
+		}
+	} = Engine.context.SyscoinNetworkController;
 	if (chainId === arbChainId) {
 		return Engine.context.ArbNetworkController;
 	} else if (chainId === opChainId) {
@@ -1558,6 +1644,8 @@ export function getNetworkController(chainId) {
 		return Engine.context.HecoNetworkController;
 	} else if (chainId === avaxChainId) {
 		return Engine.context.AvaxNetworkController;
+	} else if (chainId === syscoinChainId) {
+		return Engine.context.SyscoinNetworkController;
 	} else if (isRpcChainId(chainId)) {
 		return Engine.context.RpcNetworkController;
 	}
@@ -1594,6 +1682,8 @@ export const getChainTypeName = type => {
 		return strings('other.optimism');
 	} else if (type === ChainType.Avax) {
 		return strings('other.avalanche');
+	} else if (type === ChainType.Syscoin) {
+		return strings('other.syscoin');
 	} else if (util.isRpcChainType(type)) {
 		return getRpcNickname(type) || RPC;
 	}
@@ -1609,6 +1699,8 @@ export const getCurrency = type => {
 		return 'HT';
 	} else if (type === ChainType.Avax) {
 		return 'AVAX';
+	} else if (type === ChainType.Syscoin) {
+		return 'SYS';
 	} else if (util.isRpcChainType(type)) {
 		return getRpcProviderTicker(type);
 	}

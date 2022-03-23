@@ -23,6 +23,8 @@ import OpContractController from '../assets/OpContractController';
 import { Sqlite } from '../transaction/Sqlite';
 import AvaxNetworkController from '../network/AvaxNetworkController';
 import AvaxContractController from '../assets/AvaxContractController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
+import SyscoinContractController from '../assets/SyscoinContractController';
 
 const APPROVAL_METHOD_ID = '0x095ea7b3';
 
@@ -86,6 +88,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     'HecoNetworkController',
     'ArbNetworkController',
     'AvaxNetworkController',
+    'SyscoinNetworkController',
     'TransactionController',
     'AssetsContractController',
     'BscContractController',
@@ -93,6 +96,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     'ArbContractController',
     'HecoContractController',
     'AvaxContractController',
+    'SyscoinContractController',
   ];
 
   /**
@@ -120,6 +124,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
     const opNetwork = this.context.OpNetworkController as OpNetworkController;
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
     transaction.subscribe(({ txChangedType, addressWithChanged }) => {
       if (bitAND(txChangedType, TxChangedType.TxChanged) !== 0) {
         this.filterApprovalEventForAddress(network.state.provider.chainId, addressWithChanged);
@@ -135,6 +140,8 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
         this.filterApprovalEventForAddress(opNetwork.state.provider.chainId, addressWithChanged);
       } else if (bitAND(txChangedType, TxChangedType.AvaxTxChanged) !== 0) {
         this.filterApprovalEventForAddress(avaxNetwork.state.provider.chainId, addressWithChanged);
+      } else if (bitAND(txChangedType, TxChangedType.SyscoinTxChanged) !== 0) {
+        this.filterApprovalEventForAddress(syscoinNetwork.state.provider.chainId, addressWithChanged);
       }
     });
   }
@@ -154,6 +161,8 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     const opChainId = opNetwork.state.provider.chainId;
     const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
     const avaxChainId = avaxNetwork.state.provider.chainId;
+    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
+    const syscoinChainId = syscoinNetwork.state.provider.chainId;
     const assetsContractController = this.context.AssetsContractController as AssetsContractController;
     const bscContractController = this.context.BscContractController as BscContractController;
     const polygonContractController = this.context.PolygonContractController as PolygonContractController;
@@ -161,6 +170,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     const arbContractController = this.context.ArbContractController as ArbContractController;
     const opContractController = this.context.OpContractController as OpContractController;
     const avaxContractController = this.context.AvaxContractController as AvaxContractController;
+    const syscoinContractController = this.context.SyscoinContractController as SyscoinContractController;
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, ethChainId, assetsContractController));
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, bscChainId, bscContractController));
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, polygonChainId, polygonContractController));
@@ -168,6 +178,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, opChainId, opContractController));
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, hecoChainId, hecoContractController));
     await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, avaxChainId, avaxContractController));
+    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, syscoinChainId, syscoinContractController));
     this.update({ updateTime: Date.now() });
   }
 

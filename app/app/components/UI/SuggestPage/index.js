@@ -20,6 +20,7 @@ import arb from '../../../images/ic_share_arb.png';
 import heco from '../../../images/ic_share_heco.png';
 import op from '../../../images/ic_share_op.png';
 import avax from '../../../images/ic_share_avax.png';
+import syscoin from '../../../images/ic_share_syscoin.png';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import NFTImage from '../NFTImage';
 import AppConstants from '../../../core/AppConstants';
@@ -245,6 +246,8 @@ class SuggestPage extends PureComponent {
 												? op
 												: item.chain === 8
 												? avax
+												: item.chain === 9
+												? syscoin
 												: eth
 										}
 									/>
@@ -276,6 +279,8 @@ class SuggestPage extends PureComponent {
 			return require('../../../images/ic_op_tag.png');
 		} else if (chain === 8) {
 			return require('../../../images/ic_avax_tag.png');
+		} else if (chain === 9) {
+			return require('../../../images/ic_syscoin_tag.png');
 		}
 		return null;
 	};
