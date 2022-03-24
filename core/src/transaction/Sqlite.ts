@@ -1151,7 +1151,7 @@ export class Sqlite {
     count: number
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND (transactionHash IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) OR tx_value=?) ORDER BY time DESC LIMIT ? OFFSET ?';
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? AND (transactionHash IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) OR tx_value=?) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, '0x0', count, index];
       this.db.executeSql(
         sql,
@@ -1184,13 +1184,13 @@ export class Sqlite {
       let sql;
       let values;
       if (from) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND lower(tx_from)=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? AND lower(tx_from)=? ORDER BY time DESC LIMIT ? OFFSET ?`;
         values = [address, type, 'tx', 'internaltx', chainId, from.toLowerCase(), count, index];
       } else if (to) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? AND lower(tx_to)=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? AND lower(tx_to)=? ORDER BY time DESC LIMIT ? OFFSET ?`;
         values = [address, type, 'tx', 'internaltx', chainId, to.toLowerCase(), count, index];
       } else {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?`;
         values = [address, type, 'tx', 'internaltx', chainId, count, index];
       }
       this.db.executeSql(
@@ -1227,7 +1227,7 @@ export class Sqlite {
       } else if (to) {
         subSql = `AND lower(tx_to)='${to.toLowerCase()}'`;
       }
-      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ${subSql} AND tx_value IS NOT NULL AND tx_value IS NOT '0x0' AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) ORDER BY time DESC LIMIT ? OFFSET ?`;
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? ${subSql} AND tx_value IS NOT NULL AND tx_value IS NOT '0x0' AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, count, index];
       this.db.executeSql(
         sql,
@@ -1267,7 +1267,7 @@ export class Sqlite {
       if (to) {
         subSql = `${subSql} AND lower(tx_to)='${to.toLowerCase()}'`;
       }
-      let sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND (txType=? OR txType=?) ${subSql} AND tx_data LIKE ? ORDER BY time DESC`;
+      let sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND (txType=? OR txType=?) AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND tx_data LIKE ? ORDER BY time DESC`;
       let values: any[] = [address, 'tx', 'internaltx', `${methodId}%`];
       if (index !== undefined && count !== undefined && index >= 0 && count > 0) {
         sql = `${sql} LIMIT ? OFFSET ?`;
@@ -1311,7 +1311,7 @@ export class Sqlite {
       if (to) {
         subSql = `${subSql} AND lower(tx_to)='${to.toLowerCase()}'`;
       }
-      let sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND (txType=? OR txType=?) ${subSql} ORDER BY time DESC`;
+      let sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND (txType=? OR txType=?) AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} ORDER BY time DESC`;
       let values: any[] = [address, 'tx', 'internaltx'];
       if (index !== undefined && count !== undefined && index >= 0 && count > 0) {
         sql = `${sql} LIMIT ? OFFSET ?`;
@@ -1424,7 +1424,7 @@ export class Sqlite {
         subSql = `AND tx_chainId='${chainId}'`;
       }
 
-      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, 'tx', to.toLowerCase(), address, 'tokentx', count, index];
 
       this.db.executeSql(
@@ -1648,13 +1648,13 @@ export class Sqlite {
       let sql;
       let values;
       if (from) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? AND lower(tx_from)=? ORDER BY time DESC';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL AND tx_chainId=? AND lower(tx_contractAddress)=? AND lower(tx_from)=? ORDER BY time DESC`;
         values = [address, type, 'tokentx', chainId, contractAddress.toLowerCase(), from.toLowerCase()];
       } else if (to) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? AND lower(tx_to)=? ORDER BY time DESC';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL AND tx_chainId=? AND lower(tx_contractAddress)=? AND lower(tx_to)=? ORDER BY time DESC`;
         values = [address, type, 'tokentx', chainId, contractAddress.toLowerCase(), to.toLowerCase()];
       } else {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC';
+        sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC`;
         values = [address, type, 'tokentx', chainId, contractAddress.toLowerCase()];
       }
 
@@ -1739,7 +1739,7 @@ export class Sqlite {
       if (chainId) {
         subSql = `AND tx_chainId='${chainId}'`;
       }
-      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql} AND transactionHash IN (${hashSql})`;
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND transactionHash IN (${hashSql})`;
       const values = [address, 'tokentx'];
 
       this.db.executeSql(
@@ -1773,7 +1773,7 @@ export class Sqlite {
         subSql = `AND tx_chainId='${chainId}'`;
       }
 
-      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
+      const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, 'tokentx', to.toLowerCase(), address, 'tx', count, index];
 
       this.db.executeSql(

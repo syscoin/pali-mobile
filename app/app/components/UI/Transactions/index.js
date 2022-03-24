@@ -571,6 +571,7 @@ class Transactions extends PureComponent {
 				this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(
 					tx =>
 						tx &&
+						tx.transactionHash &&
 						tx.chainId === chainId &&
 						tx.transaction?.value &&
 						!hexToBN(tx.transaction?.value).isZero() &&
@@ -578,7 +579,7 @@ class Transactions extends PureComponent {
 				);
 			} else {
 				this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(tx => {
-					if (!tx?.chainId) {
+					if (!tx?.chainId || !tx?.transactionHash) {
 						return false;
 					}
 					if (util.isRpcChainType(getChainTypeByChainId(tx.chainId))) {
@@ -620,6 +621,7 @@ class Transactions extends PureComponent {
 				targetTx = Engine.context.TransactionController.state.transactionMetas.filter(
 					tx =>
 						tx &&
+						tx.transactionHash &&
 						tx.chainId === chainId &&
 						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
 						this.isTxType(txType, tx, selectedAddress)
@@ -628,6 +630,7 @@ class Transactions extends PureComponent {
 				targetTx = Engine.context.TransactionController.state.transactionMetas.filter(
 					tx =>
 						tx &&
+						tx.transactionHash &&
 						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
 						util.isRpcChainType(getChainTypeByChainId(tx.chainId)) &&
 						this.isTxType(txType, tx, selectedAddress)
