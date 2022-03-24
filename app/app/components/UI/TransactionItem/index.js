@@ -338,7 +338,7 @@ const TransactionItem = props => {
 			<TouchableOpacity style={styles.cardBody} onPress={navToBrowser} activeOpacity={activeOpacity}>
 				{renderToken(item, -1)}
 				{item.tokenTxs?.map((token, index) => renderToken(token, index))}
-				{item.transactionHash && (
+				{!!item.transactionHash && (
 					<View style={[styles.txRow, styles.txBeginMargin]}>
 						<TxItem.TxItemStatus style={styles.stateWrapper} tx={item} />
 						<Text style={styles.hashText}>{formatText(item.transactionHash)}</Text>
