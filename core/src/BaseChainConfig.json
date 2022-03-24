@@ -90,6 +90,7 @@
     "nftbalances_address": "0x667AD1C77181FA247a1220d9a95b054802e52777"
   },
   "57": {
+    "coingecko_path": "syscoin",
     "balances_address": "0xBFD340EB52D77ADeDA7622367877072E72E5bfDb",
     "tokeninfos_address": "0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7",
     "nftbalances_address": "0x667AD1C77181FA247a1220d9a95b054802e52777"
