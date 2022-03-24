@@ -288,12 +288,14 @@ class SendNFTTab extends PureComponent {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		arbContractBalances: PropTypes.object,
 		opContractBalances: PropTypes.object,
 		bscContractBalances: PropTypes.object,
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		onLoading: PropTypes.func,
 		isVisibleInModal: PropTypes.bool,
@@ -441,7 +443,8 @@ class SendNFTTab extends PureComponent {
 			polygonChainId,
 			hecoChainId,
 			opChainId,
-			avaxChainId
+			avaxChainId,
+			syscoinChainId
 		} = this.props;
 
 		this.curTransactionId = randomTransactionId();
@@ -459,6 +462,8 @@ class SendNFTTab extends PureComponent {
 			txChainId = opChainId;
 		} else if (asset.type === ChainType.Avax) {
 			txChainId = avaxChainId;
+		} else if (asset.type === ChainType.Syscoin) {
+			txChainId = syscoinChainId;
 		} else if (util.isRpcChainType(asset.type)) {
 			txChainId = getRpcProviderChainId(asset.type);
 		} else {
@@ -682,6 +687,7 @@ class SendNFTTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
@@ -696,6 +702,7 @@ class SendNFTTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
@@ -728,6 +735,9 @@ class SendNFTTab extends PureComponent {
 			} else if (asset.type === ChainType.Avax) {
 				const { AvaxContractController } = Engine.context;
 				owner = await AvaxContractController.getOwnerOf(asset.address, asset.token_id);
+			} else if (asset.type === ChainType.Syscoin) {
+				const { SyscoinContractController } = Engine.context;
+				owner = await SyscoinContractController.getOwnerOf(asset.address, asset.token_id);
 			} else if (util.isRpcChainType(asset.type)) {
 				const { RpcContractController } = Engine.context;
 				owner = await RpcContractController.callContract(
@@ -793,6 +803,13 @@ class SendNFTTab extends PureComponent {
 			} else if (asset.type === ChainType.Avax) {
 				const { AvaxContractController } = Engine.context;
 				balanceOf = await AvaxContractController.getCollectibleBalanceOf(
+					asset.address,
+					selectedAddress,
+					asset.token_id
+				);
+			} else if (asset.type === ChainType.Syscoin) {
+				const { SyscoinContractController } = Engine.context;
+				balanceOf = await SyscoinContractController.getCollectibleBalanceOf(
 					asset.address,
 					selectedAddress,
 					asset.token_id
@@ -1048,6 +1065,7 @@ const mapStateToProps = state => ({
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	contractBalances:
 		state.engine.backgroundState.TokenBalancesController.contractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
@@ -1074,6 +1092,10 @@ const mapStateToProps = state => ({
 		] || {},
 	avaxContractBalances:
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	rpcContractBalances:

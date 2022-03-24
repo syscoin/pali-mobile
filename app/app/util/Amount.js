@@ -14,7 +14,8 @@ export const getEstimatedTotalGas = async opt => {
 		polygonChainId,
 		hecoChainId,
 		opChainId,
-		avaxChainId
+		avaxChainId,
+		syscoinChainId
 	} = opt;
 	let txChainId;
 	if (asset.type === ChainType.Bsc) {
@@ -29,6 +30,8 @@ export const getEstimatedTotalGas = async opt => {
 		txChainId = opChainId;
 	} else if (asset.type === ChainType.Avax) {
 		txChainId = avaxChainId;
+	} else if (asset.type === ChainType.Syscoin) {
+		txChainId = syscoinChainId;
 	} else if (util.isRpcChainType(asset.type)) {
 		txChainId = getRpcProviderChainId(asset.type);
 	} else {
@@ -51,6 +54,7 @@ export function validateAmount(inputValue, opt) {
 		polygonContractBalances,
 		hecoContractBalances,
 		avaxContractBalances,
+		syscoinContractBalances,
 		rpcContractBalances,
 		estimatedTotalGas
 	} = opt;
@@ -65,6 +69,7 @@ export function validateAmount(inputValue, opt) {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			});
 			weiInput = toWei(inputValue);
@@ -80,6 +85,7 @@ export function validateAmount(inputValue, opt) {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			});
 			weiInput = toTokenMinimalUnit(inputValue, asset.decimals);

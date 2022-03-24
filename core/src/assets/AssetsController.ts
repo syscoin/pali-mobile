@@ -45,8 +45,8 @@ export enum TokenChangedType {
   HecoTokenChanged = 0x40,
   TronTokenChanged = 0x80,
   AvaxTokenChanged = 0x100,
-  SyscoinTokenChanged = 0x100,
   RpcTokenChanged = 0x200,
+  SyscoinTokenChanged = 0x400,
 }
 
 export interface SmartContractInfo {

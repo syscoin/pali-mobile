@@ -13,6 +13,7 @@ import imgArb from '../../../images/img_ongoing_arb.png';
 import imgHeco from '../../../images/img_ongoing_heco.png';
 import imgOp from '../../../images/img_ongoing_op.png';
 import imgAvax from '../../../images/img_ongoing_avax.png';
+import imgSyscoin from '../../../images/img_ongoing_syscoin.png';
 import imgRpc from '../../../images/img_ongoing_other.png';
 import iconArrow from '../../../images/move_arrow.png';
 import TxItem from '../TxItem';
@@ -154,6 +155,7 @@ class OngoingTransactions extends PureComponent {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		selectedAddress: PropTypes.string,
 		showAlert: PropTypes.func,
 		close: PropTypes.func
@@ -189,7 +191,16 @@ class OngoingTransactions extends PureComponent {
 	);
 
 	exitChainId = curChainId => {
-		const { chainId, arbChainId, bscChainId, polygonChainId, hecoChainId, opChainId, avaxChainId } = this.props;
+		const {
+			chainId,
+			arbChainId,
+			bscChainId,
+			polygonChainId,
+			hecoChainId,
+			opChainId,
+			avaxChainId,
+			syscoinChainId
+		} = this.props;
 		return (
 			curChainId === chainId ||
 			curChainId === arbChainId ||
@@ -198,12 +209,22 @@ class OngoingTransactions extends PureComponent {
 			curChainId === hecoChainId ||
 			curChainId === opChainId ||
 			curChainId === avaxChainId ||
+			curChainId === syscoinChainId ||
 			isRpcChainId(curChainId)
 		);
 	};
 
 	getImg = curChainId => {
-		const { chainId, arbChainId, bscChainId, polygonChainId, hecoChainId, opChainId, avaxChainId } = this.props;
+		const {
+			chainId,
+			arbChainId,
+			bscChainId,
+			polygonChainId,
+			hecoChainId,
+			opChainId,
+			avaxChainId,
+			syscoinChainId
+		} = this.props;
 		if (curChainId === chainId) {
 			return imgEth;
 		} else if (curChainId === arbChainId) {
@@ -218,6 +239,8 @@ class OngoingTransactions extends PureComponent {
 			return imgOp;
 		} else if (curChainId === avaxChainId) {
 			return imgAvax;
+		} else if (curChainId === syscoinChainId) {
+			return imgSyscoin;
 		} else if (isRpcChainId(curChainId)) {
 			return imgRpc;
 		}
@@ -279,7 +302,7 @@ class OngoingTransactions extends PureComponent {
 			close && close(false);
 		} catch (e) {
 			// eslint-disable-next-line no-console
-			util.logError(e, { message: `can't get a block explorer link for network` });
+			util.logError(e, { message: "can't get a block explorer link for network" });
 		}
 	};
 
@@ -527,6 +550,7 @@ const mapStateToProps = state => ({
 	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress
 });

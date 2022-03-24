@@ -400,6 +400,7 @@ class MoveTab extends PureComponent {
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		selectedAddress: PropTypes.string,
 		chainId: PropTypes.string,
@@ -408,6 +409,7 @@ class MoveTab extends PureComponent {
 		polygonChainId: PropTypes.string,
 		hecoChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		contractBalances: PropTypes.object,
 		mainBalance: PropTypes.string,
 		ethPrice: PropTypes.object,
@@ -415,6 +417,7 @@ class MoveTab extends PureComponent {
 		polygonPrice: PropTypes.object,
 		hecoPrice: PropTypes.object,
 		avaxPrice: PropTypes.object,
+		syscoinPrice: PropTypes.object,
 		contractExchangeRates: PropTypes.object,
 		arbContractExchangeRates: PropTypes.object,
 		bscContractExchangeRates: PropTypes.object,
@@ -422,6 +425,7 @@ class MoveTab extends PureComponent {
 		hecoContractExchangeRates: PropTypes.object,
 		opContractExchangeRates: PropTypes.object,
 		avaxContractExchangeRates: PropTypes.object,
+		syscoinContractExchangeRates: PropTypes.object,
 		onLoading: PropTypes.func,
 		currencyCode: PropTypes.string,
 		currencyCodeRate: PropTypes.number,
@@ -476,6 +480,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		let approveSelectType;
@@ -497,6 +502,7 @@ class MoveTab extends PureComponent {
 					polygonContractBalances,
 					hecoContractBalances,
 					avaxContractBalances,
+					syscoinContractBalances,
 					rpcContractBalances
 				});
 				value = getFromTokenMinimalUnit(weiBalance, asset.decimals);
@@ -637,7 +643,8 @@ class MoveTab extends PureComponent {
 				bscChainId,
 				polygonChainId,
 				hecoChainId,
-				avaxChainId
+				avaxChainId,
+				syscoinChainId
 			} = this.props;
 			let txChainId;
 			if (asset.type === ChainType.Bsc) {
@@ -650,6 +657,8 @@ class MoveTab extends PureComponent {
 				txChainId = hecoChainId;
 			} else if (asset.type === ChainType.Avax) {
 				txChainId = avaxChainId;
+			} else if (asset.type === ChainType.Syscoin) {
+				txChainId = syscoinChainId;
 			} else if (util.isRpcChainType(asset.type)) {
 				txChainId = getRpcProviderChainId(asset.type);
 			} else {
@@ -692,6 +701,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { estimatedTotalGas } = this.state;
@@ -706,6 +716,7 @@ class MoveTab extends PureComponent {
 					bscContractBalances,
 					hecoContractBalances,
 					avaxContractBalances,
+					syscoinContractBalances,
 					rpcContractBalances
 				});
 				weiInput = toWei(moveAmount);
@@ -721,6 +732,7 @@ class MoveTab extends PureComponent {
 					bscContractBalances,
 					hecoContractBalances,
 					avaxContractBalances,
+					syscoinContractBalances,
 					rpcContractBalances
 				});
 				weiInput = toTokenMinimalUnit(moveAmount, asset.decimals);
@@ -1289,6 +1301,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
@@ -1303,6 +1316,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
@@ -1322,6 +1336,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { value } = transaction;
@@ -1334,6 +1349,7 @@ class MoveTab extends PureComponent {
 			bscContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		this.setState({ availableBalance: renderFromWei(balanceBN.sub(valueBN)) });
@@ -1493,6 +1509,7 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 
@@ -1517,6 +1534,7 @@ class MoveTab extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			});
 			let weiBalance = balance;
@@ -1576,6 +1594,7 @@ class MoveTab extends PureComponent {
 			polygonPrice,
 			hecoPrice,
 			avaxPrice,
+			syscoinPrice,
 			asset: { type }
 		} = this.props;
 
@@ -1590,6 +1609,8 @@ class MoveTab extends PureComponent {
 			price = hecoPrice.usd;
 		} else if (type === ChainType.Avax) {
 			price = avaxPrice.usd;
+		} else if (type === ChainType.Syscoin) {
+			price = syscoinPrice.usd;
 		} else if (util.isRpcChainType(type)) {
 			price = 0;
 		} else {
@@ -1609,6 +1630,7 @@ class MoveTab extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			contractBalances,
 			arbContractBalances,
 			opContractBalances,
@@ -1616,11 +1638,13 @@ class MoveTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			avaxPrice,
+			syscoinPrice,
 			hecoPrice,
 			currencyCode,
 			currencyCodeRate
@@ -1634,17 +1658,20 @@ class MoveTab extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			arbContractBalances,
 			opContractBalances,
 			bscContractBalances,
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			avaxPrice,
+			syscoinPrice,
 			hecoPrice,
 			currencyCode,
 			currencyCodeRate
@@ -2059,6 +2086,10 @@ const mapStateToProps = state => ({
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
 	rpcContractBalances:
 		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
@@ -2074,11 +2105,13 @@ const mapStateToProps = state => ({
 	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
 	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
 	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
 	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
 	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
+	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
 	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
 	arbContractExchangeRates: state.engine.backgroundState.TokenRatesController.arbContractExchangeRates,
 	bscContractExchangeRates: state.engine.backgroundState.TokenRatesController.bscContractExchangeRates,
@@ -2086,6 +2119,7 @@ const mapStateToProps = state => ({
 	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
 	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
 	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
+	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate
 });

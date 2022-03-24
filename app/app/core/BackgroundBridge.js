@@ -1,4 +1,3 @@
-/* eslint-disable import/no-commonjs */
 import { ChainType, util, URL } from 'gopocket-core';
 import { JsonRpcEngine } from 'json-rpc-engine';
 import { JS_POST_MESSAGE_TO_PROVIDER, JS_IFRAME_POST_MESSAGE_TO_PROVIDER } from '../util/browserScripts';
@@ -13,10 +12,8 @@ import { getChainId } from '../util/walletconnect';
 const createFilterMiddleware = require('eth-json-rpc-filters');
 const createSubscriptionManager = require('eth-json-rpc-filters/subscriptionManager');
 const providerAsMiddleware = require('eth-json-rpc-middleware/providerAsMiddleware');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const EthBlockTracker = require('eth-block-tracker');
 const pump = require('pump');
-// eslint-disable-next-line import/no-nodejs-modules
 const EventEmitter = require('events').EventEmitter;
 const { NOTIFICATION_NAMES } = AppConstants;
 
@@ -71,6 +68,9 @@ export class BackgroundBridge extends EventEmitter {
 		} else if (this.chain_type === ChainType.Avax) {
 			this.provider = Engine.context.AvaxNetworkController.provider;
 			Engine.context.AvaxNetworkController.subscribe(this.sendStateUpdate);
+		} else if (this.chain_type === ChainType.Syscoin) {
+			this.provider = Engine.context.SyscoinNetworkController.provider;
+			Engine.context.SyscoinNetworkController.subscribe(this.sendStateUpdate);
 		} else if (util.isRpcChainType(this.chain_type)) {
 			this.provider = Engine.context.RpcNetworkController.providers[this.chain_type];
 		} else {

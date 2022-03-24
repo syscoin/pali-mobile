@@ -93,6 +93,9 @@ export const chainTypeTochain = chainType => {
 	if (chainType === ChainType.Avax) {
 		return 8;
 	}
+	if (chainType === ChainType.Syscoin) {
+		return 9;
+	}
 	return chainType;
 };
 
@@ -122,6 +125,9 @@ export const getChainId = chainType => {
 	}
 	if (chainType === ChainType.Avax) {
 		return Engine.context.AvaxNetworkController.state.provider.chainId;
+	}
+	if (chainType === ChainType.Syscoin) {
+		return Engine.context.SyscoinNetworkController.state.provider.chainId;
 	}
 	if (util.isRpcChainType(chainType)) {
 		return getRpcProviderChainId(chainType);

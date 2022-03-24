@@ -125,6 +125,7 @@ class Approve extends PureComponent {
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		/**
 		 * Transaction state
@@ -255,6 +256,7 @@ class Approve extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const type = getTypeByChainId(chainId);
@@ -266,6 +268,7 @@ class Approve extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		const total = value.add(gas.mul(gasPrice));
@@ -491,6 +494,10 @@ const mapStateToProps = state => ({
 		] || {},
 	avaxContractBalances:
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	rpcContractBalances:

@@ -129,6 +129,7 @@ export default class AssetSearch extends PureComponent {
 					ArbContractController,
 					HecoContractController,
 					AvaxContractController,
+					SyscoinContractController,
 					RpcContractController,
 					RpcNetworkController
 				} = Engine.context;
@@ -194,6 +195,13 @@ export default class AssetSearch extends PureComponent {
 					}
 					decimals = await AvaxContractController.getTokenDecimals(address);
 					symbol = await AvaxContractController.getAssetSymbol(address);
+				} else if (currentChainType === ChainType.Syscoin) {
+					const validated = await this.validateCustomTokenAddress(address, currentChainType);
+					if (!validated) {
+						throw new Error('address not validated');
+					}
+					decimals = await SyscoinContractController.getTokenDecimals(address);
+					symbol = await SyscoinContractController.getAssetSymbol(address);
 				} else if (util.isRpcChainType(currentChainType)) {
 					const working = await RpcNetworkController.checkNetwork(currentChainType);
 					if (!working) {

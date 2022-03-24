@@ -89,6 +89,7 @@ class SecurityTop extends Component {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		tokens: PropTypes.array,
 		securityTokens: PropTypes.array,
 		updateTime: PropTypes.number
@@ -133,7 +134,8 @@ class SecurityTop extends Component {
 			arbChainId,
 			hecoChainId,
 			opChainId,
-			avaxChainId
+			avaxChainId,
+			syscoinChainId
 		} = this.props;
 		let normalCount = 0;
 		let noticeCount = 0;
@@ -151,6 +153,7 @@ class SecurityTop extends Component {
 							token.chainId === arbChainId ||
 							token.chainId === hecoChainId ||
 							token.chainId === avaxChainId ||
+							token.chainId === syscoinChainId ||
 							token.chainId === opChainId ||
 							isRpcChainId(token.chainId))
 				);
@@ -237,6 +240,7 @@ const mapStateToProps = state => ({
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	securityTokens: state.engine.backgroundState.SecurityController.securityTokens,
 	updateTime: state.engine.backgroundState.SecurityController.updateTime
 });

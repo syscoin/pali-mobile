@@ -17,14 +17,7 @@ import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
-import {
-	KeyringTypes,
-	ChainType,
-	isValidAddress,
-	defaultEnabledChains,
-	isZeroAddress,
-	util
-} from 'gopocket-core';
+import { KeyringTypes, ChainType, isValidAddress, defaultEnabledChains, isZeroAddress, util } from 'gopocket-core';
 import Engine from '../../../core/Engine';
 import LottieView from 'lottie-react-native';
 import { toggleShowHint } from '../../../actions/hint';
@@ -755,6 +748,7 @@ class ObserveAccounts extends PureComponent {
 		const hecoCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Heco] || 0;
 		const opCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Optimism] || 0;
 		const avaxCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Avax] || 0;
+		const syscoinCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Syscoin] || 0;
 
 		let allAmount = 0;
 		if (enableChain(ChainType.Ethereum)) allAmount += etherCurrencyAmount;
@@ -764,6 +758,7 @@ class ObserveAccounts extends PureComponent {
 		if (enableChain(ChainType.Heco)) allAmount += hecoCurrencyAmount;
 		if (enableChain(ChainType.Optimism)) allAmount += opCurrencyAmount;
 		if (enableChain(ChainType.Avax)) allAmount += avaxCurrencyAmount;
+		if (enableChain(ChainType.Syscoin)) allAmount += syscoinCurrencyAmount;
 
 		const chainTypeAmount = [
 			allAmount.toFixed(2),
@@ -773,7 +768,8 @@ class ObserveAccounts extends PureComponent {
 			bscCurrencyAmount.toFixed(2),
 			hecoCurrencyAmount.toFixed(2),
 			opCurrencyAmount.toFixed(2),
-			avaxCurrencyAmount.toFixed(2)
+			avaxCurrencyAmount.toFixed(2),
+			syscoinCurrencyAmount.toFixed(2)
 		];
 
 		return (

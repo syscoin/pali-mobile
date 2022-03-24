@@ -104,6 +104,10 @@ export function isMainnetAvax() {
 	return EngineContext().AvaxNetworkController.state.provider?.chainId === '43114';
 }
 
+export function isMainnetSyscoin() {
+	return EngineContext().SyscoinNetworkController.state.provider?.chainId === '57';
+}
+
 export async function callSqlite(method, ...args) {
 	if (EngineImpl?.context) {
 		return Sqlite.getInstance()[method]?.(...args);

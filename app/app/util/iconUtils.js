@@ -1,7 +1,6 @@
 import { ChainType, util } from 'gopocket-core';
 import { getIcTagResource } from './rpcUtil';
 
-// eslint-disable-next-line import/prefer-default-export
 export function getIcTagByChainType(type) {
 	return type === ChainType.Ethereum
 		? require('../images/ic_eth_tag.png')
@@ -15,6 +14,8 @@ export function getIcTagByChainType(type) {
 		? require('../images/ic_op_tag.png')
 		: type === ChainType.Avax
 		? require('../images/ic_avax_tag.png')
+		: type === ChainType.Syscoin
+		? require('../images/ic_syscoin_tag.png')
 		: util.isRpcChainType(type)
 		? getIcTagResource(type)
 		: require('../images/ic_bsc_tag.png');

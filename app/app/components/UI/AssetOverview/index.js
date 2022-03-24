@@ -224,12 +224,14 @@ class AssetOverview extends PureComponent {
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		ethPrice: PropTypes.object,
 		bnbPrice: PropTypes.object,
 		polygonPrice: PropTypes.object,
 		hecoPrice: PropTypes.object,
 		avaxPrice: PropTypes.object,
+		syscoinPrice: PropTypes.object,
 		/**
 		 * An object containing token exchange rates in the format address => exchangeRate
 		 */
@@ -240,6 +242,7 @@ class AssetOverview extends PureComponent {
 		hecoContractExchangeRates: PropTypes.object,
 		opContractExchangeRates: PropTypes.object,
 		avaxContractExchangeRates: PropTypes.object,
+		syscoinContractExchangeRates: PropTypes.object,
 
 		showAlert: PropTypes.func,
 		hideAmount: PropTypes.bool,
@@ -334,6 +337,7 @@ class AssetOverview extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			contractBalances,
 			arbContractBalances,
 			opContractBalances,
@@ -341,12 +345,14 @@ class AssetOverview extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			hideAmount,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			avaxPrice,
+			syscoinPrice,
 			hecoPrice,
 			currencyCode,
 			currencyCodeRate,
@@ -362,17 +368,20 @@ class AssetOverview extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			arbContractBalances,
 			opContractBalances,
 			bscContractBalances,
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			avaxPrice,
+			syscoinPrice,
 			hecoPrice,
 			currencyCode,
 			currencyCodeRate
@@ -492,11 +501,13 @@ const mapStateToProps = state => ({
 	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
 	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
 	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
+	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
 	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
 	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
 	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
 	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
 	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
+	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
 	arbContractBalances:
 		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
@@ -519,6 +530,10 @@ const mapStateToProps = state => ({
 		] || {},
 	avaxContractBalances:
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	rpcContractBalances:

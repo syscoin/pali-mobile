@@ -139,6 +139,7 @@ export default class SearchView extends PureComponent {
 			HecoContractController,
 			OpContractController,
 			AvaxContractController,
+			SyscoinContractController,
 			RpcNetworkController,
 			RpcContractController
 		} = Engine.context;
@@ -152,6 +153,9 @@ export default class SearchView extends PureComponent {
 		const hecoAddressArray = results.filter(token => token.type === ChainType.Heco).map(token => token.address);
 		const opAddressArray = results.filter(token => token.type === ChainType.Optimism).map(token => token.address);
 		const avaxAddressArray = results.filter(token => token.type === ChainType.Avax).map(token => token.address);
+		const syscoinAddressArray = results
+			.filter(token => token.type === ChainType.Syscoin)
+			.map(token => token.address);
 
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
@@ -306,6 +310,22 @@ export default class SearchView extends PureComponent {
 				util.logDebug('handleSearch polygon failed with error=', e5);
 			}
 		}
+		//Syscoin
+		if (enabledChains.includes(ChainType.Syscoin) && !this.inLocalResult(syscoinAddressArray, searchQuery)) {
+			try {
+				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Syscoin);
+				if (validated) {
+					const decimals = await SyscoinContractController.getTokenDecimals(searchQuery);
+					const symbol = await SyscoinContractController.getAssetSymbol(searchQuery);
+					if (decimals && symbol) {
+						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Syscoin });
+						syscoinAddressArray.push(searchQuery);
+					}
+				}
+			} catch (e5) {
+				util.logDebug('handleSearch polygon failed with error=', e5);
+			}
+		}
 
 		const supportedChain = [
 			ChainType.Arbitrum,
@@ -314,7 +334,8 @@ export default class SearchView extends PureComponent {
 			ChainType.Polygon,
 			ChainType.Heco,
 			ChainType.Optimism,
-			ChainType.Avax
+			ChainType.Avax,
+			ChainType.Syscoin
 		];
 		const rpcChain = enabledChains.filter(chainType => !supportedChain.includes(chainType));
 		for (let i = 0; i < rpcChain.length; i++) {

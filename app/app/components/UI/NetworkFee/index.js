@@ -146,6 +146,7 @@ class NetworkFee extends PureComponent {
 		polygonPrice: PropTypes.object,
 		hecoPrice: PropTypes.object,
 		avaxPrice: PropTypes.object,
+		syscoinPrice: PropTypes.object,
 		onChange: PropTypes.func,
 		transaction: PropTypes.object,
 		type: PropTypes.number,
@@ -481,6 +482,7 @@ class NetworkFee extends PureComponent {
 			polygonPrice,
 			hecoPrice,
 			avaxPrice,
+			syscoinPrice,
 			transaction,
 			type,
 			currencyCode,
@@ -499,6 +501,8 @@ class NetworkFee extends PureComponent {
 			rate = hecoPrice.usd;
 		} else if (type === ChainType.Avax) {
 			rate = avaxPrice.usd;
+		} else if (type === ChainType.Syscoin) {
+			rate = syscoinPrice.usd;
 		} else if (util.isRpcChainType(type)) {
 			rate = 0;
 		} else {
@@ -634,6 +638,7 @@ const mapStateToProps = state => ({
 	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
 	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
 	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
+	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate
 });

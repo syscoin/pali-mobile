@@ -763,6 +763,7 @@ class WalletManagement extends PureComponent {
 		const hecoCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Heco] || 0;
 		const opCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Optimism] || 0;
 		const avaxCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Avax] || 0;
+		const syscoinCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Syscoin] || 0;
 
 		let allAmount = 0;
 		if (enableChain(ChainType.Ethereum)) allAmount += etherCurrencyAmount;
@@ -772,6 +773,7 @@ class WalletManagement extends PureComponent {
 		if (enableChain(ChainType.Heco)) allAmount += hecoCurrencyAmount;
 		if (enableChain(ChainType.Optimism)) allAmount += opCurrencyAmount;
 		if (enableChain(ChainType.Avax)) allAmount += avaxCurrencyAmount;
+		if (enableChain(ChainType.Syscoin)) allAmount += syscoinCurrencyAmount;
 
 		const chainTypeAmount = [
 			allAmount.toFixed(2),
@@ -781,7 +783,8 @@ class WalletManagement extends PureComponent {
 			bscCurrencyAmount.toFixed(2),
 			hecoCurrencyAmount.toFixed(2),
 			opCurrencyAmount.toFixed(2),
-			avaxCurrencyAmount.toFixed(2)
+			avaxCurrencyAmount.toFixed(2),
+			syscoinCurrencyAmount.toFixed(2)
 		];
 
 		return (

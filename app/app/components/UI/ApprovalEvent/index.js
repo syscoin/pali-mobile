@@ -151,6 +151,7 @@ class ApprovalEvent extends Component {
 				PolygonNetworkController,
 				HecoNetworkController,
 				AvaxNetworkController,
+				SyscoinNetworkController,
 				RpcNetworkController,
 				AssetsContractController,
 				ArbContractController,
@@ -158,6 +159,7 @@ class ApprovalEvent extends Component {
 				BscContractController,
 				HecoContractController,
 				AvaxContractController,
+				SyscoinContractController,
 				RpcContractController
 			} = Engine.context;
 			const tokenAddress = tokenInfo.address;
@@ -175,6 +177,8 @@ class ApprovalEvent extends Component {
 				await HecoContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
 			} else if (chainId === AvaxNetworkController.state.provider.chainId) {
 				await AvaxContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
+			} else if (chainId === SyscoinNetworkController.state.provider.chainId) {
+				await SyscoinContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
 			} else if (await RpcNetworkController.isRpcChainId(chainId)) {
 				const type = await RpcNetworkController.getChainTypeByChainId(chainId);
 				await RpcContractController.callContract(

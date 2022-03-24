@@ -96,6 +96,7 @@ class TransactionEditor extends PureComponent {
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		/**
 		 * String containing the selected address
@@ -238,6 +239,7 @@ class TransactionEditor extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			} = this.props;
 			const type = getTypeByChainId(chainId);
@@ -249,6 +251,7 @@ class TransactionEditor extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			});
 			const total = value.add(gas.mul(gasPrice));
@@ -286,6 +289,7 @@ class TransactionEditor extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			} = this.props;
 			const checksummedFrom = safeToChecksumAddress(from) || '';
@@ -298,6 +302,7 @@ class TransactionEditor extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances
 			});
 			if (!value || !gas || !gasPrice || !from) {
@@ -318,6 +323,7 @@ class TransactionEditor extends PureComponent {
 					polygonContractBalances,
 					hecoContractBalances,
 					avaxContractBalances,
+					syscoinContractBalances,
 					rpcContractBalances
 				}
 			);
@@ -360,6 +366,9 @@ class TransactionEditor extends PureComponent {
 			} else if (type === ChainType.Avax) {
 				const { AvaxContractController } = Engine.context;
 				balanceOf = await AvaxContractController.getBalanceOfHex(address, selectedAddress);
+			} else if (type === ChainType.Syscoin) {
+				const { SyscoinContractController } = Engine.context;
+				balanceOf = await SyscoinContractController.getBalanceOfHex(address, selectedAddress);
 			} else if (util.isRpcChainType(type)) {
 				const { RpcContractController } = Engine.context;
 				balanceOf = await RpcContractController.callContract(type, 'getBalanceOfHex', address, selectedAddress);
@@ -392,6 +401,7 @@ class TransactionEditor extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		if (!gas) return strings('transaction.invalid_gas');
@@ -408,6 +418,7 @@ class TransactionEditor extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		if (balanceBN && isBN(gas) && isBN(gasPrice) && balanceBN.lt(gas.mul(gasPrice)))
@@ -511,6 +522,10 @@ const mapStateToProps = state => ({
 		] || {},
 	avaxContractBalances:
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	rpcContractBalances:

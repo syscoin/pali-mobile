@@ -69,6 +69,7 @@ class AssetActionView extends PureComponent {
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		contractExchangeRates: PropTypes.object,
 		arbContractExchangeRates: PropTypes.object,
@@ -77,11 +78,13 @@ class AssetActionView extends PureComponent {
 		hecoContractExchangeRates: PropTypes.object,
 		opContractExchangeRates: PropTypes.object,
 		avaxContractExchangeRates: PropTypes.object,
+		syscoinContractExchangeRates: PropTypes.object,
 		ethPrice: PropTypes.object,
 		bnbPrice: PropTypes.object,
 		polygonPrice: PropTypes.object,
 		hecoPrice: PropTypes.object,
 		avaxPrice: PropTypes.object,
+		syscoinPrice: PropTypes.object,
 		isVisibleInModal: PropTypes.bool,
 		approveModalVisibleInModal: PropTypes.bool,
 		hideAmount: PropTypes.func,
@@ -128,12 +131,14 @@ class AssetActionView extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			hecoPrice,
 			avaxPrice,
+			syscoinPrice,
 			contractExchangeRates,
 			arbContractExchangeRates,
 			bscContractExchangeRates,
@@ -141,6 +146,7 @@ class AssetActionView extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			currencyCode,
 			currencyCodeRate
 		} = this.props;
@@ -153,18 +159,21 @@ class AssetActionView extends PureComponent {
 			hecoContractExchangeRates,
 			opContractExchangeRates,
 			avaxContractExchangeRates,
+			syscoinContractExchangeRates,
 			arbContractBalances,
 			opContractBalances,
 			bscContractBalances,
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances,
 			ethPrice,
 			bnbPrice,
 			polygonPrice,
 			hecoPrice,
 			avaxPrice,
+			syscoinPrice,
 			currencyCode,
 			currencyCodeRate
 		});
@@ -302,6 +311,8 @@ class AssetActionView extends PureComponent {
 			return false;
 		} else if (asset.type === ChainType.Avax) {
 			return false;
+		} else if (asset.type === ChainType.Syscoin) {
+			return false;
 		} else if (util.isRpcChainType(asset.type)) {
 			return false;
 		}
@@ -373,6 +384,12 @@ class AssetActionView extends PureComponent {
 				url = 'https://traderjoexyz.com/#/trade';
 			} else {
 				url = 'https://traderjoexyz.com/#/trade?inputCurrency=' + asset.address;
+			}
+		} else if (asset.type === ChainType.Syscoin) {
+			if (asset.nativeCurrency) {
+				url = 'https://app.pegasys.finance/#/swap';
+			} else {
+				url = 'https://app.pegasys.finance/#/swap?inputCurrency=' + asset.address;
 			}
 		}
 		if (url !== '') {
@@ -514,6 +531,10 @@ const mapStateToProps = state => ({
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
 	rpcContractBalances:
 		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
@@ -525,11 +546,13 @@ const mapStateToProps = state => ({
 	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
 	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
 	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
+	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
 	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
 	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
 	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
 	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
 	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
+	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
 	isVisibleInModal: state.scanner.isVisibleInModal,
 	approveModalVisibleInModal: state.modals.approveModalVisibleInModal,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,

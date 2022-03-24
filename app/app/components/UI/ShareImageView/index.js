@@ -14,6 +14,7 @@ import shareTron from '../../../images/ic_share_tron.png';
 import shareHeco from '../../../images/ic_share_heco.png';
 import shareOp from '../../../images/ic_share_op.png';
 import shareAvax from '../../../images/ic_share_avax.png';
+import shareSyscoin from '../../../images/ic_share_syscoin.png';
 import shareLogo from '../../../images/img_share_logo.png';
 import { captureRef } from 'react-native-view-shot';
 import { ChainType, util } from 'gopocket-core';
@@ -116,6 +117,8 @@ export default class ShareImageView extends PureComponent {
 			return shareOp;
 		} else if (type === ChainType.Avax) {
 			return shareAvax;
+		} else if (type === ChainType.Syscoin) {
+			return shareSyscoin;
 		}
 		return shareEth;
 	};

@@ -9,6 +9,7 @@ import TronNetworkController from '../network/TronNetworkController';
 import HecoNetworkController from '../network/HecoNetworkController';
 import OpNetworkController from '../network/OpNetworkController';
 import AvaxNetworkController from '../network/AvaxNetworkController';
+import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import {
   safelyExecute,
   timeoutFetch,
@@ -190,6 +191,9 @@ export class DefiProtocolController extends BaseController<DefiProtocolConfig, D
       return network.state.provider.chainId;
     } else if (chain === 'avax') {
       const network = this.context.AvaxNetworkController as AvaxNetworkController;
+      return network.state.provider.chainId;
+    } else if (chain === 'sys' || chain === 'syscoin') {
+      const network = this.context.SyscoinNetworkController as SyscoinNetworkController;
       return network.state.provider.chainId;
     }
     const network = this.context.NetworkController as NetworkController;

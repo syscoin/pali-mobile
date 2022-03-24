@@ -95,6 +95,7 @@ class TransactionTips extends PureComponent {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		toggleShowHint: PropTypes.func
 	};
 
@@ -127,7 +128,16 @@ class TransactionTips extends PureComponent {
 	}
 
 	exitChainId = curChainId => {
-		const { chainId, arbChainId, bscChainId, polygonChainId, hecoChainId, opChainId, avaxChainId } = this.props;
+		const {
+			chainId,
+			arbChainId,
+			bscChainId,
+			polygonChainId,
+			hecoChainId,
+			opChainId,
+			avaxChainId,
+			syscoinChainId
+		} = this.props;
 		return (
 			curChainId === chainId ||
 			curChainId === arbChainId ||
@@ -136,6 +146,7 @@ class TransactionTips extends PureComponent {
 			curChainId === hecoChainId ||
 			curChainId === opChainId ||
 			curChainId === avaxChainId ||
+			curChainId === syscoinChainId ||
 			isRpcChainId(curChainId)
 		);
 	};
@@ -190,7 +201,8 @@ class TransactionTips extends PureComponent {
 			prevProps.polygonChainId !== this.props.polygonChainId ||
 			prevProps.hecoChainId !== this.props.hecoChainId ||
 			prevProps.opChainId !== this.props.opChainId ||
-			prevProps.avaxChainId !== this.props.avaxChainId
+			prevProps.avaxChainId !== this.props.avaxChainId ||
+			prevProps.syscoinChainId !== this.props.syscoinChainId
 		) {
 			this.onNetworkUpdate();
 		}
@@ -447,7 +459,8 @@ const mapStateToProps = state => ({
 	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId
+	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId
 });
 
 const mapDispatchToProps = dispatch => ({

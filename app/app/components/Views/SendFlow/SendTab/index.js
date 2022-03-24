@@ -335,12 +335,14 @@ class SendTab extends PureComponent {
 		hecoChainId: PropTypes.string,
 		opChainId: PropTypes.string,
 		avaxChainId: PropTypes.string,
+		syscoinChainId: PropTypes.string,
 		arbContractBalances: PropTypes.object,
 		opContractBalances: PropTypes.object,
 		bscContractBalances: PropTypes.object,
 		polygonContractBalances: PropTypes.object,
 		hecoContractBalances: PropTypes.object,
 		avaxContractBalances: PropTypes.object,
+		syscoinContractBalances: PropTypes.object,
 		rpcContractBalances: PropTypes.object,
 		onLoading: PropTypes.func
 	};
@@ -522,6 +524,7 @@ class SendTab extends PureComponent {
 			hecoChainId,
 			opChainId,
 			avaxChainId,
+			syscoinChainId,
 			asset,
 			contractBalances,
 			arbContractBalances,
@@ -530,6 +533,7 @@ class SendTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { amountValue, networkSelectType } = this.state;
@@ -548,7 +552,8 @@ class SendTab extends PureComponent {
 					polygonChainId,
 					hecoChainId,
 					opChainId,
-					avaxChainId
+					avaxChainId,
+					syscoinChainId
 				});
 			}
 
@@ -561,6 +566,7 @@ class SendTab extends PureComponent {
 				polygonContractBalances,
 				hecoContractBalances,
 				avaxContractBalances,
+				syscoinContractBalances,
 				rpcContractBalances,
 				estimatedTotalGas
 			});
@@ -596,7 +602,8 @@ class SendTab extends PureComponent {
 			polygonChainId,
 			hecoChainId,
 			opChainId,
-			avaxChainId
+			avaxChainId,
+			syscoinChainId
 		} = this.props;
 
 		if (asset.type === ChainType.Arbitrum && arbChainId === undefined) {
@@ -619,6 +626,8 @@ class SendTab extends PureComponent {
 			txChainId = opChainId;
 		} else if (asset.type === ChainType.Avax) {
 			txChainId = avaxChainId;
+		} else if (asset.type === ChainType.Syscoin) {
+			txChainId = syscoinChainId;
 		} else if (util.isRpcChainType(asset.type)) {
 			txChainId = getRpcProviderChainId(asset.type);
 		} else {
@@ -902,6 +911,7 @@ class SendTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
@@ -916,6 +926,7 @@ class SendTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
@@ -935,6 +946,7 @@ class SendTab extends PureComponent {
 			polygonContractBalances,
 			hecoContractBalances,
 			avaxContractBalances,
+			syscoinContractBalances,
 			rpcContractBalances
 		} = this.props;
 		const { value, gas, gasPrice } = transaction;
@@ -953,6 +965,7 @@ class SendTab extends PureComponent {
 						polygonContractBalances,
 						hecoContractBalances,
 						avaxContractBalances,
+						syscoinContractBalances,
 						rpcContractBalances
 					});
 					weiInput = hexToBN(value).add(totalGas);
@@ -975,6 +988,7 @@ class SendTab extends PureComponent {
 					polygonContractBalances,
 					hecoContractBalances,
 					avaxContractBalances,
+					syscoinContractBalances,
 					rpcContractBalances
 				});
 				weiInput = hexToBN(amount);
@@ -1427,6 +1441,7 @@ const mapStateToProps = state => ({
 	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
 	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
 	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
+	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	contractBalances:
 		state.engine.backgroundState.TokenBalancesController.contractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
@@ -1453,6 +1468,10 @@ const mapStateToProps = state => ({
 		] || {},
 	avaxContractBalances:
 		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
+			state.engine.backgroundState.PreferencesController.selectedAddress
+		] || {},
+	syscoinContractBalances:
+		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	rpcContractBalances:
