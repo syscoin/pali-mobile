@@ -102,10 +102,14 @@ export function parseWaitTime(min) {
 		[strings('unit.minute'), 1]
 	];
 	timeUnits.forEach(unit => {
-		if (parsed.includes(' ')) return;
+		if (parsed.includes(' ')) {
+			return;
+		}
 		val = Math.floor(tempMin / unit[1]);
 		if (val) {
-			if (parsed !== '') parsed += ' ';
+			if (parsed !== '') {
+				parsed += ' ';
+			}
 			parsed += `${val}${unit[0]}`;
 		}
 		tempMin = min % unit[1];
@@ -177,7 +181,7 @@ export async function fetchBscGasEstimates() {
 export async function fetchHecoGasEstimates() {
 	// Timeout in 7 seconds
 	const timeout = 5000;
-	const { url, options } = await util.getAvailableUrl(`https://tc.hecochain.com/price/prediction`, {
+	const { url, options } = await util.getAvailableUrl('https://tc.hecochain.com/price/prediction', {
 		headers: {},
 		body: null,
 		method: 'GET'
@@ -204,7 +208,7 @@ export async function fetchAvaxGasEstimates() {
 	// Timeout in 7 seconds
 	const timeout = 5000;
 	const { url, options } = await util.getAvailableUrl(
-		`https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle`,
+		'https://gavax.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle',
 		{
 			headers: {},
 			body: null,
@@ -298,6 +302,26 @@ export async function getBasicGasEstimates(transaction) {
 	return basicGasEstimates;
 }
 
+async function getRpcSuggestedGasFees(chainId) {
+	try {
+		const { TransactionController } = Engine.context;
+		const { maxPriorityFeePerGas, baseFeePerGas } = await TransactionController.getRpcSuggestedGasFees(chainId);
+		if (maxPriorityFeePerGas && baseFeePerGas) {
+			const bnMax = hexToBN(maxPriorityFeePerGas);
+			const estimatedBaseFee = hexToBN(baseFeePerGas);
+			return {
+				averageGwei: bnMax,
+				fastGwei: bnMax.muln(1.5),
+				safeLowGwei: bnMax.muln(0.5),
+				estimatedBaseFee
+			};
+		}
+	} catch (e) {
+		util.logDebug('getRpcSuggestedGasFees error:', e);
+	}
+	return undefined;
+}
+
 export async function fetchSuggestedGasFees(chainId: string | number) {
 	// Timeout in 7 seconds
 	const timeout = 14000;
@@ -318,7 +342,7 @@ export async function fetchPolygonSuggestedGasFees() {
 	// Timeout in 7 seconds
 	const timeout = 14000;
 
-	const EIP1559APIEndpoint = `https://gasstation-mainnet.matic.network/v2`;
+	const EIP1559APIEndpoint = 'https://gasstation-mainnet.matic.network/v2';
 	const fetchPromise = fetch(EIP1559APIEndpoint).then(r => r.json());
 
 	return Promise.race([
@@ -343,6 +367,9 @@ export async function getOtherSuggestedGasFees(chainId: string | number) {
 			return temp_suggestedGasFees;
 		}
 		const fetchGas = await fetchSuggestedGasFees(chainId);
+		if (!fetchGas?.high) {
+			return null;
+		}
 		const allGwei = [
 			decGWEIToBNWEI(fetchGas.high.suggestedMaxPriorityFeePerGas),
 			decGWEIToBNWEI(fetchGas.medium.suggestedMaxPriorityFeePerGas),
@@ -397,9 +424,12 @@ export async function estimateTransactionTotalGas(from, to, chainId: string | nu
 		targetGas = targetGas.ltn(minGas) ? new BN(minGas) : targetGas;
 	}
 	if (await isEIP1559Compatibility(chainId)) {
-		const suggestedGasFees = await getSuggestedGasFees(chainId);
+		let suggestedGasFees = await getSuggestedGasFees(chainId);
+		if (!suggestedGasFees) {
+			suggestedGasFees = await getRpcSuggestedGasFees(chainId);
+		}
 		if (suggestedGasFees) {
-			return suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee).mul(targetGas);
+			return suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee.muln(2)).mul(targetGas);
 		}
 	}
 	return gas.mul(gasPrice);
@@ -408,9 +438,12 @@ export async function estimateTransactionTotalGas(from, to, chainId: string | nu
 export async function getSuggestedGasEstimates(transaction, forceNormalFee = false) {
 	const gasEstimates = await getBasicGasEstimates(transaction);
 	if (!forceNormalFee && (await isEIP1559Compatibility(transaction.chainId))) {
-		const suggestedGasFees = await getSuggestedGasFees(transaction.chainId);
+		let suggestedGasFees = await getSuggestedGasFees(transaction.chainId);
+		if (!suggestedGasFees) {
+			suggestedGasFees = await getRpcSuggestedGasFees(transaction.chainId);
+		}
 		if (suggestedGasFees) {
-			const maxFeePerGas = suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee);
+			const maxFeePerGas = suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee.muln(2));
 			return {
 				...gasEstimates,
 				...suggestedGasFees,

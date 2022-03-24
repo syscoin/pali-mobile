@@ -967,6 +967,34 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     return { gas: addHexPrefix(BNToHex(maxGasBN)), gasPrice };
   }
 
+  async getRpcSuggestedGasFees(chainId: string | number) {
+    const useEthQuery = this.getETHQueryByChainId(chainId?.toString());
+    if (!useEthQuery) {
+      return {};
+    }
+    const maxPriorityFeePerGas = await this.sendAsync(chainId, 'eth_maxPriorityFeePerGas')
+    const end = await query(useEthQuery, 'getBlockByNumber', ['latest', false]);
+    return { maxPriorityFeePerGas , baseFeePerGas: end?.baseFeePerGas};
+  }
+
+  async sendAsync(chainId: string | number, method: string) {
+    if (!chainId || !method) {
+      return undefined;
+    }
+    const useEthQuery = this.getETHQueryByChainId(chainId?.toString());
+    if (!useEthQuery) {
+      return undefined;
+    }
+    return new Promise((resolve => {
+      useEthQuery.sendAsync({ method }, (error: Error, result: string) => {
+        if (error) {
+          resolve(undefined);
+        }
+        resolve(result);
+      });
+    }));
+  }
+
   async onNetworkChange() {
     const network = this.context.NetworkController as NetworkController;
     this.ethQuery = network.provider ? new EthQuery(network.provider) : /* istanbul ignore next */ null;
