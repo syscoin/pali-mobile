@@ -469,6 +469,8 @@ export function getTickerByType(type) {
 		return Engine.context.OpNetworkController.state.provider.ticker;
 	} else if (type === ChainType.Avax) {
 		return Engine.context.AvaxNetworkController.state.provider.ticker;
+	} else if (type === ChainType.Syscoin) {
+		return Engine.context.SyscoinNetworkController.state.provider.ticker;
 	} else if (util.isRpcChainType(type)) {
 		return getRpcProviderTicker(type);
 	}
