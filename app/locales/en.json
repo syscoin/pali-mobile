@@ -454,7 +454,7 @@
 		"arb_bridge_withdraw_limit": "Official bridge takes 7 days withdraw from L2 to L1. Manually claim is needed.",
 		"approving_wait": "Approving {{token}} for {{network}} bridge. Please wait. You may leave this panel and get back later to migrate.",
 		"exceeds_approval_limit": "Migration amount exceeds approval limit, increase your approval limit then migrate.",
-		"no_official_bridge": "No official bridge available, please use cBridge.",
+		"no_official_bridge": "No official bridge available, please use {{bridge}}.",
 		"approve_token": "Before migrate, approve {{token}} for {{network}} bridge first.",
 		"migrate_arbitrum_tips": "Migrate from {{network}} to Ethereum via official bridge, you need to claim your migrated asset manually after 7 days challenge period. Claim Fee is about {{amount}} according to CURRENT gas, which doesn't stand for future cost.",
 		"migrate_polygon_tips": "Migrate from {{network}} to Ethereum via official bridge, you need to claim manually in the end. Fee is about {{amount}} according to current gas, which doesn't stand for the future fee.",

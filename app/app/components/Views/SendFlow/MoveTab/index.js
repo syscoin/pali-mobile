@@ -65,10 +65,10 @@ import { CURRENCIES } from '../../../../util/currencies';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AVAILABLE_ARB, VERIFICATION_DISABLED } from '../../../../constants/storage';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
-import { getSupportCBridge } from './cBridge';
 import LottieView from 'lottie-react-native';
 
 import cBridgeImage from '../../../../images/img_bridge_cbridge.png';
+import multichainImage from '../../../../images/img_bridge_multichain.png';
 import arbBridgeImage from '../../../../images/img_bridge_arb.png';
 import arbBridgeCnImage from '../../../../images/img_bridge_arb_cn.png';
 import approveImage from '../../../../images/img_approve_bridge.png';
@@ -76,6 +76,7 @@ import { addApproveInfo, removeApproveInfo } from '../../../../actions/settings'
 import { store } from '../../../../store';
 import CheckPassword from '../../../UI/CheckPassword';
 import { getRpcProviderChainId } from '../../../../util/ControllerUtils';
+import { getSupportBridgeType, getSupportMigration, TYPE_CBRIDGE } from './Bridge';
 
 const arbiBgColor = '#B8B4BF';
 const logoBorderColor = '#DCDCDC';
@@ -430,7 +431,7 @@ class MoveTab extends PureComponent {
 		currencyCode: PropTypes.string,
 		currencyCodeRate: PropTypes.number,
 		supportNativeBridge: PropTypes.bool,
-		supportCBridge: PropTypes.bool,
+		supportBridge: PropTypes.bool,
 		addApproveInfo: PropTypes.func,
 		removeApproveInfo: PropTypes.func
 	};
@@ -454,7 +455,7 @@ class MoveTab extends PureComponent {
 		availableBalance: '',
 		migrateTransactionMeta: undefined,
 		supportNativeType: [],
-		supportCBridgeType: [],
+		supportBridgeType: [],
 		claimEthereumGas: undefined,
 		checkPassword: false
 	};
@@ -535,17 +536,17 @@ class MoveTab extends PureComponent {
 				supportNativeType.push(network.type);
 			});
 		}
-		let supportCBridgeType = [];
-		if (this.props.supportCBridge) {
-			supportCBridgeType = getSupportCBridge(this.props.asset);
-			subNetworks = this.combineSupportNetworks(subNetworks, supportCBridgeType);
+		let supportBridgeType = [];
+		if (this.props.supportBridge) {
+			supportBridgeType = getSupportMigration(this.props.asset);
+			subNetworks = this.combineSupportNetworks(subNetworks, supportBridgeType);
 		}
 		let moveStep = this.state.moveStep;
 		let networkSelectType = subNetworks[0].type;
 		if (defaultType) {
 			networkSelectType = defaultType;
 			moveStep = 2;
-		} else if (supportCBridgeType.includes(networkSelectType)) {
+		} else if (supportBridgeType.includes(networkSelectType)) {
 			moveStep = 1;
 		}
 
@@ -554,7 +555,7 @@ class MoveTab extends PureComponent {
 				supportNetworks: subNetworks,
 				networkSelectType,
 				supportNativeType,
-				supportCBridgeType,
+				supportBridgeType,
 				moveStep
 			},
 			() => {
@@ -1356,10 +1357,10 @@ class MoveTab extends PureComponent {
 	};
 
 	onNetworkSelect = type => {
-		const { moveStep, supportCBridgeType } = this.state;
+		const { moveStep, supportBridgeType } = this.state;
 		if (moveStep === 1 || moveStep === 2) {
 			let tempMoveStep = moveStep;
-			if (supportCBridgeType.includes(type)) {
+			if (supportBridgeType.includes(type)) {
 				tempMoveStep = 1;
 			} else {
 				tempMoveStep = 2;
@@ -1475,7 +1476,9 @@ class MoveTab extends PureComponent {
 				renderableInputValueConversion = `${inputValueConversion} ${asset.symbol}`;
 			}
 		}
-		if (comma) inputValue = inputValue && inputValue.replace('.', ',');
+		if (comma) {
+			inputValue = inputValue && inputValue.replace('.', ',');
+		}
 		inputValueConversion = inputValueConversion === '0' ? undefined : inputValueConversion;
 		if (isDollar) {
 			const tempInputValue = inputValue;
@@ -1793,6 +1796,18 @@ class MoveTab extends PureComponent {
 		this.onClose();
 	};
 
+	todoMultichain = () => {
+		const newTabUrl = 'https://app.multichain.org/#/router';
+		const chainType = this.props.asset.type;
+		this.props.navigation.navigate('BrowserTabHome');
+		this.props.navigation.navigate('BrowserView', {
+			newTabUrl,
+			chainType,
+			reloadOnce: true
+		});
+		this.onClose();
+	};
+
 	todoNatvieBridge = () => {
 		this.setState({ moveStep: 2 });
 	};
@@ -1804,17 +1819,23 @@ class MoveTab extends PureComponent {
 		const isZh = strings('other.accept_language') === 'zh';
 		const width = Device.getDeviceWidth() - 76;
 		const height = (width * 80) / 299;
+		const isCBridge = getSupportBridgeType(asset, networkSelectType) === TYPE_CBRIDGE;
 		return (
 			<View style={styles.bridgeWrapper}>
-				<TouchableOpacity onPress={this.todoCBridge} activeOpacity={activeOpacity}>
+				<TouchableOpacity
+					onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
+					activeOpacity={activeOpacity}
+				>
 					<Image
 						style={[styles.bridgeImage, { width, height }]}
-						source={cBridgeImage}
+						source={isCBridge ? cBridgeImage : multichainImage}
 						resizeMode={'stretch'}
 					/>
 				</TouchableOpacity>
 				<Text style={styles.bridgeText}>
-					{strings(showArbBrige ? 'other.cbridge_period_limit' : 'other.no_official_bridge')}
+					{showArbBrige
+						? strings('other.cbridge_period_limit')
+						: strings('other.no_official_bridge', { bridge: isCBridge ? 'cBridge' : 'Multichain' })}
 				</Text>
 				{showArbBrige && (
 					<>

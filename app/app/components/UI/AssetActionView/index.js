@@ -16,7 +16,6 @@ import QrScanner from '../../Views/QRScanner';
 import ReceiveTab from '../ReceiveTab';
 import { ChainType, util } from 'gopocket-core';
 import Engine from '../../../core/Engine';
-import { supportCBridge } from '../../Views/SendFlow/MoveTab/cBridge';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/Device';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
@@ -30,6 +29,7 @@ import img_crosschain_cn from '../../../images/img_crosschain_cn.png';
 import img_crosschain_en from '../../../images/img_crosschain_en.png';
 import img_receive_cn from '../../../images/img_receive_cn.png';
 import img_receive_en from '../../../images/img_receive_en.png';
+import { supportMigration } from '../../Views/SendFlow/MoveTab/Bridge';
 
 const activeOpacity = 0.8;
 
@@ -99,7 +99,7 @@ class AssetActionView extends PureComponent {
 		migrateModalVisible: false,
 		receiveModalVisible: false,
 		supportNativeBridge: false,
-		supportCBridge: false,
+		supportBridge: false,
 		migrationLoading: false,
 		imageWidths: {}
 	};
@@ -116,7 +116,7 @@ class AssetActionView extends PureComponent {
 			sendModalVisible: false,
 			migrateModalVisible: false,
 			supportNativeBridge: false,
-			supportCBridge: false
+			supportBridge: false
 		});
 	};
 
@@ -211,7 +211,7 @@ class AssetActionView extends PureComponent {
 						onClose={this.hideSendOrMigrateModal}
 						onLoading={this.onMoveTabOrSendTabLoading}
 						supportNativeBridge={this.state.supportNativeBridge}
-						supportCBridge={this.state.supportCBridge}
+						supportBridge={this.state.supportBridge}
 					/>
 				)}
 				{this.renderQRScannerInModal()}
@@ -290,17 +290,6 @@ class AssetActionView extends PureComponent {
 			}
 		} else if (asset.type === ChainType.Bsc) {
 			return false;
-			// if (asset.nativeCurrency) {
-			// 	return false;
-			// }
-			// this.setState({ migrationLoading: true });
-			// const { BscBridgeController } = Engine.context;
-			// const tokens = await BscBridgeController.getSupportTokens();
-			// const lowerAddress = asset.address.toLowerCase();
-			// const token = tokens?.find(token => token?.bscContractAddress?.toLowerCase() === lowerAddress);
-			// if (!token) {
-			// 	return false;
-			// }
 		} else if (asset.type === ChainType.Arbitrum) {
 			if (!asset.nativeCurrency && !asset.l1Address) {
 				return false;
@@ -323,14 +312,14 @@ class AssetActionView extends PureComponent {
 		const { asset, toggleShowHint } = this.props;
 		this.setState({ migrationLoading: true });
 		const supportNativeBridge = await this.supportMigrate();
-		const support = supportCBridge(asset);
+		const support = supportMigration(asset);
 		this.setState({ migrationLoading: false });
 		if (!supportNativeBridge && !support) {
 			toggleShowHint(strings('other.not_migration'));
 			return;
 		}
 
-		this.setState({ migrateModalVisible: true, supportNativeBridge, supportCBridge: support });
+		this.setState({ migrateModalVisible: true, supportNativeBridge, supportBridge: support });
 	};
 
 	onSwap = () => {

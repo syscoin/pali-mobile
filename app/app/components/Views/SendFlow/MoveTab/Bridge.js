@@ -1,6 +1,7 @@
 import { ChainType } from 'gopocket-core';
 
-export const cBridge = {
+//node: lowercase address
+export const CBRIDGE_SUPPORT_TOKENS = {
 	[ChainType.Ethereum]: {
 		//MCB
 		'0x4e352cf164e64adcbad318c3a1e222e9eba4ce42': [ChainType.Bsc],
@@ -167,8 +168,32 @@ export const cBridge = {
 	}
 };
 
-export function getSupportCBridge(asset) {
-	const chainBridge = cBridge[asset.type];
+//node: lowercase address
+export const MULTICHAIN_SUPPORT_TOKENS = {
+	[ChainType.Ethereum]: {
+		//USDC
+		'0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': [ChainType.Syscoin],
+		//USDT
+		'0xdac17f958d2ee523a2206206994597c13d831ec7': [ChainType.Syscoin],
+		//ETH
+		ETH: [ChainType.Syscoin]
+	},
+	[ChainType.Syscoin]: {
+		//ETH
+		'0x7c598c96d02398d89fbcb9d41eab3df0c16f227d': [ChainType.Ethereum],
+		//USDC
+		'0x2bf9b864cdc97b08b6d79ad4663e71b8ab65c45c': [ChainType.Ethereum],
+		//USDT
+		'0x922d641a426dcffaef11680e5358f34d97d112e1': [ChainType.Ethereum]
+	}
+};
+
+export const TYPE_UNKNOWN = 0;
+export const TYPE_CBRIDGE = 1;
+export const TYPE_MULTICHAIN = 2;
+
+function getSupportMigrationByTokens(tokens, asset) {
+	const chainBridge = tokens[asset.type];
 	if (!chainBridge) {
 		return [];
 	}
@@ -178,14 +203,39 @@ export function getSupportCBridge(asset) {
 	return chainBridge[asset.address?.toLowerCase()] || [];
 }
 
-export function supportCBridgeMigration(asset, toType) {
-	const support = getSupportCBridge();
-	if (!support || support.length <= 0) {
-		return false;
-	}
-	return support.find(type => type === toType);
+export function getSupportMigrationCBridge(asset) {
+	return getSupportMigrationByTokens(CBRIDGE_SUPPORT_TOKENS, asset);
 }
 
-export function supportCBridge(asset) {
-	return getSupportCBridge(asset).length > 0;
+export function getSupportMigrationMultichain(asset) {
+	return getSupportMigrationByTokens(MULTICHAIN_SUPPORT_TOKENS, asset);
+}
+
+export function getSupportMigration(asset) {
+	const supports = [];
+	const cBridge = getSupportMigrationCBridge(asset);
+	if (cBridge?.length) {
+		supports.push(...cBridge);
+	}
+	const multichain = getSupportMigrationMultichain(asset);
+	if (multichain?.length) {
+		supports.push(...multichain);
+	}
+	return supports;
+}
+
+export function getSupportBridgeType(asset, selectType) {
+	const cBridge = getSupportMigrationCBridge(asset);
+	if (cBridge?.find(type => type === selectType)) {
+		return TYPE_CBRIDGE;
+	}
+	const multichain = getSupportMigrationMultichain(asset);
+	if (multichain?.find(type => type === selectType)) {
+		return TYPE_MULTICHAIN;
+	}
+	return TYPE_UNKNOWN;
+}
+
+export function supportMigration(asset) {
+	return getSupportMigration(asset).length > 0;
 }
