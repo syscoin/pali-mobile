@@ -21,6 +21,10 @@ const mainnetRpcTarget = [
   'https://bsc-dataseed3.binance.org/',
   'https://bsc-dataseed4.binance.org/',
   'https://binance.ankr.com/',
+  'https://rpc.ankr.com/bsc',
+  'https://bscrpc.com',
+  'https://bsc.mytokenpocket.vip',
+  'https://binance.nodereal.io'
 ];
 
 const mainChainId = '56';
