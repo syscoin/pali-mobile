@@ -699,7 +699,7 @@
 	"nft": {
 		"favorites": "Favorites",
 		"network": "Network",
-		"unit_price": "Unit Price",
+		"unit_price": "Last Price",
 		"created_by": "Created by ",
 		"send_as_gift": "Send as a Gift",
 		"trade_on_openSea": "Trade on OpenSea",

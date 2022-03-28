@@ -699,7 +699,7 @@
 	"nft": {
 		"favorites": "收藏",
 		"network": "网络",
-		"unit_price": "单价",
+		"unit_price": "成交价",
 		"created_by": "作者  ",
 		"send_as_gift": "发送礼物",
 		"trade_on_openSea": "在OpenSea上交易",
