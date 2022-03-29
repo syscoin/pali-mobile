@@ -9,7 +9,8 @@ import {
 	StatusBar,
 	NativeModules,
 	Text,
-	Animated
+	Animated,
+	Linking
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -293,6 +294,22 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: colors.white,
 		...fontStyles.medium
+	},
+	actionScroll: {
+		height: 70,
+		width: '100%',
+		position: 'absolute',
+		bottom: 4,
+		left: 0
+	},
+	actionContainer: {
+		flexDirection: 'row',
+		paddingHorizontal: 15
+	},
+	actionView: {
+		marginHorizontal: -7,
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 });
 
@@ -511,6 +528,91 @@ class NftView extends PureComponent {
 						: strings('security.safe_nft', { contract: _address })}
 				</Text>
 			</LinearGradient>
+		);
+	};
+
+	renderActionView = () => {
+		const { nftToken } = this.state;
+		const isAndroid = Device.isAndroid();
+		const isZh = strings('other.accept_language') === 'zh';
+		const buttonWidth = 158;
+		return (
+			<ScrollView
+				style={styles.actionScroll}
+				showsHorizontalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+				horizontal
+				contentContainerStyle={styles.actionContainer}
+			>
+				<ImageCapInset
+					style={[styles.actionView, { width: buttonWidth }]}
+					source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
+					capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+				>
+					<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
+						<Image
+							style={{ width: buttonWidth }}
+							source={require('../../../images/img_opensea.png')}
+							resizeMode={'contain'}
+						/>
+					</TouchableOpacity>
+				</ImageCapInset>
+				{nftToken.chainId === this.props.chainId && (
+					<ImageCapInset
+						style={[styles.actionView, { width: buttonWidth }]}
+						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
+						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+					>
+						<TouchableOpacity
+							onPress={() => {
+								const url =
+									'https://looksrare.org/collections/' +
+									nftToken.asset_contract.address +
+									'/' +
+									nftToken.token_id;
+								this.handleBrowserUrl(url, nftToken.type, true);
+							}}
+							activeOpacity={activeOpacity}
+						>
+							<Image
+								style={{ width: buttonWidth }}
+								source={require('../../../images/img_looksrare.png')}
+								resizeMode={'contain'}
+							/>
+						</TouchableOpacity>
+					</ImageCapInset>
+				)}
+
+				{(nftToken.chainId === this.props.chainId || nftToken.chainId === this.props.polygonChainId) && (
+					<ImageCapInset
+						style={[styles.actionView, { width: buttonWidth }]}
+						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
+						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+					>
+						<TouchableOpacity
+							onPress={() => {
+								let hostUrl = 'https://opensea.io/assets/';
+								if (nftToken.chainId === this.props.polygonChainId) {
+									hostUrl = 'https://opensea.io/assets/matic/';
+								}
+								const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;
+								this.handleBrowserUrl(url, nftToken.type, true);
+							}}
+							activeOpacity={activeOpacity}
+						>
+							<Image
+								style={{ width: buttonWidth }}
+								source={
+									isZh
+										? require('../../../images/img_sendgift_cn.png')
+										: require('../../../images/img_sendgift_en.png')
+								}
+								resizeMode={'contain'}
+							/>
+						</TouchableOpacity>
+					</ImageCapInset>
+				)}
+			</ScrollView>
 		);
 	};
 
@@ -761,57 +863,6 @@ class NftView extends PureComponent {
 												</TouchableOpacity>
 											</View>
 										)}
-										<TouchableOpacity
-											onPress={() => {
-												this.showSendModal();
-											}}
-											style={styles.sendGifMargin}
-											activeOpacity={0.8}
-										>
-											<View style={styles.sendGifLayout}>
-												<LinearGradient
-													start={{ x: 0, y: 0 }}
-													end={{ x: 1, y: 0 }}
-													colors={['#FE966D', '#FE6E91', '#E664DB']}
-													style={styles.linearGradient}
-												>
-													<Text style={styles.linearText}>{strings('nft.send_as_gift')}</Text>
-												</LinearGradient>
-											</View>
-										</TouchableOpacity>
-
-										{(nftToken.chainId === this.props.chainId ||
-											nftToken.chainId === this.props.polygonChainId) && (
-											<TouchableOpacity
-												activeOpacity={0.8}
-												onPress={() => {
-													let hostUrl = 'https://opensea.io/assets/';
-													if (nftToken.chainId === this.props.polygonChainId) {
-														hostUrl = 'https://opensea.io/assets/matic/';
-													}
-													const url =
-														hostUrl +
-														nftToken.asset_contract.address +
-														'/' +
-														nftToken.token_id;
-													this.handleBrowserUrl(url, nftToken.type, true);
-												}}
-												style={styles.tradeMargin}
-											>
-												<View style={styles.sendGifLayout}>
-													<LinearGradient
-														start={{ x: 0, y: 0 }}
-														end={{ x: 1, y: 0 }}
-														colors={['#FE966D', '#FE6E91', '#E664DB']}
-														style={styles.linearGradient}
-													>
-														<Text style={styles.linearText}>
-															{strings('nft.trade_on_openSea')}
-														</Text>
-													</LinearGradient>
-												</View>
-											</TouchableOpacity>
-										)}
 									</View>
 								</ImageCapInset>
 
@@ -941,6 +992,7 @@ class NftView extends PureComponent {
 					</View>
 				</View>
 				<SafeAreaView style={styles.bottomBg} />
+				{this.renderActionView()}
 				{this.renderSendModal()}
 			</React.Fragment>
 		);
