@@ -429,7 +429,7 @@ export async function estimateTransactionTotalGas(from, to, chainId: string | nu
 			suggestedGasFees = await getRpcSuggestedGasFees(chainId);
 		}
 		if (suggestedGasFees) {
-			return suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee.muln(2)).mul(targetGas);
+			return suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee).mul(targetGas);
 		}
 	}
 	return gas.mul(gasPrice);
@@ -443,7 +443,7 @@ export async function getSuggestedGasEstimates(transaction, forceNormalFee = fal
 			suggestedGasFees = await getRpcSuggestedGasFees(transaction.chainId);
 		}
 		if (suggestedGasFees) {
-			const maxFeePerGas = suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee.muln(2));
+			const maxFeePerGas = suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee);
 			return {
 				...gasEstimates,
 				...suggestedGasFees,

@@ -375,7 +375,7 @@ class NetworkFee extends PureComponent {
 		}
 		let maxFeePerGasBN;
 		if (maxPriorityFeePerGasBN) {
-			maxFeePerGasBN = maxPriorityFeePerGasBN.add(this.state.suggestedGasFees?.estimatedBaseFee?.muln(2));
+			maxFeePerGasBN = maxPriorityFeePerGasBN.add(this.state.suggestedGasFees?.estimatedBaseFee);
 		}
 		if (maxFeePerGasBN) {
 			gasPriceBNWei = maxFeePerGasBN;
