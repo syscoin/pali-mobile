@@ -544,29 +544,31 @@ class NftView extends PureComponent {
 				horizontal
 				contentContainerStyle={styles.actionContainer}
 			>
-				<ImageCapInset
-					style={[styles.actionView, { width: buttonWidth }]}
-					source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-					capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
-				>
-					<TouchableOpacity
-						onPress={() => {
-							let hostUrl = 'https://opensea.io/assets/';
-							if (nftToken.chainId === this.props.polygonChainId) {
-								hostUrl = 'https://opensea.io/assets/matic/';
-							}
-							const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;
-							this.handleBrowserUrl(url, nftToken.type, true);
-						}}
-						activeOpacity={activeOpacity}
+				{(nftToken.chainId === this.props.chainId || nftToken.chainId === this.props.polygonChainId) && (
+					<ImageCapInset
+						style={[styles.actionView, { width: buttonWidth }]}
+						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
+						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
 					>
-						<Image
-							style={{ width: buttonWidth }}
-							source={require('../../../images/img_opensea.png')}
-							resizeMode={'contain'}
-						/>
-					</TouchableOpacity>
-				</ImageCapInset>
+						<TouchableOpacity
+							onPress={() => {
+								let hostUrl = 'https://opensea.io/assets/';
+								if (nftToken.chainId === this.props.polygonChainId) {
+									hostUrl = 'https://opensea.io/assets/matic/';
+								}
+								const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;
+								this.handleBrowserUrl(url, nftToken.type, true);
+							}}
+							activeOpacity={activeOpacity}
+						>
+							<Image
+								style={{ width: buttonWidth }}
+								source={require('../../../images/img_opensea.png')}
+								resizeMode={'contain'}
+							/>
+						</TouchableOpacity>
+					</ImageCapInset>
+				)}
 				{nftToken.chainId === this.props.chainId && (
 					<ImageCapInset
 						style={[styles.actionView, { width: buttonWidth }]}
@@ -593,25 +595,23 @@ class NftView extends PureComponent {
 					</ImageCapInset>
 				)}
 
-				{(nftToken.chainId === this.props.chainId || nftToken.chainId === this.props.polygonChainId) && (
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
-					>
-						<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
-							<Image
-								style={{ width: buttonWidth }}
-								source={
-									isZh
-										? require('../../../images/img_sendgift_cn.png')
-										: require('../../../images/img_sendgift_en.png')
-								}
-								resizeMode={'contain'}
-							/>
-						</TouchableOpacity>
-					</ImageCapInset>
-				)}
+				<ImageCapInset
+					style={[styles.actionView, { width: buttonWidth }]}
+					source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
+					capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+				>
+					<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
+						<Image
+							style={{ width: buttonWidth }}
+							source={
+								isZh
+									? require('../../../images/img_sendgift_cn.png')
+									: require('../../../images/img_sendgift_en.png')
+							}
+							resizeMode={'contain'}
+						/>
+					</TouchableOpacity>
+				</ImageCapInset>
 			</ScrollView>
 		);
 	};
