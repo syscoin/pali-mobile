@@ -549,7 +549,17 @@ class NftView extends PureComponent {
 					source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
 					capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
 				>
-					<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
+					<TouchableOpacity
+						onPress={() => {
+							let hostUrl = 'https://opensea.io/assets/';
+							if (nftToken.chainId === this.props.polygonChainId) {
+								hostUrl = 'https://opensea.io/assets/matic/';
+							}
+							const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;
+							this.handleBrowserUrl(url, nftToken.type, true);
+						}}
+						activeOpacity={activeOpacity}
+					>
 						<Image
 							style={{ width: buttonWidth }}
 							source={require('../../../images/img_opensea.png')}
@@ -589,17 +599,7 @@ class NftView extends PureComponent {
 						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
 						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
 					>
-						<TouchableOpacity
-							onPress={() => {
-								let hostUrl = 'https://opensea.io/assets/';
-								if (nftToken.chainId === this.props.polygonChainId) {
-									hostUrl = 'https://opensea.io/assets/matic/';
-								}
-								const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;
-								this.handleBrowserUrl(url, nftToken.type, true);
-							}}
-							activeOpacity={activeOpacity}
-						>
+						<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
 							<Image
 								style={{ width: buttonWidth }}
 								source={
