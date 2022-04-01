@@ -521,7 +521,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     if (ownedCollectibles) {
       ownedCollectibles = ownedCollectibles.slice(0, LOAD_NFT_MAX);
       for (const collectible of ownedCollectibles) {
-        const imageInfo = await this.getCollectibleImage(contractController, collectible.schema_name, collectible.address, collectible.token_id, chainId);
+        const imageInfo = await this.getCollectibleImage(contractController, collectible.asset_contract?.schema_name, collectible.address, collectible.token_id, chainId);
         if (imageInfo) {
           let imageUrl = imageInfo.image;
           try {
