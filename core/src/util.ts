@@ -278,7 +278,7 @@ export async function getScanApiByType(type: ChainType, chainId: string, address
   } else if (type === ChainType.Syscoin) {
     scanUrl = getSyscoinscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
   }
-  if (type === ChainType.Ethereum || type === ChainType.Optimism || type === ChainType.Bsc) {
+  if (type === ChainType.Ethereum || type === ChainType.Optimism || type === ChainType.Bsc || type === ChainType.Polygon) {
     return await getAvailableUrl(scanUrl);
   }
   return { url: scanUrl, options: undefined }
