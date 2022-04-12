@@ -1,12 +1,10 @@
 import { Mutex } from 'async-mutex';
 import { BigNumber } from 'bignumber.js';
-import isIPFS from 'is-ipfs';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
 import NetworkController from '../network/NetworkController';
 import util, {
   CollectibleType,
-  getIpfsUrlContentIdentifier,
   getScanApiByType,
   logInfo,
   safelyExecute,
@@ -400,8 +398,8 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     if (schema_name === 'ERC20') {
       return undefined;
     }
+    let tokenURI;
     try {
-      let tokenURI;
       if (schema_name === 'ERC721') {
         tokenURI = await contractController.getCollectibleERC721URI(contractAddress, tokenID, chainId);
       } else {
@@ -412,15 +410,14 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       }
       // eslint-disable-next-line no-empty
     } catch (e) {
-      console.log('PPYang getCollectibleImage e:', e, tokenID, schema_name, chainId, contractAddress);
+      util.logDebug('PPYang getCollectibleImage e:', e, tokenID, schema_name, chainId, contractAddress, tokenURI);
     }
     return undefined;
   }
 
   async handleFetchTokenURI(tokenURI: string) {
-    if (tokenURI.startsWith('ipfs://')) {
-      const contentId = getIpfsUrlContentIdentifier(tokenURI);
-      tokenURI = this.state.ipfsGateway + contentId;
+    if (util.isIPFSUrl(tokenURI)) {
+      tokenURI = util.makeIPFSUrl(tokenURI, this.state.ipfsGateway);
     }
     const response = await timeoutFetch(tokenURI, undefined, 5000);
     let object = await response.json();
@@ -523,14 +520,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       for (const collectible of ownedCollectibles) {
         const imageInfo = await this.getCollectibleImage(contractController, collectible.asset_contract?.schema_name, collectible.address, collectible.token_id, chainId);
         if (imageInfo) {
-          let imageUrl = imageInfo.image;
-          try {
-            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('ipfs') && isIPFS.multihash(imageUrl)) {
-              imageUrl = `ipfs://${imageUrl}`;
-            }
-            // eslint-disable-next-line no-empty
-          } catch (e) {}
-          collectible.image_url = imageUrl;
+          collectible.image_url = imageInfo.image;
           collectible.name = imageInfo.name;
           collectible.image_thumbnail_url = imageInfo.thumb;
           collectible.image_preview_url = imageInfo.thumb;

@@ -14,6 +14,7 @@ import { PersonalMessageParams } from './message-manager/PersonalMessageManager'
 import { TypedMessageParams } from './message-manager/TypedMessageManager';
 import { ChainType, Token } from './assets/TokenRatesController';
 import { Block, getNetworkType } from './network/NetworkController';
+import isIPFS from 'is-ipfs';
 
 const hexRe = /^[0-9A-Fa-f]+$/gu;
 
@@ -841,15 +842,22 @@ export const toLowerCaseEquals = (a: string, b: string) => {
   return tlc(a) === tlc(b);
 };
 
-export function getIpfsUrlContentIdentifier(url: string): string {
-  if (url.startsWith('ipfs://ipfs/')) {
-    return url.replace('ipfs://ipfs/', '');
+export function isIPFSUrl(url: string): boolean {
+  if (!url) {
+    return false;
   }
+  return isIPFS.ipfsUrl(url) || isIPFS.ipfsPath(url) || isIPFS.cid(url) || url.startsWith('ipfs:');
+}
 
-  if (url.startsWith('ipfs://')) {
-    return url.replace('ipfs://', '');
+export function makeIPFSUrl(url: string, ipfsHost = "https://infura-ipfs.io/ipfs/") {
+  if (isIPFS.cid(url)) return `${ipfsHost}${url}`;
+
+  const subUrls = url.split('/');
+  for (let i = subUrls.length - 1; i>= 0; i--) {
+    if (isIPFS.cid(subUrls[i])) {
+      return `${ipfsHost}${subUrls[i]}`;
+    }
   }
-
   return url;
 }
 
@@ -1084,9 +1092,10 @@ export default {
   isEtherscanAvailableChecked,
   checkEtherscanAvailable,
   setEtherscanAvailable,
-  getIpfsUrlContentIdentifier,
   isRpcChainType,
   rehydrate,
   setAgentUtil,
-  getScanApiByType
+  getScanApiByType,
+  isIPFSUrl,
+  makeIPFSUrl
 };

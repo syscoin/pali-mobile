@@ -366,9 +366,8 @@ class EnsSettingView extends PureComponent {
 			this.props.setKeyboardState && this.props.setKeyboardState(false);
 			if (this.props.page === SetUrlPage && !!this.state.urlValue) {
 				let { urlValue } = this.state;
-				if (urlValue && urlValue.startsWith('ipfs://')) {
-					const contentId = util.getIpfsUrlContentIdentifier(urlValue);
-					urlValue = Engine.context.CollectiblesController.state.ipfsGateway + contentId;
+				if (util.isIPFSUrl(urlValue)) {
+					urlValue = util.makeIPFSUrl(urlValue, Engine.context.CollectiblesController.state.ipfsGateway);
 				}
 				if (!util.isEtherscanAvailable() && !!urlValue) {
 					urlValue = 'https://api.gopocket.finance/proxy-png?url=' + urlValue;

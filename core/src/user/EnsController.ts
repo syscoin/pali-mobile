@@ -3,7 +3,7 @@ import ENS from 'ethjs-ens';
 import { Mutex } from 'async-mutex';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import NetworkController from '../network/NetworkController';
-import { handleFetch, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
+import util, { handleFetch, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
 import { getContractController } from '../ControllerUtils';
 import CollectiblesController from '../assets/CollectiblesController';
 import PreferencesController from './PreferencesController';
@@ -127,7 +127,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
     if (avatarUrl) {
       return avatarUrl;
     }
-    if (avatar.startsWith('http') || avatar.startsWith('ipfs://')) {
+    if (avatar.startsWith('http') || util.isIPFSUrl(avatar)) {
       this.state.avatarUrls[avatar] = avatar;
       this.update({ avatarUrls: { ...this.state.avatarUrls } });
       return avatar;

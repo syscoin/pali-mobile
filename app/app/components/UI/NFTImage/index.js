@@ -15,9 +15,8 @@ import { SvgCssUri } from 'react-native-svg';
 import SvgImage from '../SvgImage';
 
 export const convertImageUrl = imageUrl => {
-	if (imageUrl && imageUrl.startsWith('ipfs://')) {
-		const contentId = util.getIpfsUrlContentIdentifier(imageUrl);
-		imageUrl = Engine.context.CollectiblesController.state.ipfsGateway + contentId;
+	if (util.isIPFSUrl(imageUrl)) {
+		imageUrl = util.makeIPFSUrl(imageUrl, Engine.context.CollectiblesController.state.ipfsGateway);
 	}
 	if (imageUrl && imageUrl.startsWith('https://api.gopocket.finance/proxy-png?url=')) {
 		return imageUrl;
