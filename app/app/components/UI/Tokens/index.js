@@ -1111,6 +1111,7 @@ class Tokens extends PureComponent {
 
 	renderList = () => {
 		const { isEtherscanAvailable, searchViewAnimed, tokenData, allToken } = this.state;
+		const { tokens } = this.props;
 		return (
 			<View>
 				{this.renderHeader()}
@@ -1145,7 +1146,7 @@ class Tokens extends PureComponent {
 				) : (
 					<AddAsset
 						navigation={this.props.navigation}
-						alreadyTokens={allToken}
+						alreadyTokens={tokens || []}
 						isAmountHide={this.props.isAmountHide}
 						searchResults={this.state.searchResults}
 						searchQuery={this.state.searchQuery}
