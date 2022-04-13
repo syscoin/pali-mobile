@@ -578,7 +578,7 @@ class SendTab extends PureComponent {
 			if (networkSelectType === asset.type) {
 				await this.onNormalSend(amountValue);
 			} else {
-				await this.onSendOtherNetwork(amountValue);
+				throw new Error('Not Supported!');
 			}
 		} catch (e) {
 			this.setState({ error: e?.message });
@@ -670,56 +670,6 @@ class SendTab extends PureComponent {
 		}
 
 		this.setState({ txStep: 2, transaction });
-	};
-
-	onSendOtherNetwork = async value => {
-		const { networkSelectType, toSelectedAddress } = this.state;
-		const { asset } = this.props;
-		try {
-			if (networkSelectType === ChainType.Bsc) {
-				if (asset.type === ChainType.Ethereum) {
-					//Ethereum to Bsc
-					const { BscBridgeController } = Engine.context;
-					const { chainId } = this.props;
-					const swapResponse = await BscBridgeController.createDeposit(
-						asset.nativeCurrency ? 'ETH' : asset.symbol,
-						Number(value),
-						toSelectedAddress
-					);
-					util.logDebug('PPYang onSendOtherNetwork Ethereum to Bsc, swapResponse:', swapResponse);
-					await this.prepareTransactionDate(
-						asset.nativeCurrency,
-						chainId,
-						swapResponse.amount.toString(),
-						asset.decimals,
-						swapResponse.depositAddress,
-						asset.address
-					);
-				}
-			} else if (networkSelectType === ChainType.Ethereum) {
-				if (asset.type === ChainType.Bsc) {
-					//Bsc to Ethereum
-					const { BscBridgeController } = Engine.context;
-					const { bscChainId } = this.props;
-					const swapResponse = await BscBridgeController.createWithdraw(
-						asset.nativeCurrency ? 'ETH' : asset.symbol,
-						Number(value),
-						toSelectedAddress
-					);
-					util.logDebug('PPYang onSendOtherNetwork Bsc to Ethereum, swapResponse:', swapResponse);
-					await this.prepareTransactionDate(
-						asset.nativeCurrency,
-						bscChainId,
-						swapResponse.amount.toString(),
-						asset.decimals,
-						swapResponse.depositAddress,
-						asset.address
-					);
-				}
-			}
-		} catch (error) {
-			this.setState({ error: renderError(error) });
-		}
 	};
 
 	prepareTransactionDate = async (

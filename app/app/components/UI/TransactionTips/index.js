@@ -87,7 +87,6 @@ class TransactionTips extends PureComponent {
 	static propTypes = {
 		toggleOngoingTransactionsModal: PropTypes.func,
 		polygonDeposits: PropTypes.array,
-		bscDeposits: PropTypes.array,
 		chainId: PropTypes.string,
 		arbChainId: PropTypes.string,
 		bscChainId: PropTypes.string,
@@ -222,21 +221,6 @@ class TransactionTips extends PureComponent {
 				}
 			}
 		});
-		this.props.bscDeposits.forEach(state => {
-			if (state && state.done) {
-				const { TransactionController } = Engine.context;
-				const transactionMetas = TransactionController.state.transactionMetas;
-				const transactionMeta = transactionMetas.find(
-					({ transactionHash }) => transactionHash === state.transactionHash
-				);
-				if (transactionMeta && transactionMeta.extraInfo && transactionMeta.extraInfo.crossChainType) {
-					if (!transactionMeta.extraInfo.crossChainDone) {
-						this.finishTransaction(transactionMeta);
-						this.updateTransaction(transactionMeta);
-					}
-				}
-			}
-		});
 	}
 
 	async onNetworkUpdate() {
@@ -302,14 +286,6 @@ class TransactionTips extends PureComponent {
 		if (transactionMeta.extraInfo.crossChainType === CrossChainType.depositPolygon) {
 			const depositState = this.props.polygonDeposits.find(({ tx }) => tx === transactionMeta.transactionHash);
 			return depositState && depositState.done;
-		} else if (
-			transactionMeta.extraInfo.crossChainType === CrossChainType.depositBsc ||
-			transactionMeta.extraInfo.crossChainType === CrossChainType.withdrawBsc
-		) {
-			const swapState = this.props.bscDeposits.find(
-				({ transactionHash }) => transactionHash === transactionMeta.transactionHash
-			);
-			return swapState && swapState.done;
 		}
 		return false;
 	}
@@ -320,17 +296,6 @@ class TransactionTips extends PureComponent {
 			if (!depositState) {
 				const { PolygonContractController } = Engine.context;
 				PolygonContractController.addDepositTxHash(transactionMeta.transactionHash, transactionMeta.chainId);
-			}
-		} else if (
-			transactionMeta.extraInfo.crossChainType === CrossChainType.withdrawBsc ||
-			transactionMeta.extraInfo.crossChainType === CrossChainType.depositBsc
-		) {
-			const state = this.props.bscDeposits.find(
-				({ transactionHash }) => transactionHash === transactionMeta.transactionHash
-			);
-			if (!state) {
-				const { BscBridgeController } = Engine.context;
-				BscBridgeController.addDepositId(transactionMeta.transactionHash, transactionMeta.transaction?.from);
 			}
 		}
 	}
@@ -452,7 +417,6 @@ class TransactionTips extends PureComponent {
 
 const mapStateToProps = state => ({
 	polygonDeposits: state.engine.backgroundState.PolygonContractController.deposits,
-	bscDeposits: state.engine.backgroundState.BscBridgeController.deposits,
 	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
 	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
 	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,

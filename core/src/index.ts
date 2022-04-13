@@ -44,7 +44,6 @@ export * from './assets/TokenRatesController';
 export * from './transaction/TransactionController';
 export * from './message-manager/PersonalMessageManager';
 export * from './message-manager/TypedMessageManager';
-export * from './binance/BscBridgeController';
 export * from './security/SecurityController';
 export * from './invite/InviteController';
 export * from './assets/CollectiblesController';

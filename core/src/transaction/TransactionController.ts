@@ -113,8 +113,6 @@ export enum CrossChainType {
   withdrawArb = 'withdrawArb',
   depositPolygon = 'depositPolygon',
   withdrawPolygon = 'withdrawPolygon',
-  depositBsc = 'depositBsc',
-  withdrawBsc = 'withdrawBsc',
 }
 
 type TransferInformation = {

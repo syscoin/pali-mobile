@@ -221,8 +221,7 @@ const TxItemStatus = ({ style, ...props }) => {
 				if (props.tx.extraInfo.crossChainType) {
 					if (
 						props.tx.extraInfo.crossChainType === CrossChainType.depositPolygon ||
-						props.tx.extraInfo.crossChainType === CrossChainType.depositArb ||
-						props.tx.extraInfo.crossChainType === CrossChainType.depositBsc
+						props.tx.extraInfo.crossChainType === CrossChainType.depositArb
 					) {
 						if (props.tx.extraInfo.crossChainDone) {
 							if (props.tx.extraInfo.tryCancelHash) {

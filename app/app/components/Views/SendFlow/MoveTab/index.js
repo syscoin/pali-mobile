@@ -550,35 +550,13 @@ class MoveTab extends PureComponent {
 			moveStep = 1;
 		}
 
-		this.setState(
-			{
-				supportNetworks: subNetworks,
-				networkSelectType,
-				supportNativeType,
-				supportBridgeType,
-				moveStep
-			},
-			() => {
-				// if (this.props.supportNativeBridge && this.props.asset.type === ChainType.Ethereum) {
-				// 	this.loadBscNetworkType();
-				// }
-			}
-		);
-	};
-
-	loadBscNetworkType = async () => {
-		let supportBsc = true;
-		if (!this.props.asset.nativeCurrency) {
-			const lowerAddress = this.props.asset.address?.toLowerCase();
-			const { BscBridgeController } = Engine.context;
-			const tokens = await BscBridgeController.getSupportTokens();
-			const token = tokens?.find(token => token?.ethContractAddress?.toLowerCase() === lowerAddress);
-			supportBsc = token;
-		}
-		if (supportBsc) {
-			const supportNetworks = this.combineSupportNetworks(this.state.supportNetworks, [ChainType.Bsc]);
-			this.setState({ supportNetworks });
-		}
+		this.setState({
+			supportNetworks: subNetworks,
+			networkSelectType,
+			supportNativeType,
+			supportBridgeType,
+			moveStep
+		});
 	};
 
 	combineSupportNetworks = (networks, types: ChainType[]) => {
@@ -886,28 +864,7 @@ class MoveTab extends PureComponent {
 		const { asset, selectedAddress } = this.props;
 		const { networkSelectType, moveAmount } = this.state;
 		try {
-			if (networkSelectType === ChainType.Bsc) {
-				if (asset.type === ChainType.Ethereum) {
-					//Ethereum to Bsc
-					const { BscBridgeController } = Engine.context;
-					const { chainId } = this.props;
-					const swapResponse = await BscBridgeController.createDeposit(
-						asset.address,
-						asset.nativeCurrency ? 'ETH' : asset.symbol,
-						Number(moveAmount),
-						selectedAddress
-					);
-					util.logDebug('PPYang todoTranTransaction Ethereum to Bsc, swapResponse:', swapResponse);
-					await this.prepareTransactionDate(
-						asset.nativeCurrency,
-						chainId,
-						swapResponse.amount.toString(),
-						asset.decimals,
-						swapResponse.depositAddress,
-						asset.address
-					);
-				}
-			} else if (networkSelectType === ChainType.Arbitrum) {
+			if (networkSelectType === ChainType.Arbitrum) {
 				if (asset.type === ChainType.Ethereum) {
 					const { ArbContractController } = Engine.context;
 					//l1  to l2
@@ -934,25 +891,6 @@ class MoveTab extends PureComponent {
 							selectedAddress
 						);
 					}
-				} else if (asset.type === ChainType.Bsc) {
-					//Bsc to Ethereum
-					const { BscBridgeController } = Engine.context;
-					const { bscChainId } = this.props;
-					const swapResponse = await BscBridgeController.createWithdraw(
-						asset.address,
-						asset.nativeCurrency ? 'ETH' : asset.symbol,
-						Number(moveAmount),
-						selectedAddress
-					);
-					util.logDebug('PPYang todoTranTransaction Bsc to Ethereum, swapResponse:', swapResponse);
-					await this.prepareTransactionDate(
-						asset.nativeCurrency,
-						bscChainId,
-						swapResponse.amount.toString(),
-						asset.decimals,
-						swapResponse.depositAddress,
-						asset.address
-					);
 				} else if (asset.type === ChainType.Polygon) {
 					//Polygon to Ethereum
 					const { PolygonContractController } = Engine.context;
@@ -1196,28 +1134,17 @@ class MoveTab extends PureComponent {
 
 	confirmNormal = async () => {
 		const { asset } = this.props;
-		const { networkSelectType } = this.state;
 		const { TransactionController } = Engine.context;
 		try {
 			const prepareTransaction = this.prepareTransaction();
 
-			let crossChainType, crossChainDone;
-			if (networkSelectType === ChainType.Bsc && asset.type === ChainType.Ethereum) {
-				crossChainType = CrossChainType.depositBsc;
-				crossChainDone = false;
-			} else if (networkSelectType === ChainType.Ethereum && asset.type === ChainType.Bsc) {
-				crossChainType = CrossChainType.withdrawBsc;
-				crossChainDone = false;
-			}
 			const extraInfo = {
 				nativeCurrency: asset.nativeCurrency,
 				symbol: asset.symbol,
 				contractAddress: asset.address,
 				decimals: asset.decimals,
 				transferTo: prepareTransaction.to,
-				readableAmount: prepareTransaction.readableAmount,
-				crossChainType,
-				crossChainDone
+				readableAmount: prepareTransaction.readableAmount
 			};
 
 			const transaction = { ...prepareTransaction, extraInfo };
@@ -1227,20 +1154,6 @@ class MoveTab extends PureComponent {
 				transaction,
 				TransactionTypes.MMM
 			);
-
-			Engine.context.TransactionController.hub.once(`${transactionMeta.id}:confirmed`, transactionMeta => {
-				if (transactionMeta.status !== TransactionStatus.confirmed) {
-					return;
-				}
-				util.logDebug('PPYang confirmNormal crossChainType:', transactionMeta.extraInfo?.crossChainType);
-				if (
-					transactionMeta.extraInfo?.crossChainType === CrossChainType.withdrawBsc ||
-					transactionMeta.extraInfo?.crossChainType === CrossChainType.depositBsc
-				) {
-					const { BscBridgeController } = Engine.context;
-					BscBridgeController.addDepositId(transactionMeta.transactionHash, transactionMeta.transaction.from);
-				}
-			});
 
 			await TransactionController.approveTransaction(transactionMeta.id);
 

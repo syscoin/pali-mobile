@@ -29,7 +29,6 @@ import {
 	HecoNetworkController,
 	AvaxNetworkController,
 	SyscoinNetworkController,
-	BscBridgeController,
 	ChainType,
 	SecurityController,
 	CollectiblesController,
@@ -117,7 +116,6 @@ class EngineImpl {
 					new AssetsDetectionController(),
 					new PersonalMessageManager(),
 					new MessageManager(),
-					new BscBridgeController(),
 					new NetworkController({
 						infuraProjectId: INFURA_PROJECTID,
 						getProviderConfig: this.getProviderConfig.bind(this)
@@ -872,7 +870,6 @@ class EngineImpl {
 			TokenRatesController,
 			ArbContractController,
 			PolygonContractController,
-			BscBridgeController,
 			CollectiblesController,
 			AssetsDataModel,
 			DefiProtocolController
@@ -885,7 +882,6 @@ class EngineImpl {
 		TransactionController.update(TransactionController.defaultState);
 		ArbContractController.update(ArbContractController.defaultState);
 		PolygonContractController.update(PolygonContractController.defaultState);
-		BscBridgeController.update(BscBridgeController.defaultState);
 		CollectiblesController.update(CollectiblesController.defaultState);
 		AssetsDataModel.update(AssetsDataModel.defaultState);
 		DefiProtocolController.update(DefiProtocolController.defaultState);

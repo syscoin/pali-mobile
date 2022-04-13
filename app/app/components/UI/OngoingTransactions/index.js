@@ -252,8 +252,6 @@ class OngoingTransactions extends PureComponent {
 			return strings('other.arbitrum');
 		} else if (crossChainType === CrossChainType.depositPolygon) {
 			return strings('other.polygon');
-		} else if (crossChainType === CrossChainType.depositBsc) {
-			return strings('other.bsc');
 		}
 		return strings('other.ethereum');
 	}
