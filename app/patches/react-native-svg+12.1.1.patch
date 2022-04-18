@@ -163,3 +163,20 @@ index dca0fbc..743816a 100644
    const ast = useMemo<JsxAST | null>(
      () => (xml !== null ? parse(xml, inlineStyles) : null),
      [xml],
+diff --git a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SVGLength.java b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SVGLength.java
+index 3fc4cbd..069d38e 100644
+--- a/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SVGLength.java
++++ b/node_modules/react-native-svg/android/src/main/java/com/horcrux/svg/SVGLength.java
+@@ -82,7 +82,11 @@ class SVGLength {
+                         unit = UnitType.NUMBER;
+                         end = stringLength;
+                 }
+-                value = Double.valueOf(length.substring(0, end));
++                if (length != null && length.substring(0, end) != null) {
++                	value = Double.valueOf(length.substring(0, end));
++                } else {
++                	value = 0;
++                }
+             } else {
+                 unit = UnitType.NUMBER;
+                 value = Double.valueOf(length);
