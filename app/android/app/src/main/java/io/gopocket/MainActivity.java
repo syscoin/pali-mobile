@@ -85,4 +85,12 @@ public class MainActivity extends ReactFragmentActivity {
     public void invokeDefaultOnBackPressed() {
         moveTaskToBack(true);
     }
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// 因为Activity重建会导致Fragment重建，但是系统重建的Fragment引用我们是拿不到的
+		// 除非反射调用FragmentPagerAdapter.makeFragmentName()
+		// 因此我们选择不让系统保存状态，每次用onCreate里我们创建的Fragment去加载
+		// super.onSaveInstanceState(outState);
+	}
 }
