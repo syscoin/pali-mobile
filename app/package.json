@@ -19,7 +19,9 @@
         "build:android": "./scripts/build.sh android release",
         "build:ios": "./scripts/build.sh ios release --device",
         "postinstall": "./scripts/postinstall.sh",
-        "build:thread": "yarn build:core && ./scripts/build-thread.sh"
+        "build:thread": "yarn build:core && ./scripts/build-thread.sh",
+        "sourcemaps:android": "rm -rf sourcemaps/index.android.js.map && ./node_modules/.bin/react-native bundle --platform android --entry-file index.js --dev false --reset-cache --bundle-output /tmp/bundle.android.js --assets-dest /tmp/ --sourcemap-output sourcemaps/index.android.js.map",
+        "sourcemaps:ios": "rm -rf sourcemaps/index.ios.js.map && ./node_modules/.bin/react-native bundle --platform ios --entry-file index.js --dev false --reset-cache --bundle-output /tmp/bundle.ios.js --assets-dest /tmp/ --sourcemap-output sourcemaps/index.ios.js.map"
     },
     "prettier": {
         "printWidth": 120,

@@ -71,3 +71,5 @@ apikeys
 /android/app/src/main/res/raw/locales*
 /android/app/src/main/res/raw/node_modules*
 /ios/assets/locales/
+
+sourcemaps/*.map

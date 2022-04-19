@@ -9,7 +9,6 @@ PLATFORM=$1
 MODE=$2
 TARGET=$3
 RUN_DEVICE=false
-PRE_RELEASE=false
 
 displayHelp() {
 	echo ''
@@ -84,20 +83,11 @@ checkParameters() {
 				displayHelp
 				exit 0;
 			fi
-		elif [ "$3"  == "--pre" ] ; then
-			PRE_RELEASE=true
 		else
 			printError "Unknown argument: $4"
 			displayHelp
 			exit 0;
 		fi
-	fi
-}
-
-prebuild_ios() {
-	if [ "$PRE_RELEASE" = true ] ; then
-		echo "" > ios/debug.xcconfig
-		echo "" > ios/release.xcconfig
 	fi
 }
 
@@ -130,39 +120,27 @@ buildAndroidRun() {
 
 buildIosSimulator() {
 	build_core
-	prebuild_ios
 	react-native run-ios --simulator "iPhone 11 Pro"
 }
 
 buildIosDevice() {
 	build_core
-	prebuild_ios
 	react-native run-ios --device
 }
 
 buildIosRelease() {
 	build_core
 	build_thread_ios
-	prebuild_ios
 
-	# Replace release.xcconfig with ENV vars
-	if [ "$PRE_RELEASE" = true ] ; then
-		echo "Setting up env vars...";
-		echo "Build started..."
-		brew install watchman
-		cd ios && bundle install && bundle exec fastlane prerelease
-		# Generate sourcemaps
-		yarn sourcemaps:ios
-	else
-		if [ ! -f "ios/release.xcconfig" ] ; then
-			echo "$IOS_ENV" | tr "|" "\n" > ios/release.xcconfig
-		fi
-		if [ "$RUN_DEVICE" = true ] ; then
-			./node_modules/.bin/react-native run-ios --configuration Release --device
-		else
-			./node_modules/.bin/react-native run-ios --configuration Release --simulator "iPhone 11 Pro"
-		fi
+	if [ ! -f "ios/release.xcconfig" ] ; then
+		echo "$IOS_ENV" | tr "|" "\n" > ios/release.xcconfig
 	fi
+	if [ "$RUN_DEVICE" = true ] ; then
+		./node_modules/.bin/react-native run-ios --configuration Release --device
+	else
+		./node_modules/.bin/react-native run-ios --configuration Release --simulator "iPhone 11 Pro"
+	fi
+	yarn sourcemaps:ios
 }
 
 buildAndroidRelease() {
@@ -170,28 +148,9 @@ buildAndroidRelease() {
 	build_thread_android
 	prebuild_android
 
-	if [ "$PRE_RELEASE" = true ] ; then
-		TARGET="android/app/build.gradle"
-		sed -i'' -e 's/getPassword("mm","mm-upload-key")/"ANDROID_KEY"/' $TARGET;
-		sed -i'' -e "s/ANDROID_KEY/$ANDROID_KEY/" $TARGET;
-		echo "$ANDROID_KEYSTORE" | base64 --decode > android/keystores/release.keystore
-	fi
-
 	# GENERATE APK
-	cd android && ./gradlew assembleRelease --no-daemon --max-workers 2
-
-	# GENERATE BUNDLE
-	if [ "$GENERATE_BUNDLE" = true ] ; then
-		./gradlew bundleRelease
-	fi
-
-	if [ "$PRE_RELEASE" = true ] ; then
-		# Generate sourcemaps
-		yarn sourcemaps:android
-		# Generate checksum
-		yarn build:android:checksum
-	fi
-
+	cd android && ./gradlew assembleRelease --no-daemon --max-workers 2 && cd ..
+	yarn sourcemaps:android
 }
 
 buildAndroid() {
@@ -221,26 +180,6 @@ startWatcher() {
 		react-native start -- --reset-cache
 	else
 		react-native start
-	fi
-}
-
-checkAuthToken() {
-	local propertiesFileName="$1"
-
-	if [ ! -e "./${propertiesFileName}" ]; then
-		if [ -n "${MM_SENTRY_AUTH_TOKEN}" ]; then
-			cp "./${propertiesFileName}.example" "./${propertiesFileName}"
-		else
-			printError "Missing '${propertiesFileName}' file (see '${propertiesFileName}.example' or set MM_SENTRY_AUTH_TOKEN to generate)"
-			exit 1
-		fi
-	fi
-
-	if [ -n "${MM_SENTRY_AUTH_TOKEN}" ]; then
-		sed -i'' -e "s/auth.token.*/auth.token=${MM_SENTRY_AUTH_TOKEN}/" "./${propertiesFileName}";
-	elif ! grep -qE '^auth.token=[[:alnum:]]+$' "./${propertiesFileName}"; then
-		printError "Missing auth token in '${propertiesFileName}'; add the token, or set it as MM_SENTRY_AUTH_TOKEN"
-		exit 1
 	fi
 }
 
