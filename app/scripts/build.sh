@@ -140,7 +140,6 @@ buildIosRelease() {
 	else
 		./node_modules/.bin/react-native run-ios --configuration Release --simulator "iPhone 11 Pro"
 	fi
-	yarn sourcemaps:ios
 }
 
 buildAndroidRelease() {
@@ -150,7 +149,6 @@ buildAndroidRelease() {
 
 	# GENERATE APK
 	cd android && ./gradlew assembleRelease --no-daemon --max-workers 2 && cd ..
-	yarn sourcemaps:android
 }
 
 buildAndroid() {
