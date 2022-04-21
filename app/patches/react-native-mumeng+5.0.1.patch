@@ -52,7 +52,7 @@ index d7e1edf..d99a41a 100644
  
 +RCT_EXPORT_METHOD(reportError:(NSString *)content)
 +{
-+  [MobClick reportError:content];
++  //[MobClick reportError:content];
 +}
 +
  @end
