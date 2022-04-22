@@ -15,8 +15,6 @@ import numberToBN from 'number-to-bn';
 import { safeToChecksumAddress } from './address';
 import Engine from '../core/Engine';
 import { CURRENCIES } from './currencies';
-import { strings } from '../../locales/i18n';
-import { RPC } from './networks';
 import {
 	callSqlite,
 	EngineContext,
@@ -781,16 +779,15 @@ export function calcAssetPrices(asset, opt) {
 				const arbContractBalances = allContractBalances[ChainType.Arbitrum] || {};
 				const arbContractExchangeRates = allContractExchangeRates[ChainType.Arbitrum] || {};
 				const l1Address = safeToChecksumAddress(asset.l1Address);
-				price = arbContractExchangeRates?.[itemAddress]
-					? arbContractExchangeRates[itemAddress].usd
-					: l1Address in contractExchangeRates
-					? contractExchangeRates[l1Address].usd
-					: 0;
-				priceChange = arbContractExchangeRates?.[itemAddress]
-					? arbContractExchangeRates[itemAddress].usd_24h_change
-					: l1Address in contractExchangeRates
-					? contractExchangeRates[l1Address].usd_24h_change
-					: 0;
+				price = arbContractExchangeRates?.[itemAddress]?.usd;
+				if (!price) {
+					price = l1Address in contractExchangeRates ? contractExchangeRates[l1Address].usd : 0;
+				}
+				priceChange = arbContractExchangeRates?.[itemAddress]?.usd_24h_change;
+				if (!priceChange) {
+					priceChange =
+						l1Address in contractExchangeRates ? contractExchangeRates[l1Address].usd_24h_change : 0;
+				}
 				balance =
 					itemAddress in arbContractBalances
 						? renderFromTokenMinimalUnit(arbContractBalances[itemAddress], asset.decimals)
