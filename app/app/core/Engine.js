@@ -37,6 +37,7 @@ import { endNetworkChange } from '../actions/settings';
 import WalletConnect from './WalletConnect';
 import NotificationManager from './NotificationManager';
 import { getInternalFunctions } from '../util/threadUtils';
+import { reportError } from 'react-native-mumeng';
 
 class AgentProvider extends EventEmitter {
 	name;
@@ -292,7 +293,12 @@ class Engine {
 				this.datamodel.context[result.key]?.notify(newState);
 			});
 			NativeThreads.get().addListener('emit', result => {
-				this.datamodel.context[result.key]?.hub?.emit(...result.args);
+				try {
+					this.datamodel.context[result.key]?.hub?.emit(...result.args);
+				} catch (e) {
+					reportError(JSON.stringify({ name: 'emit_error', emit: result, error: e }));
+					util.logWarn('PPYang NativeThreads emit fail, result:', result, ' , error:', e);
+				}
 			});
 			NativeThreads.get().addListener('notification', result => {
 				NotificationManager.gotIncomingTransaction(result.type, result.needUpdate);
@@ -310,10 +316,15 @@ class Engine {
 				this.datamodel.context.KeyringController.notifyOnUnlock?.();
 			});
 			NativeThreads.get().addListener('provider_emit', result => {
-				if (result.key === 'RpcNetworkController') {
-					this.datamodel.context[result.key]?.providers?.[result.type]?.emit(...result.args);
-				} else {
-					this.datamodel.context[result.key]?.provider?.emit(...result.args);
+				try {
+					if (result.key === 'RpcNetworkController') {
+						this.datamodel.context[result.key]?.providers?.[result.type]?.emit(...result.args);
+					} else {
+						this.datamodel.context[result.key]?.provider?.emit(...result.args);
+					}
+				} catch (e) {
+					reportError(JSON.stringify({ name: 'provider_emit_error', provider_emit: result, error: e }));
+					util.logWarn('PPYang NativeThreads provider_emit fail, result:', result, ' , error:', e);
 				}
 			});
 			NativeThreads.get().callEngineAsync('init', initialState);
