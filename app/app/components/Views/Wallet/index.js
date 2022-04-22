@@ -583,7 +583,7 @@ class Wallet extends PureComponent {
 	_onStartShouldSetResponderCapture = () => hideRiskPop();
 
 	showEnsSettingModal = async ensEntry => {
-		if (await Engine.context.NetworkController.ismainnet()) {
+		if (await Engine.networks[ChainType.Ethereum].ismainnet()) {
 			this.setState({ showEnsSettingModal: true, selectEnsEntry: ensEntry, ensSettingPage: HomePage });
 		}
 	};

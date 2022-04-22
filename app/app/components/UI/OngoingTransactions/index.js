@@ -4,40 +4,36 @@ import { colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { TransactionStatus, CrossChainType, util, URL } from 'gopocket-core';
+import { TransactionStatus, CrossChainType, util, URL, ChainType } from 'gopocket-core';
 import iconNotx from '../../../images/notx.png';
-import imgEth from '../../../images/img_ongoing_eth.png';
-import imgBsc from '../../../images/img_ongoing_bsc.png';
-import imgPolygon from '../../../images/img_ongoing_polygon.png';
-import imgArb from '../../../images/img_ongoing_arb.png';
-import imgHeco from '../../../images/img_ongoing_heco.png';
-import imgOp from '../../../images/img_ongoing_op.png';
-import imgAvax from '../../../images/img_ongoing_avax.png';
-import imgSyscoin from '../../../images/img_ongoing_syscoin.png';
-import imgRpc from '../../../images/img_ongoing_other.png';
 import iconArrow from '../../../images/move_arrow.png';
 import TxItem from '../TxItem';
 import {
 	BNToHex,
 	getChainTypeNameByChainId,
-	getTypeByChainId,
+	getChainTypeByChainId,
 	renderFromTokenMinimalUnit,
-	renderFromWei
+	renderFromWei,
+	getTickerByType
 } from '../../../util/number';
 import { toDateFormat } from '../../../util/date';
 import { renderFullAddress } from '../../../util/address';
 import { showAlert } from '../../../actions/alert';
 import GlobalAlert from '../GlobalAlert';
-import { getNetworkTypeByChainId } from '../../../util/networks';
 import { getEtherscanBaseUrl, getEtherscanTransactionUrl } from '../../../util/etherscan';
 import Engine from '../../../core/Engine';
 import PromptView from '../PromptView';
 import TransactionTypes from '../../../core/TransactionTypes';
 import OperationPromptView from '../OperationPromptView';
-import { getTickerByType } from '../../../util/transactions';
 import { getIncreasedPrice, getSuggestedGasEstimates } from '../../../util/custom-gas';
 import { getOnGoingIcon } from '../../../util/rpcUtil';
-import { getRpcChainTypeByChainId, getRpcProviderExplorerUrl, isRpcChainId } from '../../../util/ControllerUtils';
+import {
+	getAllChainId,
+	getRpcChainTypeByChainId,
+	getRpcProviderExplorerUrl,
+	isRpcChainId
+} from '../../../util/ControllerUtils';
+import { ChainTypeBgOngoing, ChainTypes, getChainTypeName } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -148,14 +144,7 @@ class OngoingTransactions extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object,
 		transactionMetas: PropTypes.array,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
+		allChainId: PropTypes.object,
 		selectedAddress: PropTypes.string,
 		showAlert: PropTypes.func,
 		close: PropTypes.func
@@ -191,69 +180,42 @@ class OngoingTransactions extends PureComponent {
 	);
 
 	exitChainId = curChainId => {
-		const {
-			chainId,
-			arbChainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
-		return (
-			curChainId === chainId ||
-			curChainId === arbChainId ||
-			curChainId === bscChainId ||
-			curChainId === polygonChainId ||
-			curChainId === hecoChainId ||
-			curChainId === opChainId ||
-			curChainId === avaxChainId ||
-			curChainId === syscoinChainId ||
-			isRpcChainId(curChainId)
-		);
+		const { allChainId } = this.props;
+		if (isRpcChainId(curChainId)) {
+			return true;
+		} else {
+			for (const type in allChainId) {
+				if (allChainId[type] === curChainId) {
+					return true;
+				}
+			}
+		}
+		return false;
 	};
 
 	getImg = curChainId => {
-		const {
-			chainId,
-			arbChainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
-		if (curChainId === chainId) {
-			return imgEth;
-		} else if (curChainId === arbChainId) {
-			return imgArb;
-		} else if (curChainId === bscChainId) {
-			return imgBsc;
-		} else if (curChainId === polygonChainId) {
-			return imgPolygon;
-		} else if (curChainId === hecoChainId) {
-			return imgHeco;
-		} else if (curChainId === opChainId) {
-			return imgOp;
-		} else if (curChainId === avaxChainId) {
-			return imgAvax;
-		} else if (curChainId === syscoinChainId) {
-			return imgSyscoin;
-		} else if (isRpcChainId(curChainId)) {
-			return imgRpc;
+		const { allChainId } = this.props;
+		let chainType;
+		if (isRpcChainId(curChainId)) {
+			chainType = ChainType.RPCBase;
+		} else {
+			for (const type in allChainId) {
+				if (allChainId[type] === curChainId) {
+					chainType = Number(type);
+					break;
+				}
+			}
 		}
-		return undefined;
+		return ChainTypeBgOngoing[ChainTypes.indexOf(chainType)];
 	};
 
 	getToNetwork(crossChainType) {
 		if (crossChainType === CrossChainType.depositArb) {
-			return strings('other.arbitrum');
+			return getChainTypeName(ChainType.Arbitrum);
 		} else if (crossChainType === CrossChainType.depositPolygon) {
-			return strings('other.polygon');
+			return getChainTypeName(ChainType.Polygon);
 		}
-		return strings('other.ethereum');
+		return getChainTypeName(ChainType.Ethereum);
 	}
 
 	renderTxTime = transactionMeta => `${toDateFormat(transactionMeta.time)}`;
@@ -289,9 +251,8 @@ class OngoingTransactions extends PureComponent {
 					title
 				});
 			} else {
-				const network = getNetworkTypeByChainId(transactionMeta.chainId);
-				const url = getEtherscanTransactionUrl(network, transactionHash);
-				const etherscan_url = getEtherscanBaseUrl(network).replace('https://', '');
+				const url = getEtherscanTransactionUrl(transactionMeta.chainId, transactionHash);
+				const etherscan_url = getEtherscanBaseUrl(transactionMeta.chainId).replace('https://', '');
 				navigation.push('Webview', {
 					url,
 					title: etherscan_url
@@ -299,7 +260,6 @@ class OngoingTransactions extends PureComponent {
 			}
 			close && close(false);
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			util.logError(e, { message: "can't get a block explorer link for network" });
 		}
 	};
@@ -320,7 +280,7 @@ class OngoingTransactions extends PureComponent {
 			chainId: transactionMeta.transaction.chainId
 		});
 		gasEstimates = getIncreasedPrice(gasEstimates, 1.5);
-		const ticker = getTickerByType(getTypeByChainId(transactionMeta.chainId));
+		const ticker = getTickerByType(getChainTypeByChainId(transactionMeta.chainId));
 		const message = strings('other.cancel_gas', {
 			amount: renderFromWei(gasEstimates.gas.mul(gasEstimates.gasPrice)),
 			ticker
@@ -542,14 +502,7 @@ class OngoingTransactions extends PureComponent {
 
 const mapStateToProps = state => ({
 	transactionMetas: state.engine.backgroundState.TransactionController.transactionMetas,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
+	allChainId: getAllChainId(state),
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress
 });
 

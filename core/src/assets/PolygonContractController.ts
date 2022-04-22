@@ -2,7 +2,6 @@ import { BN, isZeroAddress, toChecksumAddress } from 'ethereumjs-util';
 import abiERC20 from 'human-standard-token-abi';
 import { Mutex } from 'async-mutex';
 import Matic, { MaticPOSClient } from '@maticnetwork/maticjs';
-import PolygonNetworkController from '../network/PolygonNetworkController';
 import PreferencesController from '../user/PreferencesController';
 import util, { bitAND, BNToHex, handleFetch, hexToBN, logDebug, safelyExecute } from '../util';
 import * as lastStateId from '../polygon/lastStateId.json';
@@ -11,12 +10,11 @@ import * as TestTokens from '../polygon/testnetTokens.json';
 import TransactionController, {
   TransactionInfo,
   TransactionStatus,
-  TxChangedType,
+  TxChanged
 } from '../transaction/TransactionController';
 import { BaseConfig, BaseState } from '../BaseController';
 import { Sqlite } from '../transaction/Sqlite';
 import {getContractController, getStaticTokenByChainId} from '../ControllerUtils';
-import AssetsContractController from './AssetsContractController';
 import { ContractController } from './ContractController';
 import { ChainType } from './TokenRatesController';
 
@@ -135,8 +133,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   toEthereumAddress(address: string) {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const tokens = polygonNetworkController.ismainnet() ? MainTokens.tokens : TestTokens.tokens;
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const tokens = polygonNetwork.ismainnet() ? MainTokens.tokens : TestTokens.tokens;
     const lowercase_address = address.toLowerCase();
     const index = tokens.findIndex((token, i) => i % 2 === 1 && token === lowercase_address);
     if (index !== -1) {
@@ -146,8 +144,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   toPolygonAddress(address: string) {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const tokens = polygonNetworkController.ismainnet() ? MainTokens.tokens : TestTokens.tokens;
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const tokens = polygonNetwork.ismainnet() ? MainTokens.tokens : TestTokens.tokens;
     const lowercase_address = address.toLowerCase();
     const index = tokens.findIndex((token, i) => i % 2 === 0 && token === lowercase_address);
     if (index !== -1) {
@@ -161,8 +159,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
       return;
     }
     const releaseLock = await this.mutex.acquire();
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const chainId = polygonNetworkController.l2ChainIdFromMainChainId(mainChainId);
+    const chainId = this.l2ChainIdFromMainChainId(mainChainId);
     const deposits = this.state.deposits ? [...this.state.deposits] : [];
     deposits.push({ chainId, tx, root_counter: 0, done: false });
     this.update({ deposits });
@@ -178,8 +175,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
     if (!selectedAddress) {
       return false;
     }
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const { MaticWETH, partnerChainId: ethereumChainId } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const { MaticWETH, partnerChainId: ethereumChainId } = polygonNetwork.getNetworkConfig(chainId);
     if (polygon_address.toLowerCase() === MaticWETH?.toLowerCase()) {
       const releaseLock = await this.mutex.acquire();
       try {
@@ -207,7 +204,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
       return false;
     }
     address = toChecksumAddress(address);
-    const contract_controller = this.context.AssetsContractController as AssetsContractController;
+    const contract_controller = this.contracts[ChainType.Ethereum];
     const releaseLock = await this.mutex.acquire();
     try {
       const symbol = await contract_controller.getAssetSymbol(address, ethereumChainId);
@@ -249,10 +246,10 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   async updateDeposits() {
-    const contractController = this.context.AssetsContractController as AssetsContractController;
+    const contractController = this.contracts[ChainType.Ethereum];
     const chainId = this.l2_chainId;
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const { partnerChainId: ethereumChainId, DepositManagerProxy } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const { partnerChainId: ethereumChainId, DepositManagerProxy } = polygonNetwork.getNetworkConfig(chainId);
     const current_deposits = this.state.deposits;
     if (!current_deposits || current_deposits.length === 0) {
       return;
@@ -263,7 +260,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         continue;
       }
       if (!item.chainId) {
-        item.chainId = polygonNetworkController.l2ChainIdFromMainChainId('1');
+        item.chainId = this.l2ChainIdFromMainChainId('1');
       }
       if (item.chainId !== chainId) {
         continue;
@@ -316,7 +313,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
     if (!selectedAddress || preferencesController.isObserveAddress(selectedAddress)) {
       return;
     }
-    const txs: TransactionInfo[] = await Sqlite.getInstance().getAllTransactions(selectedAddress, ChainType.Polygon, 'tx');
+    const txs: TransactionInfo[] = await Sqlite.getInstance().getAllTransactions(selectedAddress, ChainType.Polygon, this.l2_chainId, 'tx');
     if (!txs) {
       return;
     }
@@ -333,9 +330,9 @@ export class PolygonContractController extends ContractController<PolygonConfig,
       return;
     }
     const start = Date.now();
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
-    const { partnerChainId, MaticWETH } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { partnerChainId, MaticWETH } = polygonNetwork.getNetworkConfig(chainId);
     const new_withdraws: WithdrawState[] = [];
     let done_block_number = 0;
     const current_withdraws = this.state.withdraws;
@@ -347,7 +344,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         done_block_number = item.block_number;
       }
     }
-    const { contractController } = getContractController(this.context, partnerChainId);
+    const { contractController } = getContractController(this, partnerChainId);
     if (!contractController) {
       return;
     }
@@ -383,7 +380,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
       } else {
         const {
           message,
-        } = await this.safelyFetchInclusion(block_number, polygonNetworkController.ismainnet());
+        } = await this.safelyFetchInclusion(block_number, polygonNetwork.ismainnet());
         if (message === 'success') {
           if (block_number > done_block_number) {
             done_block_number = block_number;
@@ -437,7 +434,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   async updateWithdraws() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
     const current_withdraws = this.state.withdraws;
     if (!current_withdraws || current_withdraws.length === 0) {
@@ -478,7 +475,7 @@ export class PolygonContractController extends ContractController<PolygonConfig,
       } else {
         const {
           message,
-        } = await this.safelyFetchInclusion(item.block_number, polygonNetworkController.ismainnet());
+        } = await this.safelyFetchInclusion(item.block_number, polygonNetwork.ismainnet());
         if (message === 'success') {
           item.done = true;
           if (item.block_number > done_block_number) {
@@ -594,8 +591,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   async depositERC20ForUser(rootToken: string, user: string, amount: string, from: string) {
     const releaseLock = await this.bridgeMutex.acquire();
     try {
-      const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-      const { MaticToken } = polygonNetworkController.polygonNetworkConfig(this.l2_chainId);
+      const polygonNetwork = this.networks[ChainType.Polygon];
+      const { MaticToken } = polygonNetwork.getNetworkConfig(this.l2_chainId);
       if (MaticToken?.toLowerCase() === rootToken?.toLowerCase()) {
         return await new Promise((resolve, reject) => {
           this.requireBridge2()
@@ -714,10 +711,10 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   async requireBridge() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const mainChainId = this.l1_chainId;
     const chainId = this.l2_chainId;
-    const { partnerChainId } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { partnerChainId } = polygonNetwork.getNetworkConfig(chainId);
     if (mainChainId !== partnerChainId) {
       throw new Error('mainnet chainId and polygon chainId do not match.');
     }
@@ -726,8 +723,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         throw new Error('web3 provider not found!');
       }
       this.bridge = new MaticPOSClient({
-        network: polygonNetworkController.ismainnet() ? 'mainnet' : 'testnet',
-        version: polygonNetworkController.ismainnet() ? 'v1' : 'mumbai',
+        network: polygonNetwork.ismainnet() ? 'mainnet' : 'testnet',
+        version: polygonNetwork.ismainnet() ? 'v1' : 'mumbai',
         parentProvider: this.l1_web3.currentProvider,
         maticProvider: this.l2_web3.currentProvider,
       });
@@ -739,10 +736,10 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   async requireBridge2() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const mainChainId = this.l1_chainId;
     const chainId = this.l2_chainId;
-    const { partnerChainId } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { partnerChainId } = polygonNetwork.getNetworkConfig(chainId);
     if (mainChainId !== partnerChainId) {
       throw new Error('mainnet chainId and polygon chainId do not match.');
     }
@@ -751,8 +748,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
         throw new Error('web3 provider not found!');
       }
       this.bridge2 = new Matic({
-        network: polygonNetworkController.ismainnet() ? 'mainnet' : 'testnet',
-        version: polygonNetworkController.ismainnet() ? 'v1' : 'mumbai',
+        network: polygonNetwork.ismainnet() ? 'mainnet' : 'testnet',
+        version: polygonNetwork.ismainnet() ? 'v1' : 'mumbai',
         parentProvider: this.l1_web3.currentProvider,
         maticProvider: this.l2_web3.currentProvider,
       });
@@ -764,30 +761,30 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   }
 
   async getdepositEtherForUserMethodId() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
-    const { RootChainManagerProxy } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { RootChainManagerProxy } = polygonNetwork.getNetworkConfig(chainId);
     return [RootChainManagerProxy, '4faa8a26'];
   }
 
   async getdepositERC20ForUserMethodId() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
-    const { RootChainManagerProxy } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { RootChainManagerProxy } = polygonNetwork.getNetworkConfig(chainId);
     return [RootChainManagerProxy, 'e3dec8fb'];
   }
 
   async getdepositERC20ForUserMethodId2() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
-    const { DepositManagerProxy } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { DepositManagerProxy } = polygonNetwork.getNetworkConfig(chainId);
     return [DepositManagerProxy, '8b9e4f93'];
   }
 
   async getexitERC20MethodId() {
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
+    const polygonNetwork = this.networks[ChainType.Polygon];
     const chainId = this.l2_chainId;
-    const { RootChainManagerProxy } = polygonNetworkController.polygonNetworkConfig(chainId);
+    const { RootChainManagerProxy } = polygonNetwork.getNetworkConfig(chainId);
     return [RootChainManagerProxy, '3805550f'];
   }
 
@@ -795,11 +792,20 @@ export class PolygonContractController extends ContractController<PolygonConfig,
     return [undefined, '2e1a7d4d'];
   }
 
+  l2ChainIdFromMainChainId(chainId: string) {
+    if (chainId === '1') {
+      return '137';
+    } else if (chainId === '5') {
+      return '80001';
+    }
+    return '';
+  }
+
   async approved(erc20: string): Promise<string> {
     const releaseLock = await this.bridgeMutex.acquire();
     let address: string | undefined;
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const { MaticToken, DepositManagerProxy } = polygonNetworkController.polygonNetworkConfig(this.l2_chainId);
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const { MaticToken, DepositManagerProxy } = polygonNetwork.getNetworkConfig(this.l2_chainId);
     try {
       if (erc20?.toLowerCase() === MaticToken?.toLowerCase()) {
         address = DepositManagerProxy;
@@ -833,8 +839,8 @@ export class PolygonContractController extends ContractController<PolygonConfig,
   async approve(erc20: string, amount: string, origin: string): Promise<boolean> {
     const releaseLock = await this.bridgeMutex.acquire();
     let address: string | undefined;
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const { MaticToken, DepositManagerProxy } = polygonNetworkController.polygonNetworkConfig(this.l2_chainId);
+    const polygonNetwork = this.networks[ChainType.Polygon];
+    const { MaticToken, DepositManagerProxy } = polygonNetwork.getNetworkConfig(this.l2_chainId);
     try {
       if (erc20?.toLowerCase() === MaticToken?.toLowerCase()) {
         address = DepositManagerProxy;
@@ -872,13 +878,14 @@ export class PolygonContractController extends ContractController<PolygonConfig,
     preferences.subscribe(() => setTimeout(() => this.poll(), 5000), ['selectedAddress']);
     const transaction = this.context.TransactionController as TransactionController;
     transaction.subscribe(async ({ addressWithChanged, txChangedType }) => {
-      if (bitAND(txChangedType, TxChangedType.PolygonTxChanged) !== 0) {
-        const { selectedAddress } = preferences.state;
-        if (selectedAddress !== addressWithChanged) {
-          return;
-        }
-        setTimeout(() => this.poll(), 5000);
+      if (bitAND(txChangedType, TxChanged) === 0 || transaction.getTxChangedType(txChangedType) !== ChainType.Polygon) {
+        return;
       }
+      const { selectedAddress } = preferences.state;
+      if (selectedAddress !== addressWithChanged) {
+        return;
+      }
+      setTimeout(() => this.poll(), 5000);
     }, ['txChangedType']);
   }
 }

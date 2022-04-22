@@ -10,7 +10,7 @@ import WebsiteIcon from '../WebsiteIcon';
 import { getHost } from '../../../util/browser';
 import WalletConnect from '../../../core/WalletConnect';
 import Engine from '../../../core/Engine';
-import { getChainTypeByChainId } from '../../../util/networks';
+import { getChainTypeByChainId } from '../../../util/number';
 const styles = StyleSheet.create({
 	root: {
 		backgroundColor: colors.white,

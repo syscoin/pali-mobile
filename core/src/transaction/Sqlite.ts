@@ -434,34 +434,6 @@ export class Sqlite {
     });
   }
 
-  getStaticTokens(type: number) {
-    return new Promise<any[]>((resolve) => {
-      const sql = 'SELECT * FROM STATIC_TOKENS WHERE chain_type=?';
-      const values = [type];
-      this.db.executeSql(
-        sql,
-        values,
-        (results: any) => {
-          if (results?.rows?.length > 0) {
-            const { item, length } = results.rows;
-            const tokens = [];
-            for (let index = 0; index < length; index++) {
-              const data = item(index);
-              tokens.push(data);
-            }
-            resolve(tokens);
-          } else {
-            resolve([]);
-          }
-        },
-        (error: any) => {
-          this._errorLog('getStaticTokens', error);
-          resolve([]);
-        }
-      );
-    });
-  }
-
   insetStaticTokens(tokens: any[]) {
     if (!tokens || tokens.length <= 0) {
       return;
@@ -1383,11 +1355,12 @@ export class Sqlite {
   async getAllTransactions(
     address: string,
     type: ChainType,
+    chainId: string,
     txType: string,
   ): Promise<any[]> {
     return new Promise((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=?';
-      const values = [address, type, txType];
+      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=?';
+      const values = [address, type, txType, chainId];
 
       this.db.executeSql(
         sql,

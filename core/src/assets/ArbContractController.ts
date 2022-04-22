@@ -5,15 +5,13 @@ import { BigNumber, providers } from 'ethers';
 import { Mutex } from 'async-mutex';
 import { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
-import ArbNetworkController from '../network/ArbNetworkController';
 import util, { bitAND, BNToHex, hexToBN, logDebug, safelyExecute } from '../util';
 import TransactionController, {
   TransactionInfo,
   TransactionStatus,
-  TxChangedType,
+  TxChanged
 } from '../transaction/TransactionController';
 import { Sqlite } from '../transaction/Sqlite';
-import AssetsContractController from './AssetsContractController';
 import ContractController from './ContractController';
 import { WithdrawState } from './PolygonContractController';
 import { ChainType } from './TokenRatesController';
@@ -129,11 +127,11 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
       return false;
     }
     address = toChecksumAddress(address);
-    const contract_controller = this.context.AssetsContractController as AssetsContractController;
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const contract_controller = this.contracts[ChainType.Ethereum];
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const releaseLock = await this.mutex.acquire();
     try {
-      const { partnerChainId: ethereumChainId } = arbNetworkController.arbNetworkConfig(chainId);
+      const { partnerChainId: ethereumChainId } = arbNetwork.getNetworkConfig(chainId);
       const symbol = await contract_controller.getAssetSymbol(address, ethereumChainId);
       const decimals = await contract_controller.getTokenDecimals(address, ethereumChainId);
       const withdraws = this.state.withdraws ? [...this.state.withdraws] : [];
@@ -183,13 +181,13 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
       logDebug('leon.w@arb getBlockInfo failed');
       return;
     }
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork: any = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
     const current_withdraws = this.state.withdraws;
     if (!current_withdraws || current_withdraws.length === 0) {
       return;
     }
-    const { confirmIntervalInSecond } = arbNetworkController.arbNetworkConfig(chainId);
+    const { confirmIntervalInSecond } = arbNetwork.getNetworkConfig(chainId);
     let changed = false;
     for (const item of current_withdraws) {
       if (item.chainId !== chainId || item.processed || (item.timestamp && block_info.timestamp - Number(item.timestamp) < confirmIntervalInSecond)) {
@@ -238,7 +236,7 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
       logDebug('leon.w@arb getBlockInfo failed');
       return;
     }
-    const txs: TransactionInfo[] = await Sqlite.getInstance().getAllTransactions(selectedAddress, ChainType.Arbitrum, 'tx');
+    const txs: TransactionInfo[] = await Sqlite.getInstance().getAllTransactions(selectedAddress, ChainType.Arbitrum, this.l2_chainId, 'tx');
     if (!txs) {
       return;
     }
@@ -253,9 +251,9 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
       return;
     }
     const start = Date.now();
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { partnerChainId, confirmIntervalInSecond } = arbNetworkController.arbNetworkConfig(chainId);
+    const { partnerChainId, confirmIntervalInSecond } = arbNetwork.getNetworkConfig(chainId);
     const new_withdraws: ArbWithdrawState[] = [];
     for (const tx of arbMigrationTxs) {
       if (!tx.transactionHash || !tx.transaction.data || chainId !== String(tx.transaction.chainId) || partnerChainId !== this.l1_chainId) {
@@ -375,7 +373,7 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
     } catch (e) {
       logDebug('leon.w@safelyGetBaseInfo destination: ', data, e);
     }
-    const contract_controller = this.context.AssetsContractController as AssetsContractController;
+    const contract_controller = this.contracts[ChainType.Ethereum];
     try {
       symbol = await contract_controller.getAssetSymbol(address, mainChainId);
       decimals = await contract_controller.getTokenDecimals(address, mainChainId);
@@ -388,8 +386,8 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
   }
 
   async safelyGetBatchInfo(chainId: string, txHash: string) {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
-    const { arbsys } = arbNetworkController.arbNetworkConfig(chainId);
+    const arbNetwork = this.networks[ChainType.Arbitrum];
+    const { arbsys } = arbNetwork.getNetworkConfig(chainId);
     const tx = await this.safelyGetTransactionReceipt(txHash, chainId);
     if (!tx || !tx.logs) {
       return {};
@@ -424,10 +422,10 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
   }
 
   async requireBridge() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const mainChainId = this.l1_chainId;
     const chainId = this.l2_chainId;
-    const { partnerChainId } = arbNetworkController.arbNetworkConfig(chainId);
+    const { partnerChainId } = arbNetwork.getNetworkConfig(chainId);
     if (mainChainId !== partnerChainId) {
       throw new Error('mainnet chainId and arbitrum chainId do not match.');
     }
@@ -446,37 +444,37 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
   }
 
   async getdepositETHMethodId() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { inbox } = arbNetworkController.arbNetworkConfig(chainId);
+    const { inbox } = arbNetwork.getNetworkConfig(chainId);
     return [inbox, '0f4d14e9'];
   }
 
   async getdepositMethodId() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { l1GatewayRouter } = arbNetworkController.arbNetworkConfig(chainId);
+    const { l1GatewayRouter } = arbNetwork.getNetworkConfig(chainId);
     return [l1GatewayRouter, 'd2ce7d65'];
   }
 
   async getwithdrawETHMethodId() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { arbsys } = arbNetworkController.arbNetworkConfig(chainId);
+    const { arbsys } = arbNetwork.getNetworkConfig(chainId);
     return [arbsys, '25e16063'];
   }
 
   async getwithdrawERC20MethodId() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { l2GatewayRouter } = arbNetworkController.arbNetworkConfig(chainId);
+    const { l2GatewayRouter } = arbNetwork.getNetworkConfig(chainId);
     return [l2GatewayRouter, '7b3a3c8b'];
   }
 
   getexecuteTransactionMethodId() {
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
+    const arbNetwork = this.networks[ChainType.Arbitrum];
     const chainId = this.l2_chainId;
-    const { outbox, outbox2 } = arbNetworkController.arbNetworkConfig(chainId);
+    const { outbox, outbox2 } = arbNetwork.getNetworkConfig(chainId);
     return [outbox, outbox2, '9c5cfe0b'];
   }
 
@@ -674,13 +672,14 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
     preferences.subscribe(() => setTimeout(() => this.poll(), 5000), ['selectedAddress']);
     const transaction = this.context.TransactionController as TransactionController;
     transaction.subscribe(async ({ addressWithChanged, txChangedType }) => {
-      if (bitAND(txChangedType, TxChangedType.ArbTxChanged) !== 0) {
-        const { selectedAddress } = preferences.state;
-        if (selectedAddress !== addressWithChanged) {
-          return;
-        }
-        setTimeout(() => this.poll(), 5000);
+      if (bitAND(txChangedType, TxChanged) === 0 || transaction.getTxChangedType(txChangedType) !== ChainType.Arbitrum) {
+        return;
       }
+      const { selectedAddress } = preferences.state;
+      if (selectedAddress !== addressWithChanged) {
+        return;
+      }
+      setTimeout(() => this.poll(), 5000);
     }, ['txChangedType']);
   }
 }

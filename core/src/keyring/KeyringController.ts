@@ -12,8 +12,10 @@ import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
 import { PersonalMessageParams } from '../message-manager/PersonalMessageManager';
 import { TypedMessageParams } from '../message-manager/TypedMessageManager';
-import { logDebug, TRON_ENABLED } from '../util';
+import { logDebug } from '../util';
+import { NetworkConfig } from '../Config';
 import KeyringControllerImpl from './KeyringControllerImpl';
+import {ChainType} from "../assets/TokenRatesController";
 
 const privates = new WeakMap();
 
@@ -762,7 +764,7 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
       }
     }
     this.update({ keyrings: [...keyrings] });
-    if (TRON_ENABLED) {
+    if (!NetworkConfig[ChainType.Tron].Disabled) {
       await this.fullUpdateTronKeyrings();
     }
     await privates.get(this).keyring.fullUpdate();

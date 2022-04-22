@@ -45,26 +45,21 @@ import { createAsyncMiddleware } from 'json-rpc-engine';
 import BackgroundBridge from '../../../core/BackgroundBridge';
 import { resemblesAddress } from '../../../util/address';
 import { ethErrors } from 'eth-json-rpc-errors';
-import {
-	chainTypeTochain,
-	getChainId,
-	matchDefaultChainType,
-	matchUserSelectedChainType,
-	matchWhitelistDapps
-} from '../../../util/walletconnect';
+import { matchDefaultChainType, matchUserSelectedChainType, matchWhitelistDapps } from '../../../util/walletconnect';
 import HomePage from '../../UI/HomePage';
 import Modal from 'react-native-modal';
 import Clipboard from '@react-native-community/clipboard';
 import { showAlert } from '../../../actions/alert';
 import { AutoCompleteType_HOMEPAGE } from '../../../core/AutoCompleteController';
 import { onEvent } from 'react-native-mumeng';
-import { getNetworkController, getTypeByChainId } from '../../../util/number';
+import { getChainIdByType, getNetworkController, getChainTypeByChainId } from '../../../util/number';
 import { isPrefixedFormattedHexString } from '../../../util/networks';
 import { getIsRpc, getDefiIcon, getRpcName } from '../../../util/rpcUtil';
 import NFTImage from '../../UI/NFTImage';
 import { getActiveTabId } from '../../../util/browser';
 import NativeThreads from '../../../threads/NativeThreads';
 import { callSqlite } from '../../../util/ControllerUtils';
+import { ChainTypeBgDefi, ChainTypes, chainTypeTochain, getChainTypeName } from '../../../util/ChainTypeImages';
 
 const { HOMEPAGE_URL, USER_AGENT } = AppConstants;
 
@@ -541,14 +536,14 @@ const BrowserTab = props => {
 
 			const rpcMethods = {
 				eth_chainId: async () => {
-					const chainId = getChainId(chain_type.current);
+					const chainId = getChainIdByType(chain_type.current);
 					if (chainId && !chainId.startsWith('0x')) {
 						// Convert to hex
 						res.result = `0x${parseInt(chainId, 10).toString(16)}`;
 					}
 				},
 				net_version: async () => {
-					const chainId = getChainId(chain_type.current);
+					const chainId = getChainIdByType(chain_type.current);
 					res.result = chainId;
 				},
 				eth_requestAccounts: async () => {
@@ -632,7 +627,6 @@ const BrowserTab = props => {
 					const data = JSON.parse(req.params[1]);
 					const chainId = data.domain.chainId;
 
-					// eslint-disable-next-line
 					if (!getNetworkController(chainId)) {
 						throw ethErrors.rpc.invalidRequest(
 							`Provided chainId (${chainId}) must match the active chainId`
@@ -663,7 +657,6 @@ const BrowserTab = props => {
 					const data = JSON.parse(req.params[1]);
 					const chainId = data.domain.chainId;
 
-					// eslint-disable-next-line eqeqeq
 					if (!getNetworkController(chainId)) {
 						throw ethErrors.rpc.invalidRequest(
 							`Provided chainId (${chainId}) must match the active chainId`
@@ -764,7 +757,7 @@ const BrowserTab = props => {
 					}
 
 					const chainIdDecimal = parseInt(_chainId, 16).toString(10);
-					const type = getTypeByChainId(chainIdDecimal);
+					const type = getChainTypeByChainId(chainIdDecimal);
 					// 如下逻辑成立，表示不存在当前chainId
 					if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
 						add_chain_request.current = {
@@ -801,7 +794,7 @@ const BrowserTab = props => {
 					}
 
 					const chainIdDecimal = parseInt(_chainId, 16).toString(10);
-					const type = getTypeByChainId(chainIdDecimal);
+					const type = getChainTypeByChainId(chainIdDecimal);
 					// 如下逻辑成立，表示不存在当前chainId
 					if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
 						const rpcList = require('../../../data/rpc-chains.json');
@@ -1400,37 +1393,6 @@ const BrowserTab = props => {
 			'browser.copy_link'
 		];
 
-		const defiChainTypes = [
-			ChainType.Ethereum,
-			ChainType.Bsc,
-			ChainType.Polygon,
-			ChainType.Arbitrum,
-			ChainType.Heco,
-			ChainType.Optimism,
-			ChainType.Avax,
-			ChainType.Syscoin
-		];
-		const defiNetImgSource = [
-			require('../../../images/ic_defi_eth.png'),
-			require('../../../images/ic_defi_bsc.png'),
-			require('../../../images/ic_defi_polygon.png'),
-			require('../../../images/ic_defi_arb.png'),
-			require('../../../images/ic_defi_heco.png'),
-			require('../../../images/ic_defi_op.png'),
-			require('../../../images/ic_defi_avax.png'),
-			require('../../../images/ic_defi_syscoin.png')
-		];
-		const defiNetName = [
-			strings('other.ethereum'),
-			strings('other.bsc'),
-			strings('other.polygon'),
-			strings('other.arbitrum'),
-			strings('other.heco'),
-			strings('other.optimism'),
-			strings('other.avalanche'),
-			strings('other.syscoin')
-		];
-
 		let firstItem = 0;
 		const contactEntrys = [];
 		Object.values(props.identities).forEach((value, index) => {
@@ -1545,7 +1507,6 @@ const BrowserTab = props => {
 									>
 										<View style={styles.dappNetScroll}>
 											{props.allChains.map((item, index) => {
-												const tranlateIndex = defiChainTypes.indexOf(item);
 												const isRpc = getIsRpc(item);
 												return (
 													<TouchableOpacity
@@ -1564,7 +1525,7 @@ const BrowserTab = props => {
 														{isRpc ? (
 															getDefiIcon(item)
 														) : (
-															<Image source={defiNetImgSource[tranlateIndex]} />
+															<Image source={ChainTypeBgDefi[ChainTypes.indexOf(item)]} />
 														)}
 														<Text
 															allowFontScaling={false}
@@ -1574,7 +1535,7 @@ const BrowserTab = props => {
 																chain_type.current === item && styles.dappNetNameSeleted
 															]}
 														>
-															{isRpc ? getRpcName(item) : defiNetName[tranlateIndex]}
+															{isRpc ? getRpcName(item) : getChainTypeName(item)}
 														</Text>
 													</TouchableOpacity>
 												);
@@ -1661,7 +1622,7 @@ const BrowserTab = props => {
 		setAddChainModalVisible(false);
 		try {
 			const { nickname, rpcTarget, chainId, ticker, explorerUrl } = add_chain_request.current;
-			const type = await Engine.context.RpcNetworkController.addNetwork(
+			const type = await Engine.networks[ChainType.RPCBase].addNetwork(
 				nickname,
 				rpcTarget,
 				chainId,

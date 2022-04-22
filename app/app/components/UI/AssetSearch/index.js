@@ -83,7 +83,7 @@ export default class AssetSearch extends PureComponent {
 
 	validateCustomTokenSymbol = symbol => {
 		let validated = true;
-		if (symbol.length === 0) {
+		if (!symbol || symbol.length === 0) {
 			validated = false;
 		}
 		return validated;
@@ -91,7 +91,7 @@ export default class AssetSearch extends PureComponent {
 
 	validateCustomTokenDecimals = decimals => {
 		let validated = true;
-		if (decimals.length === 0) {
+		if (!decimals || decimals.length === 0) {
 			validated = false;
 		}
 		return validated;
@@ -121,39 +121,25 @@ export default class AssetSearch extends PureComponent {
 			let symbol;
 			let l2Address;
 			try {
-				const {
-					AssetsContractController,
-					BscContractController,
-					OpContractController,
-					PolygonContractController,
-					ArbContractController,
-					HecoContractController,
-					AvaxContractController,
-					SyscoinContractController,
-					RpcContractController,
-					RpcNetworkController
-				} = Engine.context;
-				if (currentChainType === ChainType.Polygon) {
+				if (util.isRpcChainType(currentChainType)) {
+					const working = await Engine.networks[ChainType.RPCBase].checkNetwork(currentChainType);
+					if (!working) {
+						throw new Error('RpcTarget cannot access');
+					}
 					const validated = await this.validateCustomTokenAddress(address, currentChainType);
 					if (!validated) {
 						throw new Error('address not validated');
 					}
-					decimals = await PolygonContractController.getTokenDecimals(address);
-					symbol = await PolygonContractController.getAssetSymbol(address);
-				} else if (currentChainType === ChainType.Bsc) {
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await BscContractController.getTokenDecimals(address);
-					symbol = await BscContractController.getAssetSymbol(address);
-				} else if (currentChainType === ChainType.Optimism) {
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await OpContractController.getTokenDecimals(address);
-					symbol = await OpContractController.getAssetSymbol(address);
+					decimals = await Engine.contracts[ChainType.RPCBase].callContract(
+						currentChainType,
+						'getTokenDecimals',
+						address
+					);
+					symbol = await Engine.contracts[ChainType.RPCBase].callContract(
+						currentChainType,
+						'getAssetSymbol',
+						address
+					);
 				} else if (currentChainType === ChainType.Arbitrum) {
 					let success = false;
 					try {
@@ -161,10 +147,10 @@ export default class AssetSearch extends PureComponent {
 						if (!validated) {
 							throw new Error('address not validated');
 						}
-						decimals = await ArbContractController.getTokenDecimals(address);
-						symbol = await ArbContractController.getAssetSymbol(address);
+						decimals = await Engine.contracts[ChainType.Arbitrum].getTokenDecimals(address);
+						symbol = await Engine.contracts[ChainType.Arbitrum].getAssetSymbol(address);
 						l2Address = address;
-						address = await ArbContractController.calculateL1ERC20Address(l2Address);
+						address = await Engine.contracts[ChainType.Arbitrum].calculateL1ERC20Address(l2Address);
 						success = true;
 					} catch (e1) {
 						util.logDebug('leon.w@ arb failed with error=', e1);
@@ -174,52 +160,20 @@ export default class AssetSearch extends PureComponent {
 						if (!validated) {
 							throw new Error('address not validated');
 						}
-						l2Address = await ArbContractController.calculateL2ERC20Address(address);
+						l2Address = await Engine.contracts[ChainType.Arbitrum].calculateL2ERC20Address(address);
 						if (!l2Address) {
 							throw new Error('l2 address calc failed');
 						}
-						decimals = await ArbContractController.getTokenDecimals(l2Address);
-						symbol = await ArbContractController.getAssetSymbol(l2Address);
+						decimals = await Engine.contracts[ChainType.Arbitrum].getTokenDecimals(l2Address);
+						symbol = await Engine.contracts[ChainType.Arbitrum].getAssetSymbol(l2Address);
 					}
-				} else if (currentChainType === ChainType.Heco) {
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await HecoContractController.getTokenDecimals(address);
-					symbol = await HecoContractController.getAssetSymbol(address);
-				} else if (currentChainType === ChainType.Avax) {
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await AvaxContractController.getTokenDecimals(address);
-					symbol = await AvaxContractController.getAssetSymbol(address);
-				} else if (currentChainType === ChainType.Syscoin) {
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await SyscoinContractController.getTokenDecimals(address);
-					symbol = await SyscoinContractController.getAssetSymbol(address);
-				} else if (util.isRpcChainType(currentChainType)) {
-					const working = await RpcNetworkController.checkNetwork(currentChainType);
-					if (!working) {
-						throw new Error('RpcTarget cannot access');
-					}
-					const validated = await this.validateCustomTokenAddress(address, currentChainType);
-					if (!validated) {
-						throw new Error('address not validated');
-					}
-					decimals = await RpcContractController.callContract(currentChainType, 'getTokenDecimals', address);
-					symbol = await RpcContractController.callContract(currentChainType, 'getAssetSymbol', address);
 				} else {
 					const validated = await this.validateCustomTokenAddress(address, currentChainType);
 					if (!validated) {
 						throw new Error('address not validated');
 					}
-					decimals = await AssetsContractController.getTokenDecimals(address);
-					symbol = await AssetsContractController.getAssetSymbol(address);
+					decimals = await Engine.contracts[currentChainType]?.getTokenDecimals(address);
+					symbol = await Engine.contracts[currentChainType]?.getAssetSymbol(address);
 				}
 				if (this.validateCustomTokenSymbol(symbol) && this.validateCustomTokenDecimals(decimals)) {
 					const searchToken =

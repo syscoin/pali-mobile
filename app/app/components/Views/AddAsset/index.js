@@ -31,6 +31,7 @@ import AssetElement from '../../UI/AssetElement';
 import { fontStyles, colors } from '../../../styles/common';
 import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
 import { getSecurityData } from '../../../util/security';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const { width, height } = Dimensions.get('window');
 const hideItemWidth = 70;
@@ -494,28 +495,7 @@ class AddAsset extends PureComponent {
 				>
 					<View style={styles.iconLayout}>
 						<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-						<Image
-							style={styles.tagView}
-							source={
-								isRpc
-									? getIcTagResource(asset.type)
-									: asset.type === ChainType.Ethereum
-									? require('../../../images/ic_eth_tag.png')
-									: asset.type === ChainType.Polygon
-									? require('../../../images/ic_polygon_tag.png')
-									: asset.type === ChainType.Arbitrum
-									? require('../../../images/ic_arb_tag.png')
-									: asset.type === ChainType.Heco
-									? require('../../../images/ic_heco_tag.png')
-									: asset.type === ChainType.Optimism
-									? require('../../../images/ic_op_tag.png')
-									: asset.type === ChainType.Avax
-									? require('../../../images/ic_avax_tag.png')
-									: asset.type === ChainType.Syscoin
-									? require('../../../images/ic_syscoin_tag.png')
-									: require('../../../images/ic_bsc_tag.png')
-							}
-						/>
+						<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
 					</View>
 					<View style={styles.balances}>
 						<View style={styles.titleItem}>
@@ -576,28 +556,7 @@ class AddAsset extends PureComponent {
 			>
 				<View style={styles.iconLayout}>
 					<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-					<Image
-						style={styles.tagView}
-						source={
-							isRpc
-								? getIcTagResource(asset.type)
-								: asset.type === ChainType.Ethereum
-								? require('../../../images/ic_eth_tag.png')
-								: asset.type === ChainType.Polygon
-								? require('../../../images/ic_polygon_tag.png')
-								: asset.type === ChainType.Arbitrum
-								? require('../../../images/ic_arb_tag.png')
-								: asset.type === ChainType.Heco
-								? require('../../../images/ic_heco_tag.png')
-								: asset.type === ChainType.Optimism
-								? require('../../../images/ic_op_tag.png')
-								: asset.type === ChainType.Avax
-								? require('../../../images/ic_avax_tag.png')
-								: asset.type === ChainType.Syscoin
-								? require('../../../images/ic_syscoin_tag.png')
-								: require('../../../images/ic_bsc_tag.png')
-						}
-					/>
+					<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
 				</View>
 
 				<View style={styles.balances}>

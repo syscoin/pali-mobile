@@ -7,7 +7,7 @@ import { createOriginMiddleware, createLoggerMiddleware } from '../util/middlewa
 import Engine from './Engine';
 import AppConstants from './AppConstants';
 import { createEngineStream } from 'json-rpc-middleware-stream';
-import { getChainId } from '../util/walletconnect';
+import { getChainIdByType } from '../util/number';
 
 const createFilterMiddleware = require('eth-json-rpc-filters');
 const createSubscriptionManager = require('eth-json-rpc-filters/subscriptionManager');
@@ -49,33 +49,12 @@ export class BackgroundBridge extends EventEmitter {
 
 		this.createMiddleware = getRpcMethodMiddleware;
 		this.chain_type = chain_type;
-		this.chain_id = getChainId(chain_type);
-		if (this.chain_type === ChainType.Bsc) {
-			this.provider = Engine.context.BscNetworkController.provider;
-			Engine.context.BscNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Arbitrum) {
-			this.provider = Engine.context.ArbNetworkController.provider;
-			Engine.context.ArbNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Polygon) {
-			this.provider = Engine.context.PolygonNetworkController.provider;
-			Engine.context.PolygonNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Heco) {
-			this.provider = Engine.context.HecoNetworkController.provider;
-			Engine.context.HecoNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Optimism) {
-			this.provider = Engine.context.OpNetworkController.provider;
-			Engine.context.OpNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Avax) {
-			this.provider = Engine.context.AvaxNetworkController.provider;
-			Engine.context.AvaxNetworkController.subscribe(this.sendStateUpdate);
-		} else if (this.chain_type === ChainType.Syscoin) {
-			this.provider = Engine.context.SyscoinNetworkController.provider;
-			Engine.context.SyscoinNetworkController.subscribe(this.sendStateUpdate);
-		} else if (util.isRpcChainType(this.chain_type)) {
-			this.provider = Engine.context.RpcNetworkController.providers[this.chain_type];
+		this.chain_id = getChainIdByType(chain_type);
+		if (util.isRpcChainType(this.chain_type)) {
+			this.provider = Engine.networks[ChainType.RPCBase].providers[this.chain_type];
 		} else {
-			this.provider = Engine.context.NetworkController.provider;
-			Engine.context.NetworkController.subscribe(this.sendStateUpdate);
+			this.provider = Engine.networks[this.chain_type]?.provider;
+			Engine.networks[this.chain_type]?.subscribe(this.sendStateUpdate);
 		}
 		if (this.provider) {
 			this.blockTracker = new EthBlockTracker({

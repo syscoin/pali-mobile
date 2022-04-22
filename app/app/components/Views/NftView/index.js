@@ -9,8 +9,7 @@ import {
 	StatusBar,
 	NativeModules,
 	Text,
-	Animated,
-	Linking
+	Animated
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -20,7 +19,7 @@ import MStatusBar from '../../UI/MStatusBar';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import Engine from '../../../core/Engine';
-import { fromWei } from '../../../util/number';
+import { fromWei, getChainTypeByChainId, getChainTypeNameByChainId } from '../../../util/number';
 import Clipboard from '@react-native-community/clipboard';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
@@ -39,7 +38,8 @@ import ImageCapInset from '../../UI/ImageCapInset';
 import { SafeAreaView } from 'react-navigation';
 import { getDefiIcon } from '../../../util/rpcUtil';
 import { isSvgFile } from '../../../util/general';
-import { getRpcChainTypeByChainId, getRpcNickname, isRpcChainId } from '../../../util/ControllerUtils';
+import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
+import { ChainTypeBgDefi, ChainTypes } from '../../../util/ChainTypeImages';
 
 const screenWidth = Device.getDeviceWidth();
 
@@ -321,13 +321,6 @@ const styles = StyleSheet.create({
 class NftView extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
 		favoriteCollectibles: PropTypes.array,
 		showAlert: PropTypes.func,
 		allCollectibles: PropTypes.object,
@@ -814,21 +807,11 @@ class NftView extends PureComponent {
 													) : (
 														<Image
 															source={
-																nftToken.chainId === this.props.chainId
-																	? require('../../../images/ic_defi_eth.png')
-																	: nftToken.chainId === this.props.polygonChainId
-																	? require('../../../images/ic_defi_polygon.png')
-																	: nftToken.chainId === this.props.arbChainId
-																	? require('../../../images/ic_defi_arb.png')
-																	: nftToken.chainId === this.props.hecoChainId
-																	? require('../../../images/ic_defi_heco.png')
-																	: nftToken.chainId === this.props.opChainId
-																	? require('../../../images/ic_defi_op.png')
-																	: nftToken.chainId === this.props.avaxChainId
-																	? require('../../../images/ic_defi_avax.png')
-																	: nftToken.chainId === this.props.syscoinChainId
-																	? require('../../../images/ic_defi_syscoin.png')
-																	: require('../../../images/ic_defi_bsc.png')
+																ChainTypeBgDefi[
+																	ChainTypes.indexOf(
+																		getChainTypeByChainId(nftToken.chainId)
+																	)
+																]
 															}
 														/>
 													)}
@@ -963,23 +946,7 @@ class NftView extends PureComponent {
 														numberOfLines={1}
 														ellipsizeMode={'tail'}
 													>
-														{nftToken.chainId === this.props.chainId
-															? strings('other.ethereum')
-															: nftToken.chainId === this.props.polygonChainId
-															? strings('other.polygon')
-															: nftToken.chainId === this.props.arbChainId
-															? strings('other.arbitrum')
-															: nftToken.chainId === this.props.hecoChainId
-															? strings('other.heco')
-															: nftToken.chainId === this.props.opChainId
-															? strings('other.optimism')
-															: nftToken.chainId === this.props.avaxChainId
-															? strings('other.avalanche')
-															: nftToken.chainId === this.props.syscoinChainId
-															? strings('other.syscoin')
-															: isRpcChainId(nftToken.chainId)
-															? getRpcNickname(nftToken.chainId)
-															: strings('other.bsc')}
+														{getChainTypeNameByChainId(nftToken.chainId)}
 													</Text>
 												</View>
 												<Text style={styles.technicalSub}>{strings('nft.in_network')}</Text>
@@ -1001,14 +968,6 @@ class NftView extends PureComponent {
 
 const mapStateToProps = state => ({
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
 	favoriteCollectibles:
 		state.engine.backgroundState.CollectiblesController.favoriteCollectibles[
 			state.engine.backgroundState.PreferencesController.selectedAddress

@@ -13,16 +13,17 @@ import {
 	renderAmount,
 	getTokenDecimals,
 	getAssetSymbol,
-	getTypeByChainId
+	getChainTypeByChainId
 } from '../../../util/number';
 import { getNormalizedTxState, getMethodData, decodeApproveData } from '../../../util/transactions';
 import TransactionHeader from '../../UI/TransactionHeader';
-import { chainToChainType, WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
+import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
 import { withNavigation } from 'react-navigation';
 import NetworkFee from '../NetworkFee';
 import LinearGradient from 'react-native-linear-gradient';
 import { onEvent } from 'react-native-mumeng';
 import { toLowerCaseEquals } from '../../../util/general';
+import { chainToChainType } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	root: {
@@ -207,7 +208,7 @@ class ApproveTransactionReview extends PureComponent {
 		const host = getHost(this.originIsWalletConnect ? origin.split(WALLET_CONNECT_ORIGIN)[1] : origin);
 		let tokenSymbol, tokenDecimals;
 		try {
-			const type = getTypeByChainId(chainId);
+			const type = getChainTypeByChainId(chainId);
 			tokenDecimals = await getTokenDecimals(type, to);
 			tokenSymbol = await getAssetSymbol(type, to);
 		} catch (e) {
@@ -218,7 +219,7 @@ class ApproveTransactionReview extends PureComponent {
 		setApproveAmount(encodedAmount, spenderAddress);
 		const { name: method } = await getMethodData(data);
 
-		const type = getTypeByChainId(chainId);
+		const type = getChainTypeByChainId(chainId);
 		const spenderInfo = contractList?.find(
 			contract => chainToChainType(contract.chain) === type && toLowerCaseEquals(contract.address, spenderAddress)
 		);
@@ -351,7 +352,7 @@ class ApproveTransactionReview extends PureComponent {
 
 		const activeTabUrl = getActiveUrl(browser);
 
-		const type = getTypeByChainId(transaction.chainId);
+		const type = getChainTypeByChainId(transaction.chainId);
 
 		const originalAmount = parseInt(originalApproveAmount);
 		const title =

@@ -3,15 +3,6 @@ import { toChecksumAddress } from 'ethereumjs-util';
 import { Mutex } from 'async-mutex';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
-import NetworkController from '../network/NetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
-import BscNetworkController from '../network/BscNetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import TronNetworkController from '../network/TronNetworkController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import util, { isRpcChainType } from '../util';
 import { RpcNetworkController } from '../network/RpcNetworkController';
 import { ChainType, Token } from './TokenRatesController';
@@ -24,29 +15,7 @@ import { ChainType, Token } from './TokenRatesController';
  * @property selectedAddress - Vault selected address
  */
 export interface AssetsConfig extends BaseConfig {
-  chainId: string;
-  arbChainId: string;
-  bscChainId: string;
-  polygonChainId: string;
-  tronChainId: string;
-  hecoChainId: string;
-  opChainId: string;
-  avaxChainId: string;
-  syscoinChainId: string;
-}
-
-export enum TokenChangedType {
-  NoChange = 0x00,
-  TokenChanged = 0x01,
-  BscTokenChanged = 0x02,
-  ArbTokenChanged = 0x04,
-  OpTokenChanged = 0x08,
-  PolygonTokenChanged = 0x20,
-  HecoTokenChanged = 0x40,
-  TronTokenChanged = 0x80,
-  AvaxTokenChanged = 0x100,
-  RpcTokenChanged = 0x200,
-  SyscoinTokenChanged = 0x400,
+  chainIds: { [type: number]: string };
 }
 
 export interface SmartContractInfo {
@@ -66,9 +35,11 @@ export interface SmartContractInfo {
 export interface AssetsState extends BaseState {
   allTokens: { [key: string]: { [key: string]: Token[] } };
   allIgnoredTokens: {[key: string]: { [key: string]: Token[] }};
-  tokenChangedType: TokenChangedType;
+  tokenChangedType: ChainType;
   allSmartContract: { [chainId: string]: SmartContractInfo[] };
 }
+
+export const TokenNoChange = 0;
 
 /**
  * Controller that stores assets and exposes convenience methods
@@ -89,7 +60,7 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
   /**
    * List of required sibling controllers this controller needs to function
    */
-  requiredControllers = ['AssetsContractController', 'NetworkController', 'PreferencesController'];
+  requiredControllers = ['PreferencesController'];
 
   /**
    * Creates a AssetsController instance
@@ -100,18 +71,10 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
   constructor(config?: Partial<BaseConfig>, state?: Partial<AssetsState>) {
     super(config, state);
     this.defaultConfig = {
-      chainId: '',
-      arbChainId: '',
-      bscChainId: '',
-      polygonChainId: '',
-      tronChainId: '',
-      hecoChainId: '',
-      opChainId: '',
-      avaxChainId: '',
-      syscoinChainId: '',
+      chainIds: {}
     };
     this.defaultState = {
-      tokenChangedType: TokenChangedType.NoChange,
+      tokenChangedType: TokenNoChange,
       allTokens: {},
       allIgnoredTokens: {},
       allSmartContract: {},
@@ -144,39 +107,14 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       if (!selectedAddress) {
         return;
       }
-      let chainId, tokenChangedType;
-      if (chainType === ChainType.Bsc) {
-        chainId = this.config.bscChainId;
-        tokenChangedType = TokenChangedType.BscTokenChanged;
-      } else if (chainType === ChainType.Arbitrum) {
-        chainId = this.config.arbChainId;
-        tokenChangedType = TokenChangedType.ArbTokenChanged;
-      } else if (chainType === ChainType.Polygon) {
-        chainId = this.config.polygonChainId;
-        tokenChangedType = TokenChangedType.PolygonTokenChanged;
-      } else if (chainType === ChainType.Heco) {
-        chainId = this.config.hecoChainId;
-        tokenChangedType = TokenChangedType.HecoTokenChanged;
-      } else if (chainType === ChainType.Tron) {
-        chainId = this.config.tronChainId;
-        tokenChangedType = TokenChangedType.TronTokenChanged;
-      } else if (chainType === ChainType.Optimism) {
-        chainId = this.config.opChainId;
-        tokenChangedType = TokenChangedType.OpTokenChanged;
-      } else if (chainType === ChainType.Avax) {
-        chainId = this.config.avaxChainId;
-        tokenChangedType = TokenChangedType.AvaxTokenChanged;
-      } else if (chainType === ChainType.Syscoin) {
-        chainId = this.config.syscoinChainId;
-        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
-      } else if (isRpcChainType(chainType)) {
+      let chainId;
+      if (isRpcChainType(chainType)) {
         const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
         chainId = rpcNetwork.getProviderChainId(chainType);
-        tokenChangedType = TokenChangedType.RpcTokenChanged;
       } else {
-        chainId = this.config.chainId;
-        tokenChangedType = TokenChangedType.TokenChanged;
+        chainId = this.config.chainIds[chainType];
       }
+      const tokenChangedType = chainType;
       const tokens = allTokens[selectedAddress]?.[chainId] || [];
       if (tokens.find((token) => token.address === address)) {
         return;
@@ -214,28 +152,7 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       }
       newAllTokens[selectedAddress][chainId] = [...tokens];
 
-      let tokenChangedType;
-      if (chainType === ChainType.Bsc) {
-        tokenChangedType = TokenChangedType.BscTokenChanged;
-      } else if (chainType === ChainType.Arbitrum) {
-        tokenChangedType = TokenChangedType.ArbTokenChanged;
-      } else if (chainType === ChainType.Polygon) {
-        tokenChangedType = TokenChangedType.PolygonTokenChanged;
-      } else if (chainType === ChainType.Heco) {
-        tokenChangedType = TokenChangedType.HecoTokenChanged;
-      } else if (chainType === ChainType.Tron) {
-        tokenChangedType = TokenChangedType.TronTokenChanged;
-      } else if (chainType === ChainType.Optimism) {
-        tokenChangedType = TokenChangedType.OpTokenChanged;
-      } else if (chainType === ChainType.Avax) {
-        tokenChangedType = TokenChangedType.AvaxTokenChanged;
-      } else if (chainType === ChainType.Syscoin) {
-        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
-      } else if (isRpcChainType(chainType)) {
-        tokenChangedType = TokenChangedType.RpcTokenChanged;
-      } else {
-        tokenChangedType = TokenChangedType.TokenChanged;
-      }
+      const tokenChangedType = chainType;
       this.update({ allTokens: newAllTokens, tokenChangedType });
     } finally {
       releaseLock();
@@ -252,39 +169,14 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
       if (!selectedAddress) {
         return;
       }
-      let chainId, tokenChangedType;
-      if (chainType === ChainType.Bsc) {
-        chainId = this.config.bscChainId;
-        tokenChangedType = TokenChangedType.BscTokenChanged;
-      } else if (chainType === ChainType.Arbitrum) {
-        chainId = this.config.arbChainId;
-        tokenChangedType = TokenChangedType.ArbTokenChanged;
-      } else if (chainType === ChainType.Polygon) {
-        chainId = this.config.polygonChainId;
-        tokenChangedType = TokenChangedType.PolygonTokenChanged;
-      } else if (chainType === ChainType.Heco) {
-        chainId = this.config.hecoChainId;
-        tokenChangedType = TokenChangedType.HecoTokenChanged;
-      } else if (chainType === ChainType.Tron) {
-        chainId = this.config.tronChainId;
-        tokenChangedType = TokenChangedType.TronTokenChanged;
-      } else if (chainType === ChainType.Optimism) {
-        chainId = this.config.opChainId;
-        tokenChangedType = TokenChangedType.OpTokenChanged;
-      } else if (chainType === ChainType.Avax) {
-        chainId = this.config.avaxChainId;
-        tokenChangedType = TokenChangedType.AvaxTokenChanged;
-      } else if (chainType === ChainType.Syscoin) {
-        chainId = this.config.syscoinChainId;
-        tokenChangedType = TokenChangedType.SyscoinTokenChanged;
-      } else if (isRpcChainType(chainType)) {
+      let chainId;
+      if (isRpcChainType(chainType)) {
         const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
         chainId = rpcNetwork.getProviderChainId(chainType);
-        tokenChangedType = TokenChangedType.RpcTokenChanged;
       } else {
-        chainId = this.config.chainId;
-        tokenChangedType = TokenChangedType.TokenChanged;
+        chainId = this.config.chainIds[chainType];
       }
+      const tokenChangedType = chainType;
       const tokens = allTokens[selectedAddress]?.[chainId] || [];
       const tokenEntry = tokens.find((token) => token.address === address);
       if (!tokenEntry) {
@@ -318,58 +210,11 @@ export class AssetsController extends BaseController<AssetsConfig, AssetsState> 
     }
   }
 
-  async onNetworkChange() {
-    const network = this.context.NetworkController as NetworkController;
-    const { chainId } = network.state.provider;
-    this.configure({ chainId });
-  }
-
-  async onArbNetworkChange() {
-    const arbnetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const { chainId } = arbnetwork.state.provider;
-    this.configure({ arbChainId: chainId });
-  }
-
-  async onOpNetworkChange() {
-    const opnetwork = this.context.OpNetworkController as OpNetworkController;
-    const { chainId } = opnetwork.state.provider;
-    this.configure({ opChainId: chainId });
-  }
-
-  async onPolygonNetworkChange() {
-    const polygonnetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    const { chainId } = polygonnetwork.state.provider;
-    this.configure({ polygonChainId: chainId });
-  }
-
-  async onBscNetworkChange() {
-    const bscnetwork = this.context.BscNetworkController as BscNetworkController;
-    const { chainId } = bscnetwork.state.provider;
-    this.configure({ bscChainId: chainId });
-  }
-
-  async onTronNetworkChange() {
-    const tronnetwork = this.context.TronNetworkController as TronNetworkController;
-    const { chainId } = tronnetwork.state.provider;
-    this.configure({ tronChainId: chainId });
-  }
-
-  async onHecoNetworkChange() {
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    const { chainId } = hecoNetwork.state.provider;
-    this.configure({ hecoChainId: chainId });
-  }
-
-  async onAvaxNetworkChange() {
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const { chainId } = avaxNetwork.state.provider;
-    this.configure({ avaxChainId: chainId });
-  }
-
-  async onSyscoinNetworkChange() {
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-    const { chainId } = syscoinNetwork.state.provider;
-    this.configure({ syscoinChainId: chainId });
+  async onNetworkChange(chainType: ChainType) {
+    const { chainId } = this.networks[chainType].state.provider;
+    const chainIds = this.config.chainIds;
+    chainIds[chainType] = chainId;
+    this.configure({ chainIds });
   }
 
   rehydrate(state: Partial<AssetsState>) {

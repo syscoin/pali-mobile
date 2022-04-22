@@ -23,7 +23,7 @@ import {
 import {
 	decimalsInputValue,
 	formatNumberStr,
-	getCurrency,
+	getTickerByType,
 	isDecimalValue,
 	renderAmount,
 	renderGwei,
@@ -141,12 +141,7 @@ const MAX_SLIDER = 10;
  */
 class NetworkFee extends PureComponent {
 	static propTypes = {
-		ethPrice: PropTypes.object,
-		bnbPrice: PropTypes.object,
-		polygonPrice: PropTypes.object,
-		hecoPrice: PropTypes.object,
-		avaxPrice: PropTypes.object,
-		syscoinPrice: PropTypes.object,
+		allCurrencyPrice: PropTypes.object,
 		onChange: PropTypes.func,
 		transaction: PropTypes.object,
 		type: PropTypes.number,
@@ -477,12 +472,7 @@ class NetworkFee extends PureComponent {
 			reloadGas
 		} = this.state;
 		const {
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			hecoPrice,
-			avaxPrice,
-			syscoinPrice,
+			allCurrencyPrice,
 			transaction,
 			type,
 			currencyCode,
@@ -493,20 +483,10 @@ class NetworkFee extends PureComponent {
 		const isEIP1559Transaction = suggestedGasFees?.isEIP1559;
 
 		let rate;
-		if (type === ChainType.Bsc) {
-			rate = bnbPrice.usd;
-		} else if (type === ChainType.Polygon) {
-			rate = polygonPrice.usd;
-		} else if (type === ChainType.Heco) {
-			rate = hecoPrice.usd;
-		} else if (type === ChainType.Avax) {
-			rate = avaxPrice.usd;
-		} else if (type === ChainType.Syscoin) {
-			rate = syscoinPrice.usd;
-		} else if (util.isRpcChainType(type)) {
+		if (util.isRpcChainType(type)) {
 			rate = 0;
 		} else {
-			rate = ethPrice.usd;
+			rate = allCurrencyPrice[type]?.usd || 0;
 		}
 		rate *= currencyCodeRate;
 
@@ -555,7 +535,7 @@ class NetworkFee extends PureComponent {
 									<Text style={styles.amountText}>
 										{renderAmount(getEthGasFee(selectTotalGas, transaction.gas)) +
 											' ' +
-											getCurrency(this.props.type) +
+											getTickerByType(this.props.type) +
 											' '}
 										≈{' ' + getFiatGasFee(selectTotalGas, rate, currencyCode, transaction.gas)}
 									</Text>
@@ -614,7 +594,7 @@ class NetworkFee extends PureComponent {
 									<Text style={styles.amountText}>
 										{renderAmount(getEthGasFee(customTotalGas, customGasLimitBN)) +
 											' ' +
-											getCurrency(this.props.type) +
+											getTickerByType(this.props.type) +
 											' '}
 										≈{' ' + getFiatGasFee(customTotalGas, rate, currencyCode, customGasLimitBN)}
 									</Text>
@@ -633,12 +613,7 @@ class NetworkFee extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
-	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
-	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
-	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
-	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
-	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
+	allCurrencyPrice: state.engine.backgroundState.TokenRatesController.allCurrencyPrice,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate
 });

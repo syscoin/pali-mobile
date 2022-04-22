@@ -19,11 +19,11 @@ import { strings } from '../../../../locales/i18n';
 import { ChainType, util } from 'gopocket-core';
 import { isSvgFile, isVideoFile, toLowerCaseEquals } from '../../../util/general';
 import NFTImage from '../NFTImage';
-import { getChainIdByType } from '../../../util/number';
+import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';
 import Engine from '../../../core/Engine';
 import ImageCapInset from '../ImageCapInset';
-import { getIcTagResource } from '../../../util/rpcUtil';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const favoriteAddr = '0xfavorite';
 
@@ -241,16 +241,8 @@ class Nft extends PureComponent {
 		this.isEndReached = true;
 
 		const { selectedAddress, currentChainType, allCollectibleContracts, favoriteCollectibles } = this.props;
-		const { PreferencesController, RpcNetworkController } = Engine.context;
-		const chainId = getChainIdByType(ChainType.Ethereum);
-		const bscChainId = getChainIdByType(ChainType.Bsc);
-		const arbChainId = getChainIdByType(ChainType.Arbitrum);
-		const polygonChainId = getChainIdByType(ChainType.Polygon);
-		const hecoChainId = getChainIdByType(ChainType.Heco);
-		const opChainId = getChainIdByType(ChainType.Optimism);
-		const avaxChainId = getChainIdByType(ChainType.Avax);
-		const syscoinChainId = getChainIdByType(ChainType.Syscoin);
-		const rpcChainIds = await RpcNetworkController.getEnabledChain();
+		const { PreferencesController } = Engine.context;
+		const rpcChainIds = await Engine.networks[ChainType.RPCBase].getEnabledChain();
 
 		const allContracts = this.state.allContracts;
 		let allCollectiblesList = this.state.allCollectiblesList;
@@ -260,128 +252,53 @@ class Nft extends PureComponent {
 			if (currentChainType === ChainType.All) {
 				if (favoriteCollectibles && favoriteCollectibles.length > 0) {
 					const favorites = [];
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Ethereum))) {
-						if (allCollectibleContracts[chainId] && allCollectibleContracts[chainId].length > 0) {
-							const ethFavorites = favoriteCollectibles.filter(token => token.chainId === chainId);
-							ethFavorites && ethFavorites.length > 0 && favorites.push(...ethFavorites);
+					for (const type in Engine.networks) {
+						const chainType = Number(type);
+						if (chainType === ChainType.RPCBase) {
+							if (rpcChainIds?.length > 0) {
+								rpcChainIds.forEach(chain => {
+									const rpcFavorites = favoriteCollectibles.filter(
+										token => token.chainId === chain.chainId
+									);
+									rpcFavorites && rpcFavorites.length > 0 && favorites.push(...rpcFavorites);
+								});
+							}
+						} else {
+							if (!(await PreferencesController.isDisabledChain(selectedAddress, chainType))) {
+								const chainId = getChainIdByType(chainType);
+								if (allCollectibleContracts[chainId] && allCollectibleContracts[chainId].length > 0) {
+									const chainFavorites = favoriteCollectibles.filter(
+										token => token.chainId === chainId
+									);
+									chainFavorites && chainFavorites.length > 0 && favorites.push(...chainFavorites);
+								}
+							}
 						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Polygon))) {
-						if (
-							allCollectibleContracts[polygonChainId] &&
-							allCollectibleContracts[polygonChainId].length > 0
-						) {
-							const polygonFavorites = favoriteCollectibles.filter(
-								token => token.chainId === polygonChainId
-							);
-							polygonFavorites && polygonFavorites.length > 0 && favorites.push(...polygonFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Bsc))) {
-						if (allCollectibleContracts[bscChainId] && allCollectibleContracts[bscChainId].length > 0) {
-							const bscFavorites = favoriteCollectibles.filter(token => token.chainId === bscChainId);
-							bscFavorites && bscFavorites.length > 0 && favorites.push(...bscFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Arbitrum))) {
-						if (allCollectibleContracts[arbChainId] && allCollectibleContracts[arbChainId].length > 0) {
-							const arbFavorites = favoriteCollectibles.filter(token => token.chainId === arbChainId);
-							arbFavorites && arbFavorites.length > 0 && favorites.push(...arbFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Optimism))) {
-						if (allCollectibleContracts[opChainId] && allCollectibleContracts[opChainId].length > 0) {
-							const opFavorites = favoriteCollectibles.filter(token => token.chainId === opChainId);
-							opFavorites && opFavorites.length > 0 && favorites.push(...opFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Heco))) {
-						if (allCollectibleContracts[hecoChainId] && allCollectibleContracts[hecoChainId].length > 0) {
-							const hecoFavorites = favoriteCollectibles.filter(token => token.chainId === hecoChainId);
-							hecoFavorites && hecoFavorites.length > 0 && favorites.push(...hecoFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Avax))) {
-						if (allCollectibleContracts[avaxChainId] && allCollectibleContracts[avaxChainId].length > 0) {
-							const avaxFavorites = favoriteCollectibles.filter(token => token.chainId === avaxChainId);
-							avaxFavorites && avaxFavorites.length > 0 && favorites.push(...avaxFavorites);
-						}
-					}
-					if (!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin))) {
-						if (
-							allCollectibleContracts[syscoinChainId] &&
-							allCollectibleContracts[syscoinChainId].length > 0
-						) {
-							const syscoinFavorites = favoriteCollectibles.filter(
-								token => token.chainId === syscoinChainId
-							);
-							syscoinFavorites && syscoinFavorites.length > 0 && favorites.push(...syscoinFavorites);
-						}
-					}
-					if (rpcChainIds?.length > 0) {
-						rpcChainIds.forEach(chain => {
-							const rpcFavorites = favoriteCollectibles.filter(token => token.chainId === chain.chainId);
-							rpcFavorites && rpcFavorites.length > 0 && favorites.push(...rpcFavorites);
-						});
 					}
 					if (favorites.length > 0) {
 						allContracts.push({ favoriteAddr, favorites });
 					}
 				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Ethereum)) &&
-					allCollectibleContracts[chainId]
-				) {
-					allContracts.push(...allCollectibleContracts[chainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Polygon)) &&
-					allCollectibleContracts[polygonChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[polygonChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Bsc)) &&
-					allCollectibleContracts[bscChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[bscChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Arbitrum)) &&
-					allCollectibleContracts[arbChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[arbChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Optimism)) &&
-					allCollectibleContracts[opChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[opChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Heco)) &&
-					allCollectibleContracts[hecoChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[hecoChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Avax)) &&
-					allCollectibleContracts[avaxChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[avaxChainId]);
-				}
-				if (
-					!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin)) &&
-					allCollectibleContracts[syscoinChainId]
-				) {
-					allContracts.push(...allCollectibleContracts[syscoinChainId]);
-				}
-				if (rpcChainIds?.length > 0) {
-					rpcChainIds.forEach(chain => {
-						if (allCollectibleContracts[chain.chainId]) {
-							allContracts.push(...allCollectibleContracts[chain.chainId]);
+
+				for (const type in Engine.networks) {
+					const chainType = Number(type);
+					if (chainType === ChainType.RPCBase) {
+						if (rpcChainIds?.length > 0) {
+							rpcChainIds.forEach(chain => {
+								if (allCollectibleContracts[chain.chainId]) {
+									allContracts.push(...allCollectibleContracts[chain.chainId]);
+								}
+							});
 						}
-					});
+					} else {
+						const chainId = getChainIdByType(chainType);
+						if (
+							!(await PreferencesController.isDisabledChain(selectedAddress, chainType)) &&
+							allCollectibleContracts[chainId]
+						) {
+							allContracts.push(...allCollectibleContracts[chainId]);
+						}
+					}
 				}
 			} else {
 				const currentChainId = getChainIdByType(currentChainType);
@@ -397,72 +314,28 @@ class Nft extends PureComponent {
 			}
 			if (allContracts.length > 0) {
 				const { selectedAddress, allCollectibles, currentChainType, allCollectibleContracts } = this.props;
-				const { PreferencesController, SecurityController, RpcNetworkController } = Engine.context;
+				const { PreferencesController, SecurityController } = Engine.context;
 
-				const chainId = getChainIdByType(ChainType.Ethereum);
-				const bscChainId = getChainIdByType(ChainType.Bsc);
-				const arbChainId = getChainIdByType(ChainType.Arbitrum);
-				const polygonChainId = getChainIdByType(ChainType.Polygon);
-				const hecoChainId = getChainIdByType(ChainType.Heco);
-				const opChainId = getChainIdByType(ChainType.Optimism);
-				const avaxChainId = getChainIdByType(ChainType.Avax);
-				const syscoinChainId = getChainIdByType(ChainType.Syscoin);
-				const rpcChainIds = await RpcNetworkController.getEnabledChain();
 				const collectibles = [];
 				if (currentChainType === ChainType.All) {
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Ethereum)) &&
-						allCollectibles[chainId]
-					) {
-						collectibles.push(...allCollectibles[chainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Polygon)) &&
-						allCollectibles[polygonChainId]
-					) {
-						collectibles.push(...allCollectibles[polygonChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Bsc)) &&
-						allCollectibles[bscChainId]
-					) {
-						collectibles.push(...allCollectibles[bscChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Arbitrum)) &&
-						allCollectibles[arbChainId]
-					) {
-						collectibles.push(...allCollectibles[arbChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Optimism)) &&
-						allCollectibles[opChainId]
-					) {
-						collectibles.push(...allCollectibles[opChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Heco)) &&
-						allCollectibles[hecoChainId]
-					) {
-						collectibles.push(...allCollectibles[hecoChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Avax)) &&
-						allCollectibles[avaxChainId]
-					) {
-						collectibles.push(...allCollectibles[avaxChainId]);
-					}
-					if (
-						!(await PreferencesController.isDisabledChain(selectedAddress, ChainType.Syscoin)) &&
-						allCollectibles[syscoinChainId]
-					) {
-						collectibles.push(...allCollectibles[syscoinChainId]);
-					}
-					rpcChainIds?.forEach(chain => {
-						if (allCollectibles[chain.chainId]) {
-							collectibles.push(...allCollectibles[chain.chainId]);
+					for (const type in Engine.networks) {
+						const chainType = Number(type);
+						if (chainType === ChainType.RPCBase) {
+							rpcChainIds?.forEach(chain => {
+								if (allCollectibles[chain.chainId]) {
+									collectibles.push(...allCollectibles[chain.chainId]);
+								}
+							});
+						} else {
+							const chainId = getChainIdByType(chainType);
+							if (
+								!(await PreferencesController.isDisabledChain(selectedAddress, chainType)) &&
+								allCollectibles[chainId]
+							) {
+								collectibles.push(...allCollectibles[chainId]);
+							}
 						}
-					});
+					}
 				} else {
 					const currentChainId = getChainIdByType(currentChainType);
 					if (allCollectibles[currentChainId]) {
@@ -480,24 +353,10 @@ class Nft extends PureComponent {
 					const securityNfts = SecurityController?.state?.securityNfts || [];
 					items = items.map((token, i) => {
 						let type;
-						if (token.chainId === arbChainId) {
-							type = ChainType.Arbitrum;
-						} else if (token.chainId === opChainId) {
-							type = ChainType.Optimism;
-						} else if (token.chainId === polygonChainId) {
-							type = ChainType.Polygon;
-						} else if (token.chainId === bscChainId) {
-							type = ChainType.Bsc;
-						} else if (token.chainId === hecoChainId) {
-							type = ChainType.Heco;
-						} else if (token.chainId === avaxChainId) {
-							type = ChainType.Avax;
-						} else if (token.chainId === syscoinChainId) {
-							type = ChainType.Syscoin;
-						} else if (isRpcChainId(token.chainId)) {
+						if (isRpcChainId(token.chainId)) {
 							type = getRpcChainTypeByChainId(token.chainId);
 						} else {
-							type = ChainType.Ethereum;
+							type = getChainTypeByChainId(token.chainId);
 						}
 						const contract = allCollectibleContracts?.[token.chainId]?.find(
 							contract => contract.address === token.address
@@ -550,13 +409,6 @@ class Nft extends PureComponent {
 	renderItem = (item, baseIndex) => {
 		const { selectedAddress, gridArray, updateGridArray } = this.props;
 
-		const chainId = getChainIdByType(ChainType.Ethereum);
-		const arbChainId = getChainIdByType(ChainType.Arbitrum);
-		const polygonChainId = getChainIdByType(ChainType.Polygon);
-		const hecoChainId = getChainIdByType(ChainType.Heco);
-		const opChainId = getChainIdByType(ChainType.Optimism);
-		const avaxChainId = getChainIdByType(ChainType.Avax);
-		const syscoinChainId = getChainIdByType(ChainType.Syscoin);
 		const collectibles = this.state.dataCollectibles;
 
 		const isFavorite = item.favoriteAddr === favoriteAddr;
@@ -617,25 +469,7 @@ class Nft extends PureComponent {
 						{!isFavorite && (
 							<Image
 								style={styles.tagView}
-								source={
-									item.chainId === chainId
-										? require('../../../images/ic_eth_tag.png')
-										: item.chainId === polygonChainId
-										? require('../../../images/ic_polygon_tag.png')
-										: item.chainId === arbChainId
-										? require('../../../images/ic_arb_tag.png')
-										: item.chainId === hecoChainId
-										? require('../../../images/ic_heco_tag.png')
-										: item.chainId === opChainId
-										? require('../../../images/ic_op_tag.png')
-										: item.chainId === avaxChainId
-										? require('../../../images/ic_avax_tag.png')
-										: item.chainId === syscoinChainId
-										? require('../../../images/ic_syscoin_tag.png')
-										: isRpcChainId(item.chainId)
-										? getIcTagResource(getRpcChainTypeByChainId(item.chainId))
-										: require('../../../images/ic_bsc_tag.png')
-								}
+								source={getIcTagByChainType(getChainTypeByChainId(item.chainId))}
 							/>
 						)}
 

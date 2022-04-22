@@ -6,14 +6,20 @@ export interface BalanceMap {
   [tokenAddress: string]: BN;
 }
 
-export class AssetsContractController extends ContractController<BaseConfig, BaseState> {
+export interface ContractConfig extends BaseConfig {
+  name?: string
+}
+
+export class AssetsContractController extends ContractController<ContractConfig, BaseState> {
 
   name = 'AssetsContractController';
 
-  constructor(config?: Partial<BaseConfig>, state?: Partial<BaseState>) {
+  constructor(config?: Partial<ContractConfig>, state?: Partial<BaseState>) {
     super(config, state);
-    this.defaultConfig = {
-    };
+    this.defaultState = {};
+    if (this.config.name) {
+      this.name = this.config.name;
+    }
     this.initialize();
   }
 }

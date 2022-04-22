@@ -4,9 +4,10 @@ import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity,
 import {
 	getAssetLogo,
 	getChainIdByType,
+	getChainTypeByChainId,
 	getClaimContracts,
 	getClaimValues,
-	getCurrency,
+	getTickerByType,
 	hexToBN,
 	renderAmount,
 	renderFromTokenMinimalUnit,
@@ -21,7 +22,6 @@ import { store } from '../../../store';
 import { showAlert } from '../../../actions/alert';
 import TransactionItem from '../TransactionItem';
 import { connect } from 'react-redux';
-import { getChainTypeByChainId } from '../../../util/networks';
 import { colors } from '../../../styles/common';
 import { APPROVE_FUNCTION_SIGNATURE, getSymbol } from '../../../util/transactions';
 import { toDateFormatMonthDayYear } from '../../../util/date';
@@ -724,7 +724,7 @@ class Transactions extends PureComponent {
 			: null;
 
 		const symbol = isNativeCurrency
-			? getCurrency(type)
+			? getTickerByType(type)
 			: tx.transferInformation?.symbol || (await getSymbol(toAddress, type));
 
 		const isApproval = tx.transaction?.data?.startsWith(APPROVE_FUNCTION_SIGNATURE);

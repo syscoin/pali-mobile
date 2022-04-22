@@ -5,7 +5,7 @@ import TransactionReview from '../TransactionReview';
 import {
 	isBN,
 	renderFromWei,
-	getTypeByChainId,
+	getChainTypeByChainId,
 	getNativeCurrencyBalance,
 	getTokenBalance,
 	hexToBN
@@ -89,15 +89,7 @@ class TransactionEditor extends PureComponent {
 		 * Transaction object associated with this transaction
 		 */
 		transaction: PropTypes.object,
-		contractBalances: PropTypes.object,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
+		allContractBalances: PropTypes.object,
 		/**
 		 * String containing the selected address
 		 */
@@ -201,26 +193,6 @@ class TransactionEditor extends PureComponent {
 		return nativeCurrency ? this.validateEtherAmount(allowEmpty) : await this.validateTokenAmount(allowEmpty);
 	};
 
-	validateCollectibleOwnership = async () => {
-		const { AssetsContractController } = Engine.context;
-		const {
-			transaction: {
-				selectedAsset: { address, tokenId }
-			}
-		} = this.props;
-		const { selectedAddress } = this.props;
-		try {
-			const owner = await AssetsContractController.getOwnerOf(address, tokenId);
-			const isOwner = owner.toLowerCase() === selectedAddress.toLowerCase();
-			if (!isOwner) {
-				return strings('transaction.invalid_collectible_ownership');
-			}
-			return undefined;
-		} catch (e) {
-			return false;
-		}
-	};
-
 	/**
 	 * Validates Ether transaction amount
 	 *
@@ -232,27 +204,11 @@ class TransactionEditor extends PureComponent {
 		if (!allowEmpty) {
 			const {
 				transaction: { value, gas, gasPrice, from, chainId },
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			} = this.props;
-			const type = getTypeByChainId(chainId);
+			const type = getChainTypeByChainId(chainId);
 			const balanceBN = getNativeCurrencyBalance(type, {
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			});
 			const total = value.add(gas.mul(gasPrice));
 
@@ -282,28 +238,12 @@ class TransactionEditor extends PureComponent {
 		if (!allowEmpty) {
 			const {
 				transaction: { value, gas, gasPrice, from, selectedAsset, chainId },
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			} = this.props;
 			const checksummedFrom = safeToChecksumAddress(from) || '';
-			const type = getTypeByChainId(chainId);
+			const type = getChainTypeByChainId(chainId);
 			const balanceBN = getNativeCurrencyBalance(type, {
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			});
 			if (!value || !gas || !gasPrice || !from) {
 				return strings('transaction.invalid_amount');
@@ -316,21 +256,15 @@ class TransactionEditor extends PureComponent {
 					address: selectedAsset.address
 				},
 				{
-					contractBalances,
-					arbContractBalances,
-					opContractBalances,
-					bscContractBalances,
-					polygonContractBalances,
-					hecoContractBalances,
-					avaxContractBalances,
-					syscoinContractBalances,
-					rpcContractBalances
+					allContractBalances
 				}
 			);
 			if (!contractBalanceForAddress) {
 				contractBalanceForAddress = await this.getBalanceOf(type, selectedAsset.address, checksummedFrom);
 			}
-			if (value && !isBN(value)) return strings('transaction.invalid_amount');
+			if (value && !isBN(value)) {
+				return strings('transaction.invalid_amount');
+			}
 			const validateAssetAmount = contractBalanceForAddress && contractBalanceForAddress.lt(value);
 			const ethTotalAmount = gas.mul(gasPrice);
 			if (
@@ -339,8 +273,9 @@ class TransactionEditor extends PureComponent {
 				isBN(gas) &&
 				isBN(gasPrice) &&
 				(validateAssetAmount || balanceBN.lt(ethTotalAmount))
-			)
+			) {
 				return strings('transaction.insufficient');
+			}
 		}
 		return error;
 	};
@@ -348,33 +283,15 @@ class TransactionEditor extends PureComponent {
 	getBalanceOf = async (type, address, selectedAddress) => {
 		try {
 			let balanceOf;
-			if (type === ChainType.Arbitrum) {
-				const { ArbContractController } = Engine.context;
-				balanceOf = await ArbContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Polygon) {
-				const { PolygonContractController } = Engine.context;
-				balanceOf = await PolygonContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Bsc) {
-				const { BscContractController } = Engine.context;
-				balanceOf = await BscContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Heco) {
-				const { HecoContractController } = Engine.context;
-				balanceOf = await HecoContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Optimism) {
-				const { OpContractController } = Engine.context;
-				balanceOf = await OpContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Avax) {
-				const { AvaxContractController } = Engine.context;
-				balanceOf = await AvaxContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (type === ChainType.Syscoin) {
-				const { SyscoinContractController } = Engine.context;
-				balanceOf = await SyscoinContractController.getBalanceOfHex(address, selectedAddress);
-			} else if (util.isRpcChainType(type)) {
-				const { RpcContractController } = Engine.context;
-				balanceOf = await RpcContractController.callContract(type, 'getBalanceOfHex', address, selectedAddress);
+			if (util.isRpcChainType(type)) {
+				balanceOf = await Engine.contracts[ChainType.RPCBase].callContract(
+					type,
+					'getBalanceOfHex',
+					address,
+					selectedAddress
+				);
 			} else {
-				const { AssetsContractController } = Engine.context;
-				balanceOf = await AssetsContractController.getBalanceOfHex(address, selectedAddress);
+				balanceOf = await Engine.contracts[type]?.getBalanceOfHex(address, selectedAddress);
 			}
 			if (balanceOf) {
 				return hexToBN(balanceOf);
@@ -394,35 +311,30 @@ class TransactionEditor extends PureComponent {
 		let error;
 		const {
 			transaction: { gas, gasPrice, chainId },
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		} = this.props;
-		if (!gas) return strings('transaction.invalid_gas');
-		if (gas && !isBN(gas)) return strings('transaction.invalid_gas');
-		if (!gasPrice) return strings('transaction.invalid_gas_price');
-		if (gasPrice && !isBN(gasPrice)) return strings('transaction.invalid_gas_price');
-		if (gas.lt(new BN(21000)) || gas.gt(new BN(7920028))) return strings('custom_gas.warning_gas_limit');
+		if (!gas) {
+			return strings('transaction.invalid_gas');
+		}
+		if (gas && !isBN(gas)) {
+			return strings('transaction.invalid_gas');
+		}
+		if (!gasPrice) {
+			return strings('transaction.invalid_gas_price');
+		}
+		if (gasPrice && !isBN(gasPrice)) {
+			return strings('transaction.invalid_gas_price');
+		}
+		if (gas.lt(new BN(21000)) || gas.gt(new BN(7920028))) {
+			return strings('custom_gas.warning_gas_limit');
+		}
 
-		const balanceBN = getNativeCurrencyBalance(getTypeByChainId(chainId), {
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+		const balanceBN = getNativeCurrencyBalance(getChainTypeByChainId(chainId), {
+			allContractBalances
 		});
-		if (balanceBN && isBN(gas) && isBN(gasPrice) && balanceBN.lt(gas.mul(gasPrice)))
+		if (balanceBN && isBN(gas) && isBN(gasPrice) && balanceBN.lt(gas.mul(gasPrice))) {
 			return strings('transaction.insufficient');
+		}
 		return error;
 	};
 
@@ -438,7 +350,9 @@ class TransactionEditor extends PureComponent {
 			promptedFromApproval
 		} = this.props;
 		// If it comes from a dapp it could be a contract deployment
-		if (promptedFromApproval && !to) return error;
+		if (promptedFromApproval && !to) {
+			return error;
+		}
 		!to && (error = strings('transaction.required'));
 		to && !isValidAddress(to) && (error = strings('transaction.invalid_address'));
 		to && to.length !== 42 && (error = strings('transaction.invalid_address'));
@@ -496,40 +410,8 @@ class TransactionEditor extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,

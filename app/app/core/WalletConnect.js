@@ -1,14 +1,13 @@
 import RNWalletConnect from '@walletconnect/client';
 import { parseWalletConnectUri } from '@walletconnect/utils';
 import Engine from './Engine';
-// eslint-disable-next-line import/no-nodejs-modules
 import { EventEmitter } from 'events';
 import AsyncStorage from '@react-native-community/async-storage';
 import { CLIENT_OPTIONS, WALLET_CONNECT_ORIGIN } from '../util/walletconnect';
 import { WALLETCONNECT_SESSIONS } from '../constants/storage';
 import { ChainType, util } from 'gopocket-core';
-import { getChainTypeByChainId, isPrefixedFormattedHexString } from '../util/networks';
-import { getChainIdByType, getTypeByChainId } from '../util/number';
+import { isPrefixedFormattedHexString } from '../util/networks';
+import { getChainIdByType, getChainTypeByChainId } from '../util/number';
 import { ethErrors } from 'eth-json-rpc-errors';
 
 const hub = new EventEmitter();
@@ -292,7 +291,7 @@ class WalletConnect {
 						}
 
 						const chainIdDecimal = parseInt(_chainId, 16).toString(10);
-						const type = getTypeByChainId(chainIdDecimal);
+						const type = getChainTypeByChainId(chainIdDecimal);
 						if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
 							connectors.length > 0 && hub.emit('walletconnectSwitchChainFail', '');
 						} else {

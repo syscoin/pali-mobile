@@ -3,14 +3,9 @@ import { View, TouchableOpacity, StyleSheet, Animated, ScrollView } from 'react-
 import PropTypes from 'prop-types';
 import { colors, fontStyles } from '../../../../styles/common';
 import { Easing } from 'react-native-reanimated';
+import { chainToChainType, getTabIcon } from '../../../../util/ChainTypeImages';
 
 import tabFavourites from '../../../../images/ic_tab_favourites.png';
-import tabEth from '../../../../images/ic_tab_eth.png';
-import tabBsc from '../../../../images/ic_tab_bsc.png';
-import tabPolygon from '../../../../images/ic_tab_polygon.png';
-import tabAvax from '../../../../images/ic_tab_avax.png';
-import tabSyscoin from '../../../../images/ic_tab_syscoin.png';
-import tabArb from '../../../../images/ic_tab_arb.png';
 
 const bgColor = '#FE6E9129';
 
@@ -117,20 +112,8 @@ class NetworkTabBar extends PureComponent {
 	getIcon(chain) {
 		if (chain === -1) {
 			return tabFavourites;
-		} else if (chain === 1) {
-			return tabEth;
-		} else if (chain === 2) {
-			return tabBsc;
-		} else if (chain === 3) {
-			return tabPolygon;
-		} else if (chain === 4) {
-			return tabArb;
-		} else if (chain === 8) {
-			return tabAvax;
-		} else if (chain === 9) {
-			return tabSyscoin;
 		}
-		return tabEth;
+		return getTabIcon(chainToChainType(chain));
 	}
 
 	onPressHandler(page) {

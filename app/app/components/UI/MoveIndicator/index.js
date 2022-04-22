@@ -9,6 +9,8 @@ import iconPolygon from '../../../images/ic_polygon.png';
 import iconEther from '../../../images/ic_ethereum.png';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
+import { ChainType } from 'gopocket-core';
+import { getChainTypeName } from '../../../util/ChainTypeImages';
 
 const logoBorderColor = '#DCDCDC';
 const logoBgColor = '#ECEFF0';
@@ -71,7 +73,7 @@ class MoveIndicator extends PureComponent {
 			state: {
 				provider: { chainId: polygonChainId }
 			}
-		} = Engine.context.PolygonNetworkController;
+		} = Engine.networks[ChainType.Polygon];
 		if (chainId === polygonChainId) {
 			return iconPolygon;
 		}
@@ -83,11 +85,11 @@ class MoveIndicator extends PureComponent {
 			state: {
 				provider: { chainId: polygonChainId }
 			}
-		} = Engine.context.PolygonNetworkController;
+		} = Engine.networks[ChainType.Polygon];
 		if (chainId === polygonChainId) {
-			return strings('other.polygon');
+			return getChainTypeName(ChainType.Polygon);
 		}
-		return strings('other.arbitrum');
+		return getChainTypeName(ChainType.Arbitrum);
 	}
 
 	render = () => {

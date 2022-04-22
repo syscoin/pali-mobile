@@ -160,7 +160,7 @@ class SetEnsAvatar extends Component {
 			const { selectedAddress } = Engine.context.PreferencesController.state;
 			const node = await Engine.context.EnsController.getNodeByName(this.props.name);
 			const data = generateEnsSetAvatarData(node, this.props.avatarText);
-			const chainId = await Engine.context.NetworkController.getMainChainId();
+			const chainId = await Engine.networks[ChainType.Ethereum].getMainChainId();
 			const to = toChecksumAddress('0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41');
 			const transaction = {
 				data,

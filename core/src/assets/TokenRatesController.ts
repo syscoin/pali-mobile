@@ -11,16 +11,8 @@ import {
   safelyExecute,
   safelyExecuteWithTimeout,
 } from '../util';
-import NetworkController from '../network/NetworkController';
-import BaseChainConfig from '../BaseChainConfig.json';
-import BscNetworkController from '../network/BscNetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
-import AssetsController, { TokenChangedType } from './AssetsController';
+import {BaseChainConfig, NetworkConfig} from '../Config';
+import AssetsController, {TokenNoChange} from './AssetsController';
 import TokenBalancesController from './TokenBalancesController';
 
 interface OHLCItem {
@@ -155,20 +147,8 @@ export interface CoinInfo {
  * @property contractExchangeRates - Hash of token contract addresses to exchange rates
  */
 export interface TokenRatesState extends BaseState {
-  contractExchangeRates: { [address: string]: TokenPrice };
-  arbContractExchangeRates: { [address: string]: TokenPrice };
-  bscContractExchangeRates: { [address: string]: TokenPrice };
-  polygonContractExchangeRates: { [address: string]: TokenPrice };
-  hecoContractExchangeRates: { [address: string]: TokenPrice };
-  opContractExchangeRates: { [address: string]: TokenPrice };
-  avaxContractExchangeRates: { [address: string]: TokenPrice };
-  syscoinContractExchangeRates: { [address: string]: TokenPrice };
-  ethPrice: TokenPrice;
-  bnbPrice: TokenPrice;
-  polygonPrice: TokenPrice;
-  hecoPrice: TokenPrice;
-  avaxPrice: TokenPrice;
-  syscoinPrice: TokenPrice;
+  allContractExchangeRates: { [chainType: number]: { [address: string]: TokenPrice } };
+  allCurrencyPrice: { [chainType: number]: TokenPrice };
   bitcoinPrice: TokenPrice;
   usdRates: { [code: string]: number};
   currencyCodeRate: number;
@@ -196,12 +176,22 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
 
   private update_Rates_counter = 0;
 
+  private supportExtendRates = [ChainType.Ethereum, ChainType.Bsc, ChainType.Polygon];
+
   private getPricingURL(query: string, path: string) {
     return `https://api.coingecko.com/api/v3/simple/token_price/${path}?${query}`;
   }
-
-  private getBasicPricingURL() {
-    return 'https://api.coingecko.com/api/v3/simple/price?ids=wbnb%2Cethereum%2Cmatic-network%2Chuobi-token%2Cavalanche-2%2Cbitcoin%2Csyscoin&vs_currencies=usd&include_24hr_change=true';
+  //bitcoin
+  private getBasicPricingURL(ids: string[]) {
+    let strIds;
+    for (const id of ids) {
+      if (!strIds) {
+        strIds = id;
+      } else {
+        strIds = `${strIds}%2C${id}`;
+      }
+    }
+    return `https://api.coingecko.com/api/v3/simple/price?ids=${strIds}&vs_currencies=usd&include_24hr_change=true`;
   }
 
   private getUsdRateURL() {
@@ -231,45 +221,20 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       interval: 180000,
       basic_price_timestamp: 0,
     };
+    const allCurrencyPrice: { [type: number]: TokenPrice } = {};
+    const allContractExchangeRates: { [chainType: number]: { [address: string]: TokenPrice } } = {};
+    for (const type in NetworkConfig) {
+      const chainType = Number(type);
+      allCurrencyPrice[chainType] = {
+        usd: 0,
+        usd_24h_change: 0,
+        timestamp: 0,
+      }
+      allContractExchangeRates[chainType] = {};
+    }
     this.defaultState = {
-      contractExchangeRates: {},
-      arbContractExchangeRates: {},
-      bscContractExchangeRates: {},
-      polygonContractExchangeRates: {},
-      hecoContractExchangeRates: {},
-      opContractExchangeRates: {},
-      avaxContractExchangeRates: {},
-      syscoinContractExchangeRates: {},
-      ethPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
-      bnbPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
-      polygonPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
-      hecoPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
-      avaxPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
-      syscoinPrice: {
-        usd: 0,
-        usd_24h_change: 0,
-        timestamp: 0,
-      },
+      allContractExchangeRates,
+      allCurrencyPrice,
       bitcoinPrice: {
         usd: 0,
         usd_24h_change: 0,
@@ -319,33 +284,26 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     const intervals: number[] = [];
     await safelyExecute(() => this.updateBasicExchangeRates());
     intervals.push(Date.now() - start);
-    const { addresses: price0Addresses, success } = await safelyExecute(() => this.updateExchangeRates());
-    intervals.push(Date.now() - start);
-    const { success: arbSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Arbitrum));
-    intervals.push(Date.now() - start);
-    const { addresses: bscPrice0Addresses, success: bscSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Bsc));
-    intervals.push(Date.now() - start);
-    const { addresses: polygonPrice0Addresses, success: polygonSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Polygon));
-    intervals.push(Date.now() - start);
-    const { addresses: hecoPrice0Addresses, success: hecoSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Heco));
-    hecoSuccess && this.fixExtendExchangeRates(hecoPrice0Addresses, ChainType.Heco);
-    intervals.push(Date.now() - start);
-    const { addresses: opPrice0Addresses, success: opSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Optimism));
-    opSuccess && this.fixExtendExchangeRates(opPrice0Addresses, ChainType.Optimism);
-    intervals.push(Date.now() - start);
-    const { addresses: avaxPrice0Addresses, success: avaxSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Avax));
-    avaxSuccess && this.fixExtendExchangeRates(avaxPrice0Addresses, ChainType.Avax);
-    intervals.push(Date.now() - start);
-    const { addresses: syscoinPrice0Addresses, success: syscoinSuccess } = await safelyExecute(() => this.updateExchangeRates(ChainType.Syscoin));
-    syscoinSuccess && this.fixExtendExchangeRates(syscoinPrice0Addresses, ChainType.Syscoin);
-    intervals.push(Date.now() - start);
-    price0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(price0Addresses));
-    intervals.push(Date.now() - start);
-    polygonPrice0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(polygonPrice0Addresses, ChainType.Polygon));
-    intervals.push(Date.now() - start);
-    bscPrice0Addresses?.length && await safelyExecute(() => this.extendExchangeRates(bscPrice0Addresses, ChainType.Bsc));
-    intervals.push(Date.now() - start);
-    logDebug(`leon.w@${this.name} refresh: intervals=${intervals}, ${success},${arbSuccess},${bscSuccess},${polygonSuccess},${hecoSuccess},${opSuccess},${avaxSuccess},${syscoinSuccess}`);
+
+    let strLog = '';
+    for (const type in NetworkConfig) {
+      const chainType = Number(type);
+      if (NetworkConfig[chainType].Disabled) {
+        continue;
+      }
+      const { addresses, success } = await safelyExecute(() => this.updateExchangeRates(chainType));
+      intervals.push(Date.now() - start);
+      if (this.supportExtendRates.includes(chainType)) {
+        addresses?.length && await safelyExecute(() => this.extendExchangeRates(addresses, chainType));
+      } else {
+        addresses?.length && this.fixExtendExchangeRates(addresses, chainType);
+      }
+      intervals.push(Date.now() - start);
+
+      strLog += `,${type} ${success}`;
+    }
+
+    logDebug(`leon.w@${this.name} refresh: intervals=${intervals} ${strLog}`);
     releaseLock();
   }
 
@@ -422,7 +380,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     /**
      * usd: 0, usd_24h_change: 0
      */
-    const { usd } = this.state.ethPrice;
+    const { usd } = this.state.allCurrencyPrice[ChainType.Ethereum];
     if (usd === 0) {
       return {};
     }
@@ -442,7 +400,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
 
   calculate24hRate(prices: CoinGeckoResponse, grapRep24h: TokenInfoResponse) {
     const tokenInfos = grapRep24h?.data?.tokens || [];
-    const { usd, usd_24h_change } = this.state.ethPrice;
+    const { usd, usd_24h_change } = this.state.allCurrencyPrice[ChainType.Ethereum];
     for (const info of tokenInfos) {
       if (prices[info.id]) {
         let rate_24h = 0;
@@ -566,14 +524,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
   }
 
   async fetchOtherCoinInfo(id: string, type: ChainType) {
-    let graphUrl;
-    if (type === ChainType.Ethereum) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswapv2';
-    } else if (type === ChainType.Bsc) {
-      graphUrl = 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2';
-    } else if (type === ChainType.Polygon) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sameepsi/quickswap06';
-    }
+    const graphUrl = NetworkConfig[type]?.OtherCoinInfoUrl;
     if (!graphUrl) {
       return null;
     }
@@ -596,18 +547,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
   }
 
   async fetchSushiLiquidity(id: string, type: ChainType) {
-    let graphUrl;
-    if (type === ChainType.Ethereum) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sushiswap/exchange';
-    } else if (type === ChainType.Arbitrum) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange';
-    } else if (type === ChainType.Bsc) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange';
-    } else if (type === ChainType.Polygon) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange';
-    } else if (type === ChainType.Avax) {
-      graphUrl = 'https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange';
-    }
+    const graphUrl = NetworkConfig[type]?.SushiswapGraphUrl;
     if (!graphUrl) {
       return null;
     }
@@ -718,7 +658,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     setTimeout(() => this.pollUsdRates(), 10000);
     const assets = this.context.AssetsController as AssetsController;
     assets.subscribe(({ tokenChangedType }) => {
-      if (tokenChangedType !== TokenChangedType.NoChange) {
+      if (tokenChangedType !== TokenNoChange) {
         setTimeout(() => this.poll(), 100);
       }
     }, ['allTokens', 'tokenChangedType']);
@@ -730,43 +670,15 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
    * @returns Promise resolving when this operation completes
    */
   async updateExchangeRates(chainType = ChainType.Ethereum): Promise<{ addresses: string[]; success: boolean }> {
-    const networkController = this.context.NetworkController as NetworkController;
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
-    const bscNetworkController = this.context.BscNetworkController as BscNetworkController;
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const hecoNetworkController = this.context.HecoNetworkController as HecoNetworkController;
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-
     const assetsController = this.context.AssetsController as AssetsController;
 
     const baseConfig: { [index: string]: any } = BaseChainConfig;
-    let mainChainId = networkController.getMainChainId();
-    let currentRates = this.state.contractExchangeRates;
-    if (chainType === ChainType.Arbitrum) {
-      mainChainId = arbNetworkController.getMainChainId();
-      currentRates = this.state.arbContractExchangeRates;
-    } else if (chainType === ChainType.Bsc) {
-      mainChainId = bscNetworkController.getMainChainId();
-      currentRates = this.state.bscContractExchangeRates;
-    } else if (chainType === ChainType.Polygon) {
-      mainChainId = polygonNetworkController.getMainChainId();
-      currentRates = this.state.polygonContractExchangeRates;
-    } else if (chainType === ChainType.Heco) {
-      mainChainId = hecoNetworkController.getMainChainId();
-      currentRates = this.state.hecoContractExchangeRates;
-    } else if (chainType === ChainType.Optimism) {
-      mainChainId = opNetwork.getMainChainId();
-      currentRates = this.state.opContractExchangeRates;
-    } else if (chainType === ChainType.Avax) {
-      mainChainId = avaxNetwork.getMainChainId();
-      currentRates = this.state.avaxContractExchangeRates;
-    } else if (chainType === ChainType.Syscoin) {
-      mainChainId = syscoinNetwork.getMainChainId();
-      currentRates = this.state.syscoinContractExchangeRates;
-    }
+    const mainChainId = this.networks[chainType].getMainChainId();
+    const currentRates = this.state.allContractExchangeRates[chainType] || {};
     const coingecko_path = baseConfig[mainChainId]?.coingecko_path;
+    if (!coingecko_path) {
+      return { addresses: [], success: true };
+    }
 
     const { allTokens } = assetsController.state;
     const addresses: string[] = [];
@@ -784,7 +696,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
         addresses.push(item.address);
       }
       if (chainType === ChainType.Ethereum) {
-        const arbMainChainId = arbNetworkController.getMainChainId();
+        const arbMainChainId = this.networks[ChainType.Arbitrum].getMainChainId();
         const arbTokens = allTokens[addressKey]?.[arbMainChainId] || [];
         for (const item of arbTokens) {
           if (!item.l1Address) {
@@ -830,23 +742,9 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       }
     }
 
-    if (chainType === ChainType.Ethereum) {
-      this.update({ contractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Arbitrum) {
-      this.update({ arbContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Bsc) {
-      this.update({ bscContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Polygon) {
-      this.update({ polygonContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Heco) {
-      this.update({ hecoContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Optimism) {
-      this.update({ opContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Avax) {
-      this.update({ avaxContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    } else if (chainType === ChainType.Syscoin) {
-      this.update({ syscoinContractExchangeRates: { ...currentRates, ...newContractExchangeRates } });
-    }
+    const allContractExchangeRates = { ...this.state.allContractExchangeRates };
+    allContractExchangeRates[chainType] = { ...currentRates, ...newContractExchangeRates };
+    this.update({ allContractExchangeRates });
     return { addresses: price0Addresses, success };
   }
 
@@ -899,17 +797,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       }
       extendPrices = { ...extendPrices, ...zero_prices, ...prices };
     }
-    let newContractExchangeRates;
-    if (chainType === ChainType.Ethereum) {
-      newContractExchangeRates = { ...this.state.contractExchangeRates };
-    } else if (chainType === ChainType.Bsc) {
-      newContractExchangeRates = { ...this.state.bscContractExchangeRates };
-    } else if (chainType === ChainType.Polygon) {
-      newContractExchangeRates = { ...this.state.polygonContractExchangeRates };
-    }
-    if (!newContractExchangeRates) {
-      return;
-    }
+    const newContractExchangeRates = { ...this.state.allContractExchangeRates[chainType] };
 
     const items = Object.keys(extendPrices);
     let needUpdate = false;
@@ -924,13 +812,8 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
     if (!needUpdate) {
       return;
     }
-    if (chainType === ChainType.Ethereum) {
-      this.update({ contractExchangeRates: newContractExchangeRates });
-    } else if (chainType === ChainType.Bsc) {
-      this.update({ bscContractExchangeRates: newContractExchangeRates });
-    } else if (chainType === ChainType.Polygon) {
-      this.update({ polygonContractExchangeRates: newContractExchangeRates });
-    }
+    this.state.allContractExchangeRates[chainType] = newContractExchangeRates;
+    this.update({ allContractExchangeRates: { ...this.state.allContractExchangeRates } });
   }
 
   fixExtendExchangeRates(price0Addresses: string[], chainType: ChainType) {
@@ -942,40 +825,52 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       return ids;
     }, {});
 
-    if (chainType === ChainType.Ethereum) {
-      this.update({ contractExchangeRates: { ...this.state.contractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Arbitrum) {
-      this.update({ arbContractExchangeRates: { ...this.state.arbContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Bsc) {
-      this.update({ bscContractExchangeRates: { ...this.state.bscContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Polygon) {
-      this.update({ polygonContractExchangeRates: { ...this.state.polygonContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Heco) {
-      this.update({ hecoContractExchangeRates: { ...this.state.hecoContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Optimism) {
-      this.update({ opContractExchangeRates: { ...this.state.opContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Avax) {
-      this.update({ avaxContractExchangeRates: { ...this.state.avaxContractExchangeRates, ...zero_prices } });
-    } else if (chainType === ChainType.Syscoin) {
-      this.update({ syscoinContractExchangeRates: { ...this.state.syscoinContractExchangeRates, ...zero_prices } });
-    }
+    this.state.allContractExchangeRates[chainType] = { ...this.state.allContractExchangeRates[chainType], ...zero_prices } ;
+    this.update({ allContractExchangeRates: { ...this.state.allContractExchangeRates } });
   }
 
   async updateBasicExchangeRates() {
     if (Date.now() - this.config.basic_price_timestamp < this.config.interval) {
       return;
     }
-    const { url, options } = await getAvailableUrl(this.getBasicPricingURL());
+    const ids: string[] = [];
+    const typeIds: { [chainType: number]: string } = {};
+    for (const type in NetworkConfig) {
+      const chainType = Number(type);
+      if (NetworkConfig[chainType].Disabled) {
+        continue;
+      }
+      const coingeckoId = NetworkConfig[chainType].CoingeckoId;
+      if (coingeckoId) {
+        if (!ids.includes(coingeckoId)) {
+          ids.push(coingeckoId);
+        }
+        typeIds[chainType] = coingeckoId;
+      }
+    }
+    ids.push('bitcoin');
+    const { url, options } = await getAvailableUrl(this.getBasicPricingURL(ids));
     const prices = await safelyExecuteWithTimeout(async () => await handleFetch(url, options), true, 10000);
     if (!prices) {
       return;
     }
-    if (prices.ethereum && prices.wbnb && prices['matic-network'] && prices['huobi-token'] && prices['avalanche-2'] && prices['syscoin'] && prices.bitcoin) {
+    let loadAll = true;
+    for (const id of ids) {
+      if (!prices[id]) {
+        loadAll = false;
+        break;
+      }
+    }
+    if (loadAll) {
       this.configure({ basic_price_timestamp: Date.now() }, false, false);
     }
-    this.update({ ethPrice: prices.ethereum, bnbPrice: prices.wbnb, polygonPrice: prices['matic-network'], hecoPrice: prices['huobi-token'], avaxPrice: prices['avalanche-2'], syscoinPrice: prices['syscoin'], bitcoinPrice: prices.bitcoin });
+    const allCurrencyPrice = { ...this.state.allCurrencyPrice };
+    for (const type in typeIds) {
+      const chainType = Number(type);
+      allCurrencyPrice[chainType] = prices[typeIds[chainType]];
+    }
     const bitcoinPrices = 1 / prices.bitcoin.usd;
-    this.update({ usdRates: { ...this.state.usdRates, 'XBT': bitcoinPrices } });
+    this.update({ usdRates: { ...this.state.usdRates, 'XBT': bitcoinPrices }, bitcoinPrice: prices.bitcoin, allCurrencyPrice });
     if (this.state.currencyCode === 'XBT') {
       this.update({ currencyCodeRate: bitcoinPrices });
     }

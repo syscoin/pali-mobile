@@ -5,7 +5,7 @@ import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { getNormalizedTxState, getTicker } from '../../../util/transactions';
-import { getTypeByChainId, renderAmount, renderFromWei } from '../../../util/number';
+import { getChainTypeByChainId, renderAmount, renderFromWei } from '../../../util/number';
 import { renderShortAddress } from '../../../util/address';
 import TransactionHeader from '../TransactionHeader';
 import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
@@ -120,7 +120,7 @@ class TransactionReview extends PureComponent {
 		if (transaction.selectedAsset?.balance) {
 			amount = transaction.selectedAsset.balance;
 		}
-		const type = getTypeByChainId(transaction.chainId);
+		const type = getChainTypeByChainId(transaction.chainId);
 
 		return (
 			<View style={styles.root} testID={'approve-screen'}>

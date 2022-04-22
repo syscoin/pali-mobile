@@ -8,23 +8,27 @@ import {
 	BignumberJs as BigNumber,
 	BN,
 	EthersUtils,
-	EthjsUnit as convert
+	EthjsUnit as convert,
+	NetworkConfig
 } from 'gopocket-core';
 import numberToBN from 'number-to-bn';
 import { safeToChecksumAddress } from './address';
 import Engine from '../core/Engine';
 import { CURRENCIES } from './currencies';
 import { strings } from '../../locales/i18n';
-import { RPC } from '../constants/network';
+import { RPC } from './networks';
 import {
 	callSqlite,
 	EngineContext,
+	EngineContracts,
+	EngineNetworks,
 	getRpcChainTypeByChainId,
 	getRpcNickname,
 	getRpcProviderChainId,
 	getRpcProviderTicker,
 	isRpcChainId
 } from './ControllerUtils';
+import { getChainTypeName } from './ChainTypeImages';
 
 /**
  * Converts a BN object to a hex string with a '0x' prefix
@@ -463,7 +467,9 @@ export function weiToFiatNumberStr(wei, conversionRate, decimalsToShow = 5) {
 export function handleWeiNumber(wei) {
 	const comps = wei.split('.');
 	let fraction = comps[1];
-	if (fraction && fraction.length > 18) fraction = fraction.substring(0, 18);
+	if (fraction && fraction.length > 18) {
+		fraction = fraction.substring(0, 18);
+	}
 	const finalWei = fraction ? [comps[0], fraction].join('.') : comps[0];
 	return finalWei;
 }
@@ -618,7 +624,9 @@ export function renderFiat(value, currencyCode, decimalsToShow = 5) {
  * @returns {string} - Corresponding wei value
  */
 export function renderWei(value) {
-	if (!value) return '0';
+	if (!value) {
+		return '0';
+	}
 	const wei = fromWei(value);
 	const renderWei = wei * Math.pow(10, 18);
 	return renderWei.toString();
@@ -692,7 +700,9 @@ export function fiatNumber(number: number, currencyCode) {
 	}
 	const numberStr = number.toString();
 	const index = numberStr.indexOf('.');
-	if (index === 0) return number;
+	if (index === 0) {
+		return number;
+	}
 	const valueBigNumber = new BigNumber(numberStr);
 	if (valueBigNumber.lt(1)) {
 		if (valueBigNumber.lt(0.001) && valueBigNumber.gt(0)) {
@@ -730,154 +740,18 @@ export function calcDefiTokenPrices(token, opt) {
 }
 
 export function calcAssetPrices(asset, opt) {
-	const {
-		contractBalances,
-		contractExchangeRates,
-		arbContractExchangeRates,
-		bscContractExchangeRates,
-		polygonContractExchangeRates,
-		hecoContractExchangeRates,
-		opContractExchangeRates,
-		avaxContractExchangeRates,
-		syscoinContractExchangeRates,
-		arbContractBalances,
-		opContractBalances,
-		bscContractBalances,
-		polygonContractBalances,
-		hecoContractBalances,
-		avaxContractBalances,
-		syscoinContractBalances,
-		rpcContractBalances,
-		ethPrice,
-		bnbPrice,
-		polygonPrice,
-		hecoPrice,
-		avaxPrice,
-		syscoinPrice,
-		currencyCode,
-		currencyCodeRate
-	} = opt;
+	const { allContractBalances, allContractExchangeRates, allCurrencyPrice, currencyCode, currencyCodeRate } = opt;
 	const itemAddress = safeToChecksumAddress(asset.address);
 	const type = asset.type ? asset.type : ChainType.Ethereum;
 
 	let balance;
 	let price;
 	let priceChange;
-	if (type === ChainType.Arbitrum) {
-		if (asset.nativeCurrency) {
-			price = ethPrice.usd;
-			priceChange = ethPrice.usd_24h_change;
-			balance = '0x0' in arbContractBalances ? renderFromWei(arbContractBalances['0x0']) : 0;
-		} else {
-			const l1Address = safeToChecksumAddress(asset.l1Address);
-			price = arbContractExchangeRates?.[itemAddress]
-				? arbContractExchangeRates[itemAddress].usd
-				: l1Address in contractExchangeRates
-				? contractExchangeRates[l1Address].usd
-				: 0;
-			priceChange = arbContractExchangeRates?.[itemAddress]
-				? arbContractExchangeRates[itemAddress].usd_24h_change
-				: l1Address in contractExchangeRates
-				? contractExchangeRates[l1Address].usd_24h_change
-				: 0;
-			balance =
-				itemAddress in arbContractBalances
-					? renderFromTokenMinimalUnit(arbContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Optimism) {
-		if (asset.nativeCurrency) {
-			price = ethPrice.usd;
-			priceChange = ethPrice.usd_24h_change;
-			balance = '0x0' in opContractBalances ? renderFromWei(opContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in opContractExchangeRates ? opContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in opContractExchangeRates ? opContractExchangeRates[itemAddress].usd_24h_change : 0;
-			balance =
-				itemAddress in opContractBalances
-					? renderFromTokenMinimalUnit(opContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Avax) {
-		if (asset.nativeCurrency) {
-			price = avaxPrice.usd;
-			priceChange = avaxPrice.usd_24h_change;
-			balance = '0x0' in avaxContractBalances ? renderFromWei(avaxContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in avaxContractExchangeRates ? avaxContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in avaxContractExchangeRates ? avaxContractExchangeRates[itemAddress].usd_24h_change : 0;
-			balance =
-				itemAddress in avaxContractBalances
-					? renderFromTokenMinimalUnit(avaxContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Syscoin) {
-		if (asset.nativeCurrency) {
-			price = syscoinPrice.usd;
-			priceChange = syscoinPrice.usd_24h_change;
-			balance = '0x0' in syscoinContractBalances ? renderFromWei(syscoinContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in syscoinContractExchangeRates ? syscoinContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in syscoinContractExchangeRates
-					? syscoinContractExchangeRates[itemAddress].usd_24h_change
-					: 0;
-			balance =
-				itemAddress in syscoinContractBalances
-					? renderFromTokenMinimalUnit(syscoinContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Bsc) {
-		if (asset.nativeCurrency) {
-			price = bnbPrice.usd;
-			priceChange = bnbPrice.usd_24h_change;
-			balance = '0x0' in bscContractBalances ? renderFromWei(bscContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in bscContractExchangeRates ? bscContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in bscContractExchangeRates ? bscContractExchangeRates[itemAddress].usd_24h_change : 0;
-			balance =
-				itemAddress in bscContractBalances
-					? renderFromTokenMinimalUnit(bscContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Polygon) {
-		if (asset.nativeCurrency) {
-			price = polygonPrice.usd;
-			priceChange = polygonPrice.usd_24h_change;
-			balance = '0x0' in polygonContractBalances ? renderFromWei(polygonContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in polygonContractExchangeRates ? polygonContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in polygonContractExchangeRates
-					? polygonContractExchangeRates[itemAddress].usd_24h_change
-					: 0;
-			balance =
-				itemAddress in polygonContractBalances
-					? renderFromTokenMinimalUnit(polygonContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (type === ChainType.Heco) {
-		if (asset.nativeCurrency) {
-			price = hecoPrice?.usd || 0;
-			priceChange = hecoPrice?.usd_24h_change || 0;
-			balance = '0x0' in hecoContractBalances ? renderFromWei(hecoContractBalances['0x0']) : 0;
-		} else {
-			price = itemAddress in hecoContractExchangeRates ? hecoContractExchangeRates[itemAddress].usd : 0;
-			priceChange =
-				itemAddress in hecoContractExchangeRates ? hecoContractExchangeRates[itemAddress].usd_24h_change : 0;
-			balance =
-				itemAddress in hecoContractBalances
-					? renderFromTokenMinimalUnit(hecoContractBalances[itemAddress], asset.decimals)
-					: 0;
-		}
-	} else if (util.isRpcChainType(type)) {
+
+	if (util.isRpcChainType(type)) {
 		price = 0;
 		priceChange = 0;
-		const chainId = getRpcProviderChainId(type);
-		const rpcBalances = rpcContractBalances[chainId] || {};
+		const rpcBalances = allContractBalances[type] || {};
 		if (asset.nativeCurrency) {
 			balance = '0x0' in rpcBalances ? renderFromWei(rpcBalances['0x0']) : 0;
 		} else {
@@ -886,25 +760,53 @@ export function calcAssetPrices(asset, opt) {
 		}
 	} else if (asset.lockType) {
 		if (asset.nativeCurrency) {
-			price = ethPrice.usd;
-			priceChange = ethPrice.usd_24h_change;
+			price = allCurrencyPrice[ChainType.Ethereum].usd;
+			priceChange = allCurrencyPrice[ChainType.Ethereum].usd_24h_change;
 			balance = renderFromWei(asset.amount);
 		} else {
+			const contractExchangeRates = allContractExchangeRates[ChainType.Ethereum] || {};
 			price = itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd : 0;
 			priceChange = itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd_24h_change : 0;
 			balance = asset.amount ? renderFromTokenMinimalUnit(asset.amount, asset.decimals) : 0;
 		}
-	} else if (asset.nativeCurrency) {
-		price = ethPrice.usd;
-		priceChange = ethPrice.usd_24h_change;
-		balance = '0x0' in contractBalances ? renderFromWei(contractBalances['0x0']) : 0;
 	} else {
-		price = itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd : 0;
-		priceChange = itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd_24h_change : 0;
-		balance =
-			itemAddress in contractBalances
-				? renderFromTokenMinimalUnit(contractBalances[itemAddress], asset.decimals)
-				: 0;
+		if (asset.nativeCurrency) {
+			const contractBalances = allContractBalances[type] || {};
+			price = allCurrencyPrice[type]?.usd || 0;
+			priceChange = allCurrencyPrice[type]?.usd_24h_change || 0;
+			balance = '0x0' in contractBalances ? renderFromWei(contractBalances['0x0']) : 0;
+		} else {
+			if (type === ChainType.Arbitrum) {
+				const contractExchangeRates = allContractExchangeRates[ChainType.Ethereum] || {};
+				const arbContractBalances = allContractBalances[ChainType.Arbitrum] || {};
+				const arbContractExchangeRates = allContractExchangeRates[ChainType.Arbitrum] || {};
+				const l1Address = safeToChecksumAddress(asset.l1Address);
+				price = arbContractExchangeRates?.[itemAddress]
+					? arbContractExchangeRates[itemAddress].usd
+					: l1Address in contractExchangeRates
+					? contractExchangeRates[l1Address].usd
+					: 0;
+				priceChange = arbContractExchangeRates?.[itemAddress]
+					? arbContractExchangeRates[itemAddress].usd_24h_change
+					: l1Address in contractExchangeRates
+					? contractExchangeRates[l1Address].usd_24h_change
+					: 0;
+				balance =
+					itemAddress in arbContractBalances
+						? renderFromTokenMinimalUnit(arbContractBalances[itemAddress], asset.decimals)
+						: 0;
+			} else {
+				const contractExchangeRates = allContractExchangeRates[type] || {};
+				const contractBalances = allContractBalances[type] || {};
+				price = itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd : 0;
+				priceChange =
+					itemAddress in contractExchangeRates ? contractExchangeRates[itemAddress].usd_24h_change : 0;
+				balance =
+					itemAddress in contractBalances
+						? renderFromTokenMinimalUnit(contractBalances[itemAddress], asset.decimals)
+						: 0;
+			}
+		}
 	}
 
 	const { SecurityController } = EngineContext();
@@ -945,152 +847,52 @@ export function calcAssetPrices(asset, opt) {
 export async function calcAllAddressPrices() {
 	const { PreferencesController } = Engine.context;
 	const identities = PreferencesController.state.identities;
-	let etherAllAmount = 0,
-		arbAllAmount = 0,
-		bscAllAmount = 0,
-		polygonAllAmount = 0,
-		hecoAllAmount = 0,
-		opAllAmount = 0,
-		avaxAllAmount = 0,
-		syscoinAllAmount = 0,
-		etherAllBalance = 0,
-		arbAllBalance = 0,
-		bscAllBalance = 0,
-		polygonAllBalance = 0,
-		hecoAllBalance = 0,
-		opAllBalance = 0,
-		avaxAllBalance = 0,
-		syscoinAllBalance = 0;
+	let allAmountOfChain = {};
+	let allBalanceOfChain = {};
+
+	let allAmount = 0;
+
 	const keys = Object.keys(identities);
 	for (const ids of keys) {
 		if (!(await Engine.context.PreferencesController.isObserveAddress(ids))) {
-			const {
-				etherAmount,
-				arbAmount,
-				bscAmount,
-				polygonAmount,
-				hecoAmount,
-				opAmount,
-				avaxAmount,
-				syscoinAmount,
-				etherTotalBalance,
-				arbTotalBalance,
-				bscTotalBalance,
-				polygonTotalBalance,
-				hecoTotalBalance,
-				opTotalBalance,
-				avaxTotalBalance,
-				syscoinTotalBalance
-			} = calcAddressPrices(ids);
-			etherAllAmount += etherAmount;
-			arbAllAmount += arbAmount;
-			bscAllAmount += bscAmount;
-			polygonAllAmount += polygonAmount;
-			hecoAllAmount += hecoAmount;
-			opAllAmount += opAmount;
-			avaxAllAmount += avaxAmount;
-			syscoinAllAmount += syscoinAmount;
-			etherAllBalance += etherTotalBalance;
-			arbAllBalance += arbTotalBalance;
-			bscAllBalance += bscTotalBalance;
-			polygonAllBalance += polygonTotalBalance;
-			hecoAllBalance += hecoTotalBalance;
-			opAllBalance += opTotalBalance;
-			avaxAllBalance += avaxTotalBalance;
-			syscoinAllBalance += syscoinTotalBalance;
+			const { allUsdAmount, allBalance } = calcAddressPrices(ids);
+			for (const type in allUsdAmount) {
+				const chainType = Number(type);
+				if (!allAmountOfChain[chainType]) {
+					allAmountOfChain[chainType] = 0;
+				}
+				allAmountOfChain[chainType] += allUsdAmount[chainType];
+				allAmount += allUsdAmount[chainType];
+			}
+			for (const type in allBalance) {
+				const chainType = Number(type);
+				if (!allBalanceOfChain[chainType]) {
+					allBalanceOfChain[chainType] = 0;
+				}
+				allBalanceOfChain[chainType] += allBalance[chainType];
+			}
 		}
 	}
-	const allAmount =
-		etherAllAmount +
-		arbAllAmount +
-		bscAllAmount +
-		polygonAllAmount +
-		hecoAllAmount +
-		opAllAmount +
-		avaxAllAmount +
-		syscoinAllAmount;
+
 	return {
 		allAmount,
-		etherAllAmount,
-		arbAllAmount,
-		bscAllAmount,
-		polygonAllAmount,
-		hecoAllAmount,
-		opAllAmount,
-		avaxAllAmount,
-		syscoinAllAmount,
-		etherAllBalance,
-		arbAllBalance,
-		bscAllBalance,
-		polygonAllBalance,
-		hecoAllBalance,
-		opAllBalance,
-		avaxAllBalance,
-		syscoinAllBalance
+		allAmountOfChain,
+		allBalanceOfChain
 	};
 }
 
 export function calcAddressPrices(selectedAddress) {
-	const {
-		AssetsController,
-		NetworkController,
-		ArbNetworkController,
-		BscNetworkController,
-		PolygonNetworkController,
-		TokenBalancesController,
-		TokenRatesController,
-		ArbContractController,
-		PolygonContractController,
-		HecoNetworkController,
-		OpNetworkController,
-		AvaxNetworkController,
-		SyscoinNetworkController
-	} = Engine.context;
-	const etherChainId = NetworkController.state.provider.chainId;
-	const bscChainId = BscNetworkController.state.provider.chainId;
-	const arbChainId = ArbNetworkController.state.provider.chainId;
-	const polygonChainId = PolygonNetworkController.state.provider.chainId;
-	const hecoChainId = HecoNetworkController.state.provider.chainId;
-	const opChainId = OpNetworkController.state.provider.chainId;
-	const avaxChainId = AvaxNetworkController.state.provider.chainId;
-	const syscoinChainId = SyscoinNetworkController.state.provider.chainId;
-	const allTokens = AssetsController.state.allTokens;
-	const tokens = allTokens[selectedAddress]?.[etherChainId] || [];
-	const bscTokens = allTokens[selectedAddress]?.[bscChainId] || [];
-	const arbTokens = allTokens[selectedAddress]?.[arbChainId] || [];
-	const polygonTokens = allTokens[selectedAddress]?.[polygonChainId] || [];
-	const hecoTokens = allTokens[selectedAddress]?.[hecoChainId] || [];
-	const opTokens = allTokens[selectedAddress]?.[opChainId] || [];
-	const avaxTokens = allTokens[selectedAddress]?.[avaxChainId] || [];
-	const syscoinTokens = allTokens[selectedAddress]?.[syscoinChainId] || [];
-	const contractBalances = TokenBalancesController.state.contractBalances[selectedAddress] || {};
-	const arbContractBalances = TokenBalancesController.state.arbContractBalances[selectedAddress] || {};
-	const bscContractBalances = TokenBalancesController.state.bscContractBalances[selectedAddress] || {};
-	const polygonContractBalances = TokenBalancesController.state.polygonContractBalances[selectedAddress] || {};
-	const hecoContractBalances = TokenBalancesController.state.hecoContractBalances[selectedAddress] || {};
-	const opContractBalances = TokenBalancesController.state.opContractBalances[selectedAddress] || {};
-	const avaxContractBalances = TokenBalancesController.state.avaxContractBalances[selectedAddress] || {};
-	const syscoinContractBalances = TokenBalancesController.state.syscoinContractBalances[selectedAddress] || {};
-	const rpcContractBalances = TokenBalancesController.state.rpcContractBalances[selectedAddress] || {};
-	const contractExchangeRates = TokenRatesController.state.contractExchangeRates;
-	const arbContractExchangeRates = TokenRatesController.state.arbContractExchangeRates;
-	const bscContractExchangeRates = TokenRatesController.state.bscContractExchangeRates;
-	const polygonContractExchangeRates = TokenRatesController.state.polygonContractExchangeRates;
-	const hecoContractExchangeRates = TokenRatesController.state.hecoContractExchangeRates;
-	const opContractExchangeRates = TokenRatesController.state.opContractExchangeRates;
-	const avaxContractExchangeRates = TokenRatesController.state.avaxContractExchangeRates;
-	const syscoinContractExchangeRates = TokenRatesController.state.syscoinContractExchangeRates;
-	const ethPrice = TokenRatesController.state.ethPrice;
-	const bnbPrice = TokenRatesController.state.bnbPrice;
-	const polygonPrice = TokenRatesController.state.polygonPrice;
-	const hecoPrice = TokenRatesController.state.hecoPrice;
-	const avaxPrice = TokenRatesController.state.avaxPrice;
-	const syscoinPrice = TokenRatesController.state.syscoinPrice;
+	const { AssetsController, TokenBalancesController, TokenRatesController } = Engine.context;
+	const allTokens = AssetsController.state.allTokens[selectedAddress] || [];
+	const allContractBalances = TokenBalancesController.state.allContractBalances[selectedAddress] || {};
+	const allContractExchangeRates = TokenRatesController.state.allContractExchangeRates || {};
+	const allCurrencyPrice = TokenRatesController.state.allCurrencyPrice;
 	const currencyCodeRate = TokenRatesController.state.currencyCodeRate;
 	const currencyCode = TokenRatesController.state.currencyCode;
 
-	const { unconfirmed_interval } = Engine.context.ArbContractController.config;
-	let arbWithdraws = ArbContractController.state.withdraws;
+	const { unconfirmed_interval } = EngineContracts()[ChainType.Arbitrum].config;
+	let arbWithdraws = EngineContracts()[ChainType.Arbitrum].state.withdraws;
+	const arbChainId = EngineNetworks()[ChainType.Arbitrum].state.provider.chainId;
 	arbWithdraws = arbWithdraws?.filter(
 		item =>
 			!(
@@ -1100,8 +902,9 @@ export function calcAddressPrices(selectedAddress) {
 				(item.unconfirmed_timestamp && Date.now() - item.unconfirmed_timestamp < unconfirmed_interval)
 			)
 	);
-	const { unconfirmed_interval: polygon_unconfirmed_interval } = Engine.context.PolygonContractController.config;
-	let polygonWithdraws = PolygonContractController.state.withdraws;
+	const { unconfirmed_interval: polygon_unconfirmed_interval } = EngineContracts()[ChainType.Polygon].config;
+	let polygonWithdraws = EngineContracts()[ChainType.Polygon].state.withdraws;
+	const polygonChainId = EngineNetworks()[ChainType.Polygon].state.provider.chainId;
 	polygonWithdraws = polygonWithdraws?.filter(
 		item =>
 			!(
@@ -1113,178 +916,79 @@ export function calcAddressPrices(selectedAddress) {
 	);
 
 	const opt = {
-		contractBalances,
-		contractExchangeRates,
-		arbContractExchangeRates,
-		bscContractExchangeRates,
-		polygonContractExchangeRates,
-		hecoContractExchangeRates,
-		opContractExchangeRates,
-		avaxContractExchangeRates,
-		syscoinContractExchangeRates,
-		arbContractBalances,
-		bscContractBalances,
-		polygonContractBalances,
-		hecoContractBalances,
-		opContractBalances,
-		avaxContractBalances,
-		syscoinContractBalances,
-		rpcContractBalances,
-		ethPrice,
-		bnbPrice,
-		polygonPrice,
-		hecoPrice,
-		avaxPrice,
-		syscoinPrice,
+		allContractBalances,
+		allContractExchangeRates,
+		allCurrencyPrice,
 		currencyCode,
 		currencyCodeRate
 	};
 
-	const ethAsset = {
-		type: ChainType.Ethereum,
-		nativeCurrency: true
-	};
-	let {
-		totalUsdAmount: etherAmount,
-		totalCurrencyAmount: etherCurrencyAmount,
-		totalBalance: etherTotalBalance
-	} = calcAddressSinglePrices(ethAsset, tokens, ChainType.Ethereum, opt);
-	if (arbWithdraws?.length) {
-		const items = arbWithdraws.map(item => ({
-			...item,
-			address: item.token.address,
-			decimals: item.token.decimals,
-			amount: item.token.amount,
-			nativeCurrency: item.token.nativeCurrency,
-			type: ChainType.Ethereum,
-			lockType: LockType.LockArb
-		}));
-		const { totalUsdAmount, totalCurrencyAmount, totalBalance } = calcAddressSinglePrices(
-			null,
-			items,
-			ChainType.Ethereum,
+	let allUsdAmount = {};
+	let allCurrencyAmount = {};
+	let allBalance = {};
+
+	const networks = EngineNetworks();
+	for (const type in networks) {
+		const chainType = Number(type);
+		if (chainType === ChainType.RPCBase) {
+			continue;
+		}
+		const chainId = networks[type].state.provider.chainId;
+		const nativeAsset = {
+			type: chainType,
+			nativeCurrency: true
+		};
+		const tokens = allTokens[chainId] || [];
+		let { totalUsdAmount, totalCurrencyAmount, totalBalance } = calcAddressSinglePrices(
+			nativeAsset,
+			tokens,
+			chainType,
 			opt
 		);
-		etherAmount += totalUsdAmount;
-		etherCurrencyAmount += totalCurrencyAmount;
-		etherTotalBalance += totalBalance;
+		allUsdAmount[chainType] = totalUsdAmount;
+		allCurrencyAmount[chainType] = totalCurrencyAmount;
+		allBalance[chainType] = totalBalance;
+
+		if (chainType === ChainType.Ethereum) {
+			if (arbWithdraws?.length) {
+				const items = arbWithdraws.map(item => ({
+					...item,
+					address: item.token.address,
+					decimals: item.token.decimals,
+					amount: item.token.amount,
+					nativeCurrency: item.token.nativeCurrency,
+					type: ChainType.Ethereum,
+					lockType: LockType.LockArb
+				}));
+				const result = calcAddressSinglePrices(null, items, ChainType.Ethereum, opt);
+				allUsdAmount[chainType] += result.totalUsdAmount;
+				allCurrencyAmount[chainType] += result.totalCurrencyAmount;
+				allBalance[chainType] += result.totalBalance;
+			}
+
+			if (polygonWithdraws?.length) {
+				const items = polygonWithdraws.map(item => ({
+					...item,
+					address: item.token.address,
+					decimals: item.token.decimals,
+					amount: item.token.amount,
+					nativeCurrency: item.token.nativeCurrency,
+					type: ChainType.Ethereum,
+					lockType: LockType.LockPolygon
+				}));
+				const result = calcAddressSinglePrices(null, items, ChainType.Ethereum, opt);
+
+				allUsdAmount[chainType] += result.totalUsdAmount;
+				allCurrencyAmount[chainType] += result.totalCurrencyAmount;
+				allBalance[chainType] += result.totalBalance;
+			}
+		}
 	}
-
-	if (polygonWithdraws?.length) {
-		const items = polygonWithdraws.map(item => ({
-			...item,
-			address: item.token.address,
-			decimals: item.token.decimals,
-			amount: item.token.amount,
-			nativeCurrency: item.token.nativeCurrency,
-			type: ChainType.Ethereum,
-			lockType: LockType.LockPolygon
-		}));
-		const { totalUsdAmount, totalCurrencyAmount, totalBalance } = calcAddressSinglePrices(
-			null,
-			items,
-			ChainType.Ethereum,
-			opt
-		);
-		etherAmount += totalUsdAmount;
-		etherCurrencyAmount += totalCurrencyAmount;
-		etherTotalBalance += totalBalance;
-	}
-
-	const arbAsset = {
-		type: ChainType.Arbitrum,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: arbAmount,
-		totalCurrencyAmount: arbCurrencyAmount,
-		totalBalance: arbTotalBalance
-	} = calcAddressSinglePrices(arbAsset, arbTokens, ChainType.Arbitrum, opt);
-
-	const bscAsset = {
-		type: ChainType.Bsc,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: bscAmount,
-		totalCurrencyAmount: bscCurrencyAmount,
-		totalBalance: bscTotalBalance
-	} = calcAddressSinglePrices(bscAsset, bscTokens, ChainType.Bsc, opt);
-
-	const polygonAsset = {
-		type: ChainType.Polygon,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: polygonAmount,
-		totalCurrencyAmount: polygonCurrencyAmount,
-		totalBalance: polygonTotalBalance
-	} = calcAddressSinglePrices(polygonAsset, polygonTokens, ChainType.Polygon, opt);
-
-	const hecoAsset = {
-		type: ChainType.Heco,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: hecoAmount,
-		totalCurrencyAmount: hecoCurrencyAmount,
-		totalBalance: hecoTotalBalance
-	} = calcAddressSinglePrices(hecoAsset, hecoTokens, ChainType.Heco, opt);
-
-	const opAsset = {
-		type: ChainType.Optimism,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: opAmount,
-		totalCurrencyAmount: opCurrencyAmount,
-		totalBalance: opTotalBalance
-	} = calcAddressSinglePrices(opAsset, opTokens, ChainType.Optimism, opt);
-
-	const avaxAsset = {
-		type: ChainType.Avax,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: avaxAmount,
-		totalCurrencyAmount: avaxCurrencyAmount,
-		totalBalance: avaxTotalBalance
-	} = calcAddressSinglePrices(avaxAsset, avaxTokens, ChainType.Avax, opt);
-	const syscoinAsset = {
-		type: ChainType.Syscoin,
-		nativeCurrency: true
-	};
-	const {
-		totalUsdAmount: syscoinAmount,
-		totalCurrencyAmount: syscoinCurrencyAmount,
-		totalBalance: syscoinTotalBalance
-	} = calcAddressSinglePrices(syscoinAsset, syscoinTokens, ChainType.Syscoin, opt);
 
 	return {
-		etherAmount,
-		arbAmount,
-		bscAmount,
-		polygonAmount,
-		hecoAmount,
-		opAmount,
-		avaxAmount,
-		syscoinAmount,
-		etherCurrencyAmount,
-		arbCurrencyAmount,
-		bscCurrencyAmount,
-		polygonCurrencyAmount,
-		hecoCurrencyAmount,
-		opCurrencyAmount,
-		avaxCurrencyAmount,
-		syscoinCurrencyAmount,
-		etherTotalBalance,
-		arbTotalBalance,
-		bscTotalBalance,
-		polygonTotalBalance,
-		hecoTotalBalance,
-		opTotalBalance,
-		avaxTotalBalance,
-		syscoinTotalBalance
+		allUsdAmount,
+		allCurrencyAmount,
+		allBalance
 	};
 }
 
@@ -1316,55 +1020,22 @@ export function calcAddressSinglePrices(nativeCurrencyAsset, tokens, type, opt) 
 	return { totalUsdAmount, totalCurrencyAmount, totalBalance };
 }
 
-const ethLogo = 'https://cdn.gopocket.finance/files/eth_logo.png';
-const bnbLogo = 'https://cdn.gopocket.finance/files/bnb.png';
-const polygonLogo = 'https://cdn.gopocket.finance/files/matic_network_logo.png';
-const htLogo = 'https://cdn.gopocket.finance/files/ht_logo.png';
-const avaxLogo = 'https://cdn.gopocket.finance/files/avax_logo.png';
-const syscoinLogo = 'https://cdn.gopocket.finance/files/syscoin_logo.png';
 const rpcLogo = 'https://cdn.gopocket.finance/files/rpc.png';
 
 export async function getAssetLogo(asset) {
 	const type = asset.type ? asset.type : ChainType.Ethereum;
-	if (type === ChainType.Arbitrum) {
-		if (asset.nativeCurrency) {
-			return ethLogo;
-		}
-	} else if (type === ChainType.Optimism) {
-		if (asset.nativeCurrency) {
-			return ethLogo;
-		}
-	} else if (type === ChainType.Bsc) {
-		if (asset.nativeCurrency) {
-			return bnbLogo;
-		}
-	} else if (asset.type === ChainType.Polygon) {
-		if (asset.nativeCurrency) {
-			return polygonLogo;
-		}
-	} else if (asset.type === ChainType.Heco) {
-		if (asset.nativeCurrency) {
-			return htLogo;
-		}
-	} else if (asset.type === ChainType.Avax) {
-		if (asset.nativeCurrency) {
-			return avaxLogo;
-		}
-	} else if (asset.type === ChainType.Syscoin) {
-		if (asset.nativeCurrency) {
-			return syscoinLogo;
-		}
-	} else if (util.isRpcChainType(asset.type)) {
+	if (util.isRpcChainType(asset.type)) {
 		if (asset.nativeCurrency) {
 			const name = getRpcNickname(asset.type);
 			if (util.toLowerCaseEquals('eth', name)) {
-				return ethLogo;
+				return NetworkConfig[ChainType.Ethereum]?.CurrencyLogo;
 			}
 			return rpcLogo;
 		}
 	} else if (asset.nativeCurrency) {
-		return ethLogo;
+		return NetworkConfig[type]?.CurrencyLogo;
 	}
+
 	const token = await callSqlite('getStaticToken', type, asset.address, asset.l1Address);
 	const result = token?.image;
 	if (!util.isEtherscanAvailable() && result && result.includes('coingecko.com')) {
@@ -1374,191 +1045,55 @@ export async function getAssetLogo(asset) {
 }
 
 export function getNativeCurrencyBalance(type, opt) {
-	const {
-		contractBalances,
-		bscContractBalances,
-		arbContractBalances,
-		opContractBalances,
-		polygonContractBalances,
-		hecoContractBalances,
-		avaxContractBalances,
-		syscoinContractBalances,
-		rpcContractBalances
-	} = opt;
+	const { allContractBalances } = opt;
 	let balanceBN;
-	if (type === ChainType.Bsc) {
-		balanceBN = '0x0' in bscContractBalances ? bscContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Arbitrum) {
-		balanceBN = '0x0' in arbContractBalances ? arbContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Optimism) {
-		balanceBN = '0x0' in opContractBalances ? opContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Polygon) {
-		balanceBN = '0x0' in polygonContractBalances ? polygonContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Heco) {
-		balanceBN = '0x0' in hecoContractBalances ? hecoContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Avax) {
-		balanceBN = '0x0' in avaxContractBalances ? avaxContractBalances['0x0'] : new BN(0);
-	} else if (type === ChainType.Syscoin) {
-		balanceBN = '0x0' in syscoinContractBalances ? syscoinContractBalances['0x0'] : new BN(0);
-	} else if (util.isRpcChainType(type)) {
-		const chainId = getRpcProviderChainId(type);
-		const rpcBalances = rpcContractBalances[chainId] || [];
-		balanceBN = '0x0' in rpcBalances ? rpcBalances['0x0'] : new BN(0);
-	} else {
+	const contractBalances = allContractBalances?.[type];
+	if (contractBalances) {
 		balanceBN = '0x0' in contractBalances ? contractBalances['0x0'] : new BN(0);
+	} else {
+		balanceBN = new BN(0);
 	}
 	return balanceBN;
 }
 
 export function getTokenBalance(asset, opt) {
-	const {
-		contractBalances,
-		bscContractBalances,
-		arbContractBalances,
-		opContractBalances,
-		polygonContractBalances,
-		hecoContractBalances,
-		avaxContractBalances,
-		syscoinContractBalances,
-		rpcContractBalances
-	} = opt;
+	const { allContractBalances } = opt;
 	const { type, address } = asset;
 	let weiBalance;
-	if (type === ChainType.Bsc) {
-		weiBalance = address in bscContractBalances ? bscContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Arbitrum) {
-		weiBalance = address in arbContractBalances ? arbContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Optimism) {
-		weiBalance = address in opContractBalances ? opContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Polygon) {
-		weiBalance = address in polygonContractBalances ? polygonContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Heco) {
-		weiBalance = address in hecoContractBalances ? hecoContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Avax) {
-		weiBalance = address in avaxContractBalances ? avaxContractBalances[address] : new BN(0);
-	} else if (type === ChainType.Syscoin) {
-		weiBalance = address in syscoinContractBalances ? syscoinContractBalances[address] : new BN(0);
-	} else if (util.isRpcChainType(type)) {
-		const chainId = getRpcProviderChainId(type);
-		const rpcBalances = rpcContractBalances[chainId] || [];
-		weiBalance = address in rpcBalances ? rpcBalances[address] : new BN(0);
-	} else {
+	const contractBalances = allContractBalances?.[type];
+	if (contractBalances) {
 		weiBalance = address in contractBalances ? contractBalances[address] : new BN(0);
+	} else {
+		weiBalance = new BN(0);
 	}
 	return weiBalance;
 }
 
 export const getTokenDecimals = async (type, to) => {
-	if (type === ChainType.Bsc) {
-		const { BscContractController } = Engine.context;
-		return await BscContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Polygon) {
-		const { PolygonContractController } = Engine.context;
-		return await PolygonContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Arbitrum) {
-		const { ArbContractController } = Engine.context;
-		return await ArbContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Heco) {
-		const { HecoContractController } = Engine.context;
-		return await HecoContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Optimism) {
-		const { OpContractController } = Engine.context;
-		return await OpContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Avax) {
-		const { AvaxContractController } = Engine.context;
-		return await AvaxContractController.getTokenDecimals(to);
-	} else if (type === ChainType.Syscoin) {
-		const { SyscoinContractController } = Engine.context;
-		return await SyscoinContractController.getTokenDecimals(to);
-	} else if (util.isRpcChainType(type)) {
-		const { RpcContractController } = Engine.context;
-		return await RpcContractController.callContract(type, 'getTokenDecimals', to);
+	if (util.isRpcChainType(type)) {
+		return await EngineContracts()[ChainType.RPCBase].callContract(type, 'getTokenDecimals', to);
+	} else {
+		return await EngineContracts()[type]?.getTokenDecimals(to);
 	}
-	const { AssetsContractController } = Engine.context;
-	return await AssetsContractController.getTokenDecimals(to);
 };
 
 export const getAssetSymbol = async (type, to) => {
-	if (type === ChainType.Bsc) {
-		const { BscContractController } = Engine.context;
-		return await BscContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Polygon) {
-		const { PolygonContractController } = Engine.context;
-		return await PolygonContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Arbitrum) {
-		const { ArbContractController } = Engine.context;
-		return await ArbContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Heco) {
-		const { HecoContractController } = Engine.context;
-		return await HecoContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Optimism) {
-		const { OpContractController } = Engine.context;
-		return await OpContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Avax) {
-		const { AvaxContractController } = Engine.context;
-		return await AvaxContractController.getAssetSymbol(to);
-	} else if (type === ChainType.Syscoin) {
-		const { SyscoinContractController } = Engine.context;
-		return await SyscoinContractController.getAssetSymbol(to);
-	} else if (util.isRpcChainType(type)) {
-		const { RpcContractController } = Engine.context;
-		return await RpcContractController.callContract(type, 'getAssetSymbol', to);
+	if (util.isRpcChainType(type)) {
+		return await EngineContracts()[ChainType.RPCBase].callContract(type, 'getAssetSymbol', to);
+	} else {
+		return await EngineContracts()[type]?.getAssetSymbol(to);
 	}
-	const { AssetsContractController } = Engine.context;
-	return await AssetsContractController.getAssetSymbol(to);
 };
 
-export function getTypeByChainId(chainId) {
+export function getChainTypeByChainId(chainId) {
 	chainId = chainId && chainId.toString();
-	const {
-		state: {
-			provider: { chainId: arbChainId }
+	for (const type in NetworkConfig) {
+		const chainType = Number(type);
+		for (const key in NetworkConfig[type].Networks) {
+			if (NetworkConfig[type].Networks[key].provider.chainId === chainId) {
+				return chainType;
+			}
 		}
-	} = Engine.context.ArbNetworkController;
-	const {
-		state: {
-			provider: { chainId: opChainId }
-		}
-	} = Engine.context.OpNetworkController;
-	const {
-		state: {
-			provider: { chainId: polygonChainId }
-		}
-	} = Engine.context.PolygonNetworkController;
-	const {
-		state: {
-			provider: { chainId: bscChainId }
-		}
-	} = Engine.context.BscNetworkController;
-	const {
-		state: {
-			provider: { chainId: hecoChainId }
-		}
-	} = Engine.context.HecoNetworkController;
-	const {
-		state: {
-			provider: { chainId: avaxChainId }
-		}
-	} = Engine.context.AvaxNetworkController;
-	const {
-		state: {
-			provider: { chainId: syscoinChainId }
-		}
-	} = Engine.context.SyscoinNetworkController;
-	if (chainId === arbChainId) {
-		return ChainType.Arbitrum;
-	} else if (chainId === opChainId) {
-		return ChainType.Optimism;
-	} else if (chainId === polygonChainId) {
-		return ChainType.Polygon;
-	} else if (chainId === bscChainId) {
-		return ChainType.Bsc;
-	} else if (chainId === hecoChainId) {
-		return ChainType.Heco;
-	} else if (chainId === avaxChainId) {
-		return ChainType.Avax;
-	} else if (chainId === syscoinChainId) {
-		return ChainType.Syscoin;
 	}
 	const type = getRpcChainTypeByChainId(chainId);
 	if (type) {
@@ -1568,88 +1103,20 @@ export function getTypeByChainId(chainId) {
 }
 
 export function getChainIdByType(type) {
-	if (type === ChainType.Arbitrum) {
-		return EngineContext().ArbNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Polygon) {
-		return EngineContext().PolygonNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Bsc) {
-		return EngineContext().BscNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Heco) {
-		return EngineContext().HecoNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Optimism) {
-		return EngineContext().OpNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Avax) {
-		return EngineContext().AvaxNetworkController.state.provider.chainId;
-	} else if (type === ChainType.Syscoin) {
-		return EngineContext().SyscoinNetworkController.state.provider.chainId;
-	} else if (util.isRpcChainType(type)) {
+	if (util.isRpcChainType(type)) {
 		return getRpcProviderChainId(type);
+	} else {
+		return EngineNetworks()[type]?.state.provider.chainId;
 	}
-	return EngineContext().NetworkController.state.provider.chainId;
 }
 
 export function getNetworkController(chainId) {
 	chainId = chainId && chainId.toString();
-	const {
-		state: {
-			provider: { chainId: mainChainId }
-		}
-	} = Engine.context.NetworkController;
-	const {
-		state: {
-			provider: { chainId: arbChainId }
-		}
-	} = Engine.context.ArbNetworkController;
-	const {
-		state: {
-			provider: { chainId: opChainId }
-		}
-	} = Engine.context.OpNetworkController;
-	const {
-		state: {
-			provider: { chainId: polygonChainId }
-		}
-	} = Engine.context.PolygonNetworkController;
-	const {
-		state: {
-			provider: { chainId: bscChainId }
-		}
-	} = Engine.context.BscNetworkController;
-	const {
-		state: {
-			provider: { chainId: hecoChainId }
-		}
-	} = Engine.context.HecoNetworkController;
-	const {
-		state: {
-			provider: { chainId: avaxChainId }
-		}
-	} = Engine.context.AvaxNetworkController;
-	const {
-		state: {
-			provider: { chainId: syscoinChainId }
-		}
-	} = Engine.context.SyscoinNetworkController;
-	if (chainId === arbChainId) {
-		return Engine.context.ArbNetworkController;
-	} else if (chainId === opChainId) {
-		return Engine.context.OpNetworkController;
-	} else if (chainId === polygonChainId) {
-		return Engine.context.PolygonNetworkController;
-	} else if (chainId === bscChainId) {
-		return Engine.context.BscNetworkController;
-	} else if (chainId === mainChainId) {
-		return Engine.context.NetworkController;
-	} else if (chainId === hecoChainId) {
-		return Engine.context.HecoNetworkController;
-	} else if (chainId === avaxChainId) {
-		return Engine.context.AvaxNetworkController;
-	} else if (chainId === syscoinChainId) {
-		return Engine.context.SyscoinNetworkController;
-	} else if (isRpcChainId(chainId)) {
-		return Engine.context.RpcNetworkController;
+	if (isRpcChainId(chainId)) {
+		return EngineNetworks()[ChainType.RPCBase];
+	} else {
+		return EngineNetworks()[getChainTypeByChainId(chainId)];
 	}
-	return null;
 }
 
 export async function isEIP1559Compatibility(chainId) {
@@ -1659,53 +1126,25 @@ export async function isEIP1559Compatibility(chainId) {
 }
 
 export const toHexadecimal = decimal => {
-	if (!decimal) return decimal;
+	if (!decimal) {
+		return decimal;
+	}
 	if (decimal !== typeof 'string') {
 		decimal = String(decimal);
 	}
-	if (decimal.startsWith('0x')) return decimal;
+	if (decimal.startsWith('0x')) {
+		return decimal;
+	}
 	return new BigNumber(decimal, 10).toString(16);
 };
 
-export const getChainTypeName = type => {
-	if (type === ChainType.Bsc) {
-		return strings('other.bsc');
-	} else if (type === ChainType.Polygon) {
-		return strings('other.polygon');
-	} else if (type === ChainType.Arbitrum) {
-		return strings('other.arbitrum');
-	} else if (type === ChainType.Tron) {
-		return strings('other.tron');
-	} else if (type === ChainType.Heco) {
-		return strings('other.heco');
-	} else if (type === ChainType.Optimism) {
-		return strings('other.optimism');
-	} else if (type === ChainType.Avax) {
-		return strings('other.avalanche');
-	} else if (type === ChainType.Syscoin) {
-		return strings('other.syscoin');
-	} else if (util.isRpcChainType(type)) {
-		return getRpcNickname(type) || RPC;
-	}
-	return strings('other.ethereum');
-};
-
-export const getCurrency = type => {
-	if (type === ChainType.Bsc) {
-		return 'BNB';
-	} else if (type === ChainType.Polygon) {
-		return 'MATIC';
-	} else if (type === ChainType.Heco) {
-		return 'HT';
-	} else if (type === ChainType.Avax) {
-		return 'AVAX';
-	} else if (type === ChainType.Syscoin) {
-		return 'SYS';
-	} else if (util.isRpcChainType(type)) {
+export function getTickerByType(type) {
+	if (util.isRpcChainType(type)) {
 		return getRpcProviderTicker(type);
+	} else {
+		return EngineNetworks()[type]?.state.provider.ticker;
 	}
-	return 'ETH';
-};
+}
 
 export const getTokenName = type => {
 	if (type === ChainType.Bsc) {
@@ -1716,10 +1155,11 @@ export const getTokenName = type => {
 	return 'ERC20';
 };
 
-export const getChainTypeNameByChainId = chainId => getChainTypeName(getTypeByChainId(chainId));
+export const getChainTypeNameByChainId = chainId => getChainTypeName(getChainTypeByChainId(chainId));
 
 export async function getMigrationContracts() {
-	const { ArbContractController: arbContract, PolygonContractController: polygonContract } = Engine.context;
+	const arbContract = EngineContracts()[ChainType.Arbitrum];
+	const polygonContract = EngineContracts()[ChainType.Polygon];
 	const contracts = [];
 	const addr1 = await arbContract.getdepositETHMethodId();
 	if (addr1?.[0]) {
@@ -1756,7 +1196,7 @@ export async function getMigrationContracts() {
 }
 
 export async function getClaimContracts() {
-	const { ArbContractController: arbContract } = Engine.context;
+	const arbContract = EngineContracts()[ChainType.Arbitrum];
 	const contracts = [];
 	const addr3 = await arbContract.getexecuteTransactionMethodId();
 	if (addr3?.[0]) {

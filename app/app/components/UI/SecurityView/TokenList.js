@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import AsyncStorage from '@react-native-community/async-storage';
 import { colors, fontStyles } from '../../../styles/common';
-import { ChainType, util } from 'gopocket-core';
 import { getChainIdByType, renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
 import TokenImage from '../TokenImage';
@@ -23,10 +22,11 @@ import Engine from '../../../core/Engine';
 import SearchView from './SearchView';
 import SecurityDesc from '../SecurityDesc';
 import { toLowerCaseEquals } from '../../../util/general';
-import { getIcTagResource } from '../../../util/rpcUtil';
 import { key2Warn } from '../../../util/security';
 import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { ChainType, util } from 'gopocket-core';
 
 const styles = StyleSheet.create({
 	emptyView: {
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
 
 const SORT_NAME = 'sort_name';
 const SORT_NETWORK = 'sort_network';
-const STOARGE_SORT_TYPE = `storage_sorttype`;
+const STOARGE_SORT_TYPE = 'storage_sorttype';
 const SORT_NETWORTH = 'sort_networth';
 
 class TokenList extends PureComponent {
@@ -341,13 +341,18 @@ class TokenList extends PureComponent {
 		let newTokens = tokens;
 		newTokens.sort((x, y) => y.totalPrice - x.totalPrice);
 		if (this.currentSortType === SORT_NETWORK) {
-			const ethTokens = newTokens.filter(token => token.type === ChainType.Ethereum);
-			const bscTokens = newTokens.filter(token => token.type === ChainType.Bsc);
-			const polygonTokens = newTokens.filter(token => token.type === ChainType.Polygon);
-			const arbTokens = newTokens.filter(token => token.type === ChainType.Arbitrum);
-			const hecoTokens = newTokens.filter(token => token.type === ChainType.Heco);
-			const opTokens = newTokens.filter(token => token.type === ChainType.Optimism);
-			newTokens = [...ethTokens, ...bscTokens, ...polygonTokens, ...arbTokens, ...hecoTokens, ...opTokens];
+			const tempTokens = [];
+			for (const type in Engine.networks) {
+				const chainType = Number(type);
+				let filterTokens;
+				if (chainType === ChainType.RPCBase) {
+					filterTokens = newTokens.filter(token => util.isRpcChainType(token.type));
+				} else {
+					filterTokens = newTokens.filter(token => token.type === chainType);
+				}
+				filterTokens && tempTokens.push(...filterTokens);
+			}
+			newTokens = tempTokens;
 		} else if (this.currentSortType === SORT_NAME) {
 			newTokens.sort((x, y) => x.symbol.toUpperCase().localeCompare(y.symbol.toUpperCase()));
 		}
@@ -436,28 +441,7 @@ class TokenList extends PureComponent {
 											containerStyle={styles.ethLogo}
 											iconStyle={styles.iconStyle}
 										/>
-										<Image
-											style={styles.tagView}
-											source={
-												asset.type === ChainType.Ethereum
-													? require('../../../images/ic_eth_tag.png')
-													: asset.type === ChainType.Polygon
-													? require('../../../images/ic_polygon_tag.png')
-													: asset.type === ChainType.Arbitrum
-													? require('../../../images/ic_arb_tag.png')
-													: asset.type === ChainType.Heco
-													? require('../../../images/ic_heco_tag.png')
-													: asset.type === ChainType.Optimism
-													? require('../../../images/ic_op_tag.png')
-													: asset.type === ChainType.Avax
-													? require('../../../images/ic_avax_tag.png')
-													: asset.type === ChainType.Syscoin
-													? require('../../../images/ic_syscoin_tag.png')
-													: util.isRpcChainType(asset.type)
-													? getIcTagResource(asset.type)
-													: require('../../../images/ic_bsc_tag.png')
-											}
-										/>
+										<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
 									</View>
 
 									<View style={styles.balances} testID={'balance'}>

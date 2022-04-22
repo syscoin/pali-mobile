@@ -5,14 +5,13 @@ import { connect } from 'react-redux';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { ChainType, util } from 'gopocket-core';
 import { TokenImage } from '../TokenImage';
-import { getAssetLogo } from '../../../util/number';
+import { getAssetLogo, getChainTypeByChainId } from '../../../util/number';
 import ApprovalEvent from '../ApprovalEvent';
 import { strings } from '../../../../locales/i18n';
 import { toLowerCaseEquals } from '../../../util/general';
-import { getChainTypeByChainId } from '../../../util/networks';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
-import { getIcTagResource } from '../../../util/rpcUtil';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const { width } = Dimensions.get('screen');
 
@@ -279,30 +278,7 @@ class ApprovalList extends Component {
 
 	renderChainFlag = (chainId, index) => {
 		const chainType = getChainTypeByChainId(chainId);
-		return (
-			<Image
-				style={styles.tagView}
-				source={
-					chainType === ChainType.Ethereum
-						? require('../../../images/ic_eth_tag.png')
-						: chainType === ChainType.Polygon
-						? require('../../../images/ic_polygon_tag.png')
-						: chainType === ChainType.Arbitrum
-						? require('../../../images/ic_arb_tag.png')
-						: chainType === ChainType.Heco
-						? require('../../../images/ic_heco_tag.png')
-						: chainType === ChainType.Optimism
-						? require('../../../images/ic_op_tag.png')
-						: chainType === ChainType.Avax
-						? require('../../../images/ic_avax_tag.png')
-						: chainType === ChainType.Syscoin
-						? require('../../../images/ic_syscoin_tag.png')
-						: util.isRpcChainType(chainType)
-						? getIcTagResource(chainType)
-						: require('../../../images/ic_bsc_tag.png')
-				}
-			/>
-		);
+		return <Image style={styles.tagView} source={getIcTagByChainType(chainType)} />;
 	};
 
 	onItemTokenClick = token => {

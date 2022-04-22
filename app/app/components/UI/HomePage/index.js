@@ -31,8 +31,7 @@ import { toggleShowHint } from '../../../actions/hint';
 import Device from '../../../util/Device';
 import { addFavouriteDapp, removeFavouriteDapp, updateFavouriteDapps } from '../../../actions/browser';
 import DraggableGrid from '../DraggableGrid';
-import { util } from 'gopocket-core';
-import { getIcTagResource } from '../../../util/rpcUtil';
+import { chainToChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const screenWidth = Dimensions.get('window').width;
 const dragParentWidth = screenWidth - (20 + 20);
@@ -365,7 +364,7 @@ class HomePage extends PureComponent {
 	renderTabs(dappPage) {
 		const tabs = [];
 		tabs.push(
-			<View style={styles.content} tabLabel={'Favourites:-1'} key={`network_-1`}>
+			<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
 				{this.renderFavourites()}
 			</View>
 		);
@@ -526,7 +525,7 @@ class HomePage extends PureComponent {
 
 	renderDragItem(item) {
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
-		const tagIcon = this.getIconByChain(item?.chain);
+		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
 		const key = JSON.stringify({ url: item.url, chain: item.chain });
 		return (
 			<View style={styles.item} key={key}>
@@ -537,29 +536,6 @@ class HomePage extends PureComponent {
 				</Text>
 			</View>
 		);
-	}
-
-	getIconByChain(chain) {
-		if (chain === 1) {
-			return require('../../../images/ic_eth_tag.png');
-		} else if (chain === 2) {
-			return require('../../../images/ic_bsc_tag.png');
-		} else if (chain === 3) {
-			return require('../../../images/ic_polygon_tag.png');
-		} else if (chain === 4) {
-			return require('../../../images/ic_arb_tag.png');
-		} else if (chain === 6) {
-			return require('../../../images/ic_heco_tag.png');
-		} else if (chain === 7) {
-			return require('../../../images/ic_op_tag.png');
-		} else if (chain === 8) {
-			return require('../../../images/ic_avax_tag.png');
-		} else if (chain === 9) {
-			return require('../../../images/ic_syscoin_tag.png');
-		} else if (util.isRpcChainType(chain)) {
-			return getIcTagResource(chain);
-		}
-		return null;
 	}
 
 	async onChangeTab(tab) {

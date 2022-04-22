@@ -1,22 +1,16 @@
-import { BN } from 'ethereumjs-util';
-import { Mutex } from 'async-mutex';
-import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import util, {
-  getTronAccountUrl,
-  handleFetch,
-  isRpcChainType,
-  logDebug,
-  safelyExecute,
-  TRON_ENABLED,
-} from '../util';
+import {BN} from 'ethereumjs-util';
+import {Mutex} from 'async-mutex';
+import BaseController, {BaseConfig, BaseState} from '../BaseController';
+import util, {getTronAccountUrl, handleFetch, logDebug, safelyExecute} from '../util';
 import PreferencesController from '../user/PreferencesController';
 import TronNetworkController from '../network/TronNetworkController';
 import KeyringController from '../keyring/KeyringController';
-import { getControllerFromType } from '../ControllerUtils';
-import AssetsController, { TokenChangedType } from './AssetsController';
-import { ChainType, Token } from './TokenRatesController';
+import {getControllerFromType} from '../ControllerUtils';
+import AssetsController, {TokenNoChange} from './AssetsController';
+import {ChainType, Token} from './TokenRatesController';
 import TronContractController from './TronContractController';
-import { BalanceMap } from './AssetsContractController';
+import {BalanceMap} from './AssetsContractController';
+import {NetworkConfig} from "../Config";
 
 /**
  * @type TokenBalancesConfig
@@ -32,16 +26,7 @@ export interface TokenBalancesConfig extends BaseConfig {
 }
 
 export interface TokenBalancesState extends BaseState {
-  contractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  arbContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  opContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  bscContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  polygonContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  hecoContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  tronContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  avaxContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  syscoinContractBalances: {[selectedAddress: string]: {[address: string]: BN}};
-  rpcContractBalances: {[selectedAddress: string]: {[chainId: string]: {[address: string]: BN}}};
+  allContractBalances: {[selectedAddress: string]: {[chainType: number]: {[address: string]: BN}}};
 }
 
 /**
@@ -63,7 +48,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   /**
    * List of required sibling controllers this controller needs to function
    */
-  requiredControllers = ['AssetsContractController', 'AssetsController'];
+  requiredControllers = ['AssetsController'];
 
   /**
    * Creates a TokenBalancesController instance
@@ -78,16 +63,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       backgroundMode: false,
     };
     this.defaultState = {
-      contractBalances: {},
-      arbContractBalances: {},
-      opContractBalances: {},
-      bscContractBalances: {},
-      polygonContractBalances: {},
-      hecoContractBalances: {},
-      tronContractBalances: {},
-      avaxContractBalances: {},
-      syscoinContractBalances: {},
-      rpcContractBalances: {},
+      allContractBalances: {},
     };
     this.initialize();
   }
@@ -134,46 +110,23 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       const intervals: number[] = [];
 
       const preferences = this.context.PreferencesController as PreferencesController;
-      !preferences.isDisabledChain(selectedAddress, ChainType.Ethereum) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress));
-      intervals.push(Date.now() - start);
 
-      !preferences.isDisabledChain(selectedAddress, ChainType.Bsc) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Bsc));
-      intervals.push(Date.now() - start);
+      for (const type in NetworkConfig) {
+        const chainType = Number(type);
+        if (NetworkConfig[chainType].Disabled) {
+          continue;
+        }
+        if (chainType === ChainType.Tron) {
+          !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
+          await safelyExecute(() => this.updateTronBalances(selectedAddress));
 
-      !preferences.isDisabledChain(selectedAddress, ChainType.Polygon) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Polygon));
-      intervals.push(Date.now() - start);
-
-      !preferences.isDisabledChain(selectedAddress, ChainType.Arbitrum) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Arbitrum));
-      intervals.push(Date.now() - start);
-
-      !preferences.isDisabledChain(selectedAddress, ChainType.Optimism) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Optimism));
-      intervals.push(Date.now() - start);
-
-      !preferences.isDisabledChain(selectedAddress, ChainType.Heco) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Heco));
-      intervals.push(Date.now() - start);
-
-      !preferences.isDisabledChain(selectedAddress, ChainType.Avax) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Avax));
-      intervals.push(Date.now() - start);
-
-      !preferences.isDisabledChain(selectedAddress, ChainType.Syscoin) &&
-      await safelyExecute(() => this.updateBalances(selectedAddress, ChainType.Syscoin));
-      intervals.push(Date.now() - start);
-
-      if (TRON_ENABLED) {
-        !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
-        await safelyExecute(() => this.updateTronBalances(selectedAddress));
-
-        await safelyExecute(() => this.detectTronTokens(selectedAddress));
+          await safelyExecute(() => this.detectTronTokens(selectedAddress));
+        } else {
+          !preferences.isDisabledChain(selectedAddress, chainType) &&
+          await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
+        }
         intervals.push(Date.now() - start);
       }
-
       const types = preferences.getEnabledRpcChains(selectedAddress);
       if (types?.length > 0) {
         for (const type of types) {
@@ -191,66 +144,11 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   async updateBalancesWithBalances(selectedAddress: string, chainType = ChainType.Ethereum, balances: BalanceMap = {}) {
     const releaseLock = await this.mutex.acquire();
     try {
-      switch (chainType) {
-        case ChainType.Ethereum: {
-          const oldBalances = this.state.contractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.contractBalances[selectedAddress] = newBalances;
-          this.update({ contractBalances: { ...this.state.contractBalances }});
-          break;
-        }
-        case ChainType.Heco: {
-          const oldBalances = this.state.hecoContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.hecoContractBalances[selectedAddress] = newBalances;
-          this.update({ hecoContractBalances: { ...this.state.hecoContractBalances }});
-          break;
-        }
-        case ChainType.Arbitrum: {
-          const oldBalances = this.state.arbContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.arbContractBalances[selectedAddress] = newBalances;
-          this.update({ arbContractBalances: { ...this.state.arbContractBalances }});
-          break;
-        }
-        case ChainType.Optimism: {
-          const oldBalances = this.state.opContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.opContractBalances[selectedAddress] = newBalances;
-          this.update({ opContractBalances: { ...this.state.opContractBalances }});
-          break;
-        }
-        case ChainType.Bsc: {
-          const oldBalances = this.state.bscContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.bscContractBalances[selectedAddress] = newBalances;
-          this.update({ bscContractBalances: { ...this.state.bscContractBalances }});
-          break;
-        }
-        case ChainType.Polygon: {
-          const oldBalances = this.state.polygonContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.polygonContractBalances[selectedAddress] = newBalances;
-          this.update({ polygonContractBalances: { ...this.state.polygonContractBalances }});
-          break;
-        }
-        case ChainType.Avax: {
-          const oldBalances = this.state.avaxContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.avaxContractBalances[selectedAddress] = newBalances;
-          this.update({ avaxContractBalances: { ...this.state.avaxContractBalances }});
-          break;
-        }
-        case ChainType.Syscoin: {
-          const oldBalances = this.state.syscoinContractBalances[selectedAddress] || {};
-          const newBalances = { ...oldBalances, ...balances };
-          this.state.syscoinContractBalances[selectedAddress] = newBalances;
-          this.update({ syscoinContractBalances: { ...this.state.syscoinContractBalances }});
-          break;
-        }
-        default:
-          break;
-      }
+      const oldAddressBalances = this.state.allContractBalances[selectedAddress] || {};
+      const oldBalances = oldAddressBalances[chainType] || {};
+      oldAddressBalances[chainType] = {...oldBalances, ...balances};
+      this.state.allContractBalances[selectedAddress] = oldAddressBalances;
+      this.update({ allContractBalances: { ...this.state.allContractBalances }});
     } finally {
       releaseLock();
     }
@@ -265,7 +163,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     if (this.disabled) {
       return;
     }
-    const { chainId, contractController } = getControllerFromType(this.context, chainType);
+    const { chainId, contractController } = getControllerFromType(this, chainType);
     if (!contractController) {
       return;
     }
@@ -283,40 +181,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     if (Object.keys(newContractBalances).length === 0) {
       return;
     }
-    let oldBalances;
-    switch (chainType) {
-      case ChainType.Ethereum:
-        oldBalances = this.state.contractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Heco:
-        oldBalances = this.state.hecoContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Arbitrum:
-        oldBalances = this.state.arbContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Optimism:
-        oldBalances = this.state.opContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Bsc:
-        oldBalances = this.state.bscContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Polygon:
-        oldBalances = this.state.polygonContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Avax:
-        oldBalances = this.state.avaxContractBalances[selectedAddress] || {};
-        break;
-      case ChainType.Syscoin:
-        oldBalances = this.state.syscoinContractBalances[selectedAddress] || {};
-        break;
-      default:
-        if (isRpcChainType(chainType)) {
-          oldBalances = this.state.rpcContractBalances[selectedAddress]?.[chainId] || {};
-        } else {
-          oldBalances = {};
-        }
-        break;
-    }
+    const oldBalances = this.state.allContractBalances[selectedAddress]?.[chainType] || {};
     let needUpdate = Object.keys(newContractBalances).length !== Object.keys(oldBalances).length;
     if (!needUpdate) {
       for (const newContractBalancesKey in newContractBalances) {
@@ -330,55 +195,9 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     }
 
     if (needUpdate) {
-      switch (chainType) {
-        case ChainType.Ethereum:
-          const contractBalances = { ...this.state.contractBalances };
-          contractBalances[selectedAddress] = newContractBalances;
-          this.update({ contractBalances });
-          break;
-        case ChainType.Arbitrum:
-          const arbContractBalances = { ...this.state.arbContractBalances };
-          arbContractBalances[selectedAddress] = newContractBalances;
-          this.update({ arbContractBalances });
-          break;
-        case ChainType.Optimism:
-          const opContractBalances = { ...this.state.opContractBalances };
-          opContractBalances[selectedAddress] = newContractBalances;
-          this.update({ opContractBalances });
-          break;
-        case ChainType.Polygon:
-          const polygonContractBalances = { ...this.state.polygonContractBalances };
-          polygonContractBalances[selectedAddress] = newContractBalances;
-          this.update({ polygonContractBalances });
-          break;
-        case ChainType.Bsc:
-          const bscContractBalances = { ...this.state.bscContractBalances };
-          bscContractBalances[selectedAddress] = newContractBalances;
-          this.update({ bscContractBalances });
-          break;
-        case ChainType.Heco:
-          const hecoContractBalances = { ...this.state.hecoContractBalances };
-          hecoContractBalances[selectedAddress] = newContractBalances;
-          this.update({ hecoContractBalances });
-          break;
-        case ChainType.Avax:
-          const avaxContractBalances = { ...this.state.avaxContractBalances };
-          avaxContractBalances[selectedAddress] = newContractBalances;
-          this.update({ avaxContractBalances });
-          break;
-        case ChainType.Syscoin:
-          const syscoinContractBalances = { ...this.state.syscoinContractBalances };
-          syscoinContractBalances[selectedAddress] = newContractBalances;
-          this.update({ syscoinContractBalances });
-          break;
-        default:
-          if (isRpcChainType(chainType)) {
-            const rpcChainBalances = this.state.rpcContractBalances[selectedAddress] || {};
-            rpcChainBalances[chainId] = { ...oldBalances, ...newContractBalances };
-            this.update({ rpcContractBalances: { ...this.state.rpcContractBalances, [selectedAddress]: rpcChainBalances } });
-          }
-          break;
-      }
+      const typeBalances = this.state.allContractBalances[selectedAddress] || {};
+      typeBalances[chainType] = newContractBalances;
+      this.update({ allContractBalances: { ...this.state.allContractBalances, [selectedAddress]: typeBalances } });
     }
   }
 
@@ -404,9 +223,10 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
         newContractBalances[address] = new BN(trc20[address], 10);
       }
     }
-    const tronContractBalances = { ...this.state.tronContractBalances };
-    tronContractBalances[selectedAddress] = newContractBalances;
-    this.update({ tronContractBalances });
+
+    const typeBalances = this.state.allContractBalances[selectedAddress] || {};
+    typeBalances[ChainType.Tron] = newContractBalances;
+    this.update({ allContractBalances: { ...this.state.allContractBalances, [selectedAddress]: typeBalances } });
   }
 
   async detectTronTokens(selectedAddress: string) {
@@ -416,7 +236,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     const { allTokens, allIgnoredTokens } = assets.state;
     const tokens = allTokens[selectedAddress]?.[chainId] || [];
     const ignoredTokens = allIgnoredTokens[selectedAddress]?.[chainId] || [];
-    const tronBalances = this.state.tronContractBalances[selectedAddress] || {};
+    const tronBalances = this.state.allContractBalances[selectedAddress]?.[ChainType.Tron] || {};
     const needToAdd = Object.keys(tronBalances).filter((address) => address !== '0x0' &&
       !tokens.find((token) => token.address === address) &&
       !ignoredTokens.find((token) => token.address === address));
@@ -446,58 +266,10 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     super.beforeOnComposed();
     const preferencesController = this.context.PreferencesController as PreferencesController;
     const { identities } = preferencesController.state;
-    const contractBalances = this.state.contractBalances || {};
+    const contractBalances = this.state.allContractBalances || {};
     Object.keys(contractBalances).forEach((address) => {
       if (!identities[address]) {
         delete contractBalances[address];
-      }
-    });
-    const bscContractBalances = this.state.bscContractBalances || {};
-    Object.keys(bscContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete bscContractBalances[address];
-      }
-    });
-    const polygonContractBalances = this.state.polygonContractBalances || {};
-    Object.keys(polygonContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete polygonContractBalances[address];
-      }
-    });
-    const arbContractBalances = this.state.arbContractBalances || {};
-    Object.keys(arbContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete arbContractBalances[address];
-      }
-    });
-    const opContractBalances = this.state.opContractBalances || {};
-    Object.keys(opContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete opContractBalances[address];
-      }
-    });
-    const hecoContractBalances = this.state.hecoContractBalances || {};
-    Object.keys(hecoContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete hecoContractBalances[address];
-      }
-    });
-    const avaxContractBalances = this.state.avaxContractBalances || {};
-    Object.keys(avaxContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete avaxContractBalances[address];
-      }
-    });
-    const syscoinContractBalances = this.state.syscoinContractBalances || {};
-    Object.keys(syscoinContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete syscoinContractBalances[address];
-      }
-    });
-    const rpcContractBalances = this.state.rpcContractBalances || {};
-    Object.keys(rpcContractBalances).forEach((address) => {
-      if (!identities[address]) {
-        delete rpcContractBalances[address];
       }
     });
   }
@@ -509,7 +281,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     preferences.subscribe(() => setTimeout(() => this.poll(), 100), ['selectedAddress']);
     const assets = this.context.AssetsController as AssetsController;
     assets.subscribe(({ tokenChangedType }) => {
-      if (tokenChangedType !== TokenChangedType.NoChange) {
+      if (tokenChangedType !== TokenNoChange) {
         setTimeout(() => this.poll(), 100);
       }
     }, ['allTokens']);

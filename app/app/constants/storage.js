@@ -1,5 +1,5 @@
 const gopocket = 'GoPocket';
-const prefix = `@${gopocket}:`;
+export const prefix = `@${gopocket}:`;
 
 export const EXISTING_USER = `${prefix}existingUser`;
 export const BIOMETRY_CHOICE = `${prefix}biometryChoice`;
@@ -7,14 +7,6 @@ export const BIOMETRY_CHOICE_DISABLED = `${prefix}biometryChoiceDisabled`;
 export const VERIFICATION_DISABLED = `${prefix}verificationDisabled`;
 
 export const WALLETCONNECT_SESSIONS = `${prefix}walletconnectSessions`;
-export const LAST_INCOMING_TX_BLOCK_INFO = `${prefix}lastIncomingTxBlockInfo`;
-export const LAST_BSC_INCOMING_TX_BLOCK_INFO = `${prefix}lastBscIncomingTxBlockInfo`;
-export const LAST_POLYGON_INCOMING_TX_BLOCK_INFO = `${prefix}lastPolgyonIncomingTxBlockInfo`;
-export const LAST_ARB_INCOMING_TX_BLOCK_INFO = `${prefix}lastArbIncomingTxBlockInfo`;
-export const LAST_OP_INCOMING_TX_BLOCK_INFO = `${prefix}lastOpIncomingTxBlockInfo`;
-export const LAST_HECO_INCOMING_TX_BLOCK_INFO = `${prefix}lastHecoIncomingTxBlockInfo`;
-export const LAST_AVAX_INCOMING_TX_BLOCK_INFO = `${prefix}lastAvaxIncomingTxBlockInfo`;
-export const LAST_SYSCOIN_INCOMING_TX_BLOCK_INFO = `${prefix}lastSyscoinIncomingTxBlockInfo`;
 
 export const LAST_NOTIFICATION_INFO = `${prefix}lastNotificationInfo`;
 export const ETHERSCAN_KEY = `${prefix}etherscanKey`;

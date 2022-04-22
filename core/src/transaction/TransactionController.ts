@@ -1,42 +1,36 @@
-import { EventEmitter } from 'events';
-import { addHexPrefix, BN, bufferToHex } from 'ethereumjs-util';
-import { ethErrors } from 'eth-rpc-errors';
+import {EventEmitter} from 'events';
+import {addHexPrefix, BN, bufferToHex} from 'ethereumjs-util';
+import {ethErrors} from 'eth-rpc-errors';
 import MethodRegistry from 'eth-method-registry';
 import Common from '@ethereumjs/common';
 import EthQuery from 'eth-query';
-import { TransactionFactory, TypedTransaction } from '@ethereumjs/tx';
-import { v1 as random } from 'uuid';
-import { Mutex } from 'async-mutex';
-import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import NetworkController, { getNetworkType } from '../network/NetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
+import {TransactionFactory, TypedTransaction} from '@ethereumjs/tx';
+import {v1 as random} from 'uuid';
+import {Mutex} from 'async-mutex';
+import BaseController, {BaseConfig, BaseState} from '../BaseController';
 
 import util, {
   bitOR,
   BNToHex,
   fractionBN,
+  getEthereumNetworkType,
   getIncreasedPriceFromExisting,
   handleTransactionFetch,
   hexToBN,
   isEIP1559Transaction,
   isSmartContractCode,
-  logDebug, logInfo,
+  logDebug,
+  logInfo,
   logWarn,
   normalizeTransaction,
   query,
   safelyExecute,
   validateTransaction,
 } from '../util';
-import BscNetworkController from '../network/BscNetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import { ChainType } from '../assets/TokenRatesController';
+import {ChainType} from '../assets/TokenRatesController';
 import PreferencesController from '../user/PreferencesController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import RpcNetworkController from '../network/RpcNetworkController';
-import { Sqlite } from './Sqlite';
+import {Sqlite} from './Sqlite';
 
 const HARDFORK = 'london';
 
@@ -176,33 +170,9 @@ export type TokenTransactionInfo = {
   error?: Error;
 };
 
-export enum TxChangedType {
-  NoChange = 0x0,
-
-  TxChanged = 0x1,
-  TokenTxChanged = 0x2,
-
-  BscTxChanged = 0x4,
-  BscTokenTxChanged = 0x8,
-
-  PolygonTxChanged = 0x10,
-  PolygonTokenTxChanged = 0x20,
-
-  ArbTxChanged = 0x40,
-  ArbTokenTxChanged = 0x80,
-
-  HecoTxChanged = 0x100,
-  HecoTokenTxChanged = 0x200,
-
-  OpTxChanged = 0x400,
-  OpTokenTxChanged = 0x800,
-
-  AvaxTxChanged = 0x1000,
-  AvaxTokenTxChanged = 0x2000,
-
-  SyscoinTxChanged = 0x4000,
-  SyscoinTokenTxChanged = 0x8000,
-}
+export const TxChanged =      0x1000000000000;
+export const TokenTxChanged = 0x10000000000000;
+export const TxNoChange = 0x0;
 
 /**
  * @type EtherscanTransactionMeta
@@ -287,7 +257,7 @@ export interface MethodData {
 export interface TransactionState extends BaseState {
   transactionMetas: TransactionMeta[];
   methodData: { [key: string]: MethodData };
-  txChangedType: TxChangedType;
+  txChangedType: number;
   addressWithChanged: string;
 }
 
@@ -305,21 +275,7 @@ export const SPEED_UP_RATE = 1.1;
  * Controller responsible for submitting and managing transactions
  */
 export class TransactionController extends BaseController<TransactionConfig, TransactionState> {
-  private ethQuery: any;
-
-  private arbEthQuery: any;
-
-  private opEthQuery: any;
-
-  private bscEthQuery: any;
-
-  private polygonEthQuery: any;
-
-  private hecoEthQuery: any;
-
-  private avaxEthQuery: any;
-
-  private syscoinEthQuery: any;
+  private ethQuery: { [chainId: string]: any } = {};
 
   private registry: any;
 
@@ -446,7 +402,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     this.defaultState = {
       methodData: {},
       transactionMetas: [],
-      txChangedType: TxChangedType.NoChange,
+      txChangedType: TxNoChange,
       addressWithChanged: '',
     };
     this.initialize();
@@ -467,86 +423,15 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   getETHQueryByChainId(chainId: string) {
-    const commonNetwork = this.context.NetworkController as NetworkController;
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-    const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
     const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
-    const {
-      state: {
-        provider: { chainId: commonChainId },
-      },
-    } = commonNetwork;
-
-    const {
-      state: {
-        provider: { chainId: arbChainId },
-      },
-    } = arbNetwork;
-
-    const {
-      state: {
-        provider: { chainId: opChainId },
-      },
-    } = opNetwork;
-
-    const {
-      state: {
-        provider: { chainId: bscChainId },
-      },
-    } = bscNetwork;
-
-    const {
-      state: {
-        provider: { chainId: polygonChainId },
-      },
-    } = polygonNetwork;
-
-    const {
-      state: {
-        provider: { chainId: hecoChainId },
-      },
-    } = hecoNetwork;
-
-    const {
-      state: {
-        provider: { chainId: avaxChainId },
-      },
-    } = avaxNetwork;
-
-    const {
-      state: {
-        provider: { chainId: syscoinChainId },
-      },
-    } = syscoinNetwork;
-
-    if (chainId === commonChainId) {
-      return this.ethQuery;
-    } else if (chainId === arbChainId) {
-      return this.arbEthQuery;
-    } else if (chainId === opChainId) {
-      return this.opEthQuery;
-    } else if (chainId === bscChainId) {
-      return this.bscEthQuery;
-    } else if (chainId === polygonChainId) {
-      return this.polygonEthQuery;
-    } else if (chainId === hecoChainId) {
-      return this.hecoEthQuery;
-    } else if (chainId === avaxChainId) {
-      return this.avaxEthQuery;
-    } else if (chainId === syscoinChainId) {
-      return this.syscoinEthQuery;
-    } else if (rpcNetwork.isRpcChainId(chainId)) {
+    if (rpcNetwork.isRpcChainId(chainId)) {
       const type = rpcNetwork.getChainTypeByChainId(chainId);
       if (type) {
         return rpcNetwork.allEthQuery[type];
       }
+    } else {
+      return this.ethQuery[chainId];
     }
-    return null;
   }
 
   /**
@@ -564,7 +449,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
         return methodData[fourBytePrefix];
       }
       const registry = await this.registryLookup(fourBytePrefix);
-      this.update({ txChangedType: TxChangedType.NoChange, methodData: { ...methodData, ...{ [fourBytePrefix]: registry } } });
+      this.update({ txChangedType: TxNoChange, methodData: { ...methodData, ...{ [fourBytePrefix]: registry } } });
       return registry;
     } finally {
       releaseLock();
@@ -742,7 +627,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   getCommonConfiguration(chainId: string): Common {
-    const chain = getNetworkType(chainId);
+    const chain = getEthereumNetworkType(chainId);
     if (chain) {
       return new Common({ chain, hardfork: HARDFORK });
     }
@@ -855,9 +740,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       throw new Error('No sign method defined.');
     }
 
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const isArbTransaction = transactionMeta.chainId === arbNetwork.state.provider.chainId;
-    const useEthQuery = isArbTransaction ? this.arbEthQuery : this.ethQuery;
+    const useEthQuery = this.getETHQueryByChainId(transactionMeta.chainId);
 
     /* istanbul ignore next */
     const gasPrice = getIncreasedPriceFromExisting(
@@ -993,47 +876,22 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     }));
   }
 
-  async onNetworkChange() {
-    const network = this.context.NetworkController as NetworkController;
-    this.ethQuery = network.provider ? new EthQuery(network.provider) : /* istanbul ignore next */ null;
-    this.registry = network.provider
-      ? new MethodRegistry({ provider: network.provider }) /* istanbul ignore next */
-      : null;
-  }
-
-  async onArbNetworkChange() {
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    this.arbEthQuery = arbNetwork.provider ? new EthQuery(arbNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onOpNetworkChange() {
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    this.opEthQuery = opNetwork.provider ? new EthQuery(opNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onBscNetworkChange() {
-    const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-    this.bscEthQuery = bscNetwork.provider ? new EthQuery(bscNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onPolygonNetworkChange() {
-    const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    this.polygonEthQuery = polygonNetwork.provider ? new EthQuery(polygonNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onHecoNetworkChange() {
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    this.hecoEthQuery = hecoNetwork.provider ? new EthQuery(hecoNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onAvaxNetworkChange() {
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    this.avaxEthQuery = avaxNetwork.provider ? new EthQuery(avaxNetwork.provider) : /* istanbul ignore next */ null;
-  }
-
-  async onSyscoinNetworkChange() {
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-    this.syscoinEthQuery = syscoinNetwork.provider ? new EthQuery(syscoinNetwork.provider) : /* istanbul ignore next */ null;
+  async onNetworkChange(chainType: ChainType) {
+    const network = this.networks[chainType];
+    if (!network) {
+      return;
+    }
+    if (chainType === ChainType.Ethereum) {
+      this.registry = network.provider
+        ? new MethodRegistry({ provider: network.provider }) /* istanbul ignore next */
+        : null;
+    }
+    const {
+      state: {
+        provider: { chainId },
+      },
+    } = network;
+    this.ethQuery[chainId] = network.provider ? new EthQuery(network.provider) : /* istanbul ignore next */ null;
   }
 
   /**
@@ -1107,74 +965,19 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   getCurrentChainId(type: ChainType, opt?: FetchAllOptions) {
-    if (type === ChainType.Bsc) {
-      const network = this.context.BscNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Polygon) {
-      const network = this.context.PolygonNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Arbitrum) {
-      const network = this.context.ArbNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Heco) {
-      const network = this.context.HecoNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Optimism) {
-      const network = this.context.OpNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Avax) {
-      const network = this.context.AvaxNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (type === ChainType.Syscoin) {
-      const network = this.context.SyscoinNetworkController;
-      return opt?.chainId ? opt.chainId : network.state.provider.chainId;
-    } else if (util.isRpcChainType(type)) {
+    if (util.isRpcChainType(type)) {
       return opt?.chainId ? opt.chainId : (this.context.RpcNetworkController as RpcNetworkController).getProviderChainId(type);
+    } else {
+      return this.networks[type].state.provider.chainId;
     }
-    const network = this.context.NetworkController;
-    return opt?.chainId ? opt.chainId : network.state.provider.chainId;
   }
 
-  getTxChangedByType(type: ChainType) {
-    if (type === ChainType.Bsc) {
-      return TxChangedType.BscTxChanged;
-    } else if (type === ChainType.Polygon) {
-      return TxChangedType.PolygonTxChanged;
-    } else if (type === ChainType.Arbitrum) {
-      return TxChangedType.ArbTxChanged;
-    } else if (type === ChainType.Heco) {
-      return TxChangedType.HecoTxChanged;
-    } else if (type === ChainType.Optimism) {
-      return TxChangedType.OpTxChanged;
-    } else if (type === ChainType.Avax) {
-      return TxChangedType.AvaxTxChanged;
-    } else if (type === ChainType.Syscoin) {
-      return TxChangedType.SyscoinTxChanged;
-    }
-    return TxChangedType.TxChanged;
-  }
-
-  getTokenTxChangedByType(type: ChainType) {
-    if (type === ChainType.Bsc) {
-      return TxChangedType.BscTokenTxChanged;
-    } else if (type === ChainType.Polygon) {
-      return TxChangedType.PolygonTokenTxChanged;
-    } else if (type === ChainType.Arbitrum) {
-      return TxChangedType.ArbTokenTxChanged;
-    } else if (type === ChainType.Heco) {
-      return TxChangedType.HecoTokenTxChanged;
-    } else if (type === ChainType.Optimism) {
-      return TxChangedType.OpTokenTxChanged;
-    } else if (type === ChainType.Avax) {
-      return TxChangedType.AvaxTokenTxChanged;
-    } else if (type === ChainType.Syscoin) {
-      return TxChangedType.SyscoinTokenTxChanged;
-    }
-    return TxChangedType.TokenTxChanged;
+  getTxChangedType(changed: number) {
+    return changed &~ TxChanged &~ TokenTxChanged;
   }
 
   async handleScanTx(address: string, type: ChainType, currentChainId: string, loadToken: boolean, txInternal: boolean, txResponse: any) {
-    let changed = TxChangedType.NoChange;
+    let changed = TxNoChange;
     if (!loadToken || txInternal) {
       const normalizedTxs = txResponse?.result?.map((tx: EtherscanTransactionMeta) =>
         this.normalizeTx(tx, currentChainId),
@@ -1185,7 +988,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
           const txs = normalizedTxs.filter((item: TransactionInfo, index: number, arr: TransactionInfo[]) => {
             return arr.findIndex((item2) => item2.transactionHash === item.transactionHash) === index;
           });
-          changed = bitOR(changed, this.getTxChangedByType(type));
+          changed = bitOR(changed, bitOR(type, TxChanged));
           Sqlite.getInstance().insertTransactions(address, type, txs, txInternal);
         } else {
           for (const normalizedTx of normalizedTxs) {
@@ -1193,7 +996,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
             if (existInfo) {
               await Sqlite.getInstance().updateTransactionInfo(address, type, currentChainId, normalizedTx.transactionHash || '', normalizedTx, txInternal);
             } else {
-              changed = bitOR(changed, this.getTxChangedByType(type));
+              changed = bitOR(changed, bitOR(type, TxChanged));
               Sqlite.getInstance().insertTransactions(address, type, [normalizedTx], txInternal);
             }
           }
@@ -1212,7 +1015,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
               item2.transferInformation.contractAddress === item.transferInformation.contractAddress &&
               item2.amount === item.amount) === index;
           });
-          changed = bitOR(changed, this.getTokenTxChangedByType(type));
+          changed = bitOR(changed, bitOR(type, TokenTxChanged));
           Sqlite.getInstance().insertTokenTransactions(address, type, txs);
         } else {
           for (const normalizedToken of normalizedTokenTxs) {
@@ -1222,7 +1025,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
               Sqlite.getInstance().updateTokenTransactionInfo(address, type, currentChainId, normalizedToken.transactionHash,
                 normalizedToken.transferInformation.contractAddress, normalizedToken.amount, normalizedToken);
             } else {
-              changed = bitOR(changed, this.getTokenTxChangedByType(type));
+              changed = bitOR(changed, bitOR(type, TokenTxChanged));
               Sqlite.getInstance().insertTokenTransactions(address, type, [normalizedToken]);
             }
           }
@@ -1250,12 +1053,12 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   async fetchAll(address: string, type: ChainType, loadToken: boolean, txInternal: boolean, opt?: FetchAllOptions):
-    Promise<{latestIncomingTxBlockNumber: number; needUpdate: TxChangedType}> {
+    Promise<{latestIncomingTxBlockNumber: number; needUpdate: number}> {
     const preferences = this.context.PreferencesController as PreferencesController;
     if (preferences.isDisabledChain(address, type)) {
       return {
         latestIncomingTxBlockNumber: opt ? Number(opt.fromBlock) : 0,
-        needUpdate: TxChangedType.NoChange,
+        needUpdate: TxNoChange,
       };
     }
     const chainId = this.getCurrentChainId(type, opt);
@@ -1265,7 +1068,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       latestIncomingTxBlockNumber,
     } = await this.handleScanTx(address, type, chainId, loadToken, txInternal, etherscanTxResponse);
 
-    if (commonChanged !== TxChangedType.NoChange) {
+    if (commonChanged !== TxNoChange) {
       this.update({
         txChangedType: commonChanged,
         addressWithChanged: address,
@@ -1295,31 +1098,22 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   async getCode(chainType: ChainType, address: string) {
-    let code;
-    if (chainType === ChainType.Bsc) {
-      code = await util.query(this.bscEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Polygon) {
-      code = await util.query(this.polygonEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Arbitrum) {
-      code = await util.query(this.arbEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Heco) {
-      code = await util.query(this.hecoEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Optimism) {
-      code = await util.query(this.opEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Avax) {
-      code = await util.query(this.avaxEthQuery, 'getCode', [address]);
-    } else if (chainType === ChainType.Syscoin) {
-      code = await util.query(this.syscoinEthQuery, 'getCode', [address]);
-    } else if (util.isRpcChainType(chainType)) {
-      const rpcNetwork = this.context.RpcNetworkController as RpcNetworkController;
-      const ethQuery = rpcNetwork.allEthQuery[chainType];
-      if (ethQuery) {
-        code = await util.query(ethQuery, 'getCode', [address]);
-      }
-    } else {
-      code = await util.query(this.ethQuery, 'getCode', [address]);
+    const network = this.networks[chainType];
+    if (!network) {
+      return undefined;
     }
-    return code;
+
+    let ethQuery;
+    if (util.isRpcChainType(chainType)) {
+     ethQuery = network.allEthQuery[chainType];
+    } else {
+      const chainId = network.state.provider.chainId;
+      ethQuery = this.ethQuery[chainId];
+    }
+    if (!ethQuery) {
+      return undefined;
+    }
+    return await util.query(ethQuery, 'getCode', [address]);
   }
 
   beforeOnComposed() {

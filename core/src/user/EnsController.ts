@@ -2,11 +2,11 @@ import { isValidAddress, isZeroAddress, toChecksumAddress } from 'ethereumjs-uti
 import ENS from 'ethjs-ens';
 import { Mutex } from 'async-mutex';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import NetworkController from '../network/NetworkController';
 import util, { handleFetch, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
 import { getContractController } from '../ControllerUtils';
 import CollectiblesController from '../assets/CollectiblesController';
 import PreferencesController from './PreferencesController';
+import {ChainType} from "../assets/TokenRatesController";
 
 export interface EnsEntry {
   ensName: string;
@@ -72,7 +72,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       return undefined;
     }
     try {
-      const networkController = this.context.NetworkController as NetworkController;
+      const networkController = this.networks[ChainType.Ethereum];
       if (!networkController.ismainnet() || networkController.isLoading()) {
         return undefined;
       }
@@ -139,7 +139,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       const contractAddress = contractInfo[1];
       const tokenID = subStr[2];
 
-      const { contractController } = getContractController(this.context, chainId);
+      const { contractController } = getContractController(this, chainId);
       const collectiblesController = this.context.CollectiblesController as CollectiblesController;
       const cImage = await collectiblesController.getCollectibleImage(contractController, contractType?.toUpperCase(), contractAddress, tokenID, chainId);
       if (cImage?.image) {
@@ -278,7 +278,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
   }
 
   async getNodeByName(ensName: string) {
-    const networkController = this.context.NetworkController as NetworkController;
+    const networkController = this.networks[ChainType.Ethereum];
     if (!networkController.ismainnet() || networkController.isLoading()) {
       return undefined;
     }

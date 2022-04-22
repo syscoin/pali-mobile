@@ -7,20 +7,16 @@ import * as RNFS from 'react-native-fs';
 import { wordlists } from 'bip39';
 import { Mutex } from 'async-mutex';
 import URL from 'url-parse';
-import * as ArbConfig from './ArbConfig.json';
 import * as util from './util';
 import Fuse from 'fuse.js';
+
+export * from "./Config";
 
 export * from './approval/ApprovalEventsController';
 export * from './assets/AssetsContractController';
 export * from './assets/ArbContractController';
-export * from './assets/OpContractController';
-export * from './assets/BscContractController';
 export * from './assets/PolygonContractController';
 export * from './assets/TronContractController';
-export * from './assets/HecoContractController';
-export * from './assets/AvaxContractController';
-export * from './assets/SyscoinContractController';
 export * from './assets/RpcContractController';
 export * from './assets/AssetsController';
 export * from './assets/AssetsDetectionController';
@@ -29,14 +25,7 @@ export * from './ComposableController';
 export * from './keyring/KeyringController';
 export * from './message-manager/MessageManager';
 export * from './network/NetworkController';
-export * from './network/ArbNetworkController';
-export * from './network/OpNetworkController';
-export * from './network/BscNetworkController';
-export * from './network/PolygonNetworkController';
 export * from './network/TronNetworkController';
-export * from './network/HecoNetworkController';
-export * from './network/AvaxNetworkController';
-export * from './network/SyscoinNetworkController';
 export * from './network/RpcNetworkController';
 export * from './user/PreferencesController';
 export * from './assets/TokenBalancesController';
@@ -59,5 +48,3 @@ export { BigNumber, EthersUtils };
 export { util, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL, Fuse };
 // ethereumjs-util
 export { BN, toChecksumAddress, stripHexPrefix, isValidAddress, addHexPrefix, isZeroAddress };
-
-export { ArbConfig };

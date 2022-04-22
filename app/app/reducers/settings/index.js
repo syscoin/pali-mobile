@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist';
-import { ChainType, util } from 'gopocket-core';
+import { util } from 'gopocket-core';
 import { SORT_NETWORTH } from '../../constants/storage';
 import NativeThreads from '../../threads/NativeThreads';
 
@@ -8,15 +8,7 @@ const initialState = {
 	useTestServer: false,
 	updateConfig: {},
 	appstoreBaseVersion: 0,
-	etherNetworkChanging: null,
-	bscNetworkChanging: null,
-	polygonNetworkChanging: null,
-	arbitrumNetworkChanging: null,
-	optimismNetworkChanging: null,
-	tronNetworkChanging: null,
-	hecoNetworkChanging: null,
-	avaxNetworkChanging: null,
-	syscoinNetworkChanging: null,
+	allNetworkChanging: {},
 	contractList: [],
 	approveList: [],
 	isLockScreen: false,
@@ -37,15 +29,7 @@ const settingsReducer = (state = initialState, action) => {
 				return {
 					...state,
 					...action.payload.settings,
-					etherNetworkChanging: null,
-					bscNetworkChanging: null,
-					polygonNetworkChanging: null,
-					arbitrumNetworkChanging: null,
-					optimismNetworkChanging: null,
-					tronNetworkChanging: null,
-					hecoNetworkChanging: null,
-					avaxNetworkChanging: null,
-					syscoinNetworkChanging: null,
+					allNetworkChanging: {},
 					isLockScreen: false
 				};
 			}
@@ -73,148 +57,11 @@ const settingsReducer = (state = initialState, action) => {
 				appstoreBaseVersion: action.appstoreBaseVersion
 			};
 		case 'START_NETWORK_CHANGE':
-			switch (action.chainType) {
-				case ChainType.Bsc: {
-					return {
-						...state,
-						bscNetworkChanging: action.change
-					};
-				}
-				case ChainType.Polygon: {
-					return {
-						...state,
-						polygonNetworkChanging: action.change
-					};
-				}
-				case ChainType.Arbitrum: {
-					return {
-						...state,
-						arbitrumNetworkChanging: action.change
-					};
-				}
-				case ChainType.Optimism: {
-					return {
-						...state,
-						optimismNetworkChanging: action.change
-					};
-				}
-				case ChainType.Ethereum: {
-					return {
-						...state,
-						etherNetworkChanging: action.change
-					};
-				}
-				case ChainType.Tron: {
-					return {
-						...state,
-						tronNetworkChanging: action.change
-					};
-				}
-				case ChainType.Heco: {
-					return {
-						...state,
-						hecoNetworkChanging: action.change
-					};
-				}
-				case ChainType.Avax: {
-					return {
-						...state,
-						avaxNetworkChanging: action.change
-					};
-				}
-				case ChainType.Syscoin: {
-					return {
-						...state,
-						syscoinNetworkChanging: action.change
-					};
-				}
-			}
-			return state;
+			state.allNetworkChanging[action.chainType] = action.change;
+			return { ...state };
 		case 'END_NETWORK_CHANGE':
-			switch (action.chainType) {
-				case ChainType.Bsc: {
-					if (state.bscNetworkChanging === action.change) {
-						return {
-							...state,
-							bscNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Polygon: {
-					if (state.polygonNetworkChanging === action.change) {
-						return {
-							...state,
-							polygonNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Arbitrum: {
-					if (state.arbitrumNetworkChanging === action.change) {
-						return {
-							...state,
-							arbitrumNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Optimism: {
-					if (state.optimismNetworkChanging === action.change) {
-						return {
-							...state,
-							optimismNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Ethereum: {
-					if (state.etherNetworkChanging === action.change) {
-						return {
-							...state,
-							etherNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Tron: {
-					if (state.tronNetworkChanging === action.change) {
-						return {
-							...state,
-							tronNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Heco: {
-					if (state.hecoNetworkChanging === action.change) {
-						return {
-							...state,
-							hecoNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Avax: {
-					if (state.avaxNetworkChanging === action.change) {
-						return {
-							...state,
-							avaxNetworkChanging: null
-						};
-					}
-					break;
-				}
-				case ChainType.Syscoin: {
-					if (state.syscoinNetworkChanging === action.change) {
-						return {
-							...state,
-							syscoinNetworkChanging: null
-						};
-					}
-					break;
-				}
-			}
-			return state;
+			state.allNetworkChanging[action.chainType] = null;
+			return { ...state };
 		case 'UPDATE_CONTRACT_LIST':
 			return {
 				...state,

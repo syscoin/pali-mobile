@@ -24,7 +24,7 @@ import {
 	hexToBN,
 	BNToHex,
 	getNativeCurrencyBalance,
-	getTypeByChainId
+	getChainTypeByChainId
 } from '../../../../util/number';
 import { getNormalizedTxState, getTicker, generateApproveData, decodeApproveData } from '../../../../util/transactions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -118,15 +118,7 @@ const styles = StyleSheet.create({
  */
 class Approve extends PureComponent {
 	static propTypes = {
-		contractBalances: PropTypes.object,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
+		allContractBalances: PropTypes.object,
 		/**
 		 * Transaction state
 		 */
@@ -249,27 +241,11 @@ class Approve extends PureComponent {
 		let error;
 		const {
 			transaction: { value, gas, gasPrice, chainId },
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		} = this.props;
-		const type = getTypeByChainId(chainId);
+		const type = getChainTypeByChainId(chainId);
 		const balanceBN = getNativeCurrencyBalance(type, {
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		});
 		const total = value.add(gas.mul(gasPrice));
 		if (!gas) error = strings('transaction.invalid_gas');
@@ -468,40 +444,8 @@ class Approve extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	transaction: getNormalizedTxState(state),

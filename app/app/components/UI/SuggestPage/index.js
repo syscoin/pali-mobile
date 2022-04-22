@@ -13,17 +13,10 @@ import {
 	AutoCompleteType_URL
 } from '../../../core/AutoCompleteController';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import eth from '../../../images/ic_share_eth.png';
-import bsc from '../../../images/ic_share_bsc.png';
-import polygon from '../../../images/ic_share_polygon.png';
-import arb from '../../../images/ic_share_arb.png';
-import heco from '../../../images/ic_share_heco.png';
-import op from '../../../images/ic_share_op.png';
-import avax from '../../../images/ic_share_avax.png';
-import syscoin from '../../../images/ic_share_syscoin.png';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import NFTImage from '../NFTImage';
 import AppConstants from '../../../core/AppConstants';
+import { chainToChainType, getIcTagByChainType, getShareImage } from '../../../util/ChainTypeImages';
 
 const styles = {
 	root: {
@@ -233,23 +226,7 @@ class SuggestPage extends PureComponent {
 								{showChain && item.chain && (
 									<Image
 										style={styles.itemTitleLogo}
-										source={
-											item.chain === 2
-												? bsc
-												: item.chain === 3
-												? polygon
-												: item.chain === 4
-												? arb
-												: item.chain === 6
-												? heco
-												: item.chain === 7
-												? op
-												: item.chain === 8
-												? avax
-												: item.chain === 9
-												? syscoin
-												: eth
-										}
+										source={getShareImage(chainToChainType(item.chain))}
 									/>
 								)}
 							</View>
@@ -264,30 +241,9 @@ class SuggestPage extends PureComponent {
 		);
 	}
 
-	getIconByChain = chain => {
-		if (chain === 1) {
-			return require('../../../images/ic_eth_tag.png');
-		} else if (chain === 2) {
-			return require('../../../images/ic_bsc_tag.png');
-		} else if (chain === 3) {
-			return require('../../../images/ic_polygon_tag.png');
-		} else if (chain === 4) {
-			return require('../../../images/ic_arb_tag.png');
-		} else if (chain === 6) {
-			return require('../../../images/ic_heco_tag.png');
-		} else if (chain === 7) {
-			return require('../../../images/ic_op_tag.png');
-		} else if (chain === 8) {
-			return require('../../../images/ic_avax_tag.png');
-		} else if (chain === 9) {
-			return require('../../../images/ic_syscoin_tag.png');
-		}
-		return null;
-	};
-
 	rennderFavoriteItem = (item, index) => {
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
-		const tagIcon = this.getIconByChain(item?.chain);
+		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
 		return (
 			<TouchableOpacity
 				style={styles.favoriteItem}

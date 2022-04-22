@@ -32,8 +32,7 @@ import {
 	fiatNumberToWei,
 	fromWei,
 	getChainIdByType,
-	getChainTypeName,
-	getCurrency,
+	getTickerByType,
 	getFromTokenMinimalUnit,
 	getNativeCurrencyBalance,
 	getTokenBalance,
@@ -52,11 +51,7 @@ import {
 } from '../../../../util/number';
 import { strings } from '../../../../../locales/i18n';
 import PromptView from '../../../UI/PromptView';
-import {
-	getSuggestedGasEstimatesAndId,
-	estimateTransactionTotalGas,
-	getBasicGasEstimates
-} from '../../../../util/custom-gas';
+import { getSuggestedGasEstimatesAndId, getBasicGasEstimates } from '../../../../util/custom-gas';
 import { renderError } from '../../../../util/error';
 import iconMigrateActive from '../../../../images/ic_migrate_white.png';
 import Device from '../../../../util/Device';
@@ -75,8 +70,9 @@ import approveImage from '../../../../images/img_approve_bridge.png';
 import { addApproveInfo, removeApproveInfo } from '../../../../actions/settings';
 import { store } from '../../../../store';
 import CheckPassword from '../../../UI/CheckPassword';
-import { getRpcProviderChainId } from '../../../../util/ControllerUtils';
 import { getSupportBridgeType, getSupportMigration, TYPE_CBRIDGE } from './Bridge';
+import { getEstimatedTotalGas } from '../../../../util/Amount';
+import { getChainTypeName } from '../../../../util/ChainTypeImages';
 
 const arbiBgColor = '#B8B4BF';
 const logoBorderColor = '#DCDCDC';
@@ -133,18 +129,6 @@ const styles = StyleSheet.create({
 		width: 30,
 		height: 30,
 		alignItems: 'center'
-	},
-	arbiBar: {
-		width: 50,
-		marginTop: 2,
-		borderRadius: 3,
-		backgroundColor: arbiBgColor
-	},
-	arbiText: {
-		fontSize: 10,
-		lineHeight: 16,
-		textAlign: 'center',
-		color: colors.white
 	},
 	moveWrapper: {
 		maxHeight: '88%',
@@ -395,38 +379,11 @@ class MoveTab extends PureComponent {
 		navigation: PropTypes.object,
 		asset: PropTypes.object,
 		onClose: PropTypes.func,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
+		allContractBalances: PropTypes.object,
+		allCurrencyPrice: PropTypes.object,
+		allContractExchangeRates: PropTypes.object,
 		selectedAddress: PropTypes.string,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
-		contractBalances: PropTypes.object,
 		mainBalance: PropTypes.string,
-		ethPrice: PropTypes.object,
-		bnbPrice: PropTypes.object,
-		polygonPrice: PropTypes.object,
-		hecoPrice: PropTypes.object,
-		avaxPrice: PropTypes.object,
-		syscoinPrice: PropTypes.object,
-		contractExchangeRates: PropTypes.object,
-		arbContractExchangeRates: PropTypes.object,
-		bscContractExchangeRates: PropTypes.object,
-		polygonContractExchangeRates: PropTypes.object,
-		hecoContractExchangeRates: PropTypes.object,
-		opContractExchangeRates: PropTypes.object,
-		avaxContractExchangeRates: PropTypes.object,
-		syscoinContractExchangeRates: PropTypes.object,
 		onLoading: PropTypes.func,
 		currencyCode: PropTypes.string,
 		currencyCodeRate: PropTypes.number,
@@ -472,18 +429,7 @@ class MoveTab extends PureComponent {
 	onApproveConfirmedListener = undefined;
 
 	componentDidMount() {
-		const {
-			asset,
-			arbContractBalances,
-			opContractBalances,
-			contractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { asset, allContractBalances } = this.props;
 		let approveSelectType;
 		if (!asset.nativeCurrency) {
 			let value;
@@ -496,34 +442,26 @@ class MoveTab extends PureComponent {
 				this.props.removeApproveInfo(approveInfo.metaID);
 			} else {
 				const weiBalance = getTokenBalance(asset, {
-					contractBalances,
-					bscContractBalances,
-					arbContractBalances,
-					opContractBalances,
-					polygonContractBalances,
-					hecoContractBalances,
-					avaxContractBalances,
-					syscoinContractBalances,
-					rpcContractBalances
+					allContractBalances
 				});
 				value = getFromTokenMinimalUnit(weiBalance, asset.decimals);
 			}
 			this.onAmountChange(value);
 		}
 		this.loadNetworkType(approveSelectType);
-		asset.type !== ChainType.Bsc && this.loadClaimEthereumGas();
+		this.loadClaimEthereumGas();
 		this.props.onLoading(false);
 	}
 
 	loadClaimEthereumGas = async () => {
-		const { currencyCodeRate, ethPrice, currencyCode } = this.props;
+		const { currencyCodeRate, allCurrencyPrice, currencyCode } = this.props;
 		const { gasPrice } = await getBasicGasEstimates({
 			from: this.props.selectedAddress,
 			to: this.props.selectedAddress,
-			chainId: Engine.context.NetworkController.state.provider.chainId
+			chainId: Engine.networks[ChainType.Ethereum].state.provider.chainId
 		});
 		const balance = renderFromWei(new BN(250000).mul(gasPrice).toString(10));
-		const fiatNumber = balanceToFiatNumber(balance, currencyCodeRate, ethPrice.usd);
+		const fiatNumber = balanceToFiatNumber(balance, currencyCodeRate, allCurrencyPrice[ChainType.Ethereum].usd);
 		this.setState({ claimEthereumGas: addCurrencySymbol(fiatNumber, currencyCode) });
 	};
 
@@ -614,45 +552,8 @@ class MoveTab extends PureComponent {
 
 	getEstimatedTotalGas = async () => {
 		if (this.state.estimatedTotalGas === undefined) {
-			const {
-				selectedAddress,
-				asset,
-				arbChainId,
-				chainId,
-				bscChainId,
-				polygonChainId,
-				hecoChainId,
-				avaxChainId,
-				syscoinChainId
-			} = this.props;
-			let txChainId;
-			if (asset.type === ChainType.Bsc) {
-				txChainId = bscChainId;
-			} else if (asset.type === ChainType.Arbitrum) {
-				txChainId = arbChainId;
-			} else if (asset.type === ChainType.Polygon) {
-				txChainId = polygonChainId;
-			} else if (asset.type === ChainType.Heco) {
-				txChainId = hecoChainId;
-			} else if (asset.type === ChainType.Avax) {
-				txChainId = avaxChainId;
-			} else if (asset.type === ChainType.Syscoin) {
-				txChainId = syscoinChainId;
-			} else if (util.isRpcChainType(asset.type)) {
-				txChainId = getRpcProviderChainId(asset.type);
-			} else {
-				txChainId = chainId;
-			}
-			let minGas;
-			if (asset.type === ChainType.Arbitrum) {
-				minGas = 800000;
-			}
-			const estimatedTotalGas = await estimateTransactionTotalGas(
-				selectedAddress,
-				selectedAddress,
-				txChainId,
-				minGas
-			);
+			const { selectedAddress, asset } = this.props;
+			const estimatedTotalGas = await getEstimatedTotalGas({ selectedAddress, asset });
 			this.setState({ estimatedTotalGas });
 			return estimatedTotalGas;
 		}
@@ -664,39 +565,14 @@ class MoveTab extends PureComponent {
 		return <TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />;
 	};
 
-	renderArbiBar = () => (
-		<View style={styles.arbiBar}>
-			<Text style={styles.arbiText}>{strings('other.arbitrum')}</Text>
-		</View>
-	);
-
 	validateAmount = moveAmount => {
-		const {
-			contractBalances,
-			asset,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { allContractBalances, asset } = this.props;
 		const { estimatedTotalGas } = this.state;
 		let weiBalance, weiInput, amountError;
 		if (isDecimal(moveAmount) && !isZero(moveAmount)) {
 			if (asset.nativeCurrency) {
 				weiBalance = getNativeCurrencyBalance(asset.type, {
-					contractBalances,
-					arbContractBalances,
-					opContractBalances,
-					polygonContractBalances,
-					bscContractBalances,
-					hecoContractBalances,
-					avaxContractBalances,
-					syscoinContractBalances,
-					rpcContractBalances
+					allContractBalances
 				});
 				weiInput = toWei(moveAmount);
 				if (estimatedTotalGas) {
@@ -704,15 +580,7 @@ class MoveTab extends PureComponent {
 				}
 			} else {
 				weiBalance = getTokenBalance(asset, {
-					contractBalances,
-					arbContractBalances,
-					opContractBalances,
-					polygonContractBalances,
-					bscContractBalances,
-					hecoContractBalances,
-					avaxContractBalances,
-					syscoinContractBalances,
-					rpcContractBalances
+					allContractBalances
 				});
 				weiInput = toTokenMinimalUnit(moveAmount, asset.decimals);
 			}
@@ -753,12 +621,10 @@ class MoveTab extends PureComponent {
 		const { asset } = this.props;
 
 		if (networkSelectType === ChainType.Arbitrum) {
-			const { ArbContractController } = Engine.context;
-			const approved = await ArbContractController.approved(asset.address);
+			const approved = await Engine.contracts[ChainType.Arbitrum].approved(asset.address);
 			return hexToBN(approved);
 		} else if (networkSelectType === ChainType.Polygon) {
-			const { PolygonContractController } = Engine.context;
-			const approved = await PolygonContractController.approved(asset.address);
+			const approved = await Engine.contracts[ChainType.Polygon].approved(asset.address);
 			return hexToBN(approved);
 		}
 		return hexToBN('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
@@ -768,15 +634,13 @@ class MoveTab extends PureComponent {
 		const { networkSelectType } = this.state;
 		const { asset } = this.props;
 		if (networkSelectType === ChainType.Arbitrum) {
-			const { ArbContractController } = Engine.context;
-			return await ArbContractController.approve(
+			return await Engine.contracts[ChainType.Arbitrum].approve(
 				asset.address,
 				'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 				TransactionTypes.ORIGIN_MOVE_TO_L2
 			);
 		} else if (networkSelectType === ChainType.Polygon) {
-			const { PolygonContractController } = Engine.context;
-			return await PolygonContractController.approve(
+			return await Engine.contracts[ChainType.Polygon].approve(
 				asset.address,
 				'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
 				TransactionTypes.ORIGIN_MOVE_TO_L2
@@ -836,8 +700,9 @@ class MoveTab extends PureComponent {
 
 	onNext = async () => {
 		const { moveAmount, networkSelectType } = this.state;
-		const { asset, arbChainId } = this.props;
+		const { asset } = this.props;
 		if (networkSelectType === ChainType.Arbitrum) {
+			const arbChainId = Engine.networks[ChainType.Arbitrum].state.provider.chainId;
 			if (arbChainId === undefined) {
 				this.setLoading(false);
 				this.setState({ error: 'Current network is not supported' });
@@ -866,36 +731,32 @@ class MoveTab extends PureComponent {
 		try {
 			if (networkSelectType === ChainType.Arbitrum) {
 				if (asset.type === ChainType.Ethereum) {
-					const { ArbContractController } = Engine.context;
 					//l1  to l2
+					const ArbContract = Engine.contracts[ChainType.Arbitrum];
 					this.startWaitingTransactionMeta();
 					if (asset.nativeCurrency) {
-						await ArbContractController.depositETH(BNToHex(toWei(moveAmount)));
+						await ArbContract.depositETH(BNToHex(toWei(moveAmount)));
 					} else {
 						const approveAmount = toTokenMinimalUnit(moveAmount, asset.decimals);
-						await ArbContractController.deposit(asset.address, BNToHex(approveAmount));
+						await ArbContract.deposit(asset.address, BNToHex(approveAmount));
 					}
 				}
 			} else if (networkSelectType === ChainType.Ethereum) {
 				if (asset.type === ChainType.Arbitrum) {
 					//l2 to l1
-					const { ArbContractController } = Engine.context;
+					const ArbContract = Engine.contracts[ChainType.Arbitrum];
 					this.startWaitingTransactionMeta();
 					if (asset.nativeCurrency) {
-						await ArbContractController.withdrawETH(BNToHex(toWei(moveAmount)), selectedAddress);
+						await ArbContract.withdrawETH(BNToHex(toWei(moveAmount)), selectedAddress);
 					} else {
 						const approveAmount = toTokenMinimalUnit(moveAmount, asset.decimals);
-						await ArbContractController.withdrawERC20(
-							asset.l1Address,
-							BNToHex(approveAmount),
-							selectedAddress
-						);
+						await ArbContract.withdrawERC20(asset.l1Address, BNToHex(approveAmount), selectedAddress);
 					}
 				} else if (asset.type === ChainType.Polygon) {
 					//Polygon to Ethereum
-					const { PolygonContractController } = Engine.context;
+					const PolygonContract = Engine.contracts[ChainType.Polygon];
 					this.startWaitingTransactionMeta();
-					const result = await PolygonContractController.burnERC20(
+					const result = await PolygonContract.burnERC20(
 						asset.address,
 						BNToHex(toTokenMinimalUnit(moveAmount, asset.decimals)),
 						selectedAddress
@@ -905,17 +766,17 @@ class MoveTab extends PureComponent {
 			} else if (networkSelectType === ChainType.Polygon) {
 				if (asset.type === ChainType.Ethereum) {
 					//Ethereum to Polygon
-					const { PolygonContractController } = Engine.context;
+					const PolygonContract = Engine.contracts[ChainType.Polygon];
 					this.startWaitingTransactionMeta();
 					if (asset.nativeCurrency) {
-						const result = await PolygonContractController.depositEtherForUser(
+						const result = await PolygonContract.depositEtherForUser(
 							selectedAddress,
 							BNToHex(toWei(moveAmount)),
 							selectedAddress
 						);
 						util.logDebug('PPYang depositEtherForUser result:', result);
 					} else {
-						const result = await PolygonContractController.depositERC20ForUser(
+						const result = await PolygonContract.depositERC20ForUser(
 							asset.address,
 							selectedAddress,
 							BNToHex(toTokenMinimalUnit(moveAmount, asset.decimals)),
@@ -1100,21 +961,19 @@ class MoveTab extends PureComponent {
 				}
 				const crossChainType = transactionMeta.extraInfo?.crossChainType;
 				util.logDebug('PPYang confirmApprove crossChainType:', crossChainType);
-				const { PolygonContractController, ArbContractController } = Engine.context;
+				const PolygonContract = Engine.contracts[ChainType.Polygon];
+				const ArbContract = Engine.contracts[ChainType.Arbitrum];
 				if (crossChainType === CrossChainType.depositPolygon) {
-					await PolygonContractController.addDepositTxHash(
-						transactionMeta.transactionHash,
-						transactionMeta.chainId
-					);
+					await PolygonContract.addDepositTxHash(transactionMeta.transactionHash, transactionMeta.chainId);
 				} else if (crossChainType === CrossChainType.withdrawPolygon) {
-					await PolygonContractController.addWithdrawTxHash(
+					await PolygonContract.addWithdrawTxHash(
 						transactionMeta.transactionHash,
 						asset.address,
 						readableAmount,
 						transactionMeta.chainId
 					);
 				} else if (crossChainType === CrossChainType.withdrawArb) {
-					await ArbContractController.addWithdrawTxHash(
+					await ArbContract.addWithdrawTxHash(
 						transactionMeta.transactionHash,
 						asset.nativeCurrency ? '0x' : asset.address,
 						readableAmount,
@@ -1206,32 +1065,13 @@ class MoveTab extends PureComponent {
 	};
 
 	validateGas = () => {
-		const {
-			asset,
-			bscContractBalances,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { asset, allContractBalances } = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
 		let errorMessage;
 		const totalGas = gas.mul(gasPrice);
 		const valueBN = hexToBN(value);
 		const balanceBN = getNativeCurrencyBalance(asset.type, {
-			contractBalances,
-			bscContractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
 			errorMessage = strings('transaction.not_enough_gas');
@@ -1241,30 +1081,11 @@ class MoveTab extends PureComponent {
 	};
 
 	availableBalance = transaction => {
-		const {
-			asset,
-			contractBalances,
-			bscContractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { asset, allContractBalances } = this.props;
 		const { value } = transaction;
 		const valueBN = hexToBN(value);
 		const balanceBN = getNativeCurrencyBalance(asset.type, {
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			bscContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		});
 		this.setState({ availableBalance: renderFromWei(balanceBN.sub(valueBN)) });
 	};
@@ -1285,33 +1106,27 @@ class MoveTab extends PureComponent {
 
 	getSupportNetworks = async asset => {
 		const { type, address } = asset;
-		if (type === ChainType.Bsc) {
-			return [{ type: ChainType.Ethereum, name: strings('other.ethereum') }];
-		} else if (type === ChainType.Arbitrum) {
-			return [{ type: ChainType.Ethereum, name: strings('other.ethereum') }];
+		if (type === ChainType.Arbitrum) {
+			return [{ type: ChainType.Ethereum, name: getChainTypeName(ChainType.Ethereum) }];
 		} else if (type === ChainType.Polygon) {
-			return [{ type: ChainType.Ethereum, name: strings('other.ethereum') }];
-		} else if (type === ChainType.Heco) {
-			return [{ type: ChainType.Ethereum, name: strings('other.ethereum') }];
+			return [{ type: ChainType.Ethereum, name: getChainTypeName(ChainType.Ethereum) }];
 		} else if (type === ChainType.Ethereum) {
-			const supportNetworks = [{ type: ChainType.Arbitrum, name: strings('other.arbitrum') }];
+			const supportNetworks = [{ type: ChainType.Arbitrum, name: getChainTypeName(ChainType.Arbitrum) }];
 			let supportPolygon;
 			if (asset.nativeCurrency) {
 				supportPolygon = true;
 			} else {
 				const lowerAddress = address?.toLowerCase();
-				const { PolygonContractController, PolygonNetworkController } = Engine.context;
-				supportPolygon = !!(await PolygonContractController.toPolygonAddress(lowerAddress));
+				supportPolygon = !!(await Engine.contracts[ChainType.Polygon].toPolygonAddress(lowerAddress));
 				if (!supportPolygon) {
-					const { MaticToken } = await PolygonNetworkController.polygonNetworkConfig(
-						PolygonNetworkController.state.provider.chainId
-					);
+					const polygonNetwork = Engine.networks[ChainType.Polygon];
+					const { MaticToken } = await polygonNetwork.getNetworkConfig(polygonNetwork.state.provider.chainId);
 					supportPolygon = MaticToken?.toLowerCase() === lowerAddress;
 				}
 			}
 
 			if (supportPolygon) {
-				supportNetworks.push({ type: ChainType.Polygon, name: strings('other.polygon') });
+				supportNetworks.push({ type: ChainType.Polygon, name: getChainTypeName(ChainType.Polygon) });
 			}
 			return supportNetworks;
 		}
@@ -1416,18 +1231,7 @@ class MoveTab extends PureComponent {
 	};
 
 	useMax = async () => {
-		const {
-			contractBalances,
-			asset,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { allContractBalances, asset } = this.props;
 
 		this.closeInput();
 
@@ -1443,15 +1247,7 @@ class MoveTab extends PureComponent {
 		let input;
 		if (asset.nativeCurrency) {
 			const balance = getNativeCurrencyBalance(asset.type, {
-				contractBalances,
-				bscContractBalances,
-				arbContractBalances,
-				opContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			});
 			let weiBalance = balance;
 			if (asset.type === ChainType.Arbitrum) {
@@ -1462,12 +1258,7 @@ class MoveTab extends PureComponent {
 			input = fromWei(maxValue);
 		} else {
 			const weiBalance = getTokenBalance(asset, {
-				contractBalances,
-				bscContractBalances,
-				arbContractBalances,
-				opContractBalances,
-				polygonContractBalances,
-				hecoContractBalances
+				allContractBalances
 			});
 			input = getFromTokenMinimalUnit(weiBalance, asset.decimals);
 		}
@@ -1505,32 +1296,15 @@ class MoveTab extends PureComponent {
 
 	getRate = () => {
 		const {
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			hecoPrice,
-			avaxPrice,
-			syscoinPrice,
+			allCurrencyPrice,
 			asset: { type }
 		} = this.props;
 
 		let price;
-		if (type === ChainType.Arbitrum) {
-			price = ethPrice.usd;
-		} else if (type === ChainType.Bsc) {
-			price = bnbPrice.usd;
-		} else if (type === ChainType.Polygon) {
-			price = polygonPrice.usd;
-		} else if (type === ChainType.Heco) {
-			price = hecoPrice.usd;
-		} else if (type === ChainType.Avax) {
-			price = avaxPrice.usd;
-		} else if (type === ChainType.Syscoin) {
-			price = syscoinPrice.usd;
-		} else if (util.isRpcChainType(type)) {
+		if (util.isRpcChainType(type)) {
 			price = 0;
 		} else {
-			price = ethPrice.usd;
+			price = allCurrencyPrice[type]?.usd || 0;
 		}
 
 		return price;
@@ -1539,56 +1313,16 @@ class MoveTab extends PureComponent {
 	getTokenRate = () => {
 		const {
 			asset,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
+			allContractBalances,
+			allContractExchangeRates,
+			allCurrencyPrice,
 			currencyCode,
 			currencyCodeRate
 		} = this.props;
 		const { priceUsd: price } = calcAssetPrices(asset, {
-			contractBalances,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
+			allContractBalances,
+			allContractExchangeRates,
+			allCurrencyPrice,
 			currencyCode,
 			currencyCodeRate
 		});
@@ -1627,7 +1361,7 @@ class MoveTab extends PureComponent {
 	renderNormalInput = () => {
 		const { loading, nextEnabled, networkSelectType, claimEthereumGas } = this.state;
 		const { asset, onClose, mainBalance } = this.props;
-		const showTips = networkSelectType === ChainType.Ethereum && (asset.type === ChainType.Bsc || claimEthereumGas);
+		const showTips = networkSelectType === ChainType.Ethereum && claimEthereumGas;
 		return (
 			<>
 				<View style={styles.amountWrapper}>
@@ -1644,9 +1378,7 @@ class MoveTab extends PureComponent {
 				<View style={baseStyles.flexGrow} />
 				{showTips && (
 					<Text style={styles.migrateEthereumTips}>
-						{asset.type === ChainType.Bsc
-							? strings('other.migrate_bsc_tips')
-							: asset.type === ChainType.Arbitrum
+						{asset.type === ChainType.Arbitrum
 							? strings('other.migrate_arbitrum_tips', {
 									network: getChainTypeName(asset.type),
 									amount: claimEthereumGas
@@ -1857,7 +1589,7 @@ class MoveTab extends PureComponent {
 		const {
 			asset: { symbol, type }
 		} = this.props;
-		const showTips = networkSelectType === ChainType.Ethereum && (type === ChainType.Bsc || claimEthereumGas);
+		const showTips = networkSelectType === ChainType.Ethereum && claimEthereumGas;
 		return (
 			<View style={styles.wrapper}>
 				<View style={styles.rowWrapper}>
@@ -1890,7 +1622,7 @@ class MoveTab extends PureComponent {
 
 				<Text style={styles.noteView}>
 					{strings('other.gas_paid', {
-						symbol: getCurrency(type),
+						symbol: getTickerByType(type),
 						network: getChainTypeName(type),
 						amount: availableBalance
 					})}
@@ -1898,9 +1630,7 @@ class MoveTab extends PureComponent {
 				<View style={baseStyles.flexGrow} />
 				{showTips && (
 					<Text style={styles.migrateEthereumTips}>
-						{type === ChainType.Bsc
-							? strings('other.migrate_bsc_tips')
-							: type === ChainType.Arbitrum
+						{type === ChainType.Arbitrum
 							? strings('other.migrate_arbitrum_tips', {
 									network: getChainTypeName(type),
 									amount: claimEthereumGas
@@ -1996,64 +1726,13 @@ class MoveTab extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
+	allContractExchangeRates: state.engine.backgroundState.TokenRatesController.allContractExchangeRates,
+	allCurrencyPrice: state.engine.backgroundState.TokenRatesController.allCurrencyPrice,
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
-	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
-	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
-	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
-	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
-	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
-	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
-	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
-	arbContractExchangeRates: state.engine.backgroundState.TokenRatesController.arbContractExchangeRates,
-	bscContractExchangeRates: state.engine.backgroundState.TokenRatesController.bscContractExchangeRates,
-	polygonContractExchangeRates: state.engine.backgroundState.TokenRatesController.polygonContractExchangeRates,
-	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
-	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
-	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
-	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate
 });

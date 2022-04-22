@@ -1,5 +1,5 @@
 import EthQuery from 'ethjs-query';
-import { KeyringTypes, util } from 'gopocket-core';
+import { ChainType, KeyringTypes, util } from 'gopocket-core';
 import EngineImpl from '../core/EngineImpl';
 
 const ZERO_BALANCE = '0x0';
@@ -55,13 +55,14 @@ export const isHDMainAddress = (keyringIndex = 0) =>
  * Add additional accounts in the wallet based on balance
  */
 export default async () => {
-	const { KeyringController, NetworkController } = EngineImpl.context;
-	const { provider } = NetworkController;
+	const { KeyringController } = EngineImpl.context;
+	const network = EngineImpl.networks[ChainType.Ethereum];
+	const { provider } = network;
 
 	try {
 		if (!isHDMainAddress()) return;
 
-		if (NetworkController.state.network === 'loading') {
+		if (network.state.network === 'loading') {
 			return;
 		}
 

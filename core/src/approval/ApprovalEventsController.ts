@@ -1,30 +1,15 @@
 import { Mutex } from 'async-mutex';
 import { isZeroAddress } from 'ethereumjs-util';
-import AssetsContractController from '../assets/AssetsContractController';
-import BscContractController from '../assets/BscContractController';
-import PolygonContractController from '../assets/PolygonContractController';
-import ArbContractController from '../assets/ArbContractController';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import BscNetworkController from '../network/BscNetworkController';
-import NetworkController from '../network/NetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
 import TransactionController, {
   TransactionInfo,
   TransactionStatus,
-  TxChangedType,
+  TxChanged
 } from '../transaction/TransactionController';
 import util, { bitAND, logDebug } from '../util';
 import { getContractController } from '../ControllerUtils';
-import HecoNetworkController from '../network/HecoNetworkController';
-import HecoContractController from '../assets/HecoContractController';
-import OpNetworkController from '../network/OpNetworkController';
-import OpContractController from '../assets/OpContractController';
 import { Sqlite } from '../transaction/Sqlite';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import AvaxContractController from '../assets/AvaxContractController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
-import SyscoinContractController from '../assets/SyscoinContractController';
+import {ChainType} from "../assets/TokenRatesController";
 
 const APPROVAL_METHOD_ID = '0x095ea7b3';
 
@@ -82,21 +67,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
    */
   requiredControllers = [
     'AssetsController',
-    'NetworkController',
-    'BscNetworkController',
-    'PolygonNetworkController',
-    'HecoNetworkController',
-    'ArbNetworkController',
-    'AvaxNetworkController',
-    'SyscoinNetworkController',
-    'TransactionController',
-    'AssetsContractController',
-    'BscContractController',
-    'PolygonContractController',
-    'ArbContractController',
-    'HecoContractController',
-    'AvaxContractController',
-    'SyscoinContractController',
+    'TransactionController'
   ];
 
   /**
@@ -117,73 +88,34 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
   async onComposed() {
     super.onComposed();
     const transaction = this.context.TransactionController as TransactionController;
-    const network = this.context.NetworkController as NetworkController;
-    const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-    const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
     transaction.subscribe(({ txChangedType, addressWithChanged }) => {
-      if (bitAND(txChangedType, TxChangedType.TxChanged) !== 0) {
-        this.filterApprovalEventForAddress(network.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.BscTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(bscNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.PolygonTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(polygonNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.ArbTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(arbNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.HecoTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(hecoNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.OpTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(opNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.AvaxTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(avaxNetwork.state.provider.chainId, addressWithChanged);
-      } else if (bitAND(txChangedType, TxChangedType.SyscoinTxChanged) !== 0) {
-        this.filterApprovalEventForAddress(syscoinNetwork.state.provider.chainId, addressWithChanged);
+      if (bitAND(txChangedType, TxChanged) === 0) {
+        return;
       }
-    });
+      const type = transaction.getTxChangedType(txChangedType);
+      const network = this.networks[type];
+      if (!network) {
+        return;
+      }
+      this.filterApprovalEventForAddress(network.state.provider.chainId, addressWithChanged);
+    }, ['txChangedType']);
   }
 
   async refreshAllowances(myAddress: string) {
-    const network = this.context.NetworkController as NetworkController;
-    const ethChainId = network.state.provider.chainId;
-    const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-    const bscChainId = bscNetwork.state.provider.chainId;
-    const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    const polygonChainId = polygonNetwork.state.provider.chainId;
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const arbChainId = arbNetwork.state.provider.chainId;
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    const hecoChainId = hecoNetwork.state.provider.chainId;
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    const opChainId = opNetwork.state.provider.chainId;
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const avaxChainId = avaxNetwork.state.provider.chainId;
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-    const syscoinChainId = syscoinNetwork.state.provider.chainId;
-    const assetsContractController = this.context.AssetsContractController as AssetsContractController;
-    const bscContractController = this.context.BscContractController as BscContractController;
-    const polygonContractController = this.context.PolygonContractController as PolygonContractController;
-    const hecoContractController = this.context.HecoContractController as HecoContractController;
-    const arbContractController = this.context.ArbContractController as ArbContractController;
-    const opContractController = this.context.OpContractController as OpContractController;
-    const avaxContractController = this.context.AvaxContractController as AvaxContractController;
-    const syscoinContractController = this.context.SyscoinContractController as SyscoinContractController;
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, ethChainId, assetsContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, bscChainId, bscContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, polygonChainId, polygonContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, arbChainId, arbContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, opChainId, opContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, hecoChainId, hecoContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, avaxChainId, avaxContractController));
-    await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, syscoinChainId, syscoinContractController));
+    for (let type in this.networks) {
+      const chainType = Number(type);
+      if (chainType === ChainType.RPCBase) {
+        continue;
+      }
+      const chainId = this.networks[chainType].state.provider.chainId;
+      const contract = this.contracts[chainType];
+      await util.safelyExecute(() => this.refreshSingleChainAllowance(myAddress, chainId, contract));
+    }
     this.update({ updateTime: Date.now() });
   }
 
   async refreshOneChainAllowances(myAddress: string, chainId: string) {
-    const { contractController } = getContractController(this.context, chainId);
+    const { contractController } = getContractController(this, chainId);
     if (!contractController) {
       return;
     }
@@ -192,7 +124,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
 
   async refreshMyEventGroups(myAddress: string, chainId: string) {
     try {
-      const { contractController, type } = getContractController(this.context, chainId);
+      const { contractController, type } = getContractController(this, chainId);
       if (!contractController || !type) {
         return;
       }
@@ -206,7 +138,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     }
   }
 
-  async refreshSingleChainAllowance(myAddress: string, chainId: string, contractController: AssetsContractController | BscContractController | PolygonContractController | ArbContractController | HecoContractController) {
+  async refreshSingleChainAllowance(myAddress: string, chainId: string, contractController: any) {
     const releaseLock = await this.mutex.acquire();
     try {
       const tokenArray = [];
@@ -243,7 +175,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
 
   async filterApprovalEventForAddress(chainId: string, selectedAddress: string) {
     try {
-      const { contractController, type } = getContractController(this.context, chainId);
+      const { contractController, type } = getContractController(this, chainId);
       if (!contractController || !type || !selectedAddress) {
         return;
       }
@@ -257,7 +189,7 @@ export class ApprovalEventsController extends BaseController<BaseConfig, Approva
     }
   }
 
-  async handleOneAccountTxs(chainId: string, myAddress: string, txInfos: TransactionInfo[], contractController: BscContractController | PolygonContractController | ArbContractController | HecoContractController) {
+  async handleOneAccountTxs(chainId: string, myAddress: string, txInfos: TransactionInfo[], contractController: any) {
     const releaseLock = await this.mutex.acquire();
     try {
       const currentEventGroups = this.state.allEvents[myAddress] || {};

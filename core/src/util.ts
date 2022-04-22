@@ -13,8 +13,8 @@ import { MessageParams } from './message-manager/MessageManager';
 import { PersonalMessageParams } from './message-manager/PersonalMessageManager';
 import { TypedMessageParams } from './message-manager/TypedMessageManager';
 import { ChainType, Token } from './assets/TokenRatesController';
-import { Block, getNetworkType } from './network/NetworkController';
 import isIPFS from 'is-ipfs';
+import {NetworkConfig} from "./Config";
 
 const hexRe = /^[0-9A-Fa-f]+$/gu;
 
@@ -65,149 +65,6 @@ export function fractionBN(targetBN: any, numerator: number | string, denominato
   return targetBN.mul(numBN).div(denomBN);
 }
 
-/**
- * Return a URL that can be used to fetch ETH transactions
- *
- * @param networkType - Network type of desired network
- * @param address - Address to get the transactions from
- * @param fromBlock? - Block from which transactions are needed
- * @returns - URL to fetch the transactions from
- */
-export function getEtherscanApiUrl(
-  networkType: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl: string;
-
-  if (networkType !== 'mainnet') {
-    apiUrl = `https://api-${networkType}.etherscan.io/api`;
-  } else {
-    apiUrl = 'https://api.etherscan.io/api';
-  }
-  let url = `${apiUrl}?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getBscscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl = 'https://api.bscscan.com';
-  if (chainId === '56') {
-    apiUrl = `https://api.bscscan.com`;
-  } else if (chainId === '97') {
-    apiUrl = `https://api-testnet.bscscan.com`;
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getPolygonscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl = 'https://api.polygonscan.com';
-  if (chainId === '137') {
-    apiUrl = `https://api.polygonscan.com`;
-  } else if (chainId === '80001') {
-    apiUrl = `https://api-testnet.polygonscan.com`;
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getArbscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  if (chainId === '421611') {
-    return '';
-  }
-  const apiUrl = 'https://api.arbiscan.io';
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getOpscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl: string;
-  if (chainId === '10') {
-    apiUrl = `https://api-optimistic.etherscan.io`;
-  } else {
-    apiUrl = 'https://api-kovan-optimistic.etherscan.io';
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getHecoinfoApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl = 'https://api.hecoinfo.com';
-  if (chainId === '256') {
-    apiUrl = 'https://api-testnet.hecoinfo.com';
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
 export function getTronAccountUrl(
   chainId: string,
   address: string,
@@ -218,68 +75,27 @@ export function getTronAccountUrl(
   return `https://api.shasta.trongrid.io/v1/accounts/${address}`;
 }
 
-export function getAvaxscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl = 'https://api.snowtrace.io';
-  if (chainId === '43113') {
-    apiUrl = 'https://api-testnet.snowtrace.io';
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
-export function getSyscoinscanApiUrl(
-  chainId: string,
-  address: string,
-  action: string,
-  fromBlock?: string,
-  etherscanApiKey?: string,
-): string {
-  let apiUrl = 'https://explorer.syscoin.org';
-  if (chainId === '5700') {
-    apiUrl = 'https://tanenbaum.io';
-  }
-  let url = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (etherscanApiKey) {
-    url += `&apikey=${etherscanApiKey}`;
-  }
-  return url;
-}
-
 export async function getScanApiByType(type: ChainType, chainId: string, address: string, action: string, fromBlock?: string, etherscanApiKey?: string) {
-  let scanUrl = '';
-  if (type === ChainType.Ethereum) {
-    scanUrl = getEtherscanApiUrl(getNetworkType(chainId), address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Bsc) {
-    scanUrl = getBscscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Polygon) {
-    scanUrl = getPolygonscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Arbitrum) {
-    scanUrl = getArbscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Heco) {
-    scanUrl = getHecoinfoApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Optimism) {
-    scanUrl = getOpscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Avax) {
-    scanUrl = getAvaxscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
-  } else if (type === ChainType.Syscoin) {
-    scanUrl = getSyscoinscanApiUrl(chainId, address, action, fromBlock, etherscanApiKey);
+  let apiUrl;
+  const networks = NetworkConfig[type]?.Networks;
+  if (!networks) {
+    return undefined;
   }
-  if (type === ChainType.Ethereum || type === ChainType.Optimism || type === ChainType.Bsc || type === ChainType.Polygon) {
+  for (const network in networks) {
+    if (chainId === networks[network].provider.chainId) {
+      apiUrl = networks[network].ExplorerApiUrl;
+      break;
+    }
+  }
+  let scanUrl = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
+  if (fromBlock) {
+    scanUrl += `&startBlock=${fromBlock}`;
+  }
+  if (etherscanApiKey) {
+    scanUrl += `&apikey=${etherscanApiKey}`;
+  }
+
+  if (NetworkConfig[type].NeedAvailableUrl) {
     return await getAvailableUrl(scanUrl);
   }
   return { url: scanUrl, options: undefined }
@@ -310,6 +126,9 @@ export async function handleTransactionFetch(
     action = 'tokentx';
   }
   const api = await getScanApiByType(type, chainId, address, action, opt?.fromBlock, opt?.etherscanApiKey);
+  if (!api) {
+    return { result: [] };
+  }
   let etherscanTxResponse;
   try {
     etherscanTxResponse = await handleFetch(api.url, api.options);
@@ -752,8 +571,6 @@ export function logError(...data: any[]) {
   }
 }
 
-export const TRON_ENABLED = false;
-
 export const convertPriceToDecimal = (value: string | undefined): number =>
   parseInt(value === undefined ? '0x0' : value, 16);
 
@@ -774,7 +591,7 @@ export async function queryEIP1559Compatibility(ethQuery: any): Promise<boolean>
   return new Promise((resolve, reject) => {
     ethQuery.sendAsync(
       { method: 'eth_getBlockByNumber', params: ['latest', false] },
-      (error: Error, block: Block) => {
+      (error: Error, block: any) => {
         if (error) {
           reject(error);
         } else {
@@ -878,97 +695,43 @@ export function resolveURI(uri: string, tokenId: string, locale: string) {
   return resolveURIWithLocale(resolveURIWithTokenId(uri, tokenId), locale);
 }
 
+export function getEthereumNetworkType(chainId: string) {
+  chainId = chainId?.toString();
+  switch (chainId) {
+    case '1': return 'mainnet';
+    case '42': return 'kovan';
+    case '4': return 'rinkeby';
+    case '5': return 'goerli';
+    case '3': return 'ropsten';
+    default: return '';
+  }
+}
+
+export function getConfigChainType(chainId: string) {
+  for (const type in NetworkConfig) {
+    const networks = NetworkConfig[type].Networks;
+    if (!networks) {
+      continue;
+    }
+    for (const name in networks) {
+      if (networks[name].provider?.chainId === chainId) {
+        return Number(type);
+      }
+    }
+  }
+  return undefined;
+}
+
 export function rehydrate(name: string, state: any) {
   const new_state = { ...state };
   switch (name) {
     case 'TokenBalancesController': {
-      if (new_state.contractBalances) {
-        for (const key in new_state.contractBalances) {
-          for (const key2 in new_state.contractBalances[key]) {
-            if (new_state.contractBalances[key][key2]) {
-              new_state.contractBalances[key][key2] = hexToBN(String(new_state.contractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.arbContractBalances) {
-        for (const key in new_state.arbContractBalances) {
-          for (const key2 in new_state.arbContractBalances[key]) {
-            if (new_state.arbContractBalances[key][key2]) {
-              new_state.arbContractBalances[key][key2] = hexToBN(String(new_state.arbContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.opContractBalances) {
-        for (const key in new_state.opContractBalances) {
-          for (const key2 in new_state.opContractBalances[key]) {
-            if (new_state.opContractBalances[key][key2]) {
-              new_state.opContractBalances[key][key2] = hexToBN(String(new_state.opContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.bscContractBalances) {
-        for (const key in new_state.bscContractBalances) {
-          for (const key2 in new_state.bscContractBalances[key]) {
-            if (new_state.bscContractBalances[key][key2]) {
-              new_state.bscContractBalances[key][key2] = hexToBN(String(new_state.bscContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.polygonContractBalances) {
-        for (const key in new_state.polygonContractBalances) {
-          for (const key2 in new_state.polygonContractBalances[key]) {
-            if (new_state.polygonContractBalances[key][key2]) {
-              new_state.polygonContractBalances[key][key2] = hexToBN(String(new_state.polygonContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.hecoContractBalances) {
-        for (const key in new_state.hecoContractBalances) {
-          for (const key2 in new_state.hecoContractBalances[key]) {
-            if (new_state.hecoContractBalances[key][key2]) {
-              new_state.hecoContractBalances[key][key2] = hexToBN(String(new_state.hecoContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.tronContractBalances) {
-        for (const key in new_state.tronContractBalances) {
-          for (const key2 in new_state.tronContractBalances[key]) {
-            if (new_state.tronContractBalances[key][key2]) {
-              new_state.tronContractBalances[key][key2] = hexToBN(String(new_state.tronContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.avaxContractBalances) {
-        for (const key in new_state.avaxContractBalances) {
-          for (const key2 in new_state.avaxContractBalances[key]) {
-            if (new_state.avaxContractBalances[key][key2]) {
-              new_state.avaxContractBalances[key][key2] = hexToBN(String(new_state.avaxContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.syscoinContractBalances) {
-        for (const key in new_state.syscoinContractBalances) {
-          for (const key2 in new_state.syscoinContractBalances[key]) {
-            if (new_state.syscoinContractBalances[key][key2]) {
-              new_state.syscoinContractBalances[key][key2] = hexToBN(String(new_state.syscoinContractBalances[key][key2]));
-            }
-          }
-        }
-      }
-      if (new_state.rpcContractBalances) {
-        for (const key in new_state.rpcContractBalances) {
-          for (const key2 in new_state.rpcContractBalances[key]) {
-            for (const key3 in new_state.rpcContractBalances[key][key2]) {
-              if (new_state.rpcContractBalances[key][key2][key3]) {
-                new_state.rpcContractBalances[key][key2][key3] = hexToBN(String(new_state.rpcContractBalances[key][key2][key3]));
+      if (new_state.allContractBalances) {
+        for (const key in new_state.allContractBalances) {
+          for (const key2 in new_state.allContractBalances[key]) {
+            for (const key3 in new_state.allContractBalances[key][key2]) {
+              if (new_state.allContractBalances[key][key2][key3]) {
+                new_state.allContractBalances[key][key2][key3] = hexToBN(String(new_state.allContractBalances[key][key2][key3]));
               }
             }
           }

@@ -4,8 +4,7 @@ import { strings } from '../../../../locales/i18n';
 import React from 'react';
 import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import TxItem from '../TxItem';
-import { getCurrency } from '../../../util/number';
-import { getNetworkTypeByChainId } from '../../../util/networks';
+import { getTickerByType } from '../../../util/number';
 import PropTypes from 'prop-types';
 import { URL, util } from 'gopocket-core';
 import { getEtherscanBaseUrl, getEtherscanTransactionUrl } from '../../../util/etherscan';
@@ -19,7 +18,7 @@ import Clipboard from '@react-native-community/clipboard';
 import { getRpcChainTypeByChainId, getRpcProviderExplorerUrl, isRpcChainId } from '../../../util/ControllerUtils';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
-import { getIcTagByChainType } from '../../../util/iconUtils';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	txRow: {
@@ -191,9 +190,8 @@ const TransactionItem = props => {
 					title
 				});
 			} else {
-				const network = getNetworkTypeByChainId(item.chainId);
-				const url = getEtherscanTransactionUrl(network, transactionHash);
-				const etherscan_url = getEtherscanBaseUrl(network).replace('https://', '');
+				const url = getEtherscanTransactionUrl(item.chainId, transactionHash);
+				const etherscan_url = getEtherscanBaseUrl(item.chainId).replace('https://', '');
 				navigation.push('Webview', {
 					url,
 					title: etherscan_url
@@ -201,7 +199,6 @@ const TransactionItem = props => {
 			}
 			close && close();
 		} catch (e) {
-			// eslint-disable-next-line no-console
 			util.logError(e, { message: `can't get a block explorer link for network` });
 		}
 	};
@@ -237,7 +234,7 @@ const TransactionItem = props => {
 					<Image style={styles.tokenIcon} source={imgFire} />
 					<Text style={styles.tokenSymbol}>{strings('other.gas_fee')}</Text>
 					<View style={baseStyles.flexGrow} />
-					<Text style={styles.tokenExpendAmount}>{'-' + item.gasValue + getCurrency(item.type)}</Text>
+					<Text style={styles.tokenExpendAmount}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
 					<Image style={styles.networkIcon} source={getIcTagByChainType(item.type)} />
 				</View>
 				<View style={[styles.txRow, styles.txBeginMargin]}>
@@ -359,7 +356,7 @@ const TransactionItem = props => {
 				{item.gasValue !== '0' && (
 					<View style={[styles.txRow, styles.txNormalMargin]}>
 						<Image style={styles.fireIcon} source={iconFire} />
-						<Text style={styles.hashText}>{'-' + item.gasValue + getCurrency(item.type)}</Text>
+						<Text style={styles.hashText}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
 						<View style={baseStyles.flexGrow} />
 						<Text style={styles.txDatetime}>{toDateFormatSimple(item.time).toUpperCase()}</Text>
 					</View>

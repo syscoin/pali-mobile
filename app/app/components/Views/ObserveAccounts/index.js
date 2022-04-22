@@ -741,36 +741,19 @@ class ObserveAccounts extends PureComponent {
 
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 
-		const etherCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Ethereum] || 0;
-		const arbCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Arbitrum] || 0;
-		const bscCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Bsc] || 0;
-		const polygonCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Polygon] || 0;
-		const hecoCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Heco] || 0;
-		const opCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Optimism] || 0;
-		const avaxCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Avax] || 0;
-		const syscoinCurrencyAmount = wealths[address]?.tokenAmount?.[ChainType.Syscoin] || 0;
-
 		let allAmount = 0;
-		if (enableChain(ChainType.Ethereum)) allAmount += etherCurrencyAmount;
-		if (enableChain(ChainType.Arbitrum)) allAmount += arbCurrencyAmount;
-		if (enableChain(ChainType.Bsc)) allAmount += bscCurrencyAmount;
-		if (enableChain(ChainType.Polygon)) allAmount += polygonCurrencyAmount;
-		if (enableChain(ChainType.Heco)) allAmount += hecoCurrencyAmount;
-		if (enableChain(ChainType.Optimism)) allAmount += opCurrencyAmount;
-		if (enableChain(ChainType.Avax)) allAmount += avaxCurrencyAmount;
-		if (enableChain(ChainType.Syscoin)) allAmount += syscoinCurrencyAmount;
-
-		const chainTypeAmount = [
-			allAmount.toFixed(2),
-			etherCurrencyAmount.toFixed(2),
-			polygonCurrencyAmount.toFixed(2),
-			arbCurrencyAmount.toFixed(2),
-			bscCurrencyAmount.toFixed(2),
-			hecoCurrencyAmount.toFixed(2),
-			opCurrencyAmount.toFixed(2),
-			avaxCurrencyAmount.toFixed(2),
-			syscoinCurrencyAmount.toFixed(2)
-		];
+		let chainTypeAmount = [];
+		for (const chainType of ChainTypes) {
+			if (chainType === ChainType.All) {
+				continue;
+			}
+			const currencyAmount = wealths[address]?.tokenAmount?.[chainType] || 0;
+			if (enableChain(chainType)) {
+				allAmount += currencyAmount;
+			}
+			chainTypeAmount.push(currencyAmount.toFixed(2));
+		}
+		chainTypeAmount = [allAmount, ...chainTypeAmount];
 
 		return (
 			<View style={styles.accountItem} key={'account-element-' + index}>

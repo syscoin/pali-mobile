@@ -5,44 +5,16 @@ import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
-import Networks, {
-	getAllNetworks,
-	getBscAllNetworks,
-	getPolygonAllNetworks,
-	getArbAllNetworks,
-	getOpAllNetworks,
-	getTronAllNetworks,
-	getHecoAllNetworks,
-	getAvaxAllNetworks,
-	getSyscoinAllNetworks,
-	BscNetworks,
-	ArbNetworks,
-	OpNetworks,
-	PolygonNetworks,
-	TronNetworks,
-	HecoNetworks,
-	AvaxNetworks,
-	SyscoinNetworks
-} from '../../../util/networks';
 import checkIcon from '../../../images/network_check.png';
 import { connect } from 'react-redux';
 import Engine from '../../../core/Engine';
 import { startNetworkChange, toggleTestnetVisible } from '../../../actions/settings';
-import {
-	ArbitrumMainnet,
-	OptimismMainnet,
-	BSCMAINNET,
-	MAINNET,
-	PolygonMainnet,
-	TronMainnet,
-	HecoMainnet,
-	AvaxMainnet,
-	SyscoinMainnet
-} from '../../../constants/network';
 import MStatusBar from '../../UI/MStatusBar';
-import { ChainType, util } from 'gopocket-core';
+import { NetworkConfig } from 'gopocket-core';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-navigation';
+import { getAllProvider } from '../../../util/ControllerUtils';
+import { getDeveloperTitle } from '../../../util/ChainTypeImages';
 
 const styles = {
 	wrapper: {
@@ -116,44 +88,18 @@ const styles = {
 class DeveloperOptions extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object,
-		ethProvider: PropTypes.object,
-		bscProvider: PropTypes.object,
-		polygonProvider: PropTypes.object,
-		arbProvider: PropTypes.object,
-		opProvider: PropTypes.object,
-		tronProvider: PropTypes.object,
-		hecoProvider: PropTypes.object,
-		avaxProvider: PropTypes.object,
-		syscoinProvider: PropTypes.object,
+		allProvider: PropTypes.object,
 		testnetVisible: PropTypes.bool,
 		toggleTestnetVisible: PropTypes.func,
 		startNetworkChange: PropTypes.func,
-		etherNetworkChanging: PropTypes.string,
-		bscNetworkChanging: PropTypes.string,
-		polygonNetworkChanging: PropTypes.string,
-		arbitrumNetworkChanging: PropTypes.string,
-		optimismNetworkChanging: PropTypes.string,
-		tronNetworkChanging: PropTypes.string,
-		hecoNetworkChanging: PropTypes.string,
-		avaxNetworkChanging: PropTypes.string,
-		syscoinNetworkChanging: PropTypes.string
+		allNetworkChanging: PropTypes.object
 	};
 
-	getEthNetworks = () => getAllNetworks();
-	getBscNetworks = () => getBscAllNetworks();
-	getPolygonNetworks = () => getPolygonAllNetworks();
-	getArbNetworks = () => getArbAllNetworks();
-	getOpNetworks = () => getOpAllNetworks();
-	getTronNetworks = () => getTronAllNetworks();
-	getHecoNetworks = () => getHecoAllNetworks();
-	getAvaxNetworks = () => getAvaxAllNetworks();
-	getSyscoinNetworks = () => getSyscoinAllNetworks();
-
-	networkElement = (selected, onPress, shortName, color, i, network) => (
+	networkElement = (selected, onPress, shortName, i, network, chainType) => (
 		<TouchableOpacity
 			style={styles.network}
 			key={`network-${shortName}-${i}`}
-			onPress={() => onPress && onPress(network)} // eslint-disable-line
+			onPress={() => onPress && onPress(network, chainType)}
 		>
 			<View style={styles.networkInfo}>
 				<Text style={styles.networkLabel}>{shortName}</Text>
@@ -162,316 +108,75 @@ class DeveloperOptions extends PureComponent {
 		</TouchableOpacity>
 	);
 
-	onEthNetworkChange = (type, force = false) => {
-		if (!force && this.props.etherNetworkChanging) {
+	onNetworkChange = (type, chainType, force = false) => {
+		if (!force && this.props.allNetworkChanging[chainType]) {
 			return;
 		}
-		this.props.startNetworkChange(ChainType.Ethereum, type);
-		const { NetworkController } = Engine.context;
-		NetworkController.setProviderType(type);
+		this.props.startNetworkChange(chainType, type);
+		Engine.networks[chainType].setProviderType(type);
 	};
 
-	onBscNetworkChange = (type, force = false) => {
-		if (!force && this.props.bscNetworkChanging) {
-			return;
+	renderNetworks = () => {
+		const { allProvider, allNetworkChanging } = this.props;
+		const elementMap = [];
+		for (const type in NetworkConfig) {
+			const chainType = Number(type);
+			if (NetworkConfig[type].Disabled) {
+				continue;
+			}
+			elementMap.push(<View key={`line${type}`} style={styles.line} />);
+			elementMap.push(
+				<Text key={`title${type}`} style={styles.titleHead}>
+					{getDeveloperTitle(type)}
+				</Text>
+			);
+			const Networks = NetworkConfig[type].Networks;
+			let i = 0;
+			for (const name in Networks) {
+				let selected;
+				// console.log('PPYang renderNetworks', allNetworkChanging[chainType], chainType);
+				if (allNetworkChanging[chainType]) {
+					selected =
+						allNetworkChanging[chainType] === name ? (
+							<ActivityIndicator size="small" color={colors.$FE6E91} />
+						) : null;
+				} else {
+					selected =
+						allProvider[chainType].chainId === Networks[name].provider.chainId ? (
+							<Image source={checkIcon} />
+						) : null;
+				}
+				const element = this.networkElement(
+					selected,
+					selected ? null : this.onNetworkChange,
+					name,
+					i,
+					name,
+					chainType
+				);
+				elementMap.push(element);
+				i++;
+			}
 		}
-		this.props.startNetworkChange(ChainType.Bsc, type);
-		const { BscNetworkController } = Engine.context;
-		BscNetworkController.setProviderType(type);
-	};
-
-	onPolygonNetworkChange = (type, force = false) => {
-		if (!force && this.props.polygonNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Polygon, type);
-		const { PolygonNetworkController } = Engine.context;
-		PolygonNetworkController.setProviderType(type);
-	};
-
-	onArbNetworkChange = (type, force = false) => {
-		if (!force && this.props.arbitrumNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Arbitrum, type);
-		const { ArbNetworkController } = Engine.context;
-		ArbNetworkController.setProviderType(type);
-	};
-
-	onOpNetworkChange = (type, force = false) => {
-		if (!force && this.props.optimismNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Optimism, type);
-		const { OpNetworkController } = Engine.context;
-		OpNetworkController.setProviderType(type);
-	};
-
-	onTronNetworkChange = (type, force = false) => {
-		if (!force && this.props.tronNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Tron, type);
-		const { TronNetworkController } = Engine.context;
-		TronNetworkController.setProviderType(type);
-	};
-
-	onHecoNetworkChange = (type, force = false) => {
-		if (!force && this.props.hecoNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Heco, type);
-		const { HecoNetworkController } = Engine.context;
-		HecoNetworkController.setProviderType(type);
-	};
-
-	onAvaxNetworkChange = (type, force = false) => {
-		if (!force && this.props.avaxNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Avax, type);
-		const { AvaxNetworkController } = Engine.context;
-		AvaxNetworkController.setProviderType(type);
-	};
-
-	onSyscoinNetworkChange = (type, force = false) => {
-		if (!force && this.props.syscoinNetworkChanging) {
-			return;
-		}
-		this.props.startNetworkChange(ChainType.Syscoin, type);
-		const { SyscoinNetworkController } = Engine.context;
-		SyscoinNetworkController.setProviderType(type);
-	};
-
-	renderEthNetworks = () => {
-		const { ethProvider, etherNetworkChanging } = this.props;
-		return this.getEthNetworks().map((network, i) => {
-			const { color, shortName } = Networks[network];
-			let selected;
-			if (etherNetworkChanging) {
-				selected =
-					etherNetworkChanging === network ? <ActivityIndicator size="small" color={colors.$FE6E91} /> : null;
-			} else {
-				selected = ethProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onEthNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderBscNetworks = () => {
-		const { bscProvider, bscNetworkChanging } = this.props;
-		return this.getBscNetworks().map((network, i) => {
-			const { color, shortName } = BscNetworks[network];
-			let selected;
-			if (bscNetworkChanging) {
-				selected =
-					bscNetworkChanging === network ? <ActivityIndicator size="small" color={colors.$FE6E91} /> : null;
-			} else {
-				selected = bscProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onBscNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderPolygonNetworks = () => {
-		const { polygonProvider, polygonNetworkChanging } = this.props;
-		return this.getPolygonNetworks().map((network, i) => {
-			const { color, shortName } = PolygonNetworks[network];
-			let selected;
-			if (polygonNetworkChanging) {
-				selected =
-					polygonNetworkChanging === network ? (
-						<ActivityIndicator size="small" color={colors.$FE6E91} />
-					) : null;
-			} else {
-				selected = polygonProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onPolygonNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderArbNetworks = () => {
-		const { arbProvider, arbitrumNetworkChanging } = this.props;
-		return this.getArbNetworks().map((network, i) => {
-			const { color, shortName } = ArbNetworks[network];
-			let selected;
-			if (arbitrumNetworkChanging) {
-				selected =
-					arbitrumNetworkChanging === network ? (
-						<ActivityIndicator size="small" color={colors.$FE6E91} />
-					) : null;
-			} else {
-				selected = arbProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onArbNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderOpNetworks = () => {
-		const { opProvider, optimismNetworkChanging } = this.props;
-		return this.getOpNetworks().map((network, i) => {
-			const { color, shortName } = OpNetworks[network];
-			let selected;
-			if (optimismNetworkChanging) {
-				selected =
-					optimismNetworkChanging === network ? (
-						<ActivityIndicator size="small" color={colors.$FE6E91} />
-					) : null;
-			} else {
-				selected = opProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onOpNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderTronNetworks = () => {
-		const { tronProvider, tronNetworkChanging } = this.props;
-		return this.getTronNetworks().map((network, i) => {
-			const { color, shortName } = TronNetworks[network];
-			let selected;
-			if (tronNetworkChanging) {
-				selected =
-					tronNetworkChanging === network ? <ActivityIndicator size="small" color={colors.$FE6E91} /> : null;
-			} else {
-				selected = tronProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onTronNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderHecoNetworks = () => {
-		const { hecoProvider, hecoNetworkChanging } = this.props;
-		return this.getHecoNetworks().map((network, i) => {
-			const { color, shortName } = HecoNetworks[network];
-			let selected;
-			if (hecoNetworkChanging) {
-				selected =
-					hecoNetworkChanging === network ? <ActivityIndicator size="small" color={colors.$FE6E91} /> : null;
-			} else {
-				selected = hecoProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onHecoNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderAvaxNetworks = () => {
-		const { avaxProvider, avaxNetworkChanging } = this.props;
-		return this.getAvaxNetworks().map((network, i) => {
-			const { color, shortName } = AvaxNetworks[network];
-			let selected;
-			if (avaxNetworkChanging) {
-				selected =
-					avaxNetworkChanging === network ? <ActivityIndicator size="small" color={colors.$FE6E91} /> : null;
-			} else {
-				selected = avaxProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onAvaxNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
-	};
-
-	renderSyscoinNetworks = () => {
-		const { syscoinProvider, syscoinNetworkChanging } = this.props;
-		return this.getSyscoinNetworks().map((network, i) => {
-			const { color, shortName } = SyscoinNetworks[network];
-			let selected;
-			if (syscoinNetworkChanging) {
-				selected =
-					syscoinNetworkChanging === network ? (
-						<ActivityIndicator size="small" color={colors.$FE6E91} />
-					) : null;
-			} else {
-				selected = syscoinProvider.type === network ? <Image source={checkIcon} /> : null;
-			}
-			return this.networkElement(
-				selected,
-				selected ? null : this.onSyscoinNetworkChange,
-				shortName,
-				color,
-				i,
-				network
-			);
-		});
+		return elementMap;
 	};
 
 	setDefaultNetwork = () => {
-		const {
-			ethProvider,
-			bscProvider,
-			polygonProvider,
-			arbProvider,
-			opProvider,
-			tronProvider,
-			hecoProvider,
-			avaxProvider,
-			syscoinProvider
-		} = this.props;
-		ethProvider.type !== MAINNET && this.onEthNetworkChange(MAINNET, true);
-		bscProvider.type !== BSCMAINNET && this.onBscNetworkChange(BSCMAINNET, true);
-		polygonProvider.type !== PolygonMainnet && this.onPolygonNetworkChange(PolygonMainnet, true);
-		arbProvider.type !== ArbitrumMainnet && this.onArbNetworkChange(ArbitrumMainnet, true);
-		opProvider.type !== OptimismMainnet && this.onOpNetworkChange(OptimismMainnet, true);
-		if (util.TRON_ENABLED) {
-			tronProvider.type !== TronMainnet && this.onTronNetworkChange(TronMainnet, true);
+		const { allProvider } = this.props;
+		for (const type in allProvider) {
+			const chainType = Number(type);
+			const config = NetworkConfig[chainType];
+			if (allProvider[type].chainId !== config.MainChainId) {
+				let type;
+				for (const key in config.Networks) {
+					if (config.Networks[key].provider.chainId === config.MainChainId) {
+						type = key;
+						break;
+					}
+				}
+				this.onNetworkChange(type, chainType, true);
+			}
 		}
-		hecoProvider.type !== HecoMainnet && this.onHecoNetworkChange(HecoMainnet, true);
-		avaxProvider.type !== AvaxMainnet && this.onAvaxNetworkChange(AvaxMainnet, true);
-		syscoinProvider.type !== SyscoinMainnet && this.onSyscoinNetworkChange(SyscoinMainnet, true);
 	};
 
 	render() {
@@ -509,35 +214,7 @@ class DeveloperOptions extends PureComponent {
 						) : (
 							<React.Fragment>
 								<Text style={styles.switchDesc}>{strings('developer_options.switch_desc')}</Text>
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.ethereum_network')}</Text>
-								{this.renderEthNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.bsc_network')}</Text>
-								{this.renderBscNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.polygon_network')}</Text>
-								{this.renderPolygonNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.arbitrum_network')}</Text>
-								{this.renderArbNetworks()}
-								{util.TRON_ENABLED && <View style={styles.line} />}
-								{util.TRON_ENABLED && (
-									<Text style={styles.titleHead}>{strings('developer_options.tron_network')}</Text>
-								)}
-								{util.TRON_ENABLED && this.renderTronNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.heco_network')}</Text>
-								{this.renderHecoNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.optimism_network')}</Text>
-								{this.renderOpNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.avax_network')}</Text>
-								{this.renderAvaxNetworks()}
-								<View style={styles.line} />
-								<Text style={styles.titleHead}>{strings('developer_options.syscoin_network')}</Text>
-								{this.renderSyscoinNetworks()}
+								{this.renderNetworks()}
 							</React.Fragment>
 						)}
 						<View style={styles.bottomHeght} />
@@ -549,25 +226,9 @@ class DeveloperOptions extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	bscProvider: state.engine.backgroundState.BscNetworkController.provider,
-	ethProvider: state.engine.backgroundState.NetworkController.provider,
-	polygonProvider: state.engine.backgroundState.PolygonNetworkController.provider,
-	arbProvider: state.engine.backgroundState.ArbNetworkController.provider,
-	opProvider: state.engine.backgroundState.OpNetworkController.provider,
-	tronProvider: state.engine.backgroundState.TronNetworkController.provider,
-	hecoProvider: state.engine.backgroundState.HecoNetworkController.provider,
-	avaxProvider: state.engine.backgroundState.AvaxNetworkController.provider,
-	syscoinProvider: state.engine.backgroundState.SyscoinNetworkController.provider,
+	allProvider: getAllProvider(state),
 	testnetVisible: state.settings.testnetVisible,
-	etherNetworkChanging: state.settings.etherNetworkChanging,
-	bscNetworkChanging: state.settings.bscNetworkChanging,
-	polygonNetworkChanging: state.settings.polygonNetworkChanging,
-	arbitrumNetworkChanging: state.settings.arbitrumNetworkChanging,
-	optimismNetworkChanging: state.settings.optimismNetworkChanging,
-	tronNetworkChanging: state.settings.tronNetworkChanging,
-	hecoNetworkChanging: state.settings.hecoNetworkChanging,
-	avaxNetworkChanging: state.settings.avaxNetworkChanging,
-	syscoinNetworkChanging: state.settings.syscoinNetworkChanging
+	allNetworkChanging: state.settings.allNetworkChanging
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -1,8 +1,7 @@
-import { Mutex } from 'async-mutex';
-import { BigNumber } from 'bignumber.js';
-import BaseController, { BaseConfig, BaseState } from '../BaseController';
+import {Mutex} from 'async-mutex';
+import {BigNumber} from 'bignumber.js';
+import BaseController, {BaseConfig, BaseState} from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
-import NetworkController from '../network/NetworkController';
 import util, {
   CollectibleType,
   getScanApiByType,
@@ -11,16 +10,8 @@ import util, {
   timeoutFetch,
   toLowerCaseEquals,
 } from '../util';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import BscNetworkController from '../network/BscNetworkController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import { ChainType } from './TokenRatesController';
-import PolygonContractController from './PolygonContractController';
-import BscContractController from './BscContractController';
-import AssetsContractController from './AssetsContractController';
-import HecoContractController from './HecoContractController';
-import AvaxContractController from './AvaxContractController';
+import {ChainType} from './TokenRatesController';
+import {SupportCollectibles} from "../Config";
 
 export interface ApiCollectibleCreator {
   user: { username: string };
@@ -137,7 +128,11 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     this.getScanKey = getScanKey;
   }
 
-  private isSupportNetwork(chainId: string) {
+  isSupportChainType(chainType: ChainType) {
+    return SupportCollectibles.includes(chainType);
+  }
+
+  private isSupportOpensea(chainId: string) {
     return chainId === '1' || chainId === '4' || chainId === '137';
   }
 
@@ -203,17 +198,17 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     return collectibles;
   }
 
-  async detectCollectibles(requestedSelectedAddress: string) {
-    /* istanbul ignore if */
-    const network = this.context.NetworkController as NetworkController;
-    const assetsContract = this.context.AssetsContractController as AssetsContractController;
-    const { chainId } = network.state.provider;
+  async detectCollectibles(requestedSelectedAddress: string, chainType: ChainType) {
+    const assetsContract = this.contracts[chainType];
+    const { chainId } = this.networks[chainType].state.provider;
 
-    if (!this.isSupportNetwork(chainId)) {
-      return;
+    let collectibles;
+    if (this.isSupportOpensea(chainId)) {
+      collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, assetsContract);
+    } else {
+      collectibles = await this.detectCollectiblesByType(
+        requestedSelectedAddress, chainId, chainType, assetsContract);
     }
-    const collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, assetsContract);
-
     logInfo('PPYang detectCollectibles collectibles:', collectibles?.length, ' chainId:', chainId);
     collectibles && await this.updateCollectibles(requestedSelectedAddress, chainId, collectibles);
   }
@@ -325,70 +320,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       return undefined;
     }
     return nftResult.result;
-  }
-
-  async detectPolygonCollectibles(requestedSelectedAddress: string) {
-    const network = this.context.PolygonNetworkController as PolygonNetworkController;
-    const polygonContract = this.context.PolygonContractController as PolygonContractController;
-    const { chainId } = network.state.provider;
-
-    let collectibles;
-    if (this.isSupportNetwork(chainId)) {
-      collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, polygonContract);
-    } else {
-      collectibles = await this.detectCollectiblesByType(
-        requestedSelectedAddress, chainId, ChainType.Polygon, polygonContract);
-    }
-    logInfo('PPYang detectPolygonCollectibles collectibles:', collectibles?.length, ' chainId:', chainId);
-    collectibles && await this.updateCollectibles(requestedSelectedAddress, chainId, collectibles);
-  }
-
-  async detectBscCollectibles(requestedSelectedAddress: string) {
-    const network = this.context.BscNetworkController as BscNetworkController;
-    const bscContract = this.context.BscContractController as BscContractController;
-    const { chainId } = network.state.provider;
-
-    let collectibles;
-    if (this.isSupportNetwork(chainId)) {
-      collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, bscContract);
-    } else {
-      collectibles = await this.detectCollectiblesByType(
-        requestedSelectedAddress, chainId, ChainType.Bsc, bscContract);
-    }
-    logInfo('PPYang detectBscCollectibles collectibles:', collectibles?.length, ' chainId:', chainId);
-    collectibles && await this.updateCollectibles(requestedSelectedAddress, chainId, collectibles);
-  }
-
-  async detectHecoCollectibles(requestedSelectedAddress: string) {
-    const network = this.context.HecoNetworkController as HecoNetworkController;
-    const hecoContract = this.context.HecoContractController as HecoContractController;
-    const { chainId } = network.state.provider;
-
-    let collectibles;
-    if (this.isSupportNetwork(chainId)) {
-      collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, hecoContract);
-    } else {
-      collectibles = await this.detectCollectiblesByType(
-        requestedSelectedAddress, chainId, ChainType.Heco, hecoContract);
-    }
-    logInfo('PPYang detectHecoCollectibles collectibles:', collectibles?.length, ' chainId:', chainId);
-    collectibles && await this.updateCollectibles(requestedSelectedAddress, chainId, collectibles);
-  }
-
-  async detectAvaxCollectibles(requestedSelectedAddress: string) {
-    const network = this.context.AvaxNetworkController as AvaxNetworkController;
-    const avaxContract = this.context.AvaxContractController as AvaxContractController;
-    const { chainId } = network.state.provider;
-
-    let collectibles;
-    if (this.isSupportNetwork(chainId)) {
-      collectibles = await this.getCollectiblesByOpensea(chainId, requestedSelectedAddress, avaxContract);
-    } else {
-      collectibles = await this.detectCollectiblesByType(
-        requestedSelectedAddress, chainId, ChainType.Avax, avaxContract);
-    }
-    logInfo('PPYang detectAvaxCollectibles collectibles:', collectibles?.length, ' chainId:', chainId);
-    collectibles && await this.updateCollectibles(requestedSelectedAddress, chainId, collectibles);
   }
 
   async getCollectibleImage(contractController: any, schema_name: string | null, contractAddress: string | null, tokenID: string | null, chainId: string | null = null) {
@@ -599,17 +530,10 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     }
     const releaseLock = await this.mutex.acquire();
     const preferences = this.context.PreferencesController as PreferencesController;
-    !preferences.isDisabledChain(selectedAddress, ChainType.Ethereum) &&
-      await safelyExecute(() => this.detectCollectibles(selectedAddress));
-
-    !preferences.isDisabledChain(selectedAddress, ChainType.Polygon) &&
-      await safelyExecute(() => this.detectPolygonCollectibles(selectedAddress));
-
-    !preferences.isDisabledChain(selectedAddress, ChainType.Bsc) &&
-      await safelyExecute(() => this.detectBscCollectibles(selectedAddress));
-
-    !preferences.isDisabledChain(selectedAddress, ChainType.Avax) &&
-      await safelyExecute(() => this.detectAvaxCollectibles(selectedAddress));
+    for (const chainType of SupportCollectibles) {
+      !preferences.isDisabledChain(selectedAddress, chainType) &&
+      await safelyExecute(() => this.detectCollectibles(selectedAddress, chainType));
+    }
     releaseLock();
   }
 

@@ -10,7 +10,7 @@ import {
 } from '../util/number';
 import AsyncStorage from '@react-native-community/async-storage';
 import { LAST_NOTIFICATION_INFO } from '../constants/storage';
-import { ChainType, TxChangedType } from 'gopocket-core';
+import { ChainType, TxNoChange, TokenTxChanged } from 'gopocket-core';
 import { getTicker } from '../util/transactions';
 import { callSqlite } from '../util/ControllerUtils';
 
@@ -207,67 +207,12 @@ export default {
 		instance = new NotificationManager(navigation, showTransactionNotification, showSimpleNotification);
 		return instance;
 	},
-	gotIncomingTransaction(type: number, changedType: TxChangedType) {
-		if (changedType === TxChangedType.NoChange) {
+	gotIncomingTransaction(type: number, changedType: number) {
+		if (changedType === TxNoChange) {
 			return;
 		}
-		if (type === ChainType.Polygon) {
-			if ((changedType & TxChangedType.PolygonTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.PolygonTxChanged, false);
-			}
-			if ((changedType & TxChangedType.PolygonTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.PolygonTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Bsc) {
-			if ((changedType & TxChangedType.BscTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.BscTxChanged, false);
-			}
-			if ((changedType & TxChangedType.BscTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.BscTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Arbitrum) {
-			if ((changedType & TxChangedType.ArbTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.ArbTxChanged, false);
-			}
-			if ((changedType & TxChangedType.ArbTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.ArbTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Heco) {
-			if ((changedType & TxChangedType.HecoTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.HecoTxChanged, false);
-			}
-			if ((changedType & TxChangedType.HecoTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.HecoTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Optimism) {
-			if ((changedType & TxChangedType.OpTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.OpTxChanged, false);
-			}
-			if ((changedType & TxChangedType.OpTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.OpTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Avax) {
-			if ((changedType & TxChangedType.AvaxTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.AvaxTxChanged, false);
-			}
-			if ((changedType & TxChangedType.AvaxTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.AvaxTokenTxChanged, true);
-			}
-		} else if (type === ChainType.Syscoin) {
-			if ((changedType & TxChangedType.SyscoinTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.SyscoinTxChanged, false);
-			}
-			if ((changedType & TxChangedType.SyscoinTokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.SyscoinTokenTxChanged, true);
-			}
-		} else {
-			if ((changedType & TxChangedType.TxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.TxChanged, false);
-			}
-			if ((changedType & TxChangedType.TokenTxChanged) !== 0) {
-				instance?.gotIncomingTransaction(type, TxChangedType.TokenTxChanged, true);
-			}
-		}
+		const isToken = (changedType & TokenTxChanged) !== 0;
+		instance?.gotIncomingTransaction(type, changedType, isToken);
 	},
 	showSimpleNotification(data) {
 		return instance?.showSimpleNotification(data);

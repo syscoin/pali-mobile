@@ -5,8 +5,8 @@ import { activeOpacity, colors, fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
-import { ChainType } from 'gopocket-core';
 import { getIsRpc, getDefiIcon, getRpcName } from '../../../util/rpcUtil';
+import { ChainTypeBgDefi, ChainTypes, getChainTypeName } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	dappNetLayout: {
@@ -118,36 +118,6 @@ class AccountNetworkView extends PureComponent {
 			setSelectedChainType,
 			allChains
 		} = this.props;
-		const defiChainTypes = [
-			ChainType.Ethereum,
-			ChainType.Bsc,
-			ChainType.Polygon,
-			ChainType.Arbitrum,
-			ChainType.Heco,
-			ChainType.Optimism,
-			ChainType.Avax,
-			ChainType.Syscoin
-		];
-		const defiNetImgSource = [
-			require('../../../images/ic_defi_eth.png'),
-			require('../../../images/ic_defi_bsc.png'),
-			require('../../../images/ic_defi_polygon.png'),
-			require('../../../images/ic_defi_arb.png'),
-			require('../../../images/ic_defi_heco.png'),
-			require('../../../images/ic_defi_op.png'),
-			require('../../../images/ic_defi_avax.png'),
-			require('../../../images/ic_defi_syscoin.png')
-		];
-		const defiNetName = [
-			strings('other.ethereum'),
-			strings('other.bsc'),
-			strings('other.polygon'),
-			strings('other.arbitrum'),
-			strings('other.heco'),
-			strings('other.optimism'),
-			strings('other.avalanche'),
-			strings('other.syscoin')
-		];
 
 		let firstItem = 0;
 		const contactEntrys = [];
@@ -238,7 +208,6 @@ class AccountNetworkView extends PureComponent {
 						>
 							<View style={styles.dappNetScroll}>
 								{allChains.map((item, index) => {
-									const tranlateIndex = defiChainTypes.indexOf(item);
 									const isRpc = getIsRpc(item);
 									return (
 										<TouchableOpacity
@@ -256,7 +225,7 @@ class AccountNetworkView extends PureComponent {
 											{isRpc ? (
 												getDefiIcon(item)
 											) : (
-												<Image source={defiNetImgSource[tranlateIndex]} />
+												<Image source={ChainTypeBgDefi[ChainTypes.indexOf(item)]} />
 											)}
 											<Text
 												allowFontScaling={false}
@@ -266,7 +235,7 @@ class AccountNetworkView extends PureComponent {
 													selectedChainType === item && styles.dappNetNameSeleted
 												]}
 											>
-												{isRpc ? getRpcName(item) : defiNetName[tranlateIndex]}
+												{isRpc ? getRpcName(item) : getChainTypeName(item)}
 											</Text>
 										</TouchableOpacity>
 									);

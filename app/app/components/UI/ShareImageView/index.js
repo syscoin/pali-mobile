@@ -6,19 +6,10 @@ import { strings } from '../../../../locales/i18n';
 import QRCode from 'react-native-qrcode-svg';
 
 import shareBackground from '../../../images/img_share_bg.png';
-import shareEth from '../../../images/ic_share_eth.png';
-import shareBsc from '../../../images/ic_share_bsc.png';
-import sharePolygon from '../../../images/ic_share_polygon.png';
-import shareArb from '../../../images/ic_share_arb.png';
-import shareTron from '../../../images/ic_share_tron.png';
-import shareHeco from '../../../images/ic_share_heco.png';
-import shareOp from '../../../images/ic_share_op.png';
-import shareAvax from '../../../images/ic_share_avax.png';
-import shareSyscoin from '../../../images/ic_share_syscoin.png';
 import shareLogo from '../../../images/img_share_logo.png';
 import { captureRef } from 'react-native-view-shot';
-import { ChainType, util } from 'gopocket-core';
-import { getChainTypeName } from '../../../util/number';
+import { util } from 'gopocket-core';
+import { getChainTypeName, getShareImage } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	background: {
@@ -101,35 +92,13 @@ export default class ShareImageView extends PureComponent {
 		}, 3000);
 	}
 
-	getNetworkImage = () => {
-		const type = this.props.chainType;
-		if (type === ChainType.Polygon) {
-			return sharePolygon;
-		} else if (type === ChainType.Bsc) {
-			return shareBsc;
-		} else if (type === ChainType.Arbitrum) {
-			return shareArb;
-		} else if (type === ChainType.Tron) {
-			return shareTron;
-		} else if (type === ChainType.Heco) {
-			return shareHeco;
-		} else if (type === ChainType.Optimism) {
-			return shareOp;
-		} else if (type === ChainType.Avax) {
-			return shareAvax;
-		} else if (type === ChainType.Syscoin) {
-			return shareSyscoin;
-		}
-		return shareEth;
-	};
-
 	render() {
 		return (
 			<View ref={this.imageRef} collapsable={false}>
 				<ImageBackground style={styles.background} source={shareBackground} resizeMode={'stretch'}>
 					<View style={styles.wrapper}>
 						<View style={styles.directionRow}>
-							<Image style={styles.titleImage} source={this.getNetworkImage()} />
+							<Image style={styles.titleImage} source={getShareImage(this.props.chainType)} />
 							<Text style={styles.title}>
 								{strings('other.crypto_receiving', { network: getChainTypeName(this.props.chainType) })}
 							</Text>

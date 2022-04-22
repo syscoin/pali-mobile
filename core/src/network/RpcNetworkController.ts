@@ -6,9 +6,9 @@ import { ChainType } from '../assets/TokenRatesController';
 import RpcContractController from '../assets/RpcContractController';
 import PreferencesController from '../user/PreferencesController';
 import { handleFetch, logDebug, safelyExecuteWithTimeout } from '../util';
-import { NetworkConfig, NetworkState } from './NetworkController';
+import { BaseNetworkConfig, BaseNetworkState } from './BaseNetworkController';
 
-export interface RpcNetworkState extends NetworkState {
+export interface RpcNetworkState extends BaseNetworkState {
   explorerUrl: string;
   chainType: number;
 }
@@ -17,7 +17,7 @@ export interface RcpNetworkState extends BaseState {
   networks: { [chainType: number]: RpcNetworkState };
 }
 
-export class RpcNetworkController extends BaseController<NetworkConfig, RcpNetworkState> {
+export class RpcNetworkController extends BaseController<BaseNetworkConfig, RcpNetworkState> {
   /**
    * Name of this controller used during composition
    */
@@ -36,7 +36,7 @@ export class RpcNetworkController extends BaseController<NetworkConfig, RcpNetwo
    * @param config - Initial options used to configure this controller
    * @param state - Initial state to set on this controller
    */
-  constructor(config?: Partial<NetworkConfig>, state?: Partial<RcpNetworkState>) {
+  constructor(config?: Partial<BaseNetworkConfig>, state?: Partial<RcpNetworkState>) {
     super(config, state);
     this.defaultState = {
       networks: {},

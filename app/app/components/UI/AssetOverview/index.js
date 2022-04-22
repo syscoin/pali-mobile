@@ -10,27 +10,17 @@ import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
 import iconQuestion from '../../../images/ask.png';
 import iconCopy from '../../../images/copy.png';
-import { BignumberJs as BigNumber, ChainType, util } from 'gopocket-core';
+import { BignumberJs as BigNumber } from 'gopocket-core';
 import increaseIcon from '../../../images/ic_up.png';
 import dropIcon from '../../../images/ic_drop.png';
 import { CURRENCIES } from '../../../util/currencies';
 import txTodo from '../../../images/ic_coin_history_back.png';
 import txHistory from '../../../images/ic_coin_history.png';
-import { RPC } from '../../../constants/network';
-import { getTagColor } from '../../../util/rpcUtil';
-import { getRpcNickname } from '../../../util/ControllerUtils';
+import { getAssetNetworkBarColor, getChainTypeName } from '../../../util/ChainTypeImages';
 
 const activeOpacity = 0.8;
 const darkBlack = '#030319';
 const lightBlack = '#8F92A1';
-const arbBg = '#23A1F0';
-const ethBg = '#627EEA';
-const polygonBg = '#8247E5';
-const bscBg = '#FEBF27';
-const hecoBg = '#47A150';
-const opBg = '#FF0420';
-const avaxBg = '#000000';
-const syscoinBg = '#1F5EFF';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -215,34 +205,10 @@ class AssetOverview extends PureComponent {
 		/**
 		 * An object containing token balances for current account and network in the format address => balance
 		 */
-		// eslint-disable-next-line react/no-unused-prop-types
 		selectedAddress: PropTypes.string,
-		contractBalances: PropTypes.object,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
-		ethPrice: PropTypes.object,
-		bnbPrice: PropTypes.object,
-		polygonPrice: PropTypes.object,
-		hecoPrice: PropTypes.object,
-		avaxPrice: PropTypes.object,
-		syscoinPrice: PropTypes.object,
-		/**
-		 * An object containing token exchange rates in the format address => exchangeRate
-		 */
-		contractExchangeRates: PropTypes.object,
-		arbContractExchangeRates: PropTypes.object,
-		bscContractExchangeRates: PropTypes.object,
-		polygonContractExchangeRates: PropTypes.object,
-		hecoContractExchangeRates: PropTypes.object,
-		opContractExchangeRates: PropTypes.object,
-		avaxContractExchangeRates: PropTypes.object,
-		syscoinContractExchangeRates: PropTypes.object,
+		allContractBalances: PropTypes.object,
+		allCurrencyPrice: PropTypes.object,
+		allContractExchangeRates: PropTypes.object,
 
 		showAlert: PropTypes.func,
 		hideAmount: PropTypes.bool,
@@ -264,33 +230,8 @@ class AssetOverview extends PureComponent {
 		const {
 			asset: { type }
 		} = this.props;
-		let backgroundColor = ethBg;
-		let text = strings('other.ethereum');
-		if (type === ChainType.Arbitrum) {
-			backgroundColor = arbBg;
-			text = strings('other.arbitrum');
-		} else if (type === ChainType.Bsc) {
-			backgroundColor = bscBg;
-			text = strings('other.bsc');
-		} else if (type === ChainType.Polygon) {
-			backgroundColor = polygonBg;
-			text = strings('other.polygon');
-		} else if (type === ChainType.Heco) {
-			backgroundColor = hecoBg;
-			text = strings('other.heco');
-		} else if (type === ChainType.Optimism) {
-			backgroundColor = opBg;
-			text = strings('other.optimism');
-		} else if (type === ChainType.Avax) {
-			backgroundColor = avaxBg;
-			text = strings('other.avalanche');
-		} else if (type === ChainType.Syscoin) {
-			backgroundColor = syscoinBg;
-			text = strings('other.syscoin');
-		} else if (util.isRpcChainType(type)) {
-			backgroundColor = getTagColor(type);
-			text = getRpcNickname(type) || RPC;
-		}
+		const backgroundColor = getAssetNetworkBarColor(type);
+		const text = getChainTypeName(type);
 		return (
 			<View style={[styles.networkBar, { borderColor: backgroundColor }]}>
 				<Text style={[styles.networkText, { color: backgroundColor }]}>{text}</Text>
@@ -330,59 +271,19 @@ class AssetOverview extends PureComponent {
 		const {
 			asset,
 			asset: { address, symbol },
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
+			allContractExchangeRates,
+			allContractBalances,
+			allCurrencyPrice,
 			hideAmount,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
 			currencyCode,
 			currencyCodeRate,
 			isLockScreen
 		} = this.props;
 		const { contractModalVisible } = this.state;
 		const { price, balance, balanceFiat, priceChange } = calcAssetPrices(asset, {
-			contractBalances,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
+			allContractBalances,
+			allContractExchangeRates,
+			allCurrencyPrice,
 			currencyCode,
 			currencyCodeRate
 		});
@@ -490,56 +391,12 @@ class AssetOverview extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
-	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
-	arbContractExchangeRates: state.engine.backgroundState.TokenRatesController.arbContractExchangeRates,
-	bscContractExchangeRates: state.engine.backgroundState.TokenRatesController.bscContractExchangeRates,
-	polygonContractExchangeRates: state.engine.backgroundState.TokenRatesController.polygonContractExchangeRates,
-	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
-	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
-	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
-	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
-	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
-	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
-	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
-	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
-	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
-	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
+	allContractExchangeRates: state.engine.backgroundState.TokenRatesController.allContractExchangeRates,
+	allCurrencyPrice: state.engine.backgroundState.TokenRatesController.allCurrencyPrice,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate,
 	isLockScreen: state.settings.isLockScreen

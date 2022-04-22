@@ -10,9 +10,8 @@ import WebsiteIcon from '../WebsiteIcon';
 import { getHost } from '../../../util/browser';
 import WalletConnect from '../../../core/WalletConnect';
 import Engine from '../../../core/Engine';
-import { getChainTypeByChainId } from '../../../util/networks';
 import DashSecondLine from '../../Views/DashSecondLine';
-import { getChainIdByType } from '../../../util/number';
+import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';
 
 const styles = StyleSheet.create({
 	root: {

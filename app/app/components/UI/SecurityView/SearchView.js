@@ -131,31 +131,9 @@ export default class SearchView extends PureComponent {
 			this.props.onSearch({ searchQuery, results: [] });
 		}
 		const { enabledChains } = this.props.contactEntry || {};
-		const {
-			AssetsContractController,
-			BscContractController,
-			PolygonContractController,
-			ArbContractController,
-			HecoContractController,
-			OpContractController,
-			AvaxContractController,
-			SyscoinContractController,
-			RpcNetworkController,
-			RpcContractController
-		} = Engine.context;
 
 		const { queryAddress, querySymbol } = await queryContractMap(enabledChains, searchQuery, true, 10);
 		let results = [...querySymbol, ...queryAddress];
-		const arbAddressArray = results.filter(token => token.type === ChainType.Arbitrum).map(token => token.address);
-		const bscAddressArray = results.filter(token => token.type === ChainType.Bsc).map(token => token.address);
-		const ethAddressArray = results.filter(token => token.type === ChainType.Ethereum).map(token => token.address);
-		const polyAddressArray = results.filter(token => token.type === ChainType.Polygon).map(token => token.address);
-		const hecoAddressArray = results.filter(token => token.type === ChainType.Heco).map(token => token.address);
-		const opAddressArray = results.filter(token => token.type === ChainType.Optimism).map(token => token.address);
-		const avaxAddressArray = results.filter(token => token.type === ChainType.Avax).map(token => token.address);
-		const syscoinAddressArray = results
-			.filter(token => token.type === ChainType.Syscoin)
-			.map(token => token.address);
 
 		//不是合约就没必要往下执行了
 		if (!isValidAddress(searchQuery)) {
@@ -168,204 +146,111 @@ export default class SearchView extends PureComponent {
 		}
 
 		const chainSearchResult = [];
-		// Ethereum
-		if (enabledChains.includes(ChainType.Ethereum) && !this.inLocalResult(ethAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Ethereum);
-				if (validated) {
-					const decimals = await AssetsContractController.getTokenDecimals(searchQuery);
-					const symbol = await AssetsContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Ethereum });
-						ethAddressArray.push(searchQuery);
+		for (const type in Engine.networks) {
+			const chainType = Number(type);
+			if (chainType === ChainType.RPCBase) {
+				continue;
+			}
+			if (!enabledChains.includes(chainType)) {
+				continue;
+			}
+			const addressArray = results.filter(token => token.type === chainType).map(token => token.address);
+
+			if (this.inLocalResult(addressArray, searchQuery)) {
+				continue;
+			}
+			if (chainType === ChainType.Arbitrum) {
+				const arbContract = this.contracts[ChainType.Arbitrum];
+				let success = false;
+				let address = searchQuery;
+				let l1Address = '';
+				let decimals;
+				let symbol;
+				try {
+					const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Arbitrum);
+					if (validated) {
+						decimals = await arbContract.getTokenDecimals(searchQuery);
+						symbol = await arbContract.getAssetSymbol(searchQuery);
+						l1Address = await arbContract.calculateL1ERC20Address(address);
+						success = true;
+					}
+				} catch (e2) {
+					util.logDebug('handleSearch arb failed with error=', e2);
+				}
+				if (!success) {
+					try {
+						const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Ethereum);
+						if (validated) {
+							const l2Address = await arbContract.calculateL2ERC20Address(searchQuery);
+							if (l2Address) {
+								decimals = await arbContract.getTokenDecimals(l2Address);
+								symbol = await arbContract.getAssetSymbol(l2Address);
+								address = l2Address;
+								l1Address = searchQuery;
+							}
+						}
+					} catch (e3) {
+						util.logDebug('handleSearch arb failed with error=', e3);
 					}
 				}
-			} catch (e1) {
-				util.logDebug('handleSearch eth failed with error=', e1);
-			}
-		}
-		//Arbitrum
-		if (enabledChains.includes(ChainType.Arbitrum) && !this.inLocalResult(arbAddressArray, searchQuery)) {
-			let success = false;
-			let address = searchQuery;
-			let l1Address = '';
-			let decimals;
-			let symbol;
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Arbitrum);
-				if (validated) {
-					decimals = await ArbContractController.getTokenDecimals(searchQuery);
-					symbol = await ArbContractController.getAssetSymbol(searchQuery);
-					l1Address = await ArbContractController.calculateL1ERC20Address(address);
-					success = true;
+				if (decimals && symbol) {
+					chainSearchResult.push({
+						address,
+						l1Address,
+						decimals,
+						symbol,
+						realSymbol: symbol,
+						type: ChainType.Arbitrum
+					});
 				}
-			} catch (e2) {
-				util.logDebug('handleSearch arb failed with error=', e2);
-			}
-			if (!success) {
+			} else {
 				try {
-					const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Ethereum);
+					const validated = await this.validateCustomTokenAddress(searchQuery, chainType);
 					if (validated) {
-						const l2Address = await ArbContractController.calculateL2ERC20Address(searchQuery);
-						if (l2Address) {
-							decimals = await ArbContractController.getTokenDecimals(l2Address);
-							symbol = await ArbContractController.getAssetSymbol(l2Address);
-							address = l2Address;
-							l1Address = searchQuery;
+						const decimals = await Engine.contracts[chainType].getTokenDecimals(searchQuery);
+						const symbol = await Engine.contracts[chainType].getAssetSymbol(searchQuery);
+						if (decimals && symbol) {
+							chainSearchResult.push({
+								address: searchQuery,
+								decimals,
+								symbol,
+								type: chainType
+							});
 						}
 					}
-				} catch (e3) {
-					util.logDebug('handleSearch arb failed with error=', e3);
+				} catch (e1) {
+					util.logDebug('handleSearch eth failed with error=', e1);
 				}
-			}
-			if (decimals && symbol) {
-				chainSearchResult.push({
-					address,
-					l1Address,
-					decimals,
-					symbol,
-					realSymbol: symbol,
-					type: ChainType.Arbitrum
-				});
-				arbAddressArray.push(searchQuery);
-			}
-		}
-		//BSC
-		if (enabledChains.includes(ChainType.Bsc) && !this.inLocalResult(bscAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Bsc);
-				if (validated) {
-					const decimals = await BscContractController.getTokenDecimals(searchQuery);
-					const symbol = await BscContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Bsc });
-						bscAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e4) {
-				util.logDebug('handleSearch polygon failed with error=', e4);
-			}
-		}
-		//Polygon
-		if (enabledChains.includes(ChainType.Polygon) && !this.inLocalResult(polyAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Polygon);
-				if (validated) {
-					const decimals = await PolygonContractController.getTokenDecimals(searchQuery);
-					const symbol = await PolygonContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Polygon });
-						polyAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e5) {
-				util.logDebug('handleSearch polygon failed with error=', e5);
-			}
-		}
-		//Heco
-		if (enabledChains.includes(ChainType.Heco) && !this.inLocalResult(hecoAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Heco);
-				if (validated) {
-					const decimals = await HecoContractController.getTokenDecimals(searchQuery);
-					const symbol = await HecoContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Heco });
-						hecoAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e5) {
-				util.logDebug('handleSearch polygon failed with error=', e5);
-			}
-		}
-		//Optimism
-		if (enabledChains.includes(ChainType.Optimism) && !this.inLocalResult(opAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Optimism);
-				if (validated) {
-					const decimals = await OpContractController.getTokenDecimals(searchQuery);
-					const symbol = await OpContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Optimism });
-						opAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e5) {
-				util.logDebug('handleSearch polygon failed with error=', e5);
-			}
-		}
-		//Avax
-		if (enabledChains.includes(ChainType.Avax) && !this.inLocalResult(avaxAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Avax);
-				if (validated) {
-					const decimals = await AvaxContractController.getTokenDecimals(searchQuery);
-					const symbol = await AvaxContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Avax });
-						avaxAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e5) {
-				util.logDebug('handleSearch polygon failed with error=', e5);
-			}
-		}
-		//Syscoin
-		if (enabledChains.includes(ChainType.Syscoin) && !this.inLocalResult(syscoinAddressArray, searchQuery)) {
-			try {
-				const validated = await this.validateCustomTokenAddress(searchQuery, ChainType.Syscoin);
-				if (validated) {
-					const decimals = await SyscoinContractController.getTokenDecimals(searchQuery);
-					const symbol = await SyscoinContractController.getAssetSymbol(searchQuery);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: ChainType.Syscoin });
-						syscoinAddressArray.push(searchQuery);
-					}
-				}
-			} catch (e5) {
-				util.logDebug('handleSearch polygon failed with error=', e5);
 			}
 		}
 
-		const supportedChain = [
-			ChainType.Arbitrum,
-			ChainType.Ethereum,
-			ChainType.Bsc,
-			ChainType.Polygon,
-			ChainType.Heco,
-			ChainType.Optimism,
-			ChainType.Avax,
-			ChainType.Syscoin
-		];
-		const rpcChain = enabledChains.filter(chainType => !supportedChain.includes(chainType));
+		const rpcChain = enabledChains.filter(chainType => util.isRpcChainType(chainType));
 		for (let i = 0; i < rpcChain.length; i++) {
 			const currentChainType = rpcChain[i];
-			if (util.isRpcChainType(rpcChain[i])) {
-				try {
-					const working = await RpcNetworkController.checkNetwork(currentChainType);
-					if (!working) {
-						continue;
-					}
-					const validated = await this.validateCustomTokenAddress(searchQuery, currentChainType);
-					if (!validated) {
-						continue;
-					}
-					const decimals = await RpcContractController.callContract(
-						currentChainType,
-						'getTokenDecimals',
-						searchQuery
-					);
-					const symbol = await RpcContractController.callContract(
-						currentChainType,
-						'getAssetSymbol',
-						searchQuery
-					);
-					if (decimals && symbol) {
-						chainSearchResult.push({ address: searchQuery, decimals, symbol, type: currentChainType });
-					}
-				} catch (error) {
-					logDebug('search rpc error --> ', error);
+			try {
+				const working = await Engine.networks[ChainType.RPCBase].checkNetwork(currentChainType);
+				if (!working) {
+					continue;
 				}
+				const validated = await this.validateCustomTokenAddress(searchQuery, currentChainType);
+				if (!validated) {
+					continue;
+				}
+				const decimals = await Engine.contracts[ChainType.RPCBase].callContract(
+					currentChainType,
+					'getTokenDecimals',
+					searchQuery
+				);
+				const symbol = await Engine.contracts[ChainType.RPCBase].callContract(
+					currentChainType,
+					'getAssetSymbol',
+					searchQuery
+				);
+				if (decimals && symbol) {
+					chainSearchResult.push({ address: searchQuery, decimals, symbol, type: currentChainType });
+				}
+			} catch (error) {
+				logDebug('search rpc error --> ', error);
 			}
 		}
 

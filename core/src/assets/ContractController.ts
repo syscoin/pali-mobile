@@ -5,7 +5,7 @@ import abiERC20 from 'human-standard-token-abi';
 import abiERC721 from 'human-standard-collectible-abi';
 import BigNumber from 'bignumber.js';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import BaseChainConfig from '../BaseChainConfig.json';
+import { BaseChainConfig } from '../Config';
 import { BNToHex, CollectibleType, logDebug, resolveURI } from '../util';
 import TOKEN_INFOS_ABI from '../static/tokeninfos_abi.json';
 import abiERC1155 from '../static/ERC1155.json';

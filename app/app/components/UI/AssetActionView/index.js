@@ -14,7 +14,7 @@ import { toggleApproveModalInModal } from '../../../actions/modals';
 import { hideScanner } from '../../../actions/scanner';
 import QrScanner from '../../Views/QRScanner';
 import ReceiveTab from '../ReceiveTab';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, NetworkConfig, util } from 'gopocket-core';
 import Engine from '../../../core/Engine';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/Device';
@@ -30,6 +30,7 @@ import img_crosschain_en from '../../../images/img_crosschain_en.png';
 import img_receive_cn from '../../../images/img_receive_cn.png';
 import img_receive_en from '../../../images/img_receive_en.png';
 import { supportMigration } from '../../Views/SendFlow/MoveTab/Bridge';
+import { EngineContracts, EngineNetworks } from '../../../util/ControllerUtils';
 
 const activeOpacity = 0.8;
 
@@ -62,29 +63,9 @@ class AssetActionView extends PureComponent {
 		asset: PropTypes.object,
 		hideOtherModal: PropTypes.func,
 		toggleShowHint: PropTypes.func,
-		contractBalances: PropTypes.object,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
-		contractExchangeRates: PropTypes.object,
-		arbContractExchangeRates: PropTypes.object,
-		bscContractExchangeRates: PropTypes.object,
-		polygonContractExchangeRates: PropTypes.object,
-		hecoContractExchangeRates: PropTypes.object,
-		opContractExchangeRates: PropTypes.object,
-		avaxContractExchangeRates: PropTypes.object,
-		syscoinContractExchangeRates: PropTypes.object,
-		ethPrice: PropTypes.object,
-		bnbPrice: PropTypes.object,
-		polygonPrice: PropTypes.object,
-		hecoPrice: PropTypes.object,
-		avaxPrice: PropTypes.object,
-		syscoinPrice: PropTypes.object,
+		allContractBalances: PropTypes.object,
+		allContractExchangeRates: PropTypes.object,
+		allCurrencyPrice: PropTypes.object,
 		isVisibleInModal: PropTypes.bool,
 		approveModalVisibleInModal: PropTypes.bool,
 		hideAmount: PropTypes.func,
@@ -124,56 +105,16 @@ class AssetActionView extends PureComponent {
 		const {
 			asset,
 			asset: { symbol },
-			contractBalances,
-			bscContractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			hecoPrice,
-			avaxPrice,
-			syscoinPrice,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
+			allContractBalances,
+			allCurrencyPrice,
+			allContractExchangeRates,
 			currencyCode,
 			currencyCodeRate
 		} = this.props;
 		const { balance } = calcAssetPrices(asset, {
-			contractBalances,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			hecoPrice,
-			avaxPrice,
-			syscoinPrice,
+			allContractBalances,
+			allContractExchangeRates,
+			allCurrencyPrice,
 			currencyCode,
 			currencyCodeRate
 		});
@@ -278,34 +219,22 @@ class AssetActionView extends PureComponent {
 			if (asset.nativeCurrency) {
 				return false;
 			}
-			const { PolygonContractController, PolygonNetworkController } = Engine.context;
-			const l1Address = await PolygonContractController.toEthereumAddress(asset.address);
+			const l1Address = await Engine.contracts[ChainType.Polygon].toEthereumAddress(asset.address);
 			if (!l1Address) {
-				const { MaticWETH } = await PolygonNetworkController.polygonNetworkConfig(
-					PolygonNetworkController.state.provider.chainId
-				);
+				const polygonNetwork = Engine.networks[ChainType.Polygon];
+				const { MaticWETH } = await polygonNetwork.getNetworkConfig(polygonNetwork.state.provider.chainId);
 				if (asset.address.toLowerCase() !== MaticWETH?.toLowerCase()) {
 					return false;
 				}
 			}
-		} else if (asset.type === ChainType.Bsc) {
-			return false;
+			return true;
 		} else if (asset.type === ChainType.Arbitrum) {
 			if (!asset.nativeCurrency && !asset.l1Address) {
 				return false;
 			}
-		} else if (asset.type === ChainType.Heco) {
-			return false;
-		} else if (asset.type === ChainType.Optimism) {
-			return false;
-		} else if (asset.type === ChainType.Avax) {
-			return false;
-		} else if (asset.type === ChainType.Syscoin) {
-			return false;
-		} else if (util.isRpcChainType(asset.type)) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	};
 
 	showMigrateModal = async () => {
@@ -327,61 +256,15 @@ class AssetActionView extends PureComponent {
 			this.props.hideOtherModal();
 		}
 		const { asset } = this.props;
-		let url = '';
-		if (asset.type === ChainType.Ethereum) {
-			if (asset.nativeCurrency) {
-				url = 'https://bafybeidlvfo3j6lbrq56uultqp5urpirthugtwcrjc642jci4ntkko5ra4.ipfs.cf-ipfs.com/#/swap';
-			} else {
-				url =
-					'https://bafybeidlvfo3j6lbrq56uultqp5urpirthugtwcrjc642jci4ntkko5ra4.ipfs.cf-ipfs.com/#/swap?inputCurrency=' +
-					asset.address;
-			}
-		} else if (asset.type === ChainType.Polygon) {
-			if (asset.nativeCurrency) {
-				url = 'https://quickswap.exchange/#/swap';
-			} else {
-				url = 'https://quickswap.exchange/#/swap?inputCurrency=' + asset.address;
-			}
-		} else if (asset.type === ChainType.Optimism) {
-			if (asset.nativeCurrency) {
-				url = 'https://bafybeicals7ohbyykungbndrzk3qf6pydcbe2w3a3pftwrfbjjirkpxqbq.ipfs.cf-ipfs.com/#/swap';
-			} else {
-				url =
-					'https://bafybeicals7ohbyykungbndrzk3qf6pydcbe2w3a3pftwrfbjjirkpxqbq.ipfs.cf-ipfs.com/#/swap?inputCurrency=' +
-					asset.address;
-			}
-		} else if (asset.type === ChainType.Bsc) {
-			if (asset.nativeCurrency) {
-				url = 'https://exchange.pancakeswap.finance/#/swap';
-			} else {
-				url = 'https://exchange.pancakeswap.finance/#/swap?inputCurrency=' + asset.address;
-			}
-		} else if (asset.type === ChainType.Arbitrum) {
-			if (asset.nativeCurrency) {
-				url = 'https://sushiswap-interface-teamsushi.vercel.app/swap';
-			} else {
-				url = 'https://sushiswap-interface-teamsushi.vercel.app/swap/swap?inputCurrency=' + asset.address;
-			}
-		} else if (asset.type === ChainType.Heco) {
-			if (asset.nativeCurrency) {
-				url = 'https://ht.mdex.com/#/swap';
-			} else {
-				url = 'https://ht.mdex.com/#/swap?inputCurrency=' + asset.address;
-			}
-		} else if (asset.type === ChainType.Avax) {
-			if (asset.nativeCurrency) {
-				url = 'https://traderjoexyz.com/#/trade';
-			} else {
-				url = 'https://traderjoexyz.com/#/trade?inputCurrency=' + asset.address;
-			}
-		} else if (asset.type === ChainType.Syscoin) {
-			if (asset.nativeCurrency) {
-				url = 'https://app.pegasys.finance/#/swap';
-			} else {
-				url = 'https://app.pegasys.finance/#/swap?inputCurrency=' + asset.address;
-			}
+		let url;
+		if (asset.nativeCurrency) {
+			url = NetworkConfig[asset.type]?.SwapUrl;
+		} else {
+			url = NetworkConfig[asset.type]?.SwapTokenUrl
+				? NetworkConfig[asset.type].SwapTokenUrl + asset.address
+				: undefined;
 		}
-		if (url !== '') {
+		if (url) {
 			this.handleBrowserUrl(url, asset.type);
 		}
 	};
@@ -492,56 +375,12 @@ class AssetActionView extends PureComponent {
 
 const mapStateToProps = state => ({
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
-	arbContractExchangeRates: state.engine.backgroundState.TokenRatesController.arbContractExchangeRates,
-	bscContractExchangeRates: state.engine.backgroundState.TokenRatesController.bscContractExchangeRates,
-	polygonContractExchangeRates: state.engine.backgroundState.TokenRatesController.polygonContractExchangeRates,
-	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
-	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
-	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
-	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
-	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
-	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
-	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
-	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
-	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
-	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
+	allContractExchangeRates: state.engine.backgroundState.TokenRatesController.allContractExchangeRates,
+	allCurrencyPrice: state.engine.backgroundState.TokenRatesController.allCurrencyPrice,
 	isVisibleInModal: state.scanner.isVisibleInModal,
 	approveModalVisibleInModal: state.modals.approveModalVisibleInModal,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,

@@ -5,7 +5,7 @@ export class RpcContractController extends BaseController<BaseConfig, BaseState>
 
   name = 'RpcContractController';
 
-  contracts: { [chainType: number]: ContractController<BaseConfig, BaseState> } = {};
+  rpcContracts: { [chainType: number]: ContractController<BaseConfig, BaseState> } = {};
 
   constructor(config?: Partial<BaseConfig>, state?: Partial<BaseState>) {
     super(config, state);
@@ -17,19 +17,19 @@ export class RpcContractController extends BaseController<BaseConfig, BaseState>
   }
 
   addContract(chainType: number, provider: any, chainId: string) {
-    this.contracts[chainType] = new ContractController();
-    this.contracts[chainType].context = this.context;
-    this.contracts[chainType].onL2NetworkChange(provider, chainId);
+    this.rpcContracts[chainType] = new ContractController();
+    this.rpcContracts[chainType].context = this.context;
+    this.rpcContracts[chainType].onL2NetworkChange(provider, chainId);
   }
 
   removeContract(chainType: number) {
-    if (this.contracts[chainType]) {
-      delete this.contracts[chainType];
+    if (this.rpcContracts[chainType]) {
+      delete this.rpcContracts[chainType];
     }
   }
 
   getContract(chainType: number) {
-    return this.contracts[chainType];
+    return this.rpcContracts[chainType];
   }
 
   callContract(chainType: number, method: string, ...args: any[]) {
@@ -43,8 +43,8 @@ export class RpcContractController extends BaseController<BaseConfig, BaseState>
   }
 
   onL1NetworkChange(provider: any, chainId: any) {
-    for (const chainType in this.contracts) {
-      this.contracts[chainType].onL1NetworkChange(provider, chainId);
+    for (const chainType in this.rpcContracts) {
+      this.rpcContracts[chainType].onL1NetworkChange(provider, chainId);
     }
   }
 }

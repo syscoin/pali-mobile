@@ -1,7 +1,7 @@
 import './shim.js';
 import { self } from 'react-native-threads';
 import EngineImpl from './app/core/EngineImpl';
-import { Sqlite, util } from 'gopocket-core';
+import { ChainType, Sqlite, util } from 'gopocket-core';
 import { randomTransactionId } from './app/util/number';
 import NativeWorker from './NativeWorker';
 
@@ -80,7 +80,7 @@ class TodoApi {
 	async callProvider(name, type, method, ...args) {
 		return await new Promise(resolve => {
 			if (name === 'RpcNetworkController') {
-				const provider = EngineImpl.context.RpcNetworkController.providers?.[type];
+				const provider = EngineImpl.networks[ChainType.RPCBase].providers?.[type];
 				if (provider) {
 					provider[method](...args, (error, resultObj) => {
 						resolve({ error, resultObj });

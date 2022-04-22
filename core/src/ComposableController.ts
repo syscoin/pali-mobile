@@ -26,6 +26,9 @@ export class ComposableController extends BaseController<any, any> {
    */
   context: ChildControllerContext = {};
 
+  networks: { [type: number]: any } = {};
+  contracts: { [type: number]: any } = {};
+
   /**
    * Name of this controller used during composition
    */
@@ -61,10 +64,19 @@ export class ComposableController extends BaseController<any, any> {
    */
   set controllers(controllers: ControllerList) {
     this.internalControllers = controllers;
+    controllers.forEach((controller: any) => {
+      if (controller.isNetwork) {
+        this.networks[controller.chainType] = controller;
+      } else if (controller.isContract) {
+        this.contracts[controller.chainType] = controller;
+      }
+    });
     controllers.forEach((controller) => {
       const { name } = controller;
       this.context[name] = controller;
       controller.context = this.context;
+      controller.networks = this.networks;
+      controller.contracts = this.contracts;
       try {
         this.cachedState?.[name] && controller.rehydrate(this.cachedState[name]);
       } catch (e) {

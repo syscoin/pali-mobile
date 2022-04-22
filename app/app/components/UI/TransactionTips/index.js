@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
@@ -9,7 +8,7 @@ import { strings } from '../../../../locales/i18n';
 import LottieView from 'lottie-react-native';
 import { randomTransactionId } from '../../../util/number';
 import Engine from '../../../core/Engine';
-import { CrossChainType, TransactionStatus } from 'gopocket-core';
+import { ChainType, CrossChainType, TransactionStatus } from 'gopocket-core';
 import { toggleOngoingTransactionsModal } from '../../../actions/modals';
 import PropTypes from 'prop-types';
 import { toggleShowHint } from '../../../actions/hint';
@@ -19,7 +18,7 @@ import {
 	isTokenMethodTransferFrom
 } from '../../../util/transactions';
 import { store } from '../../../store';
-import { isRpcChainId } from '../../../util/ControllerUtils';
+import { getAllChainIdArray, isRpcChainId } from '../../../util/ControllerUtils';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -87,14 +86,7 @@ class TransactionTips extends PureComponent {
 	static propTypes = {
 		toggleOngoingTransactionsModal: PropTypes.func,
 		polygonDeposits: PropTypes.array,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
+		allChainId: PropTypes.array,
 		toggleShowHint: PropTypes.func
 	};
 
@@ -127,27 +119,8 @@ class TransactionTips extends PureComponent {
 	}
 
 	exitChainId = curChainId => {
-		const {
-			chainId,
-			arbChainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
-		return (
-			curChainId === chainId ||
-			curChainId === arbChainId ||
-			curChainId === bscChainId ||
-			curChainId === polygonChainId ||
-			curChainId === hecoChainId ||
-			curChainId === opChainId ||
-			curChainId === avaxChainId ||
-			curChainId === syscoinChainId ||
-			isRpcChainId(curChainId)
-		);
+		const { allChainId } = this.props;
+		return allChainId?.find(chainId => chainId === curChainId) || isRpcChainId(curChainId);
 	};
 
 	componentDidMount() {
@@ -194,14 +167,8 @@ class TransactionTips extends PureComponent {
 	componentDidUpdate(prevProps) {
 		this.onPropsUpdate();
 		if (
-			prevProps.chainId !== this.props.chainId ||
-			prevProps.arbChainId !== this.props.arbChainId ||
-			prevProps.bscChainId !== this.props.bscChainId ||
-			prevProps.polygonChainId !== this.props.polygonChainId ||
-			prevProps.hecoChainId !== this.props.hecoChainId ||
-			prevProps.opChainId !== this.props.opChainId ||
-			prevProps.avaxChainId !== this.props.avaxChainId ||
-			prevProps.syscoinChainId !== this.props.syscoinChainId
+			prevProps.allChainId?.length !== this.props.allChainId?.length ||
+			prevProps.allChainId?.find((chainId, index) => this.props.allChainId[index] !== chainId)
 		) {
 			this.onNetworkUpdate();
 		}
@@ -294,8 +261,10 @@ class TransactionTips extends PureComponent {
 		if (transactionMeta.extraInfo.crossChainType === CrossChainType.depositPolygon) {
 			const depositState = this.props.polygonDeposits.find(({ tx }) => tx === transactionMeta.transactionHash);
 			if (!depositState) {
-				const { PolygonContractController } = Engine.context;
-				PolygonContractController.addDepositTxHash(transactionMeta.transactionHash, transactionMeta.chainId);
+				Engine.contracts[ChainType.Polygon].addDepositTxHash(
+					transactionMeta.transactionHash,
+					transactionMeta.chainId
+				);
 			}
 		}
 	}
@@ -417,14 +386,7 @@ class TransactionTips extends PureComponent {
 
 const mapStateToProps = state => ({
 	polygonDeposits: state.engine.backgroundState.PolygonContractController.deposits,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId
+	allChainId: getAllChainIdArray(state)
 });
 
 const mapDispatchToProps = dispatch => ({

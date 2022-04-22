@@ -23,13 +23,20 @@ import Engine from '../../core/Engine';
 import AppConstants from '../../core/AppConstants';
 import { colors, fontStyles } from '../../styles/common';
 import FadeOutOverlay from '../UI/FadeOutOverlay';
-import { hexToBN, getTypeByChainId, getTokenDecimals, getAssetSymbol, calcAllAddressPrices } from '../../util/number';
+import {
+	hexToBN,
+	getChainTypeByChainId,
+	getTokenDecimals,
+	getAssetSymbol,
+	calcAllAddressPrices,
+	getTickerByType
+} from '../../util/number';
 import { setEtherTransaction, setTransactionObject } from '../../actions/transaction';
 import PersonalSign from '../UI/PersonalSign';
 import TypedSign from '../UI/TypedSign';
 import Modal from 'react-native-modal';
 import WalletConnect from '../../core/WalletConnect';
-import { util, CrossChainType, BN } from 'gopocket-core';
+import { util, CrossChainType, BN, ChainType, OnEventTag } from 'gopocket-core';
 import { strings } from '../../../locales/i18n';
 
 import {
@@ -38,8 +45,7 @@ import {
 	decodeTransferData,
 	APPROVE_FUNCTION_SIGNATURE,
 	equalMethodId,
-	POLYGON_ERC20_WITHDRAW_FUNCTION_SIGNATURE,
-	getTickerByType
+	POLYGON_ERC20_WITHDRAW_FUNCTION_SIGNATURE
 } from '../../util/transactions';
 import { safeToChecksumAddress } from '../../util/address';
 import MessageSign from '../UI/MessageSign';
@@ -82,6 +88,7 @@ import { hideWalletConnectList, showWalletConnectIcon, hideWalletConnectIcon } f
 import { toggleShowHint } from '../../actions/hint';
 import { logDebug } from 'gopocket-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
+import { EngineContracts, EngineNetworks, isMainnetChain } from '../../util/ControllerUtils';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -266,7 +273,9 @@ const Main = props => {
 
 	const connectionChangeHandler = useCallback(
 		state => {
-			if (!state) return;
+			if (!state) {
+				return;
+			}
 			const { isConnected } = state;
 			// Show the modal once the status changes to offline
 			if (connected && isConnected === false) {
@@ -324,17 +333,18 @@ const Main = props => {
 
 	const onUnapprovedTransaction = useCallback(
 		async transactionMeta => {
-			if (transactionMeta.origin === TransactionTypes.MMM) return;
+			if (transactionMeta.origin === TransactionTypes.MMM) {
+				return;
+			}
 			const {
 				transaction: { value, gas, gasPrice, data, chainId }
 			} = transactionMeta;
 			const to = safeToChecksumAddress(transactionMeta.transaction.to);
 			util.logDebug('PPYang onUnapprovedTransaction to:', to, data, chainId, transactionMeta.origin);
 
-			const { ArbContractController, PolygonContractController, PolygonNetworkController } = Engine.context;
 			if (!transactionMeta.origin) {
-				const arbEthParam = await ArbContractController.getdepositETHMethodId();
-				const arbParam = await ArbContractController.getdepositMethodId();
+				const arbEthParam = await Engine.contracts[ChainType.Arbitrum].getdepositETHMethodId();
+				const arbParam = await Engine.contracts[ChainType.Arbitrum].getdepositMethodId();
 				if (
 					(equalMethodId(data, arbEthParam[1]) && arbEthParam[0] === to) ||
 					(equalMethodId(data, arbParam[1]) && arbParam[0] === to)
@@ -350,8 +360,8 @@ const Main = props => {
 					return;
 				}
 
-				const withdrawEthParam = await ArbContractController.getwithdrawETHMethodId();
-				const withdrawParam = await ArbContractController.getwithdrawERC20MethodId();
+				const withdrawEthParam = await Engine.contracts[ChainType.Arbitrum].getwithdrawETHMethodId();
+				const withdrawParam = await Engine.contracts[ChainType.Arbitrum].getwithdrawERC20MethodId();
 				if (
 					(equalMethodId(data, withdrawEthParam[1]) && withdrawEthParam[0] === to) ||
 					(equalMethodId(data, withdrawParam[1]) && withdrawParam[0] === to)
@@ -367,9 +377,9 @@ const Main = props => {
 					return;
 				}
 
-				const polygonEthParam = await PolygonContractController.getdepositEtherForUserMethodId();
-				const polygonParam = await PolygonContractController.getdepositERC20ForUserMethodId();
-				const polygonParam2 = await PolygonContractController.getdepositERC20ForUserMethodId2();
+				const polygonEthParam = await Engine.contracts[ChainType.Polygon].getdepositEtherForUserMethodId();
+				const polygonParam = await Engine.contracts[ChainType.Polygon].getdepositERC20ForUserMethodId();
+				const polygonParam2 = await Engine.contracts[ChainType.Polygon].getdepositERC20ForUserMethodId2();
 				if (
 					(equalMethodId(data, polygonEthParam[1]) && polygonEthParam[0] === to) ||
 					(equalMethodId(data, polygonParam[1]) && polygonParam[0] === to) ||
@@ -387,7 +397,7 @@ const Main = props => {
 				}
 
 				if (
-					transactionMeta.chainId === PolygonNetworkController.state.provider.chainId &&
+					transactionMeta.chainId === Engine.networks[ChainType.Polygon].state.provider.chainId &&
 					data &&
 					data.substr(0, 10) === POLYGON_ERC20_WITHDRAW_FUNCTION_SIGNATURE
 				) {
@@ -403,12 +413,12 @@ const Main = props => {
 				}
 			}
 
-			const polygonExitParam = await PolygonContractController.getexitERC20MethodId();
+			const polygonExitParam = await Engine.contracts[ChainType.Polygon].getexitERC20MethodId();
 			if (equalMethodId(data, polygonExitParam[1]) && polygonExitParam[0] === to) {
 				transactionMeta.origin = TransactionTypes.ORIGIN_CLAIM;
 			}
 
-			const claimParam = await ArbContractController.getexecuteTransactionMethodId();
+			const claimParam = await Engine.contracts[ChainType.Arbitrum].getexecuteTransactionMethodId();
 			if (equalMethodId(data, claimParam[2]) && (claimParam[0] === to || claimParam[1] === to)) {
 				transactionMeta.origin = TransactionTypes.ORIGIN_CLAIM;
 			}
@@ -424,7 +434,7 @@ const Main = props => {
 				(await getMethodData(data)).name === TOKEN_METHOD_TRANSFER
 			) {
 				const from = safeToChecksumAddress(transactionMeta.transaction.from);
-				const type = getTypeByChainId(transactionMeta.chainId);
+				const type = getChainTypeByChainId(transactionMeta.chainId);
 				let asset = getAssetByType(transactionMeta.chainId, type, from, to);
 				if (!asset) {
 					try {
@@ -458,7 +468,7 @@ const Main = props => {
 					...transactionMeta.transaction
 				});
 			} else {
-				const type = getTypeByChainId(transactionMeta.chainId);
+				const type = getChainTypeByChainId(transactionMeta.chainId);
 				const ticker = getTickerByType(type);
 				transactionMeta.transaction.value = hexToBN(value);
 
@@ -885,18 +895,7 @@ const Main = props => {
 		}, 200);
 
 		setTimeout(async () => {
-			const {
-				PreferencesController,
-				KeyringController,
-				PolygonNetworkController,
-				BscNetworkController,
-				NetworkController,
-				ArbNetworkController,
-				HecoNetworkController,
-				OpNetworkController,
-				AvaxNetworkController,
-				SyscoinNetworkController
-			} = Engine.context;
+			const { PreferencesController, KeyringController } = Engine.context;
 			let accountEventId = 'Account10+';
 			const identities = PreferencesController.state.identities;
 			const identitiesLength = Object.keys(identities).length;
@@ -912,24 +911,7 @@ const Main = props => {
 			onEvent(accountEventId);
 			onEvent(walletCountEventId);
 
-			const {
-				etherAllAmount,
-				arbAllAmount,
-				bscAllAmount,
-				polygonAllAmount,
-				hecoAllAmount,
-				opAllAmount,
-				avaxAllAmount,
-				syscoinAllAmount,
-				etherAllBalance,
-				arbAllBalance,
-				bscAllBalance,
-				polygonAllBalance,
-				hecoAllBalance,
-				opAllBalance,
-				avaxAllBalance,
-				syscoinAllBalance
-			} = await calcAllAddressPrices();
+			const { allAmountOfChain, allBalanceOfChain } = await calcAllAddressPrices();
 			const getValue = value => {
 				if (value <= 0) {
 					return 'USD0';
@@ -955,80 +937,40 @@ const Main = props => {
 				return 'USD10M+';
 			};
 			let allAmount = 0;
-			let ethValue = 'testnet';
-			let polygonValue = 'testnet';
-			let bscValue = 'testnet';
-			let arbValue = 'testnet';
-			let hecoValue = 'testnet';
-			let opValue = 'testnet';
-			let avaxValue = 'testnet';
-			let syscoinValue = 'testnet';
-			if (PolygonNetworkController && (await PolygonNetworkController.ismainnet())) {
-				allAmount += polygonAllAmount;
-				polygonValue = getValue(polygonAllAmount);
+			let chainValue = {};
+			for (const type in Engine.networks) {
+				const chainType = Number(type);
+				if (chainType === ChainType.RPCBase) {
+					continue;
+				}
+				chainValue[chainType] = 'testnet';
+				if (isMainnetChain(chainType)) {
+					const amount = allAmountOfChain[chainType] || 0;
+					allAmount += amount;
+					chainValue[chainType] = getValue(amount);
+				}
 			}
-			if (ArbNetworkController && (await ArbNetworkController.ismainnet())) {
-				allAmount += arbAllAmount;
-				arbValue = getValue(arbAllAmount);
-			}
-			if (BscNetworkController && (await BscNetworkController.ismainnet())) {
-				allAmount += bscAllAmount;
-				bscValue = getValue(bscAllAmount);
-			}
-			if (NetworkController && (await NetworkController.ismainnet())) {
-				allAmount += etherAllAmount;
-				ethValue = getValue(etherAllAmount);
-			}
-			if (HecoNetworkController && (await HecoNetworkController.ismainnet())) {
-				allAmount += hecoAllAmount;
-				hecoValue = getValue(hecoAllAmount);
-			}
-			if (OpNetworkController && (await OpNetworkController.ismainnet())) {
-				allAmount += opAllAmount;
-				opValue = getValue(opAllAmount);
-			}
-			if (AvaxNetworkController && (await AvaxNetworkController.ismainnet())) {
-				allAmount += avaxAllAmount;
-				avaxValue = getValue(avaxAllAmount);
-			}
-			if (SyscoinNetworkController && (await SyscoinNetworkController.ismainnet())) {
-				allAmount += syscoinAllAmount;
-				syscoinValue = getValue(syscoinAllAmount);
-			}
+
 			const amoutEventId = getValue(allAmount);
-			onEventWithMap(amoutEventId, {
-				eth: ethValue,
-				polygon: polygonValue,
-				bsc: bscValue,
-				arb: arbValue,
-				heco: hecoValue,
-				op: opValue,
-				avax: avaxValue,
-				syscoin: syscoinValue
-			});
-			if (etherAllBalance && etherAllBalance > 0) {
-				onEvent('EthActiveUsers');
+			const eventMap = {};
+			for (const type in chainValue) {
+				const chainType = Number(type);
+				const name = OnEventTag[chainType]?.EventValueName;
+				if (name) {
+					eventMap[name] = chainValue[type];
+				}
 			}
-			if (arbAllBalance && arbAllBalance > 0) {
-				onEvent('ArbActiveUsers');
-			}
-			if (polygonAllBalance && polygonAllBalance > 0) {
-				onEvent('PolygonActiveUsers');
-			}
-			if (bscAllBalance && bscAllBalance > 0) {
-				onEvent('BscActiveUsers');
-			}
-			if (hecoAllBalance && hecoAllBalance > 0) {
-				onEvent('HecoActiveUsers');
-			}
-			if (opAllBalance && opAllBalance > 0) {
-				onEvent('OpActiveUsers');
-			}
-			if (avaxAllBalance && avaxAllBalance > 0) {
-				onEvent('AvalancheActiveUsers');
-			}
-			if (syscoinAllBalance && syscoinAllBalance > 0) {
-				onEvent('SyscoinActiveUsers');
+			onEventWithMap(amoutEventId, eventMap);
+
+			if (allBalanceOfChain) {
+				for (const type in allBalanceOfChain) {
+					const chainType = Number(type);
+					const balance = allBalanceOfChain[chainType];
+					const tag = OnEventTag[chainType]?.EventActiveUsers;
+					if (balance && balance > 0 && tag) {
+						onEvent(tag);
+					}
+				}
 			}
 			util.logDebug('leon.w@umeng stat: ', walletCountEventId, accountEventId, amoutEventId);
 		}, 30 * 1000);
@@ -1274,10 +1216,8 @@ Main.propTypes = {
 	/**
 	 * Boolean that determines the status of the networks modal
 	 */
-	// eslint-disable-next-line react/no-unused-prop-types
 	networkModalVisible: PropTypes.bool,
 
-	// eslint-disable-next-line react/no-unused-prop-types
 	bscNetworkModalVisible: PropTypes.bool,
 
 	qrScannerModalVisible: PropTypes.bool,

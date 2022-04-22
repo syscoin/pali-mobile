@@ -39,6 +39,10 @@ export class BaseController<C extends BaseConfig, S extends BaseState> {
    */
   context: ChildControllerContext = {};
 
+  networks: { [chainType: number]: any } = {};
+
+  contracts: { [chainType: number]: any } = {};
+
   /**
    * Default options used to configure this controller
    */

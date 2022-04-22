@@ -6,7 +6,7 @@ import PreferencesController from '../user/PreferencesController';
 import KeyringController from '../keyring/KeyringController';
 import { CollectibleType, logDebug } from '../util';
 import { BalanceMap, BN, stripHexPrefix } from '..';
-import BaseChainConfig from '../BaseChainConfig.json';
+import { BaseChainConfig } from '../Config';
 import ContractController, { ERC1155METADATA_INTERFACE_ID, ERC721METADATA_INTERFACE_ID } from './ContractController';
 
 interface TronConfig extends BaseConfig {
@@ -32,7 +32,7 @@ export class TronContractController extends ContractController<TronConfig, BaseS
 
   onL2NetworkChange(_provider: any, chainId: any) {
     const tronNetworkController = this.context.TronNetworkController as TronNetworkController;
-    const { provider: { rpcTarget }, apiKey } = tronNetworkController.tronNetworkConfig(chainId);
+    const { provider: { rpcTarget }, apiKey } = tronNetworkController.getNetworkConfig(chainId);
     this.l2_chainId = chainId;
     this.tron_web = new TronWeb({ fullHost: rpcTarget });
     if (this.config.tronAddress) {

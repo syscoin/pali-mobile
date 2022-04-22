@@ -2,15 +2,9 @@ import { hexToBN, isEIP1559Compatibility, renderFromWei, toWei, weiToFiat } from
 import { strings } from '../../locales/i18n';
 import TransactionTypes from '../core/TransactionTypes';
 import Engine from '../core/Engine';
-import {
-	isAvaxMainnetByChainId,
-	isBSCMainnetByChainId,
-	isHecoMainnetByChainId,
-	isMainnetByChainId,
-	isPolygonMainnetByChainId
-} from '../util/networks';
 import { BN, ChainType, util } from 'gopocket-core';
 import { conversionUtil } from './conversion-util';
+import { isMainnetByChainType } from './ControllerUtils';
 
 export const ETH = 'ETH';
 export const GWEI = 'GWEI';
@@ -262,13 +256,13 @@ export async function getBasicGasEstimates(transaction) {
 
 	try {
 		let fetchGas;
-		if (isMainnetByChainId(chainId)) {
+		if (isMainnetByChainType(ChainType.Ethereum, chainId)) {
 			fetchGas = await fetchMainnetGasEstimates();
-		} else if (isBSCMainnetByChainId(chainId)) {
+		} else if (isMainnetByChainType(ChainType.Bsc, chainId)) {
 			fetchGas = await fetchBscGasEstimates();
-		} else if (isHecoMainnetByChainId(chainId)) {
+		} else if (isMainnetByChainType(ChainType.Heco, chainId)) {
 			fetchGas = await fetchHecoGasEstimates();
-		} else if (isAvaxMainnetByChainId(chainId)) {
+		} else if (isMainnetByChainType(ChainType.Avax, chainId)) {
 			fetchGas = await fetchAvaxGasEstimates();
 		}
 		if (fetchGas) {
@@ -355,7 +349,7 @@ let getSuggestedGasFees_timestamp = 0;
 let temp_suggestedGasFees = null;
 
 export async function getSuggestedGasFees(chainId: string | number) {
-	if (isPolygonMainnetByChainId(chainId)) {
+	if (isMainnetByChainType(ChainType.Polygon, chainId)) {
 		return getPolygonSuggestedGasFees();
 	}
 	return getOtherSuggestedGasFees(chainId);

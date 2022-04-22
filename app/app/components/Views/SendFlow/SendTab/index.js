@@ -26,10 +26,9 @@ import {
 	renderAmount,
 	getNativeCurrencyBalance,
 	getTokenBalance,
-	getChainTypeName,
-	getTokenName
+	getTokenName,
+	getChainIdByType
 } from '../../../../util/number';
-import { chainTypeTochain } from '../../../../util/walletconnect';
 import Engine from '../../../../core/Engine';
 import TransactionTypes from '../../../../core/TransactionTypes';
 import { getSuggestedGasEstimatesAndId } from '../../../../util/custom-gas';
@@ -52,7 +51,8 @@ import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { getEstimatedTotalGas, validateAmount } from '../../../../util/Amount';
 import LottieView from 'lottie-react-native';
 import NFTImage from '../../../UI/NFTImage';
-import { getRpcNickname, getRpcProviderChainId } from '../../../../util/ControllerUtils';
+import { getRpcNickname } from '../../../../util/ControllerUtils';
+import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 
 const titleColor = '#030319';
 const addrColor = '#60657D';
@@ -326,24 +326,8 @@ class SendTab extends PureComponent {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
 		mainBalance: PropTypes.string,
-		contractBalances: PropTypes.object,
+		allContractBalances: PropTypes.object,
 		asset: PropTypes.object,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
 		onLoading: PropTypes.func
 	};
 
@@ -515,27 +499,7 @@ class SendTab extends PureComponent {
 	};
 
 	onNext = async () => {
-		const {
-			selectedAddress,
-			arbChainId,
-			chainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId,
-			asset,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { selectedAddress, asset, allContractBalances } = this.props;
 		const { amountValue, networkSelectType } = this.state;
 		this.closeInput();
 		this.setLoading(true);
@@ -545,29 +509,13 @@ class SendTab extends PureComponent {
 			if (asset.nativeCurrency) {
 				estimatedTotalGas = await getEstimatedTotalGas({
 					selectedAddress,
-					asset,
-					arbChainId,
-					chainId,
-					bscChainId,
-					polygonChainId,
-					hecoChainId,
-					opChainId,
-					avaxChainId,
-					syscoinChainId
+					asset
 				});
 			}
 
 			const amountError = validateAmount(amountValue, {
 				asset,
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances,
+				allContractBalances,
 				estimatedTotalGas
 			});
 			if (amountError) {
@@ -593,19 +541,8 @@ class SendTab extends PureComponent {
 
 	onNormalSend = async value => {
 		const { transaction, toSelectedAddress } = this.state;
-		const {
-			asset,
-			selectedAddress,
-			arbChainId,
-			chainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
-
+		const { asset, selectedAddress } = this.props;
+		const arbChainId = Engine.networks[ChainType.Arbitrum].state.provider.chainId;
 		if (asset.type === ChainType.Arbitrum && arbChainId === undefined) {
 			this.setState({ error: 'Current network is not supported' });
 			return;
@@ -613,27 +550,7 @@ class SendTab extends PureComponent {
 
 		this.curTransactionId = randomTransactionId();
 
-		let txChainId;
-		if (asset.type === ChainType.Bsc) {
-			txChainId = bscChainId;
-		} else if (asset.type === ChainType.Arbitrum) {
-			txChainId = arbChainId;
-		} else if (asset.type === ChainType.Polygon) {
-			txChainId = polygonChainId;
-		} else if (asset.type === ChainType.Heco) {
-			txChainId = hecoChainId;
-		} else if (asset.type === ChainType.Optimism) {
-			txChainId = opChainId;
-		} else if (asset.type === ChainType.Avax) {
-			txChainId = avaxChainId;
-		} else if (asset.type === ChainType.Syscoin) {
-			txChainId = syscoinChainId;
-		} else if (util.isRpcChainType(asset.type)) {
-			txChainId = getRpcProviderChainId(asset.type);
-		} else {
-			txChainId = chainId;
-		}
-		transaction.chainId = txChainId;
+		transaction.chainId = getChainIdByType(asset.type);
 		transaction.from = selectedAddress;
 
 		if (asset.nativeCurrency) {
@@ -852,32 +769,13 @@ class SendTab extends PureComponent {
 	};
 
 	validateGas = () => {
-		const {
-			asset,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { asset, allContractBalances } = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
 		let errorMessage;
 		const totalGas = gas.mul(gasPrice);
 		const valueBN = hexToBN(value);
 		const balanceBN = getNativeCurrencyBalance(asset.type, {
-			contractBalances,
-			bscContractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
 			errorMessage = strings('transaction.not_enough_gas');
@@ -887,18 +785,7 @@ class SendTab extends PureComponent {
 	};
 
 	validateAmount = transaction => {
-		const {
-			contractBalances,
-			asset,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { allContractBalances, asset } = this.props;
 		const { value, gas, gasPrice } = transaction;
 		let weiBalance, weiInput, errorMessage;
 		if (isDecimalValue(value)) {
@@ -908,15 +795,7 @@ class SendTab extends PureComponent {
 				} else {
 					const totalGas = gas ? gas.mul(gasPrice) : toBN('0x0');
 					weiBalance = getNativeCurrencyBalance(asset.type, {
-						contractBalances,
-						bscContractBalances,
-						arbContractBalances,
-						opContractBalances,
-						polygonContractBalances,
-						hecoContractBalances,
-						avaxContractBalances,
-						syscoinContractBalances,
-						rpcContractBalances
+						allContractBalances
 					});
 					weiInput = hexToBN(value).add(totalGas);
 					if (!weiBalance.gte(weiInput)) {
@@ -931,15 +810,7 @@ class SendTab extends PureComponent {
 			} else {
 				const [, , amount] = decodeTransferData('transfer', transaction.data);
 				weiBalance = getTokenBalance(asset, {
-					contractBalances,
-					bscContractBalances,
-					arbContractBalances,
-					opContractBalances,
-					polygonContractBalances,
-					hecoContractBalances,
-					avaxContractBalances,
-					syscoinContractBalances,
-					rpcContractBalances
+					allContractBalances
 				});
 				weiInput = hexToBN(amount);
 				if (weiInput.isZero()) {
@@ -989,31 +860,7 @@ class SendTab extends PureComponent {
 	};
 
 	getSupportNetwork = type => {
-		if (type === ChainType.Bsc) {
-			return [
-				{ type: ChainType.Bsc, name: strings('other.bsc') }
-				// { type: ChainType.Ethereum, name: strings('other.ethereum') }
-			];
-		} else if (type === ChainType.Arbitrum) {
-			return [{ type: ChainType.Arbitrum, name: strings('other.arbitrum') }];
-		} else if (type === ChainType.Polygon) {
-			return [{ type: ChainType.Polygon, name: strings('other.polygon') }];
-		} else if (type === ChainType.Heco) {
-			return [{ type: ChainType.Heco, name: strings('other.heco') }];
-		} else if (type === ChainType.Optimism) {
-			return [{ type: ChainType.Optimism, name: strings('other.optimism') }];
-		} else if (type === ChainType.Avax) {
-			return [{ type: ChainType.Avax, name: strings('other.avalanche') }];
-		} else if (type === ChainType.Syscoin) {
-			return [{ type: ChainType.Syscoin, name: strings('other.syscoin') }];
-		} else if (util.isRpcChainType(type)) {
-			const name = getRpcNickname(type);
-			return [{ type, name }];
-		}
-		return [
-			{ type: ChainType.Ethereum, name: strings('other.ethereum') }
-			// { type: ChainType.Bsc, name: strings('other.bsc') }
-		];
+		return [{ type, name: getChainTypeName(type) }];
 	};
 
 	renderNetworks = () => {
@@ -1384,48 +1231,8 @@ class SendTab extends PureComponent {
 
 const mapStateToProps = state => ({
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {}
 });

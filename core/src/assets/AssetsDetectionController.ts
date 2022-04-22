@@ -3,17 +3,9 @@ import { Mutex } from 'async-mutex';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
 import { bitAND, logDebug, safelyExecute } from '../util';
-import TransactionController, { TxChangedType } from '../transaction/TransactionController';
-import BscNetworkController from '../network/BscNetworkController';
-import NetworkController from '../network/NetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
+import TransactionController, {TokenTxChanged} from '../transaction/TransactionController';
 import { getContractController, getStaticTokenByChainId } from '../ControllerUtils';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
 import { Sqlite } from '../transaction/Sqlite';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import { ChainType, Token } from './TokenRatesController';
 import AssetsController from './AssetsController';
 import ArbContractController from './ArbContractController';
@@ -34,7 +26,7 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
   /**
    * List of required sibling controllers this controller needs to function
    */
-  requiredControllers = ['AssetsContractController', 'AssetsController', 'NetworkController', 'PreferencesController', 'TransactionController'];
+  requiredControllers = ['AssetsController', 'PreferencesController', 'TransactionController'];
 
   /**
    * Creates a AssetsDetectionController instance
@@ -50,38 +42,15 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
   async detectTokens() {
     const preferencesController = this.context.PreferencesController as PreferencesController;
     const { selectedAddress } = preferencesController.state;
-    await safelyExecute(async () => {
-      const network = this.context.NetworkController as NetworkController;
-      await this.addTokenByTransactionHistory(network.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-      await this.addTokenByTransactionHistory(bscNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-      await this.addTokenByTransactionHistory(polygonNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-      await this.addTokenByTransactionHistory(arbNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const opNetwork = this.context.OpNetworkController as OpNetworkController;
-      await this.addTokenByTransactionHistory(opNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-      await this.addTokenByTransactionHistory(hecoNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-      await this.addTokenByTransactionHistory(avaxNetwork.state.provider.chainId, selectedAddress);
-    });
-    await safelyExecute(async () => {
-      const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-      await this.addTokenByTransactionHistory(syscoinNetwork.state.provider.chainId, selectedAddress);
-    });
+    for (const type in this.networks) {
+      const chainType = Number(type);
+      if (chainType === ChainType.RPCBase) {
+        continue;
+      }
+      await safelyExecute(async () => {
+        await this.addTokenByTransactionHistory(this.networks[chainType].state.provider.chainId, selectedAddress);
+      });
+    }
   }
 
   /**
@@ -98,7 +67,7 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
       const assetsController = this.context.AssetsController as AssetsController;
       const tokenBalancesController = this.context.TokenBalancesController as TokenBalancesController;
       const needToAdd: string[] = [];
-      const { type, contractController } = getContractController(this.context, chainId);
+      const { type, contractController } = getContractController(this, chainId);
       if (!contractController || !type) {
         return;
       }
@@ -197,35 +166,17 @@ export class AssetsDetectionController extends BaseController<BaseConfig, BaseSt
   onComposed() {
     super.onComposed();
     const transaction = this.context.TransactionController as TransactionController;
-    const bscNetwork = this.context.BscNetworkController as BscNetworkController;
-    const polygonNetwork = this.context.PolygonNetworkController as PolygonNetworkController;
-    const arbNetwork = this.context.ArbNetworkController as ArbNetworkController;
-    const opNetwork = this.context.OpNetworkController as OpNetworkController;
-    const hecoNetwork = this.context.HecoNetworkController as HecoNetworkController;
-    const avaxNetwork = this.context.AvaxNetworkController as AvaxNetworkController;
-    const syscoinNetwork = this.context.SyscoinNetworkController as SyscoinNetworkController;
-    const network = this.context.NetworkController as NetworkController;
     transaction.subscribe(async ({ txChangedType, addressWithChanged }) => {
+      if (bitAND(txChangedType, TokenTxChanged) === 0) {
+        return;
+      }
       safelyExecute(async () => {
-        if (bitAND(txChangedType, TxChangedType.TokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(network.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.BscTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(bscNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.PolygonTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(polygonNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.ArbTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(arbNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.OpTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(opNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.HecoTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(hecoNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.AvaxTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(avaxNetwork.state.provider.chainId, addressWithChanged);
-        } else if (bitAND(txChangedType, TxChangedType.SyscoinTokenTxChanged) !== 0) {
-          await this.addTokenByTransactionHistory(syscoinNetwork.state.provider.chainId, addressWithChanged);
+        const type = transaction.getTxChangedType(txChangedType);
+        if (this.networks[type]) {
+          await this.addTokenByTransactionHistory(this.networks[type].state.provider.chainId, addressWithChanged);
         }
       }, true);
-    });
+    }, ['txChangedType']);
   }
 }
 

@@ -1,37 +1,30 @@
-import { ArbConfig, Sqlite } from 'gopocket-core';
+import { ChainType, NetworkConfig, Sqlite } from 'gopocket-core';
 import Engine from '../core/Engine';
 import EngineImpl from '../core/EngineImpl';
 import NativeThreads from '../threads/NativeThreads';
-
-export function arbNetworkConfig(chainId: string) {
-	const arbConfig: { [index: string]: any } = ArbConfig;
-	for (const i in arbConfig) {
-		if (arbConfig[i].provider.chainId === chainId) {
-			return arbConfig[i];
-		}
-	}
-	return {};
-}
-
-export function arbNetworkConfigByType(type: string) {
-	const arbConfig: { [index: string]: any } = ArbConfig;
-	return arbConfig[type];
-}
 
 export function EngineContext() {
 	return Engine?.context || EngineImpl?.context;
 }
 
+export function EngineNetworks() {
+	return Engine?.networks || EngineImpl?.networks;
+}
+
+export function EngineContracts() {
+	return Engine?.contracts || EngineImpl?.contracts;
+}
+
 export function getRpcNickname(chainType: number) {
-	return EngineContext().RpcNetworkController.state.networks?.[chainType]?.provider?.nickname;
+	return EngineNetworks()[ChainType.RPCBase].state.networks?.[chainType]?.provider?.nickname;
 }
 
 export function getRpcProviderChainId(chainType) {
-	return EngineContext().RpcNetworkController.state.networks?.[chainType]?.provider?.chainId;
+	return EngineNetworks()[ChainType.RPCBase].state.networks?.[chainType]?.provider?.chainId;
 }
 
 export function getRpcProviderTicker(chainType: number) {
-	return EngineContext().RpcNetworkController.state.networks[chainType]?.provider?.ticker;
+	return EngineNetworks()[ChainType.RPCBase].state.networks[chainType]?.provider?.ticker;
 }
 
 export function isRpcChainId(chainId: string) {
@@ -39,7 +32,7 @@ export function isRpcChainId(chainId: string) {
 		return false;
 	}
 	chainId = String(chainId);
-	const networks = EngineContext().RpcNetworkController.state.networks;
+	const networks = EngineNetworks()[ChainType.RPCBase].state.networks;
 	if (!networks) {
 		return false;
 	}
@@ -56,7 +49,7 @@ export function getRpcChainTypeByChainId(chainId) {
 		return null;
 	}
 	chainId = String(chainId);
-	const networks = EngineContext().RpcNetworkController.state.networks;
+	const networks = EngineNetworks()[ChainType.RPCBase].state.networks;
 	if (!networks) {
 		return false;
 	}
@@ -69,43 +62,15 @@ export function getRpcChainTypeByChainId(chainId) {
 }
 
 export function getRpcProviderExplorerUrl(chainType: number) {
-	return EngineContext().RpcNetworkController.state.networks?.[chainType]?.explorerUrl;
+	return EngineNetworks()[ChainType.RPCBase].state.networks?.[chainType]?.explorerUrl;
 }
 
-export function isMainnetPolygon() {
-	return EngineContext().PolygonNetworkController.state.provider?.chainId === '137';
+export function isMainnetChain(chainType) {
+	return EngineNetworks()[chainType]?.state.provider?.chainId === NetworkConfig[chainType]?.MainChainId;
 }
 
-export function isMainnetBsc() {
-	return EngineContext().BscNetworkController.state.provider?.chainId === '56';
-}
-
-export function isMainnetArb() {
-	return EngineContext().ArbNetworkController.state.provider?.chainId === '42161';
-}
-
-export function isMainnetEthereum() {
-	return EngineContext().NetworkController.state.provider?.chainId === '1';
-}
-
-export function isMainnetHeco() {
-	return EngineContext().HecoNetworkController.state.provider?.chainId === '128';
-}
-
-export function isMainnetTron() {
-	return EngineContext().TronNetworkController.state.provider?.chainId === '123454321';
-}
-
-export function isMainnetOp() {
-	return EngineContext().OpNetworkController.state.provider?.chainId === '10';
-}
-
-export function isMainnetAvax() {
-	return EngineContext().AvaxNetworkController.state.provider?.chainId === '43114';
-}
-
-export function isMainnetSyscoin() {
-	return EngineContext().SyscoinNetworkController.state.provider?.chainId === '57';
+export function isMainnetByChainType(chainType, chainId) {
+	return NetworkConfig[chainType]?.MainChainId === chainId?.toString();
 }
 
 export async function callSqlite(method, ...args) {
@@ -114,4 +79,43 @@ export async function callSqlite(method, ...args) {
 	} else {
 		return NativeThreads.get().callSqliteAsync(method, ...args);
 	}
+}
+
+export function getAllChainId(state) {
+	const allChainId = {};
+	const networks = EngineNetworks();
+	for (const type in networks) {
+		const chainType = Number(type);
+		if (chainType === ChainType.RPCBase) {
+			continue;
+		}
+		allChainId[chainType] = state.engine.backgroundState[networks[chainType].name].provider.chainId;
+	}
+	return allChainId;
+}
+
+export function getAllChainIdArray(state) {
+	const allChainId = [];
+	const networks = EngineNetworks();
+	for (const type in networks) {
+		const chainType = Number(type);
+		if (chainType === ChainType.RPCBase) {
+			continue;
+		}
+		allChainId.push(state.engine.backgroundState[networks[chainType].name].provider.chainId);
+	}
+	return allChainId;
+}
+
+export function getAllProvider(state) {
+	const allProvider = {};
+	const networks = EngineNetworks();
+	for (const type in networks) {
+		const chainType = Number(type);
+		if (chainType === ChainType.RPCBase) {
+			continue;
+		}
+		allProvider[chainType] = state.engine.backgroundState[networks[chainType].name].provider;
+	}
+	return allProvider;
 }

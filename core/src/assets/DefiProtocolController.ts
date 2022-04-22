@@ -1,19 +1,12 @@
 import { Mutex } from 'async-mutex';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
-import NetworkController from '../network/NetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
-import BscNetworkController from '../network/BscNetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import TronNetworkController from '../network/TronNetworkController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
 import {
   safelyExecute,
   timeoutFetch,
 } from '../util';
+import {NetworkConfig} from "../Config";
+import {ChainType} from "./TokenRatesController";
 
 export interface DefiProtocolConfig extends BaseConfig {
   interval: number;
@@ -171,33 +164,14 @@ export class DefiProtocolController extends BaseController<DefiProtocolConfig, D
   }
 
   getChainId(chain: string) {
-    if (chain === 'bsc') {
-      const network = this.context.BscNetworkController as BscNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'arb') {
-      const network = this.context.ArbNetworkController as ArbNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'matic') {
-      const network = this.context.PolygonNetworkController as PolygonNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'tron') {
-      const network = this.context.TronNetworkController as TronNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'heco') {
-      const network = this.context.HecoNetworkController as HecoNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'op') {
-      const network = this.context.OpNetworkController as OpNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'avax') {
-      const network = this.context.AvaxNetworkController as AvaxNetworkController;
-      return network.state.provider.chainId;
-    } else if (chain === 'sys' || chain === 'syscoin') {
-      const network = this.context.SyscoinNetworkController as SyscoinNetworkController;
-      return network.state.provider.chainId;
+    for (const type in NetworkConfig) {
+      const chainType = Number(type);
+      if (NetworkConfig[chainType].DefiTokenChain?.find((tokenChain: string) => tokenChain === chain)
+          && this.networks[chainType]) {
+        return this.networks[chainType].state.provider.chainId;
+      }
     }
-    const network = this.context.NetworkController as NetworkController;
-    return network.state.provider.chainId;
+    return this.networks[ChainType.Ethereum].state.provider.chainId;
   }
 
   async updateDefiTokens(selectedAddress: string, defiTokens: any[]) {

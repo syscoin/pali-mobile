@@ -1,19 +1,4 @@
-import {
-	MAINNET,
-	PolygonMainnet,
-	PolygonTestnet,
-	BSCMAINNET,
-	BSCTESTNET,
-	ArbitrumMainnet,
-	HecoMainnet,
-	HecoTestnet,
-	OptimismMainnet,
-	OptimismTestnetKovan,
-	AvaxMainnet,
-	AvaxTestnet,
-	SyscoinMainnet,
-	SyscoinTestnet
-} from '../constants/network';
+import { NetworkConfig } from 'gopocket-core';
 
 /**
  * Gets the etherscan link for an address in a specific network
@@ -22,8 +7,8 @@ import {
  * @param {address} string - ethereum address to be used on the link
  * @returns - string
  */
-export function getEtherscanAddressUrl(network, address) {
-	return `${getEtherscanBaseUrl(network)}/address/${address}`;
+export function getEtherscanAddressUrl(chainId, address) {
+	return `${getEtherscanBaseUrl(chainId)}/address/${address}`;
 }
 
 /**
@@ -33,8 +18,8 @@ export function getEtherscanAddressUrl(network, address) {
  * @param {tx_hash} string - hash of the transaction to be used on the link
  * @returns - string
  */
-export function getEtherscanTransactionUrl(network, tx_hash) {
-	return `${getEtherscanBaseUrl(network)}/tx/${tx_hash}`;
+export function getEtherscanTransactionUrl(chainId, tx_hash) {
+	return `${getEtherscanBaseUrl(chainId)}/tx/${tx_hash}`;
 }
 
 /**
@@ -43,35 +28,14 @@ export function getEtherscanTransactionUrl(network, tx_hash) {
  * @param {network} string - name of the network
  * @returns - string
  */
-export function getEtherscanBaseUrl(network) {
-	if (network === BSCMAINNET || network === BSCTESTNET) {
-		const subdomain = network === BSCMAINNET ? '' : `testnet.`;
-		return `https://${subdomain}bscscan.com`;
+export function getEtherscanBaseUrl(chainId) {
+	chainId = chainId?.toString();
+	for (const type in NetworkConfig) {
+		for (const network in NetworkConfig[type].Networks) {
+			if (NetworkConfig[type].Networks[network].provider.chainId === chainId) {
+				return NetworkConfig[type].Networks[network].ExplorerUrl;
+			}
+		}
 	}
-	if (network === PolygonMainnet) {
-		return 'https://polygonscan.com';
-	}
-	if (network === PolygonTestnet) {
-		return 'https://mumbai.polygonscan.com';
-	}
-	if (network === ArbitrumMainnet) {
-		return 'https://arbiscan.io';
-	}
-	if (network === HecoMainnet || network === HecoTestnet) {
-		const subdomain = network === HecoMainnet ? '' : `testnet.`;
-		return `https://${subdomain}hecoinfo.com`;
-	}
-	if (network === AvaxMainnet || network === AvaxTestnet) {
-		const subdomain = network === AvaxMainnet ? '' : `testnet.`;
-		return `https://${subdomain}snowtrace.io`;
-	}
-	if (network === SyscoinMainnet || network === SyscoinTestnet) {
-		return network === SyscoinMainnet ? 'https://explorer.syscoin.org' : `https://tanenbaum.io`;
-	}
-	if (network === OptimismMainnet || network === OptimismTestnetKovan) {
-		const subdomain = network === OptimismMainnet ? 'optimistic' : 'kovan-optimistic';
-		return `https://${subdomain}.etherscan.io`;
-	}
-	const subdomain = network.toLowerCase() === MAINNET ? '' : `${network.toLowerCase()}.`;
-	return `https://${subdomain}etherscan.io`;
+	return `https://mainnet.etherscan.io`;
 }

@@ -14,15 +14,14 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { colors, fontStyles } from '../../../styles/common';
 import { getEtherscanAddressUrl } from '../../../util/etherscan';
-import { getNetworkTypeByChainId } from '../../../util/networks';
 import Engine from '../../../core/Engine';
-import { chainToChainType } from '../../../util/walletconnect';
-import { getTypeByChainId } from '../../../util/number';
+import { getChainTypeByChainId } from '../../../util/number';
 import { toLowerCaseEquals } from '../../../util/general';
 import { strings } from '../../../../locales/i18n';
-import { TransactionStatus, util } from 'gopocket-core';
+import { ChainType, TransactionStatus, util } from 'gopocket-core';
 import TransactionTypes from '../../../core/TransactionTypes';
 import { onEvent } from 'react-native-mumeng';
+import { chainToChainType } from '../../../util/ChainTypeImages';
 
 const { width } = Dimensions.get('window');
 
@@ -117,8 +116,7 @@ class ApprovalEvent extends Component {
 
 	openEtherscan = spender => {
 		const { chainId } = this.props;
-		const chainName = getNetworkTypeByChainId(chainId);
-		const url = getEtherscanAddressUrl(chainName, spender);
+		const url = getEtherscanAddressUrl(chainId, spender);
 		this.props.navigation.navigate('BrowserView', {
 			newTabUrl: url
 		});
@@ -145,53 +143,32 @@ class ApprovalEvent extends Component {
 		this.setState({ loading: true });
 		try {
 			const { chainId, tokenInfo, event, selectedAddress } = this.props;
-			const {
-				ArbNetworkController,
-				BscNetworkController,
-				PolygonNetworkController,
-				HecoNetworkController,
-				AvaxNetworkController,
-				SyscoinNetworkController,
-				RpcNetworkController,
-				AssetsContractController,
-				ArbContractController,
-				PolygonContractController,
-				BscContractController,
-				HecoContractController,
-				AvaxContractController,
-				SyscoinContractController,
-				RpcContractController
-			} = Engine.context;
 			const tokenAddress = tokenInfo.address;
 			const spender = event.spender;
 			const transactionTypes = TransactionTypes.ORIGIN_CANCEL_APPROVAL;
 			const myAddress = selectedAddress;
 			this.addApprovalListener();
-			if (chainId === ArbNetworkController.state.provider.chainId) {
-				await ArbContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (chainId === BscNetworkController.state.provider.chainId) {
-				await BscContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (chainId === PolygonNetworkController.state.provider.chainId) {
-				await PolygonContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (chainId === HecoNetworkController.state.provider.chainId) {
-				await HecoContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (chainId === AvaxNetworkController.state.provider.chainId) {
-				await AvaxContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (chainId === SyscoinNetworkController.state.provider.chainId) {
-				await SyscoinContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-			} else if (await RpcNetworkController.isRpcChainId(chainId)) {
-				const type = await RpcNetworkController.getChainTypeByChainId(chainId);
-				await RpcContractController.callContract(
-					type,
-					'callApprove',
-					tokenAddress,
-					spender,
-					'0',
-					myAddress,
-					transactionTypes
-				);
-			} else {
-				await AssetsContractController.callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
+			for (const type in Engine.networks) {
+				const chainType = Number(type);
+				if (chainType === ChainType.RPCBase) {
+					if (await Engine.networks[ChainType.RPCBase].isRpcChainId(chainId)) {
+						const type = await Engine.networks[ChainType.RPCBase].getChainTypeByChainId(chainId);
+						await Engine.contracts[ChainType.RPCBase].callContract(
+							type,
+							'callApprove',
+							tokenAddress,
+							spender,
+							'0',
+							myAddress,
+							transactionTypes
+						);
+						break;
+					}
+				}
+				if (chainId === Engine.networks[type].state.provider.chainId) {
+					await Engine.contracts[type].callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
+					break;
+				}
 			}
 			onEvent('revoke_approval');
 		} catch (error) {
@@ -228,7 +205,7 @@ class ApprovalEvent extends Component {
 		const { loading } = this.state;
 		const spender = event.spender;
 		const allowance = event.allowance / 10 ** tokenInfo.decimals;
-		const type = getTypeByChainId(chainId);
+		const type = getChainTypeByChainId(chainId);
 		const spenderInfo = contractList?.find(
 			contract => chainToChainType(contract.chain) === type && toLowerCaseEquals(contract.address, spender)
 		);

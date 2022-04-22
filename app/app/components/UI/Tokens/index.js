@@ -27,7 +27,7 @@ import AssetElement from '../AssetElement';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import AddAsset from '../../Views/AddAsset';
-import { BignumberJs as BigNumber, ChainType, util } from 'gopocket-core';
+import { BignumberJs as BigNumber, util } from 'gopocket-core';
 import Popover from '../Popover';
 import AsyncStorage from '@react-native-community/async-storage';
 import LottieView from 'lottie-react-native';
@@ -41,9 +41,10 @@ import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import ImageCapInset from '../ImageCapInset';
 import { Easing } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
-import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
+import { getIsRpc } from '../../../util/rpcUtil';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
 import { getSecurityData } from '../../../util/security';
+import { getIcTagByChainType } from '../../../util/ChainTypeImages';
 
 const { width, height } = Dimensions.get('window');
 const hideItemWidth = 70;
@@ -908,28 +909,7 @@ class Tokens extends PureComponent {
 			>
 				<View style={styles.iconLayout}>
 					<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-					<Image
-						style={styles.tagView}
-						source={
-							isRpc
-								? getIcTagResource(asset.type)
-								: asset.type === ChainType.Ethereum
-								? require('../../../images/ic_eth_tag.png')
-								: asset.type === ChainType.Polygon
-								? require('../../../images/ic_polygon_tag.png')
-								: asset.type === ChainType.Arbitrum
-								? require('../../../images/ic_arb_tag.png')
-								: asset.type === ChainType.Heco
-								? require('../../../images/ic_heco_tag.png')
-								: asset.type === ChainType.Optimism
-								? require('../../../images/ic_op_tag.png')
-								: asset.type === ChainType.Avax
-								? require('../../../images/ic_avax_tag.png')
-								: asset.type === ChainType.Syscoin
-								? require('../../../images/ic_syscoin_tag.png')
-								: require('../../../images/ic_bsc_tag.png')
-						}
-					/>
+					<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
 				</View>
 
 				<View style={styles.balances}>

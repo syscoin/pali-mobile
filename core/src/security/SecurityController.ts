@@ -1,15 +1,8 @@
 import { Mutex } from 'async-mutex';
-import { bitAND, handleFetch, logDebug, safelyExecute, toLowerCaseEquals, useTestServer } from '../util';
+import {handleFetch, isRpcChainType, logDebug, safelyExecute, toLowerCaseEquals, useTestServer} from '../util';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import AssetsController, { TokenChangedType } from '../assets/AssetsController';
-import NetworkController from '../network/NetworkController';
-import BscNetworkController from '../network/BscNetworkController';
-import PolygonNetworkController from '../network/PolygonNetworkController';
-import ArbNetworkController from '../network/ArbNetworkController';
-import HecoNetworkController from '../network/HecoNetworkController';
-import OpNetworkController from '../network/OpNetworkController';
-import AvaxNetworkController from '../network/AvaxNetworkController';
-import SyscoinNetworkController from '../network/SyscoinNetworkController';
+import AssetsController, { TokenNoChange } from '../assets/AssetsController';
+import {ChainType} from "../assets/TokenRatesController";
 
 export enum SecurityChangedType {
   NoChange = 0x00,
@@ -110,7 +103,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
 
   name = 'SecurityController';
 
-  requiredControllers = ['AssetsController', 'NetworkController'];
+  requiredControllers = ['AssetsController'];
 
   private polling_counter = 0;
 
@@ -167,137 +160,47 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
 
   public async updateFetch() {
     const assetsController = this.context.AssetsController as AssetsController;
-    const networkController = this.context.NetworkController as NetworkController;
-    const bscNetworkController = this.context.BscNetworkController as BscNetworkController;
-    const polygonNetworkController = this.context.PolygonNetworkController as PolygonNetworkController;
-    const arbNetworkController = this.context.ArbNetworkController as ArbNetworkController;
-    const hecoNetworkController = this.context.HecoNetworkController as HecoNetworkController;
-    const opNetworkController = this.context.OpNetworkController as OpNetworkController;
-    const avaxNetworkController = this.context.AvaxNetworkController as AvaxNetworkController;
-    const syscoinNetworkController = this.context.SyscoinNetworkController as SyscoinNetworkController;
-    const chainId = networkController.getMainChainId();
-    const bscChainId = bscNetworkController.getMainChainId();
-    const polygonChainId = polygonNetworkController.getMainChainId();
-    const arbChainId = arbNetworkController.getMainChainId();
-    const hecoChainId = hecoNetworkController.getMainChainId();
-    const opChainId = opNetworkController.getMainChainId();
-    const avaxChainId = avaxNetworkController.getMainChainId();
-    const syscoinChainId = syscoinNetworkController.getMainChainId();
 
     const tokenArray = [];
-    const addressArray: string[] = [];
+    const allSecurityTokens: any[] = [];
+
     const { allTokens } = assetsController.state;
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[chainId] || [];
-      for (const token of tokens) {
-        if (!addressArray.includes(token.address)) {
-          addressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId });
+    for (const type in this.networks) {
+      const chainType = Number(type);
+      if (chainType === ChainType.RPCBase) {
+        continue;
+      }
+      const chainId = this.networks[type].getMainChainId();
+      const addressArray: string[] = [];
+
+      for (const addressKey in allTokens) {
+        const tokens = allTokens[addressKey]?.[chainId] || [];
+        for (const token of tokens) {
+          if (!addressArray.includes(token.address)) {
+            addressArray.push(token.address);
+            tokenArray.push({ address: token.address, chainId });
+          }
         }
       }
-    }
-    const bscAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[bscChainId] || [];
-      for (const token of tokens) {
-        if (!bscAddressArray.includes(token.address)) {
-          bscAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: bscChainId });
-        }
+      if (addressArray.length === 0) {
+        continue;
       }
-    }
-    const polygonAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[polygonChainId] || [];
-      for (const token of tokens) {
-        if (!polygonAddressArray.includes(token.address)) {
-          polygonAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: polygonChainId });
-        }
-      }
-    }
-    const arbAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[arbChainId] || [];
-      for (const token of tokens) {
-        if (!arbAddressArray.includes(token.address)) {
-          arbAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: arbChainId });
-        }
-      }
-    }
-    const hecoAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[hecoChainId] || [];
-      for (const token of tokens) {
-        if (!hecoAddressArray.includes(token.address)) {
-          hecoAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: hecoChainId });
-        }
-      }
+      const securityTokens = await this.fetchInfo(addressArray, chainId);
+      allSecurityTokens.push(...securityTokens)
     }
 
-    const opAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[opChainId] || [];
-      for (const token of tokens) {
-        if (!opAddressArray.includes(token.address)) {
-          opAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: opChainId });
-        }
-      }
-    }
-
-    const avaxAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[avaxChainId] || [];
-      for (const token of tokens) {
-        if (!avaxAddressArray.includes(token.address)) {
-          avaxAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: avaxChainId });
-        }
-      }
-    }
-
-    const syscoinAddressArray: string[] = [];
-    for (const addressKey in allTokens) {
-      const tokens = allTokens[addressKey]?.[syscoinChainId] || [];
-      for (const token of tokens) {
-        if (!syscoinAddressArray.includes(token.address)) {
-          syscoinAddressArray.push(token.address);
-          tokenArray.push({ address: token.address, chainId: syscoinChainId });
-        }
-      }
-    }
-
-    if (addressArray.length === 0 && bscAddressArray.length === 0 &&
-      polygonAddressArray.length === 0 && arbAddressArray &&
-      hecoAddressArray.length === 0 && opAddressArray.length === 0 && avaxAddressArray.length === 0 && syscoinAddressArray.length === 0) {
-      return;
-    }
-
-    const chainIdList = { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId, syscoinChainId };
-    const ethSecurityTokens = await this.fetchInfo(addressArray, chainId);
-    const bscSecurityTokens = await this.fetchInfo(bscAddressArray, bscChainId);
-    const polygonSecurityTokens = await this.fetchInfo(polygonAddressArray, polygonChainId);
-    const arbSecurityTokens = await this.fetchInfo(arbAddressArray, arbChainId);
-    const hecoSecurityTokens = await this.fetchInfo(hecoAddressArray, hecoChainId);
-    const opSecurityTokens = await this.fetchInfo(opAddressArray, opChainId);
-    const avaxSecurityTokens = await this.fetchInfo(avaxAddressArray, avaxChainId);
-    const syscoinSecurityTokens = await this.fetchInfo(syscoinAddressArray, syscoinChainId);
-    const securityTokens = [...ethSecurityTokens, ...bscSecurityTokens, ...polygonSecurityTokens, ...arbSecurityTokens, ...hecoSecurityTokens, ...opSecurityTokens, ...avaxSecurityTokens, ...syscoinSecurityTokens];
-
-    const newSecurityTokens = [...securityTokens];
+    const newSecurityTokens = [...allSecurityTokens];
     const oldSecurityTokens = this.state.securityTokens;
     if (oldSecurityTokens && oldSecurityTokens.length > 0) {
       oldSecurityTokens.forEach((oldToken) => {
-        const findToken = securityTokens.find((token: { address: string; chainId: string }) => toLowerCaseEquals(oldToken.address, token.address) && oldToken.chainId === token.chainId);
+        const findToken = allSecurityTokens.find((token: { address: string; chainId: string }) => toLowerCaseEquals(oldToken.address, token.address) && oldToken.chainId === token.chainId);
         if (!findToken) {
           newSecurityTokens.push(oldToken);
         }
       });
     }
-    const newRedDotDataMap = this.updateRedDotData(newSecurityTokens, chainIdList);
+
+    const newRedDotDataMap = this.updateRedDotData(newSecurityTokens);
     this.update({
       redDotDataMaps: newRedDotDataMap,
       securityTokens: newSecurityTokens, updateTime: Date.now(),
@@ -316,9 +219,8 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     return false;
   }
 
-  updateRedDotData(securityTokens: SecurityToken[], params: any) {
+  updateRedDotData(securityTokens: SecurityToken[]) {
     const riskTokens = securityTokens.filter((t) => (t.risk && t.risk.length > 0) || (t.notice && t.notice.length > 0));
-    const { chainId, bscChainId, polygonChainId, arbChainId, hecoChainId, opChainId, avaxChainId, syscoinChainId } = params;
     const assetsController = this.context.AssetsController as AssetsController;
     const { allTokens } = assetsController.state;
     const accounts = Object.keys(allTokens);
@@ -327,49 +229,12 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     for (let i = 0; i < accounts.length; i++) {
       const oldRedDotData = this.state.redDotDataMaps[accounts[i]];
       const lastRiskList = oldRedDotData?.lastRiskList || [];
-      const ethTokens = allTokens[accounts[i]]?.[chainId] || [];
-      const bscTokens = allTokens[accounts[i]]?.[bscChainId] || [];
-      const polygonTokens = allTokens[accounts[i]]?.[polygonChainId] || [];
-      const arbTokens = allTokens[accounts[i]]?.[arbChainId] || [];
-      const hecoTokens = allTokens[accounts[i]]?.[hecoChainId] || [];
-      const opTokens = allTokens[accounts[i]]?.[opChainId] || [];
-      const avaxTokens = allTokens[accounts[i]]?.[avaxChainId] || [];
-      const syscoinTokens = allTokens[accounts[i]]?.[syscoinChainId] || [];
       const newRiskList: any = [];
       riskTokens.forEach((token) => {
         const { address } = token;
-        if (token.chainId === chainId) {
-          if (this.isNewRiskToken(ethTokens, address, lastRiskList, chainId)) {
-            newRiskList.push({ address, chainId });
-          }
-        } else if (token.chainId === bscChainId) {
-          if (this.isNewRiskToken(bscTokens, address, lastRiskList, bscChainId)) {
-            newRiskList.push({ address, chainId: bscChainId });
-          }
-        } else if (token.chainId === polygonChainId) {
-          if (this.isNewRiskToken(polygonTokens, address, lastRiskList, polygonChainId)) {
-            newRiskList.push({ address: token.address, chainId: polygonChainId });
-          }
-        } else if (token.chainId === arbChainId) {
-          if (this.isNewRiskToken(arbTokens, address, lastRiskList, arbChainId)) {
-            newRiskList.push({ address, chainId: arbChainId });
-          }
-        } else if (token.chainId === hecoChainId) {
-          if (this.isNewRiskToken(hecoTokens, address, lastRiskList, hecoChainId)) {
-            newRiskList.push({ address, chainId: hecoChainId });
-          }
-        } else if (token.chainId === opChainId) {
-          if (this.isNewRiskToken(opTokens, address, lastRiskList, opChainId)) {
-            newRiskList.push({ address, chainId: opChainId });
-          }
-        } else if (token.chainId === avaxChainId) {
-          if (this.isNewRiskToken(avaxTokens, address, lastRiskList, avaxChainId)) {
-            newRiskList.push({ address, chainId: avaxChainId });
-          }
-        } else if (token.chainId === syscoinChainId) {
-          if (this.isNewRiskToken(syscoinTokens, address, lastRiskList, syscoinChainId)) {
-            newRiskList.push({ address, chainId: syscoinChainId });
-          }
+        const tokens = allTokens[accounts[i]]?.[token.chainId] || [];
+        if (this.isNewRiskToken(tokens, address, lastRiskList, token.chainId)) {
+          newRiskList.push({ address, chainId: token.chainId });
         }
       });
       newRedDotDataMap[accounts[i]] = {
@@ -524,11 +389,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     super.onComposed();
     const assets = this.context.AssetsController as AssetsController;
     assets.subscribe(async ({ tokenChangedType }) => {
-      if (bitAND(tokenChangedType, TokenChangedType.TokenChanged) !== 0 ||
-        bitAND(tokenChangedType, TokenChangedType.BscTokenChanged) !== 0 ||
-        bitAND(tokenChangedType, TokenChangedType.ArbTokenChanged) !== 0 ||
-        bitAND(tokenChangedType, TokenChangedType.HecoTokenChanged) !== 0 ||
-        bitAND(tokenChangedType, TokenChangedType.PolygonTokenChanged) !== 0) {
+      if (tokenChangedType === TokenNoChange && !isRpcChainType(tokenChangedType)) {
         await this.poll(true);
       }
     });

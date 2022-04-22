@@ -22,7 +22,8 @@ import iconShar from '../../../images/share.png';
 import iconReceiveActive from '../../../images/receive_hl.png';
 import { ChainType, util } from 'gopocket-core';
 import GlobalAlert from '../GlobalAlert';
-import { getChainTypeName, getTokenName } from '../../../util/number';
+import { getTokenName } from '../../../util/number';
+import { getChainTypeName } from '../../../util/ChainTypeImages';
 
 const darkBlack = '#030319';
 const grey = '#60657D';

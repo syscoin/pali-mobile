@@ -33,7 +33,7 @@ import {
 	calcAssetPrices
 } from '../../../../util/number';
 import { strings } from '../../../../../locales/i18n';
-import { ChainType, BN, util } from 'gopocket-core';
+import { BN, util } from 'gopocket-core';
 import { CURRENCIES } from '../../../../util/currencies';
 import { getEstimatedTotalGas, validateAmount } from '../../../../util/Amount';
 
@@ -139,21 +139,9 @@ const styles = StyleSheet.create({
  */
 class AmountSection extends PureComponent {
 	static propTypes = {
-		/**
-		 * Object containing token balances in the format address => balance
-		 */
-		contractBalances: PropTypes.object,
-		/**
-		 * Object containing token exchange rates in the format address => exchangeRate
-		 */
-		contractExchangeRates: PropTypes.object,
-		arbContractExchangeRates: PropTypes.object,
-		bscContractExchangeRates: PropTypes.object,
-		polygonContractExchangeRates: PropTypes.object,
-		hecoContractExchangeRates: PropTypes.object,
-		opContractExchangeRates: PropTypes.object,
-		avaxContractExchangeRates: PropTypes.object,
-		syscoinContractExchangeRates: PropTypes.object,
+		allContractBalances: PropTypes.object,
+		allCurrencyPrice: PropTypes.object,
+		allContractExchangeRates: PropTypes.object,
 		/**
 		 * A string that represents the selected address
 		 */
@@ -163,28 +151,6 @@ class AmountSection extends PureComponent {
 		 */
 		mainBalance: PropTypes.string,
 		asset: PropTypes.object,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
-		ethPrice: PropTypes.object,
-		bnbPrice: PropTypes.object,
-		polygonPrice: PropTypes.object,
-		hecoPrice: PropTypes.object,
-		avaxPrice: PropTypes.object,
-		syscoinPrice: PropTypes.object,
 		currencyCode: PropTypes.string,
 		currencyCodeRate: PropTypes.number,
 		closeInput: PropTypes.func,
@@ -214,29 +180,10 @@ class AmountSection extends PureComponent {
 	initEstimatedTotalGas = async () => {
 		if (this.state.estimatedTotalGas === undefined) {
 			this.setState({ loadEstimatedTotalGasMax: true });
-			const {
-				selectedAddress,
-				asset,
-				arbChainId,
-				chainId,
-				bscChainId,
-				polygonChainId,
-				hecoChainId,
-				opChainId,
-				avaxChainId,
-				syscoinChainId
-			} = this.props;
+			const { selectedAddress, asset } = this.props;
 			const estimatedTotalGas = await getEstimatedTotalGas({
 				selectedAddress,
-				asset,
-				arbChainId,
-				chainId,
-				bscChainId,
-				polygonChainId,
-				hecoChainId,
-				opChainId,
-				avaxChainId,
-				syscoinChainId
+				asset
 			});
 			this.setState({ estimatedTotalGas, loadEstimatedTotalGasMax: false });
 			return estimatedTotalGas;
@@ -245,33 +192,14 @@ class AmountSection extends PureComponent {
 	};
 
 	useMax = async () => {
-		const {
-			contractBalances,
-			asset,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { allContractBalances, asset } = this.props;
 		this.props.closeInput && this.props.closeInput();
 		const estimatedTotalGas = asset.nativeCurrency ? await this.initEstimatedTotalGas() : 0;
 
 		let input;
 		if (asset.nativeCurrency) {
 			const balance = getNativeCurrencyBalance(asset.type, {
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			});
 			const weiBalance = hexToBN(balance);
 			const realMaxValue = weiBalance.sub(estimatedTotalGas);
@@ -279,15 +207,7 @@ class AmountSection extends PureComponent {
 			input = fromWei(maxValue);
 		} else {
 			const weiBalance = getTokenBalance(asset, {
-				contractBalances,
-				arbContractBalances,
-				opContractBalances,
-				bscContractBalances,
-				polygonContractBalances,
-				hecoContractBalances,
-				avaxContractBalances,
-				syscoinContractBalances,
-				rpcContractBalances
+				allContractBalances
 			});
 			input = getFromTokenMinimalUnit(weiBalance, asset.decimals);
 		}
@@ -296,32 +216,15 @@ class AmountSection extends PureComponent {
 
 	getRate = () => {
 		const {
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			hecoPrice,
-			avaxPrice,
-			syscoinPrice,
+			allCurrencyPrice,
 			asset: { type }
 		} = this.props;
 
 		let price;
-		if (type === ChainType.Arbitrum) {
-			price = ethPrice.usd;
-		} else if (type === ChainType.Bsc) {
-			price = bnbPrice.usd;
-		} else if (type === ChainType.Polygon) {
-			price = polygonPrice.usd;
-		} else if (type === ChainType.Heco) {
-			price = hecoPrice.usd;
-		} else if (type === ChainType.Avax) {
-			price = avaxPrice.usd;
-		} else if (type === ChainType.Syscoin) {
-			price = syscoinPrice.usd;
-		} else if (util.isRpcChainType(type)) {
+		if (util.isRpcChainType(type)) {
 			price = 0;
 		} else {
-			price = ethPrice.usd;
+			price = allCurrencyPrice[type]?.usd || 0;
 		}
 
 		return price;
@@ -330,56 +233,16 @@ class AmountSection extends PureComponent {
 	getTokenRate = () => {
 		const {
 			asset,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
+			allContractExchangeRates,
+			allCurrencyPrice,
+			allContractBalances,
 			currencyCode,
 			currencyCodeRate
 		} = this.props;
 		const { priceUsd: price } = calcAssetPrices(asset, {
-			contractBalances,
-			contractExchangeRates,
-			arbContractExchangeRates,
-			bscContractExchangeRates,
-			polygonContractExchangeRates,
-			hecoContractExchangeRates,
-			opContractExchangeRates,
-			avaxContractExchangeRates,
-			syscoinContractExchangeRates,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			ethPrice,
-			bnbPrice,
-			polygonPrice,
-			avaxPrice,
-			syscoinPrice,
-			hecoPrice,
+			allContractExchangeRates,
+			allCurrencyPrice,
+			allContractBalances,
 			currencyCode,
 			currencyCodeRate
 		});
@@ -387,19 +250,7 @@ class AmountSection extends PureComponent {
 	};
 
 	onInputChange = (inputValue, selectedAsset, useMax, isDollar) => {
-		const {
-			asset,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
-			currencyCodeRate
-		} = this.props;
+		const { asset, allContractBalances, currencyCodeRate } = this.props;
 		const { estimatedTotalGas } = this.state;
 
 		let inputValueConversion, renderableInputValueConversion, comma;
@@ -434,7 +285,9 @@ class AmountSection extends PureComponent {
 				renderableInputValueConversion = `${inputValueConversion} ${selectedAsset.symbol}`;
 			}
 		}
-		if (comma) inputValue = inputValue && inputValue.replace('.', ',');
+		if (comma) {
+			inputValue = inputValue && inputValue.replace('.', ',');
+		}
 		inputValueConversion = inputValueConversion === '0' ? undefined : inputValueConversion;
 		if (isDollar) {
 			const tempInputValue = inputValue;
@@ -446,16 +299,8 @@ class AmountSection extends PureComponent {
 		inputValueConversion = renderAmount(inputValueConversion);
 
 		const nextEnabled = !validateAmount(inputValue, {
-			contractBalances,
+			allContractBalances,
 			asset,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances,
 			estimatedTotalGas
 		});
 		this.setState({
@@ -566,65 +411,13 @@ class AmountSection extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
-	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
-	arbContractExchangeRates: state.engine.backgroundState.TokenRatesController.arbContractExchangeRates,
-	bscContractExchangeRates: state.engine.backgroundState.TokenRatesController.bscContractExchangeRates,
-	polygonContractExchangeRates: state.engine.backgroundState.TokenRatesController.polygonContractExchangeRates,
-	hecoContractExchangeRates: state.engine.backgroundState.TokenRatesController.hecoContractExchangeRates,
-	opContractExchangeRates: state.engine.backgroundState.TokenRatesController.opContractExchangeRates,
-	avaxContractExchangeRates: state.engine.backgroundState.TokenRatesController.avaxContractExchangeRates,
-	syscoinContractExchangeRates: state.engine.backgroundState.TokenRatesController.syscoinContractExchangeRates,
+	allContractExchangeRates: state.engine.backgroundState.TokenRatesController.allContractExchangeRates,
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
-	ethPrice: state.engine.backgroundState.TokenRatesController.ethPrice,
-	bnbPrice: state.engine.backgroundState.TokenRatesController.bnbPrice,
-	polygonPrice: state.engine.backgroundState.TokenRatesController.polygonPrice,
-	hecoPrice: state.engine.backgroundState.TokenRatesController.hecoPrice,
-	avaxPrice: state.engine.backgroundState.TokenRatesController.avaxPrice,
-	syscoinPrice: state.engine.backgroundState.TokenRatesController.syscoinPrice,
+	allCurrencyPrice: state.engine.backgroundState.TokenRatesController.allCurrencyPrice,
 	currencyCode: state.engine.backgroundState.TokenRatesController.currencyCode,
 	currencyCodeRate: state.engine.backgroundState.TokenRatesController.currencyCodeRate
 });

@@ -7,7 +7,7 @@ import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
 import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
-import { isRpcChainId } from '../../../util/ControllerUtils';
+import { getAllChainId, getAllChainIdArray, isRpcChainId } from '../../../util/ControllerUtils';
 import { toLowerCaseEquals } from '../../../util/general';
 
 const styles = StyleSheet.create({
@@ -82,14 +82,7 @@ const styles = StyleSheet.create({
 
 class SecurityTop extends Component {
 	static propTypes = {
-		chainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
+		allChainId: PropTypes.array,
 		tokens: PropTypes.array,
 		securityTokens: PropTypes.array,
 		updateTime: PropTypes.number
@@ -125,18 +118,7 @@ class SecurityTop extends Component {
 	};
 
 	getTokensCount = () => {
-		const {
-			tokens,
-			securityTokens,
-			chainId,
-			bscChainId,
-			polygonChainId,
-			arbChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
+		const { tokens, securityTokens, allChainId } = this.props;
 		let normalCount = 0;
 		let noticeCount = 0;
 		let riskCount = 0;
@@ -147,15 +129,7 @@ class SecurityTop extends Component {
 				const securityData = securityTokens.filter(
 					token =>
 						toLowerCaseEquals(token.address, asset.address) &&
-						(token.chainId === chainId ||
-							token.chainId === bscChainId ||
-							token.chainId === polygonChainId ||
-							token.chainId === arbChainId ||
-							token.chainId === hecoChainId ||
-							token.chainId === avaxChainId ||
-							token.chainId === syscoinChainId ||
-							token.chainId === opChainId ||
-							isRpcChainId(token.chainId))
+						(allChainId?.find(chainId => chainId === token.chainId) || isRpcChainId(token.chainId))
 				);
 				if (securityData && securityData.length > 0) {
 					const { notice, risk } = securityData[0];
@@ -233,14 +207,7 @@ class SecurityTop extends Component {
 }
 
 const mapStateToProps = state => ({
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
+	allChainId: getAllChainIdArray(state),
 	securityTokens: state.engine.backgroundState.SecurityController.securityTokens,
 	updateTime: state.engine.backgroundState.SecurityController.updateTime
 });

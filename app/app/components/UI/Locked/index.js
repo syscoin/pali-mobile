@@ -13,7 +13,7 @@ import { strings } from '../../../../locales/i18n';
 import { setSelectedAsset } from '../../../actions/transaction';
 import { ChainType, LockType, OutgoingMessageState, util } from 'gopocket-core';
 import { renderError } from '../../../util/error';
-import { arbNetworkConfig } from '../../../util/ControllerUtils';
+import { getChainTypeName } from '../../../util/ChainTypeImages';
 
 const activeOpacity = 0.8;
 const headerColor = '#1E1F20';
@@ -112,18 +112,19 @@ class Locked extends PureComponent {
 
 	claimNow = async () => {
 		const { asset, onClose, setSelectedAsset, selectedAddress } = this.props;
-		const { ArbContractController, PolygonContractController } = Engine.context;
+		const ArbContract = Engine.contracts[ChainType.Arbitrum];
+		const PolygonContract = Engine.contracts[ChainType.Polygon];
 		this.setState({ loading: true });
 
 		try {
 			setSelectedAsset(asset);
 			if (asset.lockType === LockType.LockPolygon) {
 				util.logDebug('PPYang claimPolygon asset.tx:', asset);
-				const result = await PolygonContractController.exitERC20(asset.tx, selectedAddress, true);
+				const result = await PolygonContract.exitERC20(asset.tx, selectedAddress, true);
 				util.logDebug('PPYang exitERC20 result:', result);
 				if (result) {
-					await PolygonContractController.addClaimTxHash(asset.tx);
-					setTimeout(() => PolygonContractController.poll(), 10000);
+					await PolygonContract.addClaimTxHash(asset.tx);
+					setTimeout(() => PolygonContract.poll(), 10000);
 				}
 			} else {
 				const batchNumber = asset.batchNumber;
@@ -131,16 +132,16 @@ class Locked extends PureComponent {
 				util.logDebug('claimNow', batchNumber, indexInBatch, asset);
 				if (!asset.done) {
 					if (
-						(await ArbContractController.getOutGoingMessageState(batchNumber, indexInBatch)) !==
+						(await ArbContract.getOutGoingMessageState(batchNumber, indexInBatch)) !==
 						OutgoingMessageState.CONFIRMED
 					) {
 						throw new Error(strings('claim.not_allowed_claim'));
 					}
 				}
-				const result = await ArbContractController.triggerL2ToL1Transaction(batchNumber, indexInBatch, true);
+				const result = await ArbContract.triggerL2ToL1Transaction(batchNumber, indexInBatch, true);
 				if (result) {
-					await ArbContractController.addClaimTxHash(asset.tx);
-					setTimeout(() => ArbContractController.poll(), 10000);
+					await ArbContract.addClaimTxHash(asset.tx);
+					setTimeout(() => ArbContract.poll(), 10000);
 				}
 			}
 
@@ -160,7 +161,7 @@ class Locked extends PureComponent {
 		if (asset.lockType === LockType.LockPolygon) {
 			return { type: ChainType.Polygon, canClaim: asset.done, waitDay: 0 };
 		} else if (asset.lockType === LockType.LockArb) {
-			const { confirmIntervalInSecond } = arbNetworkConfig(asset.chainId);
+			const { confirmIntervalInSecond } = Engine.networks[ChainType.Arbitrum].getNetworkConfig(asset.chainId);
 			const oneDay = 24 * 60 * 60;
 			const waitDay = Math.ceil(confirmIntervalInSecond / oneDay);
 			return { type: ChainType.Arbitrum, canClaim: asset.done, waitDay };
@@ -214,11 +215,11 @@ class Locked extends PureComponent {
 			state: {
 				provider: { chainId: polygonChainId }
 			}
-		} = Engine.context.PolygonNetworkController;
+		} = Engine.networks[ChainType.Polygon];
 		if (chainId === polygonChainId) {
-			return strings('other.polygon');
+			return getChainTypeName(ChainType.Polygon);
 		}
-		return strings('other.arbitrum');
+		return getChainTypeName(ChainType.Arbitrum);
 	}
 
 	render = () => {

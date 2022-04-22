@@ -24,9 +24,8 @@ import {
 	getNativeCurrencyBalance,
 	revertAmount,
 	toHexadecimal,
-	getChainTypeName
+	getChainIdByType
 } from '../../../../util/number';
-import { chainTypeTochain } from '../../../../util/walletconnect';
 import Engine from '../../../../core/Engine';
 import TransactionTypes from '../../../../core/TransactionTypes';
 import { getSuggestedGasEstimatesAndId } from '../../../../util/custom-gas';
@@ -49,7 +48,7 @@ import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import CheckPassword from '../../../UI/CheckPassword';
 import AsyncStorage from '@react-native-community/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
-import { getRpcProviderChainId } from '../../../../util/ControllerUtils';
+import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 
 const titleColor = '#030319';
 const addrColor = '#60657D';
@@ -279,24 +278,8 @@ class SendNFTTab extends PureComponent {
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
-		contractBalances: PropTypes.object,
+		allContractBalances: PropTypes.object,
 		asset: PropTypes.object,
-		chainId: PropTypes.string,
-		arbChainId: PropTypes.string,
-		bscChainId: PropTypes.string,
-		polygonChainId: PropTypes.string,
-		hecoChainId: PropTypes.string,
-		opChainId: PropTypes.string,
-		avaxChainId: PropTypes.string,
-		syscoinChainId: PropTypes.string,
-		arbContractBalances: PropTypes.object,
-		opContractBalances: PropTypes.object,
-		bscContractBalances: PropTypes.object,
-		polygonContractBalances: PropTypes.object,
-		hecoContractBalances: PropTypes.object,
-		avaxContractBalances: PropTypes.object,
-		syscoinContractBalances: PropTypes.object,
-		rpcContractBalances: PropTypes.object,
 		onLoading: PropTypes.func,
 		isVisibleInModal: PropTypes.bool,
 		isLockScreen: PropTypes.bool
@@ -434,42 +417,11 @@ class SendNFTTab extends PureComponent {
 
 	onNormalSend = async () => {
 		const { transaction, toSelectedAddress, inputValue } = this.state;
-		const {
-			asset,
-			selectedAddress,
-			arbChainId,
-			chainId,
-			bscChainId,
-			polygonChainId,
-			hecoChainId,
-			opChainId,
-			avaxChainId,
-			syscoinChainId
-		} = this.props;
+		const { asset, selectedAddress } = this.props;
 
 		this.curTransactionId = randomTransactionId();
 
-		let txChainId;
-		if (asset.type === ChainType.Bsc) {
-			txChainId = bscChainId;
-		} else if (asset.type === ChainType.Arbitrum) {
-			txChainId = arbChainId;
-		} else if (asset.type === ChainType.Polygon) {
-			txChainId = polygonChainId;
-		} else if (asset.type === ChainType.Heco) {
-			txChainId = hecoChainId;
-		} else if (asset.type === ChainType.Optimism) {
-			txChainId = opChainId;
-		} else if (asset.type === ChainType.Avax) {
-			txChainId = avaxChainId;
-		} else if (asset.type === ChainType.Syscoin) {
-			txChainId = syscoinChainId;
-		} else if (util.isRpcChainType(asset.type)) {
-			txChainId = getRpcProviderChainId(asset.type);
-		} else {
-			txChainId = chainId;
-		}
-		transaction.chainId = txChainId;
+		transaction.chainId = getChainIdByType(asset.type);
 		transaction.from = selectedAddress;
 
 		util.logInfo('PPYang schema_name:', asset.asset_contract?.schema_name, inputValue);
@@ -604,7 +556,7 @@ class SendNFTTab extends PureComponent {
 				return false;
 			}
 			if (asset.asset_contract.schema_name === 'ERC721') {
-				const errorMessage = await this.validateCollectibleOwnership(transaction);
+				const errorMessage = await this.validateCollectibleOwnership();
 				if (errorMessage) {
 					this.setState({ error: errorMessage });
 					return false;
@@ -678,32 +630,13 @@ class SendNFTTab extends PureComponent {
 	};
 
 	validateGas = () => {
-		const {
-			asset,
-			contractBalances,
-			arbContractBalances,
-			opContractBalances,
-			bscContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
-		} = this.props;
+		const { asset, allContractBalances } = this.props;
 		const { gas, gasPrice, value } = this.state.transaction;
 		let errorMessage;
 		const totalGas = gas.mul(gasPrice);
 		const valueBN = hexToBN(value);
 		const balanceBN = getNativeCurrencyBalance(asset.type, {
-			contractBalances,
-			bscContractBalances,
-			arbContractBalances,
-			opContractBalances,
-			polygonContractBalances,
-			hecoContractBalances,
-			avaxContractBalances,
-			syscoinContractBalances,
-			rpcContractBalances
+			allContractBalances
 		});
 		if (valueBN.add(totalGas).gt(balanceBN)) {
 			errorMessage = strings('transaction.not_enough_gas');
@@ -717,38 +650,15 @@ class SendNFTTab extends PureComponent {
 		let errorMessage;
 		try {
 			let owner;
-			if (asset.type === ChainType.Bsc) {
-				const { BscContractController } = Engine.context;
-				owner = await BscContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Polygon) {
-				const { PolygonContractController } = Engine.context;
-				owner = await PolygonContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Arbitrum) {
-				const { ArbContractController } = Engine.context;
-				owner = await ArbContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Heco) {
-				const { HecoContractController } = Engine.context;
-				owner = await HecoContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Optimism) {
-				const { OpContractController } = Engine.context;
-				owner = await OpContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Avax) {
-				const { AvaxContractController } = Engine.context;
-				owner = await AvaxContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (asset.type === ChainType.Syscoin) {
-				const { SyscoinContractController } = Engine.context;
-				owner = await SyscoinContractController.getOwnerOf(asset.address, asset.token_id);
-			} else if (util.isRpcChainType(asset.type)) {
-				const { RpcContractController } = Engine.context;
-				owner = await RpcContractController.callContract(
+			if (util.isRpcChainType(asset.type)) {
+				owner = await Engine.contracts[ChainType.RPCBase].callContract(
 					asset.type,
 					'getOwnerOf',
 					asset.address,
 					asset.token_id
 				);
 			} else {
-				const { AssetsContractController } = Engine.context;
-				owner = await AssetsContractController.getOwnerOf(asset.address, asset.token_id);
+				owner = await Engine.contracts[asset.type]?.getOwnerOf(asset.address, asset.token_id);
 			}
 			const isOwner = toLowerCaseEquals(owner, selectedAddress);
 			if (!isOwner) {
@@ -765,58 +675,8 @@ class SendNFTTab extends PureComponent {
 		let errorMessage;
 		let balanceOf;
 		try {
-			if (asset.type === ChainType.Bsc) {
-				const { BscContractController } = Engine.context;
-				balanceOf = await BscContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Polygon) {
-				const { PolygonContractController } = Engine.context;
-				balanceOf = await PolygonContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Arbitrum) {
-				const { ArbContractController } = Engine.context;
-				balanceOf = await ArbContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Heco) {
-				const { HecoContractController } = Engine.context;
-				balanceOf = await HecoContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Optimism) {
-				const { OpContractController } = Engine.context;
-				balanceOf = await OpContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Avax) {
-				const { AvaxContractController } = Engine.context;
-				balanceOf = await AvaxContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (asset.type === ChainType.Syscoin) {
-				const { SyscoinContractController } = Engine.context;
-				balanceOf = await SyscoinContractController.getCollectibleBalanceOf(
-					asset.address,
-					selectedAddress,
-					asset.token_id
-				);
-			} else if (util.isRpcChainType(asset.type)) {
-				const { RpcContractController } = Engine.context;
-				balanceOf = await RpcContractController.callContract(
+			if (util.isRpcChainType(asset.type)) {
+				balanceOf = await Engine.contracts[ChainType.RPCBase].callContract(
 					asset.type,
 					'getCollectibleBalanceOf',
 					asset.address,
@@ -824,8 +684,7 @@ class SendNFTTab extends PureComponent {
 					asset.token_id
 				);
 			} else {
-				const { AssetsContractController } = Engine.context;
-				balanceOf = await AssetsContractController.getCollectibleBalanceOf(
+				balanceOf = await Engine.contracts[asset.type]?.getCollectibleBalanceOf(
 					asset.address,
 					selectedAddress,
 					asset.token_id
@@ -1058,48 +917,8 @@ class SendNFTTab extends PureComponent {
 
 const mapStateToProps = state => ({
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
-	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	arbChainId: state.engine.backgroundState.ArbNetworkController.provider.chainId,
-	bscChainId: state.engine.backgroundState.BscNetworkController.provider.chainId,
-	polygonChainId: state.engine.backgroundState.PolygonNetworkController.provider.chainId,
-	hecoChainId: state.engine.backgroundState.HecoNetworkController.provider.chainId,
-	opChainId: state.engine.backgroundState.OpNetworkController.provider.chainId,
-	avaxChainId: state.engine.backgroundState.AvaxNetworkController.provider.chainId,
-	syscoinChainId: state.engine.backgroundState.SyscoinNetworkController.provider.chainId,
-	contractBalances:
-		state.engine.backgroundState.TokenBalancesController.contractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	arbContractBalances:
-		state.engine.backgroundState.TokenBalancesController.arbContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	opContractBalances:
-		state.engine.backgroundState.TokenBalancesController.opContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	bscContractBalances:
-		state.engine.backgroundState.TokenBalancesController.bscContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	polygonContractBalances:
-		state.engine.backgroundState.TokenBalancesController.polygonContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	hecoContractBalances:
-		state.engine.backgroundState.TokenBalancesController.hecoContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	avaxContractBalances:
-		state.engine.backgroundState.TokenBalancesController.avaxContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	syscoinContractBalances:
-		state.engine.backgroundState.TokenBalancesController.syscoinContractBalances[
-			state.engine.backgroundState.PreferencesController.selectedAddress
-		] || {},
-	rpcContractBalances:
-		state.engine.backgroundState.TokenBalancesController.rpcContractBalances[
+	allContractBalances:
+		state.engine.backgroundState.TokenBalancesController.allContractBalances[
 			state.engine.backgroundState.PreferencesController.selectedAddress
 		] || {},
 	isVisibleInModal: state.scanner.isVisibleInModal,

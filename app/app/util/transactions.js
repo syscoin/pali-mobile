@@ -3,10 +3,8 @@ import Engine from '../core/Engine';
 import { strings } from '../../locales/i18n';
 import { safeToChecksumAddress } from './address';
 import { ChainType, util, addHexPrefix, toChecksumAddress, BN } from 'gopocket-core';
-import { getChainIdByType, hexToBN } from './number';
-import AppConstants from '../core/AppConstants';
-const { SAI_ADDRESS } = AppConstants;
-import { callSqlite, getRpcProviderTicker } from './ControllerUtils';
+import { getChainIdByType, getTickerByType, hexToBN } from './number';
+import { callSqlite } from './ControllerUtils';
 
 export const TOKEN_METHOD_TRANSFER = 'transfer';
 export const TOKEN_METHOD_APPROVE = 'approve';
@@ -42,13 +40,6 @@ export const TRANSACTION_TYPES = {
 	SITE_INTERACTION: 'transaction_site_interaction',
 	APPROVE: 'transaction_approve'
 };
-/**
- * Utility class with the single responsibility
- * of caching CollectibleAddresses
- */
-class CollectibleAddresses {
-	static cache = {};
-}
 
 /**
  * Object containing all known action keys, to be used in transaction review
@@ -342,27 +333,6 @@ export async function isSmartContractAddress(address, chainType) {
 }
 
 /**
- * Returns wether the given address is an ERC721 contract
- *
- * @param {string} address - Ethereum address
- * @param {string} tokenId - A possible collectible id
- * @returns {boolean} - Wether the given address is an ERC721 contract
- */
-export async function isCollectibleAddress(address, tokenId) {
-	const cache = CollectibleAddresses.cache[address];
-	if (cache) {
-		return Promise.resolve(cache);
-	}
-	const { AssetsContractController } = Engine.context;
-	// Hack to know if the address is a collectible smart contract
-	// for now this method is called from tx element so we have the respective 'tokenId'
-	const ownerOf = await AssetsContractController.getOwnerOf(address, tokenId);
-	const isCollectibleAddress = ownerOf && ownerOf !== '0x';
-	CollectibleAddresses.cache[address] = isCollectibleAddress;
-	return isCollectibleAddress;
-}
-
-/**
  * Returns corresponding transaction action key
  *
  * @param {object} transaction - Transaction object
@@ -391,46 +361,6 @@ export async function getTransactionActionKey(transaction) {
 }
 
 /**
- * Returns corresponding transaction type message to show in UI
- *
- * @param {object} tx - Transaction object
- * @param {string} selectedAddress - Current account public address
- * @returns {string} - Transaction type message
- */
-export async function getActionKey(tx, selectedAddress, ticker) {
-	if (tx && tx.isTransfer) {
-		const selfSent = safeToChecksumAddress(tx.transaction.from) === selectedAddress;
-		const translationKey = selfSent ? 'transactions.self_sent_unit' : 'transactions.received_unit';
-		// Third party sending wrong token symbol
-		if (tx.transferInformation.contractAddress === SAI_ADDRESS.toLowerCase()) tx.transferInformation.symbol = 'SAI';
-		return strings(translationKey, { unit: tx.transferInformation.symbol });
-	}
-	const actionKey = await getTransactionActionKey(tx);
-	if (actionKey === SEND_ETHER_ACTION_KEY) {
-		const incoming = safeToChecksumAddress(tx.transaction.to) === selectedAddress;
-		const selfSent = incoming && safeToChecksumAddress(tx.transaction.from) === selectedAddress;
-		return incoming
-			? selfSent
-				? ticker
-					? strings('transactions.self_sent_unit', { unit: ticker })
-					: strings('transactions.self_sent_ether')
-				: ticker
-				? strings('transactions.received_unit', { unit: ticker })
-				: strings('transactions.received_ether')
-			: ticker
-			? strings('transactions.sent_unit', { unit: ticker })
-			: strings('transactions.sent_ether');
-	}
-	const transactionActionKey = actionKeys[actionKey];
-
-	if (transactionActionKey) {
-		return transactionActionKey;
-	}
-
-	return actionKey;
-}
-
-/**
  * Returns corresponding transaction function type
  *
  * @param {object} tx - Transaction object
@@ -454,27 +384,6 @@ export async function getTransactionReviewActionKey(transaction) {
  */
 export function getTicker(ticker, type = ChainType.Ethereum) {
 	return ticker || getTickerByType(type);
-}
-
-export function getTickerByType(type) {
-	if (type === ChainType.Bsc) {
-		return Engine.context.BscNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Arbitrum) {
-		return Engine.context.ArbNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Polygon) {
-		return Engine.context.PolygonNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Heco) {
-		return Engine.context.HecoNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Optimism) {
-		return Engine.context.OpNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Avax) {
-		return Engine.context.AvaxNetworkController.state.provider.ticker;
-	} else if (type === ChainType.Syscoin) {
-		return Engine.context.SyscoinNetworkController.state.provider.ticker;
-	} else if (util.isRpcChainType(type)) {
-		return getRpcProviderTicker(type);
-	}
-	return Engine.context.NetworkController.state.provider.ticker;
 }
 
 /**

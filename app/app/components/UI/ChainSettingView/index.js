@@ -25,6 +25,7 @@ import ImageCapInset from '../../UI/ImageCapInset';
 import { getRpcName, getIsRpc, getAssetIcon } from '../../../util/rpcUtil';
 import PromptView from '../PromptView';
 import { toggleShowHint } from '../../../actions/hint';
+import { ChainTypeSettingsItems } from '../../../util/ChainTypeImages';
 
 const { width: viewportWidth } = Dimensions.get('window');
 const dragParentWidth = viewportWidth - (20 + 20) * 2;
@@ -35,49 +36,6 @@ const dragItemHeight = 84;
 const PAGE_HOME = 1;
 const PAGE_INPUT_RPC = 2;
 const PAGE_RPC_LIST = 3;
-
-const chainItems = [
-	{
-		text: strings('wallet.eth_etwork'),
-		icon: require('../../../images/img_asset_eth.png'),
-		chainType: ChainType.Ethereum
-	},
-	{
-		text: strings('wallet.polygon_network'),
-		icon: require('../../../images/img_asset_polygon.png'),
-		chainType: ChainType.Polygon
-	},
-	{
-		text: strings('wallet.arbitrum_network'),
-		icon: require('../../../images/img_asset_arb.png'),
-		chainType: ChainType.Arbitrum
-	},
-	{
-		text: strings('wallet.bsc_network'),
-		icon: require('../../../images/img_asset_bsc.png'),
-		chainType: ChainType.Bsc
-	},
-	{
-		text: strings('wallet.heco_network'),
-		icon: require('../../../images/img_asset_heco.png'),
-		chainType: ChainType.Heco
-	},
-	{
-		text: strings('wallet.optimism_network'),
-		icon: require('../../../images/img_asset_op.png'),
-		chainType: ChainType.Optimism
-	},
-	{
-		text: strings('wallet.avalanche_network'),
-		icon: require('../../../images/img_asset_avax.png'),
-		chainType: ChainType.Avax
-	},
-	{
-		text: strings('wallet.syscoin_network'),
-		icon: require('../../../images/img_asset_syscoin.png'),
-		chainType: ChainType.Syscoin
-	}
-];
 
 const styles = StyleSheet.create({
 	childrenWrapper: {
@@ -593,10 +551,10 @@ class ChainSettingView extends PureComponent {
 
 	addRpc = async () => {
 		const { nameValue, rpcValue, chainValue, currencyValue, explorerValue } = this.state;
-		const { RpcNetworkController, PreferencesController, TokenBalancesController } = Engine.context;
+		const { PreferencesController, TokenBalancesController } = Engine.context;
 		this.setState({ loading: true });
 		try {
-			const chainType = await RpcNetworkController.addNetwork(
+			const chainType = await Engine.networks[ChainType.RPCBase].addNetwork(
 				nameValue.trim(),
 				rpcValue.trim(),
 				chainValue.trim(),
@@ -645,8 +603,7 @@ class ChainSettingView extends PureComponent {
 			if (getIsRpc(chainType)) {
 				favouriteChainItems.push({ text: getRpcName(chainType), isRpc: true, chainType });
 			} else {
-				// eslint-disable-next-line array-callback-return
-				const item = chainItems.filter(item => item.chainType === chainType);
+				const item = ChainTypeSettingsItems.filter(item => item.chainType === chainType);
 				if (item && item.length > 0) {
 					favouriteChainItems.push(item[0]);
 				}
@@ -657,8 +614,7 @@ class ChainSettingView extends PureComponent {
 				if (getIsRpc(chainType)) {
 					disableChainItems.push({ text: getRpcName(chainType), isRpc: true, chainType });
 				} else {
-					// eslint-disable-next-line array-callback-return
-					const item = chainItems.filter(item => item.chainType === chainType);
+					const item = ChainTypeSettingsItems.filter(item => item.chainType === chainType);
 					if (item && item.length > 0) {
 						disableChainItems.push(item[0]);
 					}
@@ -822,7 +778,7 @@ class ChainSettingView extends PureComponent {
 													}
 
 													setTimeout(async () => {
-														await Engine.context.RpcNetworkController.removeNetwork(
+														await Engine.networks[ChainType.RPCBase].removeNetwork(
 															chainType
 														);
 														await Engine.context.PreferencesController.removeRpcChain(

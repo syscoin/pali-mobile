@@ -1,33 +1,19 @@
 import {
 	AssetsContractController,
-	ArbContractController,
-	OpContractController,
-	BscContractController,
-	PolygonContractController,
 	TronContractController,
-	HecoContractController,
-	AvaxContractController,
-	SyscoinContractController,
 	AssetsController,
 	AssetsDetectionController,
 	KeyringController,
 	PersonalMessageManager,
 	MessageManager,
 	NetworkController,
-	ArbNetworkController,
-	OpNetworkController,
 	RpcContractController,
 	PreferencesController,
 	TokenBalancesController,
 	TokenRatesController,
 	TransactionController,
 	TypedMessageManager,
-	BscNetworkController,
-	PolygonNetworkController,
 	TronNetworkController,
-	HecoNetworkController,
-	AvaxNetworkController,
-	SyscoinNetworkController,
 	SecurityController,
 	CollectiblesController,
 	ApprovalEventsController,
@@ -37,7 +23,11 @@ import {
 	InviteController,
 	util,
 	DefiProtocolController,
-	StaticTokenController
+	StaticTokenController,
+	NetworkConfig,
+	ChainType,
+	ArbContractController,
+	PolygonContractController
 } from 'gopocket-core';
 
 import { store } from '../store';
@@ -74,7 +64,6 @@ class Agent {
 	}
 
 	get state() {
-		// eslint-disable-next-line no-undef
 		const state = store.getState();
 		if (state?.engine?.backgroundState?.[this.name]) {
 			return state?.engine?.backgroundState?.[this.name];
@@ -187,50 +176,87 @@ class Engine {
 
 	constructor(initialState = {}) {
 		if (!Engine.instance) {
+			const clsNetworks = [];
+			const clsContracts = [];
+			for (const type in NetworkConfig) {
+				const chainType = Number(type);
+				const config = NetworkConfig[chainType];
+				if (config.Disabled) {
+					continue;
+				}
+				if (chainType === ChainType.Tron) {
+					clsNetworks.push({ cls: TronNetworkController, name: 'TronNetworkController', chainType });
+					clsContracts.push({ cls: TronContractController, name: 'TronContractController', chainType });
+				} else {
+					const networkName = (chainType === ChainType.Ethereum ? '' : config.Name) + 'NetworkController';
+					clsNetworks.push({ cls: NetworkController, name: networkName, chainType });
+					let clsContract = AssetsContractController;
+					if (chainType === ChainType.Arbitrum) {
+						clsContract = ArbContractController;
+					} else if (chainType === ChainType.Polygon) {
+						clsContract = PolygonContractController;
+					}
+					const contractName =
+						chainType === ChainType.Ethereum
+							? 'AssetsContractController'
+							: config.Name + 'ContractController';
+					clsContracts.push({
+						cls: clsContract,
+						name: contractName,
+						chainType
+					});
+				}
+			}
+			clsNetworks.push({ cls: RpcNetworkController, name: 'RpcNetworkController', chainType: ChainType.RPCBase });
+			clsContracts.push({
+				cls: RpcContractController,
+				name: 'RpcContractController',
+				chainType: ChainType.RPCBase
+			});
+
+			const allNetwork = this.getAgentController(clsNetworks);
+			const networks = {};
+			for (const key in allNetwork) {
+				const chainType = clsNetworks.find(clsNetwork => clsNetwork.name === key).chainType;
+				networks[chainType] = allNetwork[key];
+			}
+
+			const allContracts = this.getAgentController(clsContracts);
+			const contracts = {};
+			for (const key in allContracts) {
+				const chainType = clsContracts.find(clsContract => clsContract.name === key).chainType;
+				contracts[chainType] = allContracts[key];
+			}
 			this.datamodel = {
-				context: this.getAgentController([
-					{
-						cls: KeyringController,
-						name: 'KeyringController'
-					},
-					{ cls: AssetsContractController, name: 'AssetsContractController' },
-					{ cls: ArbContractController, name: 'ArbContractController' },
-					{ cls: OpContractController, name: 'OpContractController' },
-					{ cls: BscContractController, name: 'BscContractController' },
-					{ cls: PolygonContractController, name: 'PolygonContractController' },
-					{ cls: TronContractController, name: 'TronContractController' },
-					{ cls: HecoContractController, name: 'HecoContractController' },
-					{ cls: AvaxContractController, name: 'AvaxContractController' },
-					{ cls: SyscoinContractController, name: 'SyscoinContractController' },
-					{ cls: RpcContractController, name: 'RpcContractController' },
-					{ cls: AssetsController, name: 'AssetsController' },
-					{ cls: AssetsDetectionController, name: 'AssetsDetectionController' },
-					{ cls: PersonalMessageManager, name: 'PersonalMessageManager' },
-					{ cls: MessageManager, name: 'MessageManager' },
-					{ cls: NetworkController, name: 'NetworkController' },
-					{ cls: ArbNetworkController, name: 'ArbNetworkController' },
-					{ cls: OpNetworkController, name: 'OpNetworkController' },
-					{ cls: BscNetworkController, name: 'BscNetworkController' },
-					{ cls: PolygonNetworkController, name: 'PolygonNetworkController' },
-					{ cls: TronNetworkController, name: 'TronNetworkController' },
-					{ cls: HecoNetworkController, name: 'HecoNetworkController' },
-					{ cls: AvaxNetworkController, name: 'AvaxNetworkController' },
-					{ cls: SyscoinNetworkController, name: 'SyscoinNetworkController' },
-					{ cls: RpcNetworkController, name: 'RpcNetworkController' },
-					{ cls: PreferencesController, name: 'PreferencesController' },
-					{ cls: TokenBalancesController, name: 'TokenBalancesController' },
-					{ cls: TokenRatesController, name: 'TokenRatesController' },
-					{ cls: TransactionController, name: 'TransactionController' },
-					{ cls: TypedMessageManager, name: 'TypedMessageManager' },
-					{ cls: SecurityController, name: 'SecurityController' },
-					{ cls: CollectiblesController, name: 'CollectiblesController' },
-					{ cls: ApprovalEventsController, name: 'ApprovalEventsController' },
-					{ cls: AssetsDataModel, name: 'AssetsDataModel' },
-					{ cls: EnsController, name: 'EnsController' },
-					{ cls: InviteController, name: 'InviteController' },
-					{ cls: DefiProtocolController, name: 'DefiProtocolController' },
-					{ cls: StaticTokenController, name: 'StaticTokenController' }
-				])
+				networks,
+				contracts,
+				context: {
+					...this.getAgentController([
+						{
+							cls: KeyringController,
+							name: 'KeyringController'
+						},
+						{ cls: AssetsController, name: 'AssetsController' },
+						{ cls: AssetsDetectionController, name: 'AssetsDetectionController' },
+						{ cls: PersonalMessageManager, name: 'PersonalMessageManager' },
+						{ cls: MessageManager, name: 'MessageManager' },
+						{ cls: PreferencesController, name: 'PreferencesController' },
+						{ cls: TokenBalancesController, name: 'TokenBalancesController' },
+						{ cls: TokenRatesController, name: 'TokenRatesController' },
+						{ cls: TransactionController, name: 'TransactionController' },
+						{ cls: TypedMessageManager, name: 'TypedMessageManager' },
+						{ cls: SecurityController, name: 'SecurityController' },
+						{ cls: CollectiblesController, name: 'CollectiblesController' },
+						{ cls: ApprovalEventsController, name: 'ApprovalEventsController' },
+						{ cls: AssetsDataModel, name: 'AssetsDataModel' },
+						{ cls: EnsController, name: 'EnsController' },
+						{ cls: InviteController, name: 'InviteController' },
+						{ cls: DefiProtocolController, name: 'DefiProtocolController' },
+						{ cls: StaticTokenController, name: 'StaticTokenController' }
+					]),
+					...allNetwork,
+					...allContracts
+				}
 			};
 			NativeThreads.get().addListener('state', result => {
 				let newState;
@@ -244,23 +270,23 @@ class Engine {
 					const types = Object.keys(newState.networks);
 					if (types?.length) {
 						types.forEach(type => {
-							if (!this.datamodel.context.RpcNetworkController.providers[type]) {
-								this.datamodel.context.RpcNetworkController.providers[type] = new AgentProvider(
+							if (!this.datamodel.networks[ChainType.RPCBase].providers[type]) {
+								this.datamodel.networks[ChainType.RPCBase].providers[type] = new AgentProvider(
 									'RpcNetworkController',
 									type
 								);
 							}
 						});
-						const beTypes = Object.keys(this.datamodel.context.RpcNetworkController.providers);
+						const beTypes = Object.keys(this.datamodel.networks[ChainType.RPCBase].providers);
 						if (beTypes?.length) {
 							beTypes.forEach(type => {
 								if (!types.includes(type)) {
-									delete this.datamodel.context.RpcNetworkController.providers[type];
+									delete this.datamodel.networks[ChainType.RPCBase].providers[type];
 								}
 							});
 						}
 					} else {
-						this.datamodel.context.RpcNetworkController.providers = [];
+						this.datamodel.networks[ChainType.RPCBase].providers = [];
 					}
 				}
 				this.datamodel.context[result.key]?.notify(newState);
@@ -302,6 +328,12 @@ let instance;
 export default {
 	get context() {
 		return instance && instance.datamodel && instance.datamodel.context;
+	},
+	get networks() {
+		return instance && instance.datamodel && instance.datamodel.networks;
+	},
+	get contracts() {
+		return instance && instance.datamodel && instance.datamodel.contracts;
 	},
 	async resetState() {
 		return NativeThreads.get().callEngineAsync('resetState');
