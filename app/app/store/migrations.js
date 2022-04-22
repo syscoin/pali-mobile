@@ -228,6 +228,7 @@ export const migrations = {
 		return state;
 	},
 	7: state => {
+		callSqlite('deleteOldStaticTokens');
 		const TokenRatesController = state?.engine?.backgroundState?.TokenRatesController;
 		if (TokenRatesController) {
 			if (!TokenRatesController.allContractExchangeRates) {

@@ -162,8 +162,9 @@ export class Sqlite {
         );
         // static tokens
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS STATIC_TOKENS(' +
-          'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+          'CREATE TABLE IF NOT EXISTS STATIC_TOKENS_PRO(' +
+          '_id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+          'id INTEGER NOT NULL,' +
           'address VARCHAR NOT NULL,' +
           'l1_address VARCHAR,' +
           'coin_id VARCHAR,' +
@@ -176,7 +177,7 @@ export class Sqlite {
           [],
           undefined,
           (err: any) => {
-            this._errorLog('create table STATIC_TOKENS', err);
+            this._errorLog('create table STATIC_TOKENS_PRO', err);
           }
         );
       },
@@ -189,6 +190,23 @@ export class Sqlite {
     );
   }
 
+  deleteOldStaticTokens() {
+    return new Promise((resolve => {
+      const sql = 'DROP TABLE IF EXISTS STATIC_TOKENS';
+      this.db.executeSql(
+        sql,
+        [],
+        () => {
+          resolve(true);
+        },
+        (error: any) => {
+          this._errorLog('deleteOldStaticTokens', error);
+          resolve(false);
+        }
+      );
+    }));
+  }
+
   copyTempTokens(path: string) {
     return new Promise((resolve => {
       this.db.executeSql(
@@ -196,7 +214,7 @@ export class Sqlite {
         [],
         () => {
           this.db.executeSql(
-            `INSERT INTO STATIC_TOKENS SELECT * FROM tempDB.temp_token`,
+            `INSERT INTO STATIC_TOKENS_PRO(id, address, l1_address, coin_id, chain_type, image, name, decimals, symbol) SELECT * FROM tempDB.temp_token`,
             [],
             () => {
               this.db.executeSql(
@@ -227,7 +245,7 @@ export class Sqlite {
 
   clearStaticTokens() {
     return new Promise((resolve => {
-      const sql = 'DELETE FROM STATIC_TOKENS';
+      const sql = 'DELETE FROM STATIC_TOKENS_PRO';
       this.db.executeSql(
         sql,
         [],
@@ -244,7 +262,7 @@ export class Sqlite {
 
   getStaticTokensMaxId() {
     return new Promise<any>((resolve) => {
-      let sql = 'SELECT MAX(id) AS max_id FROM STATIC_TOKENS';
+      let sql = 'SELECT MAX(id) AS max_id FROM STATIC_TOKENS_PRO';
       this.db.executeSql(
         sql,
         [],
@@ -279,7 +297,7 @@ export class Sqlite {
     }
     typeSql = `${typeSql})`;
     const queryAddress = await new Promise<any[]>((resolve) => {
-      const sql = `SELECT * FROM STATIC_TOKENS WHERE address=? AND chain_type IN ${typeSql}`;
+      const sql = `SELECT * FROM STATIC_TOKENS_PRO WHERE address=? AND chain_type IN ${typeSql}`;
       const values = [query];
       this.db.executeSql(
         sql,
@@ -322,7 +340,7 @@ export class Sqlite {
     }
 
     let querySymbol = await new Promise<any[]>((resolve) => {
-      const sql = `SELECT * FROM STATIC_TOKENS WHERE chain_type IN ${typeSql} AND lower(symbol) GLOB '*${query}*'`;
+      const sql = `SELECT * FROM STATIC_TOKENS_PRO WHERE chain_type IN ${typeSql} AND lower(symbol) GLOB '*${query}*'`;
       this.db.executeSql(
         sql,
         [],
@@ -382,7 +400,7 @@ export class Sqlite {
 
   getStaticTokenCount() {
     return new Promise<any>((resolve) => {
-      let sql = 'SELECT COUNT(*) AS count FROM STATIC_TOKENS';
+      let sql = 'SELECT COUNT(*) AS count FROM STATIC_TOKENS_PRO';
       this.db.executeSql(
         sql,
         [],
@@ -409,10 +427,10 @@ export class Sqlite {
       let sql;
       let values;
       if (type === ChainType.Arbitrum && l1_address) {
-        sql = 'SELECT * FROM STATIC_TOKENS WHERE (chain_type=? AND address=?) OR (chain_type=? AND address=?)';
+        sql = 'SELECT * FROM STATIC_TOKENS_PRO WHERE (chain_type=? AND address=?) OR (chain_type=? AND address=?)';
         values = [type, address.toLowerCase(), ChainType.Ethereum, l1_address.toLowerCase()];
       } else {
-        sql = 'SELECT * FROM STATIC_TOKENS WHERE chain_type=? AND address=?';
+        sql = 'SELECT * FROM STATIC_TOKENS_PRO WHERE chain_type=? AND address=?';
         values = [type, address.toLowerCase()];
       }
       this.db.executeSql(
@@ -438,12 +456,12 @@ export class Sqlite {
     if (!tokens || tokens.length <= 0) {
       return;
     }
-    const baseSql = 'INSERT OR REPLACE INTO STATIC_TOKENS(address, l1_address, coin_id, chain_type, image, name, decimals, symbol) VALUES';
-    const valuesSql = '(?,?,?,?,?,?,?,?)';
+    const baseSql = 'INSERT OR REPLACE INTO STATIC_TOKENS_PRO(id, address, l1_address, coin_id, chain_type, image, name, decimals, symbol) VALUES';
+    const valuesSql = '(?,?,?,?,?,?,?,?,?)';
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, tokens, (item) => [
-          item.address, item.l1_address, item.coin_id, item.chain_type, item.image, item.name, item.decimals, item.symbol
+          item.id, item.address, item.l1_address, item.coin_id, item.chain_type, item.image, item.name, item.decimals, item.symbol
         ]);
       },
       (error: any) => {
