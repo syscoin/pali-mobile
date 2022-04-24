@@ -148,33 +148,29 @@ class ApprovalEvent extends Component {
 			const transactionTypes = TransactionTypes.ORIGIN_CANCEL_APPROVAL;
 			const myAddress = selectedAddress;
 			this.addApprovalListener();
-			for (const type in Engine.networks) {
-				const chainType = Number(type);
-				if (chainType === ChainType.RPCBase) {
-					if (await Engine.networks[ChainType.RPCBase].isRpcChainId(chainId)) {
-						const type = await Engine.networks[ChainType.RPCBase].getChainTypeByChainId(chainId);
-						await Engine.contracts[ChainType.RPCBase].callContract(
-							type,
-							'callApprove',
-							tokenAddress,
-							spender,
-							'0',
-							myAddress,
-							transactionTypes
-						);
-						break;
-					}
-				} else {
-					if (chainId === Engine.networks[chainType].state.provider.chainId) {
-						await Engine.contracts[chainType].callApprove(
-							tokenAddress,
-							spender,
-							'0',
-							myAddress,
-							transactionTypes
-						);
-						break;
-					}
+			const chainType = getChainTypeByChainId(chainId);
+			if (chainType === ChainType.RPCBase) {
+				if (await Engine.networks[ChainType.RPCBase].isRpcChainId(chainId)) {
+					const type = await Engine.networks[ChainType.RPCBase].getChainTypeByChainId(chainId);
+					await Engine.contracts[ChainType.RPCBase].callContract(
+						type,
+						'callApprove',
+						tokenAddress,
+						spender,
+						'0',
+						myAddress,
+						transactionTypes
+					);
+				}
+			} else {
+				if (chainId === Engine.networks[chainType]?.state.provider.chainId) {
+					await Engine.contracts[chainType]?.callApprove(
+						tokenAddress,
+						spender,
+						'0',
+						myAddress,
+						transactionTypes
+					);
 				}
 			}
 			onEvent('revoke_approval');

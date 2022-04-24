@@ -427,7 +427,6 @@ class NftView extends PureComponent {
 			>
 				<View style={[styles.childrenWrapper]}>
 					<Text style={styles.itemTitle}>{strings('nft.attributes')}</Text>
-					{/* eslint-disable-next-line array-callback-return */}
 					{traits.map((item, index) => {
 						if (index % 2 === 0) {
 							return (
@@ -547,7 +546,7 @@ class NftView extends PureComponent {
 						<TouchableOpacity
 							onPress={() => {
 								let hostUrl = 'https://opensea.io/assets/';
-								if (nftToken.chainId === this.props.polygonChainId) {
+								if (nftToken.type === ChainType.Polygon) {
 									hostUrl = 'https://opensea.io/assets/matic/';
 								}
 								const url = hostUrl + nftToken.asset_contract.address + '/' + nftToken.token_id;

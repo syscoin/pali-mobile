@@ -100,68 +100,6 @@ export const NetworkConfig: { [type: number]: any } = {
       },
     }
   },
-  [ChainType.Arbitrum]: {
-    Name: "Arb",
-    MainChainId: '42161',
-    UseInfura: true,
-    Disabled: false,
-    DefiTokenChain: ['arb'],
-    CoingeckoId: 'ethereum',
-    SwapUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap',
-    SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
-    NeedAvailableUrl: false,
-    OtherCoinInfoUrl: '',
-    SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange',
-    Networks: {
-      "Arbitrum Mainnet": {
-        "provider": {
-          "rpcTarget": "https://arb1.arbitrum.io/rpc",
-          "type": "Arbitrum Mainnet",
-          "chainId": "42161",
-          "ticker": "ETH",
-          "nickname": "Arbitrum"
-        },
-        ExplorerUrl: 'https://arbiscan.io',
-        ExplorerApiUrl: 'https://api.arbiscan.io',
-        "confirmIntervalInSecond": 604800,
-        "partnerChainId": "1",
-        "infuraType": "arbitrum-mainnet",
-        "inbox": "0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f",
-        "outbox": "0x667e23ABd27E623c11d4CC00ca3EC4d0bD63337a",
-        "outbox2": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
-        "l1GatewayRouter": "0x72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef",
-        "arbsys": "0x0000000000000000000000000000000000000064",
-        "node_interface": "0x00000000000000000000000000000000000000C8",
-        "l2GatewayRouter": "0x5288c571Fd7aD117beA99bF60FE0846C4E84F933",
-        "l1ERC20Gateway": "0xa3A7B6F88361F48403514059F1F16C8E78d60EeC",
-        "l2ERC20Gateway": "0x09e9222E96E7B4AE2a407B98d48e330053351EEe",
-      },
-      "Arbitrum Testnet Rinkeby": {
-        "provider": {
-          "rpcTarget": "https://rinkeby.arbitrum.io/rpc",
-          "type": "Arbitrum Testnet Rinkeby",
-          "chainId": "421611",
-          "ticker": "ETH",
-          "nickname": "Arbitrum"
-        },
-        ExplorerUrl: 'https://testnet.arbiscan.io',
-        ExplorerApiUrl: 'https://api-testnet.arbiscan.io',
-        "confirmIntervalInSecond": 86400,
-        "partnerChainId": "4",
-        "infuraType": "arbitrum-rinkeby",
-        "inbox": "0x578BAde599406A8fE3d24Fd7f7211c0911F5B29e",
-        "outbox": "0xefa1a42D3c4699822eE42677515A64b658be1bFc",
-        "outbox2": "0xefa1a42D3c4699822eE42677515A64b658be1bFc",
-        "l1GatewayRouter": "0x70C143928eCfFaf9F5b406f7f4fC28Dc43d68380",
-        "arbsys": "0x0000000000000000000000000000000000000064",
-        "node_interface": "0x00000000000000000000000000000000000000C8",
-        "l2GatewayRouter": "0x9413AD42910c1eA60c737dB5f58d1C504498a3cD",
-        "l1ERC20Gateway": "0x91169Dbb45e6804743F94609De50D511C437572E",
-        "l2ERC20Gateway": "0x195C107F3F75c4C93Eba7d9a1312F19305d6375f"
-      }
-    }
-  },
   [ChainType.Polygon]: {
     Name: "Polygon",
     MainChainId: '137',
@@ -282,48 +220,6 @@ export const NetworkConfig: { [type: number]: any } = {
       }
     }
   },
-  [ChainType.Heco]: {
-    Name: "Heco",
-    MainChainId: '128',
-    UseInfura: false,
-    Disabled: false,
-    DefiTokenChain: ['heco'],
-    CoingeckoId: 'huobi-token',
-    SwapUrl: 'https://ht.mdex.com/#/swap',
-    SwapTokenUrl: 'https://ht.mdex.com/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/ht_logo.png',
-    NeedAvailableUrl: false,
-    OtherCoinInfoUrl: '',
-    SushiswapGraphUrl: '',
-    Networks: {
-      "Heco Mainnet": {
-        "provider": {
-          "rpcTarget": "https://http-mainnet.hecochain.com",
-          "type": "Heco Mainnet",
-          "chainId": "128",
-          "ticker": "HT",
-          "nickname": "HuoBi"
-        },
-        rpcTargets: [
-          'https://http-mainnet-node.huobichain.com',
-          'https://http-mainnet.hecochain.com',
-        ],
-        ExplorerUrl: 'https://hecoinfo.com',
-        ExplorerApiUrl: 'https://api.hecoinfo.com',
-      },
-      "Heco Testnet": {
-        "provider": {
-          "rpcTarget": "https://http-testnet.hecochain.com",
-          "type": "Heco Testnet",
-          "chainId": "256",
-          "ticker": "HT",
-          "nickname": "HuoBi"
-        },
-        ExplorerUrl: 'https://testnet.hecoinfo.com',
-        ExplorerApiUrl: 'https://api-testnet.hecoinfo.com',
-      }
-    }
-  },
   [ChainType.Avax]: {
     Name: "Avax",
     MainChainId: '43114',
@@ -439,6 +335,110 @@ export const NetworkConfig: { [type: number]: any } = {
         },
         ExplorerUrl: 'https://tanenbaum.io',
         ExplorerApiUrl: 'https://tanenbaum.io',
+      }
+    }
+  },
+  [ChainType.Arbitrum]: {
+    Name: "Arb",
+    MainChainId: '42161',
+    UseInfura: true,
+    Disabled: false,
+    DefiTokenChain: ['arb'],
+    CoingeckoId: 'ethereum',
+    SwapUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap',
+    SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap/swap?inputCurrency=',
+    CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
+    NeedAvailableUrl: false,
+    OtherCoinInfoUrl: '',
+    SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange',
+    Networks: {
+      "Arbitrum Mainnet": {
+        "provider": {
+          "rpcTarget": "https://arb1.arbitrum.io/rpc",
+          "type": "Arbitrum Mainnet",
+          "chainId": "42161",
+          "ticker": "ETH",
+          "nickname": "Arbitrum"
+        },
+        ExplorerUrl: 'https://arbiscan.io',
+        ExplorerApiUrl: 'https://api.arbiscan.io',
+        "confirmIntervalInSecond": 604800,
+        "partnerChainId": "1",
+        "infuraType": "arbitrum-mainnet",
+        "inbox": "0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f",
+        "outbox": "0x667e23ABd27E623c11d4CC00ca3EC4d0bD63337a",
+        "outbox2": "0x760723CD2e632826c38Fef8CD438A4CC7E7E1A40",
+        "l1GatewayRouter": "0x72Ce9c846789fdB6fC1f34aC4AD25Dd9ef7031ef",
+        "arbsys": "0x0000000000000000000000000000000000000064",
+        "node_interface": "0x00000000000000000000000000000000000000C8",
+        "l2GatewayRouter": "0x5288c571Fd7aD117beA99bF60FE0846C4E84F933",
+        "l1ERC20Gateway": "0xa3A7B6F88361F48403514059F1F16C8E78d60EeC",
+        "l2ERC20Gateway": "0x09e9222E96E7B4AE2a407B98d48e330053351EEe",
+      },
+      "Arbitrum Testnet Rinkeby": {
+        "provider": {
+          "rpcTarget": "https://rinkeby.arbitrum.io/rpc",
+          "type": "Arbitrum Testnet Rinkeby",
+          "chainId": "421611",
+          "ticker": "ETH",
+          "nickname": "Arbitrum"
+        },
+        ExplorerUrl: 'https://testnet.arbiscan.io',
+        ExplorerApiUrl: 'https://api-testnet.arbiscan.io',
+        "confirmIntervalInSecond": 86400,
+        "partnerChainId": "4",
+        "infuraType": "arbitrum-rinkeby",
+        "inbox": "0x578BAde599406A8fE3d24Fd7f7211c0911F5B29e",
+        "outbox": "0xefa1a42D3c4699822eE42677515A64b658be1bFc",
+        "outbox2": "0xefa1a42D3c4699822eE42677515A64b658be1bFc",
+        "l1GatewayRouter": "0x70C143928eCfFaf9F5b406f7f4fC28Dc43d68380",
+        "arbsys": "0x0000000000000000000000000000000000000064",
+        "node_interface": "0x00000000000000000000000000000000000000C8",
+        "l2GatewayRouter": "0x9413AD42910c1eA60c737dB5f58d1C504498a3cD",
+        "l1ERC20Gateway": "0x91169Dbb45e6804743F94609De50D511C437572E",
+        "l2ERC20Gateway": "0x195C107F3F75c4C93Eba7d9a1312F19305d6375f"
+      }
+    }
+  },
+  [ChainType.Heco]: {
+    Name: "Heco",
+    MainChainId: '128',
+    UseInfura: false,
+    Disabled: false,
+    DefiTokenChain: ['heco'],
+    CoingeckoId: 'huobi-token',
+    SwapUrl: 'https://ht.mdex.com/#/swap',
+    SwapTokenUrl: 'https://ht.mdex.com/#/swap?inputCurrency=',
+    CurrencyLogo: 'https://cdn.gopocket.finance/files/ht_logo.png',
+    NeedAvailableUrl: false,
+    OtherCoinInfoUrl: '',
+    SushiswapGraphUrl: '',
+    Networks: {
+      "Heco Mainnet": {
+        "provider": {
+          "rpcTarget": "https://http-mainnet.hecochain.com",
+          "type": "Heco Mainnet",
+          "chainId": "128",
+          "ticker": "HT",
+          "nickname": "HuoBi"
+        },
+        rpcTargets: [
+          'https://http-mainnet-node.huobichain.com',
+          'https://http-mainnet.hecochain.com',
+        ],
+        ExplorerUrl: 'https://hecoinfo.com',
+        ExplorerApiUrl: 'https://api.hecoinfo.com',
+      },
+      "Heco Testnet": {
+        "provider": {
+          "rpcTarget": "https://http-testnet.hecochain.com",
+          "type": "Heco Testnet",
+          "chainId": "256",
+          "ticker": "HT",
+          "nickname": "HuoBi"
+        },
+        ExplorerUrl: 'https://testnet.hecoinfo.com',
+        ExplorerApiUrl: 'https://api-testnet.hecoinfo.com',
       }
     }
   },

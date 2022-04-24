@@ -389,7 +389,7 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
     super.onComposed();
     const assets = this.context.AssetsController as AssetsController;
     assets.subscribe(async ({ tokenChangedType }) => {
-      if (tokenChangedType === TokenNoChange && !isRpcChainType(tokenChangedType)) {
+      if (tokenChangedType !== TokenNoChange && !isRpcChainType(tokenChangedType)) {
         await this.poll(true);
       }
     });

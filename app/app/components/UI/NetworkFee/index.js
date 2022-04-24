@@ -573,7 +573,6 @@ class NetworkFee extends PureComponent {
 												selectTextOnFocus
 											/>
 										</View>
-										{/* eslint-disable-next-line react-native/no-inline-styles */}
 										<View style={[styles.gasPrice, { marginLeft: 28 }]}>
 											<Text style={styles.gasText}>{strings('custom_gas.gas_limit')}</Text>
 											<TextInput

@@ -478,7 +478,21 @@ class EngineImpl {
 					continue;
 				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, true);
+			}
+
+			for (const type in this.datamodel.networks) {
+				const chainType = Number(type);
+				if (chainType === ChainType.RPCBase) {
+					continue;
+				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false);
+			}
+
+			for (const type in this.datamodel.networks) {
+				const chainType = Number(type);
+				if (chainType === ChainType.RPCBase) {
+					continue;
+				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false, true);
 			}
 		} catch (e) {

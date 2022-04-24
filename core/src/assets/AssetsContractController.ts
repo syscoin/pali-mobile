@@ -17,8 +17,8 @@ export class AssetsContractController extends ContractController<ContractConfig,
   constructor(config?: Partial<ContractConfig>, state?: Partial<BaseState>) {
     super(config, state);
     this.defaultState = {};
-    if (this.config.name) {
-      this.name = this.config.name;
+    if (config?.name) {
+      this.name = config.name;
     }
     this.initialize();
   }
