@@ -14,7 +14,7 @@ import TransactionController, {
 import { Sqlite } from '../transaction/Sqlite';
 import ContractController from './ContractController';
 import { WithdrawState } from './PolygonContractController';
-import { ChainType } from './TokenRatesController';
+import { ChainType } from "../Config";
 
 export { Bridge, OutgoingMessageState };
 

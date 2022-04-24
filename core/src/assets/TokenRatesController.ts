@@ -11,7 +11,7 @@ import {
   safelyExecute,
   safelyExecuteWithTimeout,
 } from '../util';
-import {BaseChainConfig, NetworkConfig} from '../Config';
+import {BaseChainConfig, ChainType, NetworkConfig} from '../Config';
 import AssetsController, {TokenNoChange} from './AssetsController';
 import TokenBalancesController from './TokenBalancesController';
 
@@ -69,20 +69,6 @@ interface BlockInfoData{
 
 interface BlockInfo{
   number: string;
-}
-
-export enum ChainType {
-  All = 0,
-  Ethereum = 0x01,
-  Arbitrum = 0x02,
-  Bsc = 0x04,
-  Polygon = 0x08,
-  Tron = 0x10,
-  Heco = 0x20,
-  Optimism = 0x40,
-  Avax = 0x80,
-  Syscoin = 0x100,
-  RPCBase = 0x10000000000000,
 }
 
 export enum LockType {

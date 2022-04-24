@@ -12,9 +12,9 @@ import { Transaction, FetchAllOptions } from './transaction/TransactionControlle
 import { MessageParams } from './message-manager/MessageManager';
 import { PersonalMessageParams } from './message-manager/PersonalMessageManager';
 import { TypedMessageParams } from './message-manager/TypedMessageManager';
-import { ChainType, Token } from './assets/TokenRatesController';
+import { Token } from './assets/TokenRatesController';
 import isIPFS from 'is-ipfs';
-import {NetworkConfig} from "./Config";
+import {NetworkConfig, ChainType} from "./Config";
 
 const hexRe = /^[0-9A-Fa-f]+$/gu;
 

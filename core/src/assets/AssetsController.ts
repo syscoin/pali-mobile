@@ -5,7 +5,8 @@ import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
 import util, { isRpcChainType } from '../util';
 import { RpcNetworkController } from '../network/RpcNetworkController';
-import { ChainType, Token } from './TokenRatesController';
+import { Token } from './TokenRatesController';
+import { ChainType } from "../Config";
 
 /**
  * @type AssetsConfig

@@ -7,10 +7,10 @@ import TronNetworkController from '../network/TronNetworkController';
 import KeyringController from '../keyring/KeyringController';
 import {getControllerFromType} from '../ControllerUtils';
 import AssetsController, {TokenNoChange} from './AssetsController';
-import {ChainType, Token} from './TokenRatesController';
+import {Token} from './TokenRatesController';
 import TronContractController from './TronContractController';
 import {BalanceMap} from './AssetsContractController';
-import {NetworkConfig} from "../Config";
+import {NetworkConfig, ChainType} from "../Config";
 
 /**
  * @type TokenBalancesConfig

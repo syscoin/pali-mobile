@@ -5,8 +5,7 @@ import {
   safelyExecute,
   timeoutFetch,
 } from '../util';
-import {NetworkConfig} from "../Config";
-import {ChainType} from "./TokenRatesController";
+import { NetworkConfig, ChainType } from "../Config";
 
 export interface DefiProtocolConfig extends BaseConfig {
   interval: number;

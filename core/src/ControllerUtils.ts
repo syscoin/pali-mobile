@@ -1,6 +1,6 @@
-import { ChainType } from './assets/TokenRatesController';
 import {getConfigChainType, isRpcChainType} from './util';
 import {Sqlite} from "./transaction/Sqlite";
+import {ChainType} from "./Config";
 
 export function getContractController(controller: any, chainId: string) {
   if (controller.networks[ChainType.RPCBase].isRpcChainId(chainId)) {

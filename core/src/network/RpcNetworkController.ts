@@ -2,7 +2,7 @@ import createMetamaskProvider from 'web3-provider-engine/zero';
 import EthQuery from 'eth-query';
 import BigNumber from 'bignumber.js';
 import BaseController, { BaseState } from '../BaseController';
-import { ChainType } from '../assets/TokenRatesController';
+import { ChainType } from "../Config";
 import RpcContractController from '../assets/RpcContractController';
 import PreferencesController from '../user/PreferencesController';
 import { handleFetch, logDebug, safelyExecuteWithTimeout } from '../util';

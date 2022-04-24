@@ -1,12 +1,13 @@
 import { Mutex } from 'async-mutex';
 import { BigNumber } from 'ethers';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
-import PreferencesController, { defaultEnabledChains } from '../user/PreferencesController';
+import PreferencesController from '../user/PreferencesController';
 import util, { isEtherscanAvailableAsync, logDebug, safelyExecute, toLowerCaseEquals } from '../util';
-import {BN, NetworkConfig} from '..';
+import { BN } from '..';
 import SecurityController, { SecurityToken } from '../security/SecurityController';
 import AssetsController from './AssetsController';
-import { ChainType, LockType, Token, TokenRatesController } from './TokenRatesController';
+import { LockType, Token, TokenRatesController } from './TokenRatesController';
+import { NetworkConfig, ChainType, defaultEnabledChains } from "../Config";
 import TokenBalancesController from './TokenBalancesController';
 import CollectiblesController from './CollectiblesController';
 import DefiProtocolController from './DefiProtocolController';

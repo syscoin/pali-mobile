@@ -6,7 +6,7 @@ import util, { handleFetch, logDebug, safelyExecute, toLowerCaseEquals } from '.
 import { getContractController } from '../ControllerUtils';
 import CollectiblesController from '../assets/CollectiblesController';
 import PreferencesController from './PreferencesController';
-import {ChainType} from "../assets/TokenRatesController";
+import { ChainType } from "../Config";
 
 export interface EnsEntry {
   ensName: string;

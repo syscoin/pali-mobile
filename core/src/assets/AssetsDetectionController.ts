@@ -6,11 +6,12 @@ import { bitAND, logDebug, safelyExecute } from '../util';
 import TransactionController, {TokenTxChanged} from '../transaction/TransactionController';
 import { getContractController, getStaticTokenByChainId } from '../ControllerUtils';
 import { Sqlite } from '../transaction/Sqlite';
-import { ChainType, Token } from './TokenRatesController';
+import { Token } from './TokenRatesController';
 import AssetsController from './AssetsController';
 import ArbContractController from './ArbContractController';
 import TokenBalancesController from './TokenBalancesController';
 import { BalanceMap } from './AssetsContractController';
+import { ChainType } from "../Config";
 
 /**
  * Controller that passively polls on a set interval for assets auto detection

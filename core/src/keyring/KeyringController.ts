@@ -15,7 +15,7 @@ import { TypedMessageParams } from '../message-manager/TypedMessageManager';
 import { logDebug } from '../util';
 import { NetworkConfig } from '../Config';
 import KeyringControllerImpl from './KeyringControllerImpl';
-import {ChainType} from "../assets/TokenRatesController";
+import { ChainType } from "../Config";
 
 const privates = new WeakMap();
 

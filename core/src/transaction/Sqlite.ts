@@ -1,6 +1,6 @@
 import SQLiteStorage from 'react-native-sqlite-storage';
 import URL from 'url-parse';
-import { ChainType } from '../assets/TokenRatesController';
+import { ChainType } from "../Config";
 import { util } from '..';
 import { TokenTransactionInfo, TransactionInfo } from './TransactionController';
 import Fuse from 'fuse.js';

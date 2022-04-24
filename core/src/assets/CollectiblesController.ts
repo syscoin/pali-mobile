@@ -10,8 +10,7 @@ import util, {
   timeoutFetch,
   toLowerCaseEquals,
 } from '../util';
-import {ChainType} from './TokenRatesController';
-import {SupportCollectibles} from "../Config";
+import {SupportCollectibles, ChainType} from "../Config";
 
 export interface ApiCollectibleCreator {
   user: { username: string };

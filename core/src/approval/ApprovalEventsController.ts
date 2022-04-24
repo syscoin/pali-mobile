@@ -9,7 +9,7 @@ import TransactionController, {
 import util, { bitAND, logDebug } from '../util';
 import { getContractController } from '../ControllerUtils';
 import { Sqlite } from '../transaction/Sqlite';
-import {ChainType} from "../assets/TokenRatesController";
+import { ChainType } from "../Config";
 
 const APPROVAL_METHOD_ID = '0x095ea7b3';
 

@@ -1,7 +1,7 @@
 import { toChecksumAddress } from 'ethereumjs-util';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import { isRpcChainType, logDebug } from '../util';
-import { ChainType } from '../assets/TokenRatesController';
+import {defaultEnabledChains, allChains, ChainType} from "../Config";
 
 /**
  * @type ContactEntry
@@ -49,8 +49,6 @@ export enum TokenType {
   NFT = 0x02,
 }
 
-export const defaultEnabledChains = [ChainType.Ethereum, ChainType.Polygon, ChainType.Arbitrum, ChainType.Bsc, ChainType.Avax, ChainType.Syscoin];
-
 /**
  * Controller that stores shared settings and exposes convenience methods
  */
@@ -71,7 +69,7 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
     this.defaultState = {
       identities: {},
       selectedAddress: '',
-      allChains: [...defaultEnabledChains, ChainType.Optimism, ChainType.Heco],
+      allChains: allChains,
       hideDefiPortfolio: false,
       hideNormalTokens: false,
     };

@@ -27,7 +27,7 @@ import util, {
   safelyExecute,
   validateTransaction,
 } from '../util';
-import {ChainType} from '../assets/TokenRatesController';
+import { ChainType } from "../Config";
 import PreferencesController from '../user/PreferencesController';
 import RpcNetworkController from '../network/RpcNetworkController';
 import {Sqlite} from './Sqlite';

@@ -2,7 +2,7 @@ import { Mutex } from 'async-mutex';
 import {handleFetch, isRpcChainType, logDebug, safelyExecute, toLowerCaseEquals, useTestServer} from '../util';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import AssetsController, { TokenNoChange } from '../assets/AssetsController';
-import {ChainType} from "../assets/TokenRatesController";
+import { ChainType } from "../Config";
 
 export enum SecurityChangedType {
   NoChange = 0x00,

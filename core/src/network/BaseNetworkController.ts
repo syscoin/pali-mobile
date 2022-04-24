@@ -1,6 +1,5 @@
 import BaseController, {BaseConfig, BaseState} from "../BaseController";
-import {ChainType} from "../assets/TokenRatesController";
-import { NetworkConfig } from "../Config";
+import { NetworkConfig, ChainType } from "../Config";
 
 export interface NetworkProperties {
   isEIP1559Compatible?: boolean;
