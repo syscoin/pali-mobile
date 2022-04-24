@@ -170,8 +170,8 @@ export type TokenTransactionInfo = {
   error?: Error;
 };
 
-export const TxChanged =      0x1000000000000;
-export const TokenTxChanged = 0x10000000000000;
+export const TxChanged =      0x1000000;
+export const TokenTxChanged = 0x10000000;
 export const TxNoChange = 0x0;
 
 /**
@@ -1098,14 +1098,19 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
   }
 
   async getCode(chainType: ChainType, address: string) {
-    const network = this.networks[chainType];
+    let network;
+    if (util.isRpcChainType(chainType)) {
+      network = this.networks[ChainType.RPCBase];
+    } else {
+      network = this.networks[chainType];
+    }
     if (!network) {
       return undefined;
     }
 
     let ethQuery;
     if (util.isRpcChainType(chainType)) {
-     ethQuery = network.allEthQuery[chainType];
+      ethQuery = network.allEthQuery[chainType];
     } else {
       const chainId = network.state.provider.chainId;
       ethQuery = this.ethQuery[chainId];

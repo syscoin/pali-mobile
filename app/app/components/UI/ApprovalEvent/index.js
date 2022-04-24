@@ -164,10 +164,17 @@ class ApprovalEvent extends Component {
 						);
 						break;
 					}
-				}
-				if (chainId === Engine.networks[type].state.provider.chainId) {
-					await Engine.contracts[type].callApprove(tokenAddress, spender, '0', myAddress, transactionTypes);
-					break;
+				} else {
+					if (chainId === Engine.networks[chainType].state.provider.chainId) {
+						await Engine.contracts[chainType].callApprove(
+							tokenAddress,
+							spender,
+							'0',
+							myAddress,
+							transactionTypes
+						);
+						break;
+					}
 				}
 			}
 			onEvent('revoke_approval');

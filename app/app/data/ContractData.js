@@ -1,4 +1,4 @@
-import { ChainType, NetworkConfig, toChecksumAddress } from 'gopocket-core';
+import { ChainType, NetworkConfig, toChecksumAddress, util } from 'gopocket-core';
 import Engine from '../core/Engine';
 import { callSqlite, isMainnetChain } from '../util/ControllerUtils';
 
@@ -7,6 +7,9 @@ export async function queryContractMap(types, query, needFuse, fuseCount) {
 		return { queryAddress: [], querySymbol: [] };
 	}
 	const validTypes = types?.filter(type => {
+		if (util.isRpcChainType(type)) {
+			return false;
+		}
 		if (isMainnetChain(type)) {
 			return true;
 		}

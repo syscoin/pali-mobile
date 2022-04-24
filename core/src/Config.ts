@@ -32,7 +32,7 @@ export const NetworkConfig: { [type: number]: any } = {
           "nickname": "Ethereum"
         },
         infuraType: "mainnet",
-        ExplorerUrl: 'https://mainnet.etherscan.io',
+        ExplorerUrl: 'https://etherscan.io',
         ExplorerApiUrl: 'https://api.etherscan.io',
       },
       "Ropsten": {

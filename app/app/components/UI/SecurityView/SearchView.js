@@ -160,7 +160,7 @@ export default class SearchView extends PureComponent {
 				continue;
 			}
 			if (chainType === ChainType.Arbitrum) {
-				const arbContract = this.contracts[ChainType.Arbitrum];
+				const arbContract = Engine.contracts[ChainType.Arbitrum];
 				let success = false;
 				let address = searchQuery;
 				let l1Address = '';

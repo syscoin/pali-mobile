@@ -66,6 +66,9 @@ export function getRpcProviderExplorerUrl(chainType: number) {
 }
 
 export function isMainnetChain(chainType) {
+	if (!EngineNetworks()[chainType]) {
+		return false;
+	}
 	return EngineNetworks()[chainType]?.state.provider?.chainId === NetworkConfig[chainType]?.MainChainId;
 }
 

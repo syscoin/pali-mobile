@@ -180,8 +180,8 @@ class ApprovalList extends Component {
 	static propTypes = {
 		updateTime: PropTypes.number,
 		tokens: PropTypes.array,
-		// allEvents: PropTypes.object,
-		// selectedAddress: PropTypes.string,
+		allEvents: PropTypes.object,
+		selectedAddress: PropTypes.string,
 		showInfiniteDesc: PropTypes.func,
 		onItemPress: PropTypes.func
 	};

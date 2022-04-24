@@ -327,7 +327,6 @@ export async function isSmartContractAddress(address, chainType) {
 		const isSmartContract = util.isSmartContractCode(code);
 		await AssetsController.addSmartContract(chainId, address, isSmartContract);
 		return isSmartContract;
-		// eslint-disable-next-line no-empty
 	} catch (e) {}
 	return false;
 }
