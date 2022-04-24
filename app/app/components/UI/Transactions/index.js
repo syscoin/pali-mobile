@@ -572,6 +572,7 @@ class Transactions extends PureComponent {
 					tx =>
 						tx &&
 						tx.transactionHash &&
+						tx.status !== 'cancelled' &&
 						tx.chainId === chainId &&
 						tx.transaction?.value &&
 						!hexToBN(tx.transaction?.value).isZero() &&
@@ -579,7 +580,7 @@ class Transactions extends PureComponent {
 				);
 			} else {
 				this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(tx => {
-					if (!tx?.chainId || !tx?.transactionHash) {
+					if (!tx?.chainId || !tx?.transactionHash || tx.status === 'cancelled') {
 						return false;
 					}
 					if (util.isRpcChainType(getChainTypeByChainId(tx.chainId))) {
@@ -622,6 +623,7 @@ class Transactions extends PureComponent {
 					tx =>
 						tx &&
 						tx.transactionHash &&
+						tx.status !== 'cancelled' &&
 						tx.chainId === chainId &&
 						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
 						this.isTxType(txType, tx, selectedAddress)
@@ -631,6 +633,7 @@ class Transactions extends PureComponent {
 					tx =>
 						tx &&
 						tx.transactionHash &&
+						tx.status !== 'cancelled' &&
 						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
 						util.isRpcChainType(getChainTypeByChainId(tx.chainId)) &&
 						this.isTxType(txType, tx, selectedAddress)

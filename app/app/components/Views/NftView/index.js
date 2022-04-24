@@ -40,6 +40,7 @@ import { getDefiIcon } from '../../../util/rpcUtil';
 import { isSvgFile } from '../../../util/general';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
 import { ChainTypeBgDefi, ChainTypes } from '../../../util/ChainTypeImages';
+import { ChainType } from 'gopocket-core';
 
 const screenWidth = Device.getDeviceWidth();
 
@@ -537,7 +538,7 @@ class NftView extends PureComponent {
 				horizontal
 				contentContainerStyle={styles.actionContainer}
 			>
-				{(nftToken.chainId === this.props.chainId || nftToken.chainId === this.props.polygonChainId) && (
+				{(nftToken.type === ChainType.Ethereum || nftToken.type === ChainType.Polygon) && (
 					<ImageCapInset
 						style={[styles.actionView, { width: buttonWidth }]}
 						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
@@ -562,7 +563,7 @@ class NftView extends PureComponent {
 						</TouchableOpacity>
 					</ImageCapInset>
 				)}
-				{nftToken.chainId === this.props.chainId && (
+				{nftToken.type === ChainType.Ethereum && (
 					<ImageCapInset
 						style={[styles.actionView, { width: buttonWidth }]}
 						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}

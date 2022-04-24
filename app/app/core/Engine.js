@@ -38,6 +38,7 @@ import WalletConnect from './WalletConnect';
 import NotificationManager from './NotificationManager';
 import { getInternalFunctions } from '../util/threadUtils';
 import { reportError } from 'react-native-mumeng';
+import Device from '../util/Device';
 
 class AgentProvider extends EventEmitter {
 	name;
@@ -296,7 +297,7 @@ class Engine {
 				try {
 					this.datamodel.context[result.key]?.hub?.emit(...result.args);
 				} catch (e) {
-					reportError(JSON.stringify({ name: 'emit_error', emit: result, error: e }));
+					Device.isAndroid() && reportError(JSON.stringify({ name: 'emit_error', emit: result, error: e }));
 					util.logWarn('PPYang NativeThreads emit fail, result:', result, ' , error:', e);
 				}
 			});
@@ -323,7 +324,8 @@ class Engine {
 						this.datamodel.context[result.key]?.provider?.emit(...result.args);
 					}
 				} catch (e) {
-					reportError(JSON.stringify({ name: 'provider_emit_error', provider_emit: result, error: e }));
+					Device.isAndroid() &&
+						reportError(JSON.stringify({ name: 'provider_emit_error', provider_emit: result, error: e }));
 					util.logWarn('PPYang NativeThreads provider_emit fail, result:', result, ' , error:', e);
 				}
 			});

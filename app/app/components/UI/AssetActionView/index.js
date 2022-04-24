@@ -233,6 +233,8 @@ class AssetActionView extends PureComponent {
 				return false;
 			}
 			return true;
+		} else if (asset.type === ChainType.Ethereum) {
+			return true;
 		}
 		return false;
 	};
