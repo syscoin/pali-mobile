@@ -474,11 +474,12 @@ class EngineImpl {
 			await this.removeTxInfosIfNecessary();
 			for (const type in this.datamodel.networks) {
 				const chainType = Number(type);
-				if (chainType === ChainType.RPCBase) {
+				if (chainType === ChainType.RPCBase || chainType === ChainType.Arbitrum) {
 					continue;
 				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, true);
 			}
+			await this.refreshEthTransactionHistory(forceCheck, ChainType.Arbitrum, selectedAddress, true);
 
 			for (const type in this.datamodel.networks) {
 				const chainType = Number(type);
@@ -486,13 +487,6 @@ class EngineImpl {
 					continue;
 				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false);
-			}
-
-			for (const type in this.datamodel.networks) {
-				const chainType = Number(type);
-				if (chainType === ChainType.RPCBase) {
-					continue;
-				}
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false, true);
 			}
 		} catch (e) {
