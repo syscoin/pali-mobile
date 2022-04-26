@@ -1645,5 +1645,28 @@
 		"rpc": ["https://andromeda.metis.io/?owner=1088"],
 		"faucets": [],
 		"infoURL": "https://www.metis.io"
+	},
+	{
+		"name": "OKExChain Mainnet",
+		"chain": "okexchain",
+		"network": "mainnet",
+		"rpc": ["https://exchainrpc.okex.org"],
+		"faucets": ["https://free-online-app.com/faucet-for-eth-evm-chains/?"],
+		"nativeCurrency": {
+			"name": "OKExChain Global Utility Token",
+			"symbol": "OKT",
+			"decimals": 18
+		},
+		"infoURL": "https://www.okex.com/okexchain",
+		"shortName": "okt",
+		"chainId": 66,
+		"networkId": 66,
+		"explorers": [
+			{
+				"name": "OKLink",
+				"url": "https://www.oklink.com/okexchain",
+				"standard": "EIP3091"
+			}
+		]
 	}
 ]
