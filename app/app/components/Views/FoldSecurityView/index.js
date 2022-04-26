@@ -550,15 +550,19 @@ class FoldSecurityView extends PureComponent {
 				const normalLength = normal ? normal.length : 0;
 				const noticeLength = notice ? notice.length : 0;
 				const riskLength = risk ? risk.length : 0;
-				this.props.asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
-				this.setState({
-					securityData: { ...securityData, normalLength, noticeLength, riskLength },
-					showFastCheck: false
-				});
-				if (asset.isSecurityCenter) {
-					DeviceEventEmitter.emit('updateSecurity', this.props.asset);
+				if (normalLength !== 0 || noticeLength !== 0 || riskLength !== 0) {
+					this.props.asset.securityData = { ...securityData, normalLength, noticeLength, riskLength };
+					this.setState({
+						securityData: { ...securityData, normalLength, noticeLength, riskLength },
+						showFastCheck: false
+					});
+					if (asset.isSecurityCenter) {
+						DeviceEventEmitter.emit('updateSecurity', this.props.asset);
+					}
+					return;
 				}
-			} else if (this.fastCheckCount === 1) {
+			}
+			if (this.fastCheckCount === 1) {
 				this.fastCheckCount = 0;
 				this.setState({ showFastCheck: false, showNoDetectedModal: true });
 			} else {

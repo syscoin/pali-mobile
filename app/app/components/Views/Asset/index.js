@@ -287,10 +287,11 @@ class Asset extends PureComponent {
 			bgImg = require('../../../images/img_coin_bg_safe.png');
 		} else {
 			const securityData = getSecurityData(asset);
-			const { notice, risk, isTrust } = securityData;
+			const { notice, risk, normal, isTrust } = securityData;
 			const noticeNum = notice && notice.length ? notice.length : 0;
 			const riskNum = risk && risk.length ? risk.length : 0;
-			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0)) {
+			const normalNum = normal && normal.length ? normal.length : 0;
+			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0 && normalNum !== 0)) {
 				bgColor = '#91D752';
 				bgImg = require('../../../images/img_coin_bg_safe.png');
 			} else if (riskNum > 0) {
