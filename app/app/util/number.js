@@ -806,6 +806,13 @@ export function calcAssetPrices(asset, opt) {
 		}
 	}
 
+	if (price === undefined) {
+		price = 0;
+	}
+	if (!priceChange === undefined) {
+		priceChange = 0;
+	}
+
 	const { SecurityController } = EngineContext();
 	const securityTokens = SecurityController.state.securityTokens || [];
 	const risk_token =

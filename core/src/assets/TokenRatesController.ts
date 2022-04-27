@@ -719,7 +719,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
       for (const item of sliced_addresses) {
         const address = toChecksumAddress(item);
         const price = prices[address.toLowerCase()];
-        if (price) {
+        if (price && price.hasOwnProperty('usd') && price.hasOwnProperty('usd_24h_change')) {
           price.timestamp = Date.now();
           newContractExchangeRates[address] = price;
         } else {
