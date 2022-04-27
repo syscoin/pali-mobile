@@ -11,9 +11,10 @@ import Engine from '../../../core/Engine';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { setSelectedAsset } from '../../../actions/transaction';
-import { ChainType, LockType, OutgoingMessageState, util } from 'gopocket-core';
+import { ChainType, LockType, OutgoingMessageState, util, NetworkConfig } from 'gopocket-core';
 import { renderError } from '../../../util/error';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
+import { getNetworkConfig } from '../../../util/ControllerUtils';
 
 const activeOpacity = 0.8;
 const headerColor = '#1E1F20';
@@ -161,7 +162,7 @@ class Locked extends PureComponent {
 		if (asset.lockType === LockType.LockPolygon) {
 			return { type: ChainType.Polygon, canClaim: asset.done, waitDay: 0 };
 		} else if (asset.lockType === LockType.LockArb) {
-			const { confirmIntervalInSecond } = Engine.networks[ChainType.Arbitrum].getNetworkConfig(asset.chainId);
+			const { confirmIntervalInSecond } = getNetworkConfig(ChainType.Arbitrum, asset.chainId);
 			const oneDay = 24 * 60 * 60;
 			const waitDay = Math.ceil(confirmIntervalInSecond / oneDay);
 			return { type: ChainType.Arbitrum, canClaim: asset.done, waitDay };

@@ -1284,17 +1284,25 @@ export class Sqlite {
 
   async getTransactionsByAddress(
     address: string,
-    chainId: string | null,
+    chainIds: string[],
     from: string,
     to: string,
     index: number | undefined = undefined,
     count: number | undefined = undefined
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
-      let subSql = '';
-      if (chainId) {
-        subSql = `AND tx_chainId='${chainId}'`;
+      if (!chainIds?.length) {
+        return [];
       }
+      let subSql = '';
+      for (const chainId of chainIds) {
+        if (!subSql) {
+          subSql = `'${chainId}'`;
+        } else {
+          subSql = `${subSql}, '${chainId}'`;
+        }
+      }
+      subSql = `AND tx_chainId IN (${subSql})`;
       if (from) {
         subSql = `${subSql} AND lower(tx_from)='${from.toLowerCase()}'`;
       }
@@ -1404,16 +1412,24 @@ export class Sqlite {
 
   async getReceiveTx(
     address: string,
-    chainId: string,
+    chainIds: string[],
     to: string,
     index: number,
     count: number
   ) {
     return new Promise((resolve) => {
-      let subSql = '';
-      if (chainId) {
-        subSql = `AND tx_chainId='${chainId}'`;
+      if (!chainIds?.length) {
+        return [];
       }
+      let subSql = '';
+      for (const chainId of chainIds) {
+        if (!subSql) {
+          subSql = `'${chainId}'`;
+        } else {
+          subSql = `${subSql}, '${chainId}'`;
+        }
+      }
+      subSql = `AND tx_chainId IN (${subSql})`;
 
       const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, 'tx', to.toLowerCase(), address, 'tokentx', count, index];
@@ -1711,13 +1727,16 @@ export class Sqlite {
 
   async getTokenByHash(
     address: string,
-    chainId: string,
+    chainIds: string[],
     allHash: string[]
   ): Promise<any[]> {
     if (!allHash?.length) {
       return [];
     }
     return new Promise((resolve) => {
+      if (!allHash?.length || !chainIds?.length) {
+        return [];
+      }
       let hashSql = '';
       allHash.forEach((hash) => {
         if (hashSql) {
@@ -1727,9 +1746,14 @@ export class Sqlite {
         }
       });
       let subSql = '';
-      if (chainId) {
-        subSql = `AND tx_chainId='${chainId}'`;
+      for (const chainId of chainIds) {
+        if (!subSql) {
+          subSql = `'${chainId}'`;
+        } else {
+          subSql = `${subSql}, '${chainId}'`;
+        }
       }
+      subSql = `AND tx_chainId IN (${subSql})`;
       const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND transactionHash IN (${hashSql})`;
       const values = [address, 'tokentx'];
 
@@ -1753,16 +1777,24 @@ export class Sqlite {
 
   async getReceiveTokenTx(
     address: string,
-    chainId: string,
+    chainIds: string[],
     to: string,
     index: number,
     count: number
   ) {
     return new Promise((resolve) => {
-      let subSql = '';
-      if (chainId) {
-        subSql = `AND tx_chainId='${chainId}'`;
+      if (!chainIds?.length) {
+        return [];
       }
+      let subSql = '';
+      for (const chainId of chainIds) {
+        if (!subSql) {
+          subSql = `'${chainId}'`;
+        } else {
+          subSql = `${subSql}, '${chainId}'`;
+        }
+      }
+      subSql = `AND tx_chainId IN (${subSql})`;
 
       const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND txType=? AND transactionHash!='' AND transactionHash IS NOT NULL ${subSql} AND lower(tx_to)=? AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND txType=? ${subSql}) ORDER BY time DESC LIMIT ? OFFSET ?`;
       const values = [address, 'tokentx', to.toLowerCase(), address, 'tx', count, index];

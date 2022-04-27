@@ -76,6 +76,16 @@ export function isMainnetByChainType(chainType, chainId) {
 	return NetworkConfig[chainType]?.MainChainId === chainId?.toString();
 }
 
+export function getNetworkConfig(chainType: ChainType, chainId: string) {
+	const networkConfig = NetworkConfig[chainType].Networks;
+	for (const i in networkConfig) {
+		if (networkConfig[i].provider.chainId === chainId) {
+			return networkConfig[i];
+		}
+	}
+	return {};
+}
+
 export async function callSqlite(method, ...args) {
 	if (EngineImpl?.context) {
 		return Sqlite.getInstance()[method]?.(...args);

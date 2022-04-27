@@ -266,6 +266,10 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
     return !enabledChains.includes(type);
   }
 
+  getEnabledChains(selectedAddress: string) {
+    return this.state.identities?.[selectedAddress]?.enabledChains || defaultEnabledChains;
+  }
+
   getEnabledRpcChains(selectedAddress: string) {
     const enabledChains = this.state.identities?.[selectedAddress]?.enabledChains || [];
     return enabledChains.filter((type) => isRpcChainType(type));

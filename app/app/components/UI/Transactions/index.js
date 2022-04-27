@@ -188,9 +188,9 @@ class Transactions extends PureComponent {
 			const chainId = getChainIdByType(type);
 			if (util.isRpcChainType(type)) {
 				if (asset.nativeCurrency) {
-					targetTx = this.loadRpcTx(txType, chainId, selectedAddress, startIndex, loadCount);
+					targetTx = this.loadRpcTx(txType, [chainId], selectedAddress, startIndex, loadCount);
 				} else {
-					targetTx = this.loadRpcTokenTx(txType, chainId, selectedAddress, startIndex, loadCount);
+					targetTx = this.loadRpcTokenTx(txType, [chainId], selectedAddress, startIndex, loadCount);
 				}
 				loadEnd = targetTx.length < loadCount;
 				this.allLoadCount += targetTx.length;
@@ -338,7 +338,7 @@ class Transactions extends PureComponent {
 
 		if (approveTx.length) {
 			const allHash = approveTx.map(tx => tx.transactionHash);
-			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, chainId, allHash);
+			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, [chainId], allHash);
 			approveTx.forEach(tx => {
 				const tokenTxs = addressTokenTx.filter(tokenTx => tokenTx.transactionHash === tx.transactionHash);
 				if (tokenTxs?.length) {
@@ -361,25 +361,39 @@ class Transactions extends PureComponent {
 	loadAllTx = async (txType, hasLoadTx, startIndex, loadCount) => {
 		const { selectedAddress } = this.props;
 		const selectChainType = this.props.selectChainType || ChainType.All;
-		const chainId = selectChainType === ChainType.All ? null : getChainIdByType(selectChainType);
+		const chainIds = [];
+		const rpcChainIds = [];
+		if (selectChainType === ChainType.All) {
+			const allType = await Engine.context.PreferencesController.getEnabledChains(selectedAddress);
+			if (allType) {
+				for (const chainType of allType) {
+					const chainId = getChainIdByType(chainType);
+					if (util.isRpcChainType(chainType)) {
+						rpcChainIds.push(chainId);
+					} else {
+						chainIds.push(chainId);
+					}
+				}
+			}
+		} else {
+			const chainId = getChainIdByType(selectChainType);
+			if (util.isRpcChainType(selectChainType)) {
+				rpcChainIds.push(chainId);
+			} else {
+				chainIds.push(chainId);
+			}
+		}
 
 		const tempTx = [];
-		let rpcTx;
-		if (selectChainType === ChainType.All) {
-			rpcTx = this.loadRpcTx(txType, undefined, selectedAddress, this.loadRpcTxCount, loadCount);
-		} else if (util.isRpcChainType(selectChainType)) {
-			rpcTx = this.loadRpcTx(txType, chainId, selectedAddress, this.loadRpcTxCount, loadCount);
-		}
+		let rpcTx =
+			rpcChainIds?.length && this.loadRpcTx(txType, rpcChainIds, selectedAddress, this.loadRpcTxCount, loadCount);
 		if (rpcTx) {
 			rpcTx = rpcTx.map(tx => ({ ...tx, loadClass: 1 }));
 			tempTx.push(...rpcTx);
 		}
-		let rpcTokenTx;
-		if (selectChainType === ChainType.All) {
-			rpcTokenTx = this.loadRpcTokenTx(txType, null, selectedAddress, this.loadRpcTokenCount, loadCount);
-		} else if (util.isRpcChainType(selectChainType)) {
-			rpcTokenTx = this.loadRpcTokenTx(txType, chainId, selectedAddress, this.loadRpcTokenCount, loadCount);
-		}
+		let rpcTokenTx =
+			rpcChainIds?.length &&
+			this.loadRpcTokenTx(txType, rpcChainIds, selectedAddress, this.loadRpcTokenCount, loadCount);
 		if (rpcTokenTx) {
 			rpcTokenTx = rpcTokenTx.map(tx => ({ ...tx, loadClass: 2 }));
 			tempTx.push(...rpcTokenTx);
@@ -390,7 +404,7 @@ class Transactions extends PureComponent {
 			txs = await callSqlite(
 				'getReceiveTx',
 				selectedAddress,
-				chainId,
+				chainIds,
 				selectedAddress,
 				this.loadTxCount,
 				loadCount + 10
@@ -399,7 +413,7 @@ class Transactions extends PureComponent {
 			txs = await callSqlite(
 				'getTransactionsByAddress',
 				selectedAddress,
-				chainId,
+				chainIds,
 				txType === 2 && selectedAddress,
 				txType === 1 && selectedAddress,
 				this.loadTxCount,
@@ -415,7 +429,7 @@ class Transactions extends PureComponent {
 			let receiveToken = await callSqlite(
 				'getReceiveTokenTx',
 				selectedAddress,
-				chainId,
+				chainIds,
 				selectedAddress,
 				this.loadTokenCount,
 				loadCount
@@ -456,7 +470,7 @@ class Transactions extends PureComponent {
 			});
 
 			const allHash = tempTxs.map(tx => tx.transactionHash);
-			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, chainId, allHash);
+			const addressTokenTx = await callSqlite('getTokenByHash', selectedAddress, chainIds, allHash);
 
 			tempTxs.forEach(tx => {
 				const tokenTxs = addressTokenTx.filter(tokenTx => tokenTx.transactionHash === tx.transactionHash);
@@ -565,33 +579,18 @@ class Transactions extends PureComponent {
 		return transactions_with_gas;
 	};
 
-	loadRpcTx = (txType, chainId, selectedAddress, start, count) => {
+	loadRpcTx = (txType, chainIds, selectedAddress, start, count) => {
 		if (this.tempRpcTx === undefined) {
-			if (chainId) {
-				this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(
-					tx =>
-						tx &&
-						tx.transactionHash &&
-						tx.status !== 'cancelled' &&
-						tx.chainId === chainId &&
-						tx.transaction?.value &&
-						!hexToBN(tx.transaction?.value).isZero() &&
-						this.isTxType(txType, tx, selectedAddress)
-				);
-			} else {
-				this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(tx => {
-					if (!tx?.chainId || !tx?.transactionHash || tx.status === 'cancelled') {
-						return false;
-					}
-					if (util.isRpcChainType(getChainTypeByChainId(tx.chainId))) {
-						if (!tx.transaction?.value || hexToBN(tx.transaction?.value).isZero()) {
-							return false;
-						}
-						return this.isTxType(txType, tx, selectedAddress);
-					}
-					return false;
-				});
-			}
+			this.tempRpcTx = Engine.context.TransactionController.state.transactionMetas.filter(
+				tx =>
+					tx &&
+					tx.transactionHash &&
+					tx.status !== 'cancelled' &&
+					chainIds.includes(tx.chainId) &&
+					tx.transaction?.value &&
+					!hexToBN(tx.transaction?.value).isZero() &&
+					this.isTxType(txType, tx, selectedAddress)
+			);
 			this.tempRpcTx = this.tempRpcTx.sort((a, b) => b.time - a.time);
 		}
 		return this.tempRpcTx.slice(start, start + count);
@@ -615,30 +614,17 @@ class Transactions extends PureComponent {
 		);
 	};
 
-	loadRpcTokenTx = (txType, chainId, selectedAddress, start, count) => {
+	loadRpcTokenTx = (txType, chainIds, selectedAddress, start, count) => {
 		if (this.tempRpcTokenTx === undefined) {
-			let targetTx;
-			if (chainId) {
-				targetTx = Engine.context.TransactionController.state.transactionMetas.filter(
-					tx =>
-						tx &&
-						tx.transactionHash &&
-						tx.status !== 'cancelled' &&
-						tx.chainId === chainId &&
-						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
-						this.isTxType(txType, tx, selectedAddress)
-				);
-			} else {
-				targetTx = Engine.context.TransactionController.state.transactionMetas.filter(
-					tx =>
-						tx &&
-						tx.transactionHash &&
-						tx.status !== 'cancelled' &&
-						(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
-						util.isRpcChainType(getChainTypeByChainId(tx.chainId)) &&
-						this.isTxType(txType, tx, selectedAddress)
-				);
-			}
+			const targetTx = Engine.context.TransactionController.state.transactionMetas.filter(
+				tx =>
+					tx &&
+					tx.transactionHash &&
+					tx.status !== 'cancelled' &&
+					chainIds.includes(tx.chainId) &&
+					(!tx.transaction?.value || tx.transaction?.value === '0x0') &&
+					this.isTxType(txType, tx, selectedAddress)
+			);
 			this.tempRpcTokenTx = targetTx.map(tx => ({
 				...tx,
 				from: tx.transaction?.from,
