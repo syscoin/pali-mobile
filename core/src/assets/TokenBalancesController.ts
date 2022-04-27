@@ -96,19 +96,16 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   }
 
   async refresh() {
-    logDebug(`leon.w@${this.name} refresh backgroundMode: ${this.config.backgroundMode}`);
     if (this.config.backgroundMode) {
       return;
     }
     const preferencesController = this.context.PreferencesController as PreferencesController;
     const { selectedAddress } = preferencesController.state;
-    logDebug(`leon.w@${this.name} refresh selectedAddress: ${selectedAddress}`);
     if (!selectedAddress) {
       return;
     }
     const releaseLock = await this.mutex.acquire();
     try {
-      logDebug(`leon.w@${this.name} refresh start`);
       const start = Date.now();
       const intervals: number[] = [];
 
@@ -119,7 +116,6 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
         if (NetworkConfig[chainType].Disabled) {
           continue;
         }
-        logDebug(`leon.w@${this.name} refresh chainType: ${chainType}`);
         if (chainType === ChainType.Tron) {
           !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
           await safelyExecute(() => this.updateTronBalances(selectedAddress));
@@ -134,15 +130,12 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       const types = preferences.getEnabledRpcChains(selectedAddress);
       if (types?.length > 0) {
         for (const type of types) {
-          logDebug(`leon.w@${this.name} refresh rpc chainType: ${type}`);
           await safelyExecute(() => this.updateBalances(selectedAddress, type));
           intervals.push(Date.now() - start);
         }
       }
 
       logDebug(`leon.w@${this.name} refresh: ${selectedAddress}, intervals=${intervals}`);
-    } catch (e) {
-      logDebug(`leon.w@${this.name} refresh error: ${e}`);
     } finally {
       releaseLock();
     }
@@ -171,7 +164,6 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       return;
     }
     const { chainId, contractController } = getControllerFromType(this, chainType);
-    logDebug('PPYang updateBalances chainType:', chainType, chainId);
     if (!contractController) {
       return;
     }
@@ -182,9 +174,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
 
     const tokensAddress = tokens.map((token) => token.address);
     tokensAddress.push('0x0');
-    logDebug('PPYang updateBalances start getBalancesInSingleCall');
     const balances = await contractController.getBalancesInSingleCall(selectedAddress, tokensAddress, true, chainId);
-    logDebug('PPYang updateBalances end getBalancesInSingleCall');
     for (const balancesKey in balances) {
         newContractBalances[balancesKey] = balances[balancesKey];
     }
@@ -204,7 +194,6 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       }
     }
 
-    logDebug('PPYang updateBalances needUpdate:', chainType, needUpdate);
     if (needUpdate) {
       const typeBalances = this.state.allContractBalances[selectedAddress] || {};
       typeBalances[chainType] = newContractBalances;
