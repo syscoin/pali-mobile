@@ -293,6 +293,7 @@ class NetworkFee extends PureComponent {
 			suggestedGasFees.fastGwei = suggestedGasFees.averageGwei.muln(1.5);
 		}
 		if (this.props.type === ChainType.Bsc) {
+			suggestedGasFees.safeLowGwei = suggestedGasFees.averageGwei;
 			suggestedGasFees.averageGwei = suggestedGasFees.fastGwei.add(suggestedGasFees.safeLowGwei).divn(2);
 		} else if (suggestedGasFees.safeLowGwei.gte(suggestedGasFees.averageGwei)) {
 			suggestedGasFees.safeLowGwei = suggestedGasFees.averageGwei.muln(0.5);
