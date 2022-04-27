@@ -1054,10 +1054,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
 
   async fetchAll(address: string, type: ChainType, loadToken: boolean, txInternal: boolean, opt?: FetchAllOptions):
     Promise<{latestIncomingTxBlockNumber: number; needUpdate: number}> {
-    logDebug('PPYang fetchAll start address:', address, type, loadToken, txInternal);
     const preferences = this.context.PreferencesController as PreferencesController;
     if (preferences.isDisabledChain(address, type)) {
-      logDebug('PPYang fetchAll end disable:', address, type);
       return {
         latestIncomingTxBlockNumber: opt ? Number(opt.fromBlock) : 0,
         needUpdate: TxNoChange,
@@ -1070,7 +1068,6 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       latestIncomingTxBlockNumber,
     } = await this.handleScanTx(address, type, chainId, loadToken, txInternal, etherscanTxResponse);
 
-    logDebug('PPYang fetchAll end type:', type, commonChanged);
     if (commonChanged !== TxNoChange) {
       this.update({
         txChangedType: commonChanged,

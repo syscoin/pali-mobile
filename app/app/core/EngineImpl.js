@@ -463,13 +463,11 @@ class EngineImpl {
 	};
 
 	refreshTransactionHistory = async (selectedAddress, forceCheck) => {
-		util.logDebug('PPYang refreshTransactionHistory selectedAddress:', selectedAddress, forceCheck);
 		const releaseLock = await mutex.acquire();
 		try {
 			if (!selectedAddress) {
 				selectedAddress = this.datamodel.context.PreferencesController.state.selectedAddress;
 			}
-			util.logDebug('PPYang refreshTransactionHistory start selectedAddress:', selectedAddress);
 			if (!selectedAddress) {
 				return;
 			}
@@ -479,13 +477,8 @@ class EngineImpl {
 				if (chainType === ChainType.RPCBase || chainType === ChainType.Arbitrum) {
 					continue;
 				}
-				util.logDebug('PPYang refreshTransactionHistory refreshEthTransactionHistory chainType:', chainType);
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, true);
 			}
-			util.logDebug(
-				'PPYang refreshTransactionHistory refreshEthTransactionHistory chainType:',
-				ChainType.Arbitrum
-			);
 			await this.refreshEthTransactionHistory(forceCheck, ChainType.Arbitrum, selectedAddress, true);
 
 			for (const type in this.datamodel.networks) {
@@ -493,14 +486,9 @@ class EngineImpl {
 				if (chainType === ChainType.RPCBase) {
 					continue;
 				}
-				util.logDebug(
-					'PPYang refreshTransactionHistory refreshEthTransactionHistory main or internal chainType:',
-					chainType
-				);
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false);
 				await this.refreshEthTransactionHistory(forceCheck, chainType, selectedAddress, false, true);
 			}
-			util.logDebug('PPYang refreshTransactionHistory end selectedAddress:', selectedAddress);
 		} catch (e) {
 			util.logWarn('refreshTransactionHistory error:', e);
 		} finally {
