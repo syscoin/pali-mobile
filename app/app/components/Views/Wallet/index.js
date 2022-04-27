@@ -261,6 +261,12 @@ class Wallet extends PureComponent {
 		];
 		await util.safelyExecuteWithTimeout(async () => await Promise.all(actions), false, 6000);
 		this.setState({ refreshing: false });
+
+		const { identities, selectedAddress } = this.props;
+		const nftChecked = identities[selectedAddress]?.currentTokenType === TokenType.NFT;
+		if (nftChecked) {
+			DeviceEventEmitter.emit('onParentScroll', 100);
+		}
 	};
 
 	closeTokenSwipeRow = () => {

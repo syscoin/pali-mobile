@@ -213,6 +213,12 @@ class Nft extends PureComponent {
 	}
 
 	onParentScroll = type => {
+		//Pull down refresh
+		if (type === 100) {
+			this.loadData(0);
+			return;
+		}
+
 		if (type === 2) {
 			this.isScrollTop = true;
 			return;
