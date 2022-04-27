@@ -127,14 +127,13 @@ class DeveloperOptions extends PureComponent {
 			elementMap.push(<View key={`line${type}`} style={styles.line} />);
 			elementMap.push(
 				<Text key={`title${type}`} style={styles.titleHead}>
-					{getDeveloperTitle(type)}
+					{getDeveloperTitle(chainType)}
 				</Text>
 			);
 			const Networks = NetworkConfig[type].Networks;
 			let i = 0;
 			for (const name in Networks) {
 				let selected;
-				// console.log('PPYang renderNetworks', allNetworkChanging[chainType], chainType);
 				if (allNetworkChanging[chainType]) {
 					selected =
 						allNetworkChanging[chainType] === name ? (

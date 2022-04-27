@@ -1,7 +1,7 @@
 import {BN} from 'ethereumjs-util';
 import {Mutex} from 'async-mutex';
 import BaseController, {BaseConfig, BaseState} from '../BaseController';
-import util, {getTronAccountUrl, handleFetch, logDebug, safelyExecute} from '../util';
+import util, {getTronAccountUrl, handleFetch, logDebug, safelyExecute, safelyExecuteWithTimeout} from '../util';
 import PreferencesController from '../user/PreferencesController';
 import TronNetworkController from '../network/TronNetworkController';
 import KeyringController from '../keyring/KeyringController';
@@ -174,7 +174,10 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
 
     const tokensAddress = tokens.map((token) => token.address);
     tokensAddress.push('0x0');
-    const balances = await contractController.getBalancesInSingleCall(selectedAddress, tokensAddress, true, chainId);
+    let balances = await safelyExecuteWithTimeout(async () => await contractController.getBalancesInSingleCall(selectedAddress, tokensAddress, true, chainId), true, 40000);
+    if (!balances) {
+      return;
+    }
     for (const balancesKey in balances) {
         newContractBalances[balancesKey] = balances[balancesKey];
     }

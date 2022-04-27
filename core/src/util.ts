@@ -131,7 +131,8 @@ export async function handleTransactionFetch(
   }
   let etherscanTxResponse;
   try {
-    etherscanTxResponse = await handleFetch(api.url, api.options);
+    const response = await timeoutFetch(api.url, api.options, 20000);
+    etherscanTxResponse = await response.json();
   } catch (e) {
     logInfo(`leon.w@fetch ${api.url} failed. error=${e}`);
   }
