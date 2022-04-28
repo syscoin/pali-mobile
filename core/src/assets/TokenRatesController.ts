@@ -620,7 +620,7 @@ export class TokenRatesController extends BaseController<TokenRatesConfig, Token
 
   async loadTvSymbol(searchName: string) {
     return new Promise<string>(async (resolve) => {
-      const url = `https://symbol-search.tradingview.com/symbol_search/?text='${searchName}'&hl=1&type=bitcoin,crypto&domain=production`;
+      const url = `https://symbol-search.tradingview.com/symbol_search/?text=${searchName}&hl=1&type=bitcoin,crypto&domain=production`;
       const result = await handleFetch(url, { method: 'GET' });
       if (result?.[0]?.symbol) {
         this.state.tvSymbol[searchName] = result?.[0]?.symbol;
