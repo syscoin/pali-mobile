@@ -70,6 +70,8 @@ apikeys
 *.bundle
 /android/app/src/main/res/raw/locales*
 /android/app/src/main/res/raw/node_modules*
+android/app/src/main/res/**/app_images_*.png
 /ios/assets/locales/
+/ios/assets/app/
 
 sourcemaps/*.map
