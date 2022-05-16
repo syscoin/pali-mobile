@@ -249,7 +249,6 @@ class Approve extends PureComponent {
 		});
 		const total = value.add(gas.mul(gasPrice));
 		if (!gas) error = strings('transaction.invalid_gas');
-		else if (gas.lt(new BN(21000)) || gas.gt(new BN(7920028))) error = strings('custom_gas.warning_gas_limit');
 		else if (!gasPrice) error = strings('transaction.invalid_gas_price');
 		else if (balanceBN && isBN(gas) && isBN(gasPrice) && balanceBN.lt(gas.mul(gasPrice))) {
 			const amount = renderFromWei(total.sub(value));

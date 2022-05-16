@@ -325,9 +325,6 @@ class TransactionEditor extends PureComponent {
 		if (gasPrice && !isBN(gasPrice)) {
 			return strings('transaction.invalid_gas_price');
 		}
-		if (gas.lt(new BN(21000)) || gas.gt(new BN(7920028))) {
-			return strings('custom_gas.warning_gas_limit');
-		}
 
 		const balanceBN = getNativeCurrencyBalance(getChainTypeByChainId(chainId), {
 			allContractBalances
