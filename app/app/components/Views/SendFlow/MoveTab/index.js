@@ -63,6 +63,7 @@ import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import LottieView from 'lottie-react-native';
 
 import cBridgeImage from '../../../../images/img_bridge_cbridge.png';
+import lifiBridgeImage from '../../../../images/img_bridge_lifi.png';
 import multichainImage from '../../../../images/img_bridge_multichain.png';
 import arbBridgeImage from '../../../../images/img_bridge_arb.png';
 import arbBridgeCnImage from '../../../../images/img_bridge_arb_cn.png';
@@ -1453,6 +1454,38 @@ class MoveTab extends PureComponent {
 		this.onClose();
 	};
 
+	todoLifi = () => {
+		const { type, address, symbol } = this.props.asset;
+		const fromChain = this.getLifiChain(type);
+		const toChain = this.getLifiChain(this.state.networkSelectType);
+
+		const newTabUrl = `https://transferto.xyz/swap?fromChain=${fromChain}&fromToken=${address}&toChain=${toChain}&toToken=${symbol}`;
+		const chainType = this.props.asset.type;
+		this.props.navigation.navigate('BrowserTabHome');
+		this.props.navigation.navigate('BrowserView', {
+			newTabUrl,
+			chainType,
+			reloadOnce: true
+		});
+		this.onClose();
+	};
+
+	getLifiChain = type => {
+		let chain = 'eth';
+		if (type === ChainType.Bsc) {
+			chain = 'bsc';
+		} else if (type === ChainType.Polygon) {
+			chain = 'pol';
+		} else if (type === ChainType.Arbitrum) {
+			chain = 'arb';
+		} else if (type === ChainType.Avax) {
+			chain = 'ava';
+		} else if (type === ChainType.Optimism) {
+			chain = 'opt';
+		}
+		return chain;
+	};
+
 	todoNatvieBridge = () => {
 		this.setState({ moveStep: 2 });
 	};
@@ -1466,36 +1499,44 @@ class MoveTab extends PureComponent {
 		const height = (width * 80) / 299;
 		const isCBridge = getSupportBridgeType(asset, networkSelectType) === TYPE_CBRIDGE;
 		return (
-			<View style={styles.bridgeWrapper}>
-				<TouchableOpacity
-					onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
-					activeOpacity={activeOpacity}
-				>
-					<Image
-						style={[styles.bridgeImage, { width, height }]}
-						source={isCBridge ? cBridgeImage : multichainImage}
-						resizeMode={'stretch'}
-					/>
-				</TouchableOpacity>
-				<Text style={styles.bridgeText}>
-					{showArbBrige
-						? strings('other.cbridge_period_limit')
-						: strings('other.no_official_bridge', { bridge: isCBridge ? 'cBridge' : 'Multichain' })}
-				</Text>
-				{showArbBrige && (
-					<>
-						<TouchableOpacity onPress={this.todoNatvieBridge} activeOpacity={activeOpacity}>
-							<Image
-								style={[styles.bridgeImage, { width, height }]}
-								source={isZh ? arbBridgeCnImage : arbBridgeImage}
-								resizeMode={'stretch'}
-							/>
-						</TouchableOpacity>
-						<Text style={styles.bridgeText}>{strings('other.arb_bridge_withdraw_limit')}</Text>
-					</>
-				)}
-				<View style={baseStyles.flexGrow} />
-			</View>
+			<ScrollView showsVerticalScrollIndicator={false}>
+				<View style={styles.bridgeWrapper}>
+					<TouchableOpacity
+						onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
+						activeOpacity={activeOpacity}
+					>
+						<Image
+							style={[styles.bridgeImage, { width, height }]}
+							source={isCBridge ? cBridgeImage : multichainImage}
+							resizeMode={'stretch'}
+						/>
+					</TouchableOpacity>
+					{showArbBrige && (
+						<>
+							<TouchableOpacity onPress={this.todoNatvieBridge} activeOpacity={activeOpacity}>
+								<Image
+									style={[styles.bridgeImage, { width, height }]}
+									source={isZh ? arbBridgeCnImage : arbBridgeImage}
+									resizeMode={'stretch'}
+								/>
+							</TouchableOpacity>
+							<Text style={styles.bridgeText}>{strings('other.arb_bridge_withdraw_limit')}</Text>
+						</>
+					)}
+					{isCBridge && (
+						<>
+							<TouchableOpacity onPress={this.todoLifi} activeOpacity={activeOpacity}>
+								<Image
+									style={[styles.bridgeImage, { width, height, marginBottom: 30 }]}
+									source={lifiBridgeImage}
+									resizeMode={'stretch'}
+								/>
+							</TouchableOpacity>
+						</>
+					)}
+					<View style={baseStyles.flexGrow} />
+				</View>
+			</ScrollView>
 		);
 	};
 
