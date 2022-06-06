@@ -1292,7 +1292,8 @@ export class Sqlite {
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
-        return [];
+        resolve([]);
+        return;
       }
       let subSql = '';
       for (const chainId of chainIds) {
@@ -1419,7 +1420,8 @@ export class Sqlite {
   ) {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
-        return [];
+        resolve([]);
+        return;
       }
       let subSql = '';
       for (const chainId of chainIds) {
@@ -1735,7 +1737,8 @@ export class Sqlite {
     }
     return new Promise((resolve) => {
       if (!allHash?.length || !chainIds?.length) {
-        return [];
+        resolve([]);
+        return;
       }
       let hashSql = '';
       allHash.forEach((hash) => {
@@ -1784,7 +1787,8 @@ export class Sqlite {
   ) {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
-        return [];
+        resolve([]);
+        return;
       }
       let subSql = '';
       for (const chainId of chainIds) {
