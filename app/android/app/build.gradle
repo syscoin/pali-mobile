@@ -49,8 +49,8 @@ android {
 		applicationId "io.gopocket"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 149
-		versionName "1.4.9"
+		versionCode 150
+		versionName "1.5.0"
 		multiDexEnabled true
 		missingDimensionStrategy "minReactNative", "minReactNative46"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
