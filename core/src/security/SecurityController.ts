@@ -323,12 +323,12 @@ export class SecurityController extends BaseController<SecurityConfig, SecurityS
       return securityTokens;
     }
 
-    if (tokenArray.length <= 100) {
+    if (tokenArray.length <= 10) {
       const listData = await this.fetchSecurityData(tokenArray, chainId);
       securityTokens = securityTokens.concat(this.mapResultList(tokenArray, listData, chainId));
     } else {
-      for (let i = 0; i <= tokenArray.length / 100; i++) {
-        const subTokens = tokenArray.slice(i * 100, (i + 1) * 100);
+      for (let i = 0; i <= tokenArray.length / 10; i++) {
+        const subTokens = tokenArray.slice(i * 10, (i + 1) * 10);
         const listData = await this.fetchSecurityData(subTokens, chainId);
         securityTokens = securityTokens.concat(this.mapResultList(subTokens, listData, chainId));
       }
