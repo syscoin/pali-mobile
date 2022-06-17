@@ -1,4 +1,4 @@
-import { BigNumber, utils as EthersUtils } from 'ethers';
+import { BigNumber, utils as EthersUtils, providers } from 'ethers';
 import * as axios from 'axios';
 import { BigNumber as BignumberJs } from 'bignumber.js';
 import { BN, toChecksumAddress, stripHexPrefix, isValidAddress, addHexPrefix, isZeroAddress } from 'ethereumjs-util';
@@ -9,6 +9,7 @@ import { Mutex } from 'async-mutex';
 import URL from 'url-parse';
 import * as util from './util';
 import Fuse from 'fuse.js';
+import { serialize } from '@ethersproject/transactions'
 
 export * from "./Config";
 
@@ -43,7 +44,7 @@ export * from './assets/DefiProtocolController';
 export * from './assets/StaticTokenController';
 
 // ethers
-export { BigNumber, EthersUtils };
+export { BigNumber, EthersUtils, providers, serialize };
 
 export { util, axios, BignumberJs, EthjsUnit, RNFS, wordlists, Mutex, URL, Fuse };
 // ethereumjs-util

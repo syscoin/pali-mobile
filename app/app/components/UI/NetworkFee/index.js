@@ -495,6 +495,12 @@ class NetworkFee extends PureComponent {
 
 		const middleSpeed = type === ChainType.Bsc ? 0 : MAX_SLIDER / 2;
 
+		let rAmount, rPrice;
+		if (ready) {
+			rAmount = renderAmount(getEthGasFee(selectTotalGas, transaction.gas, suggestedGasFees?.l1Fee));
+			rPrice = getFiatGasFee(selectTotalGas, rate, currencyCode, transaction.gas, suggestedGasFees?.l1Fee);
+		}
+
 		return (
 			<View style={styles.root}>
 				{ready ? (
@@ -534,11 +540,7 @@ class NetworkFee extends PureComponent {
 										</Text>
 									</View>
 									<Text style={styles.amountText}>
-										{renderAmount(getEthGasFee(selectTotalGas, transaction.gas)) +
-											' ' +
-											getTickerByType(this.props.type) +
-											' '}
-										≈{' ' + getFiatGasFee(selectTotalGas, rate, currencyCode, transaction.gas)}
+										{rAmount + ' ' + getTickerByType(this.props.type) + ' '}≈{' ' + rPrice}
 									</Text>
 									<Slider
 										style={styles.slider}

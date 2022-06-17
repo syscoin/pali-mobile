@@ -53,6 +53,7 @@
     },
     "dependencies": {
         "@benjeau/react-native-draw": "0.3.3",
+        "@eth-optimism/contracts": "0.5.27",
         "@react-native-community/async-storage": "1.12.1",
         "@react-native-community/blur": "^3.6.0",
         "@react-native-community/cameraroll": "^4.0.4",

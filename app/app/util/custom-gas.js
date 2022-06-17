@@ -1,10 +1,11 @@
-import { hexToBN, isEIP1559Compatibility, renderFromWei, toWei, weiToFiat } from './number';
+import { hexToBN, isEIP1559Compatibility, renderFromWei, toGwei, toWei, weiToFiat } from './number';
 import { strings } from '../../locales/i18n';
 import TransactionTypes from '../core/TransactionTypes';
 import Engine from '../core/Engine';
-import { BN, ChainType, util } from 'gopocket-core';
+import { BN, ChainType, util, providers, serialize } from 'gopocket-core';
 import { conversionUtil } from './conversion-util';
 import { isMainnetByChainType } from './ControllerUtils';
+import { getContractFactory, predeploys } from '@eth-optimism/contracts';
 
 export const ETH = 'ETH';
 export const GWEI = 'GWEI';
@@ -55,8 +56,11 @@ export function getRenderableEthGasFee(estimate, gasLimit = 21000) {
 	return renderFromWei(gasFee);
 }
 
-export function getEthGasFee(weiGas, gasLimitBN) {
-	const gasFee = weiGas.mul(gasLimitBN);
+export function getEthGasFee(weiGas, gasLimitBN, moreGasFee = undefined) {
+	let gasFee = weiGas.mul(gasLimitBN);
+	if (moreGasFee) {
+		gasFee = gasFee.add(moreGasFee);
+	}
 	return renderFromWei(gasFee);
 }
 
@@ -74,8 +78,11 @@ export function getRenderableFiatGasFee(estimate, conversionRate, currencyCode, 
 	return weiToFiat(wei, conversionRate, currencyCode);
 }
 
-export function getFiatGasFee(weiGas, conversionRate, currencyCode, gasLimit = 21000) {
-	const wei = weiGas.mul(new BN(gasLimit, 10));
+export function getFiatGasFee(weiGas, conversionRate, currencyCode, gasLimit = 21000, moreGasFee = undefined) {
+	let wei = weiGas.mul(new BN(gasLimit, 10));
+	if (moreGasFee) {
+		wei = wei.add(moreGasFee);
+	}
 	return weiToFiat(wei, conversionRate, currencyCode);
 }
 
@@ -227,6 +234,35 @@ export async function fetchAvaxGasEstimates() {
 	]);
 }
 
+async function getOptimismL1Fee(transaction) {
+	const opProvider = Engine.networks[ChainType.Optimism]?.provider;
+	if (!opProvider) {
+		return undefined;
+	}
+	const unsignedTx = {
+		data: transaction.data,
+		value: transaction.value,
+		to: transaction.to,
+		gasPrice: transaction.gasPrice,
+		gasLimit: transaction.gas
+	};
+	const provider = new providers.Web3Provider(opProvider);
+	const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle')
+		.attach(predeploys.OVM_GasPriceOracle)
+		.connect(provider);
+	const serializedTx = serialize(unsignedTx);
+	// const l1GasUsed = await OVMGasPriceOracle.getL1GasUsed(serializedTx)
+	// const l1GasPrice = await OVMGasPriceOracle.l1BaseFee()
+	// const scalar = await OVMGasPriceOracle.scalar()
+	// return {
+	// 	l1Fee,
+	// 	l1GasPrice,
+	// 	l1GasUsed,
+	// 	scalar: scalar / 1e6,
+	// }
+	return await OVMGasPriceOracle.getL1Fee(serializedTx);
+}
+
 export async function getBasicGasEstimates(transaction) {
 	const { TransactionController } = Engine.context;
 	const chainId = transaction.chainId;
@@ -275,6 +311,22 @@ export async function getBasicGasEstimates(transaction) {
 	} catch (error) {
 		util.logWarn('PPYang, Error while trying to get gas limit estimates', error);
 	}
+
+	let l1Fee;
+	if (isMainnetByChainType(ChainType.Optimism, chainId) && gasLimit && averageGasPrice) {
+		try {
+			l1Fee = await getOptimismL1Fee({
+				...transaction,
+				gas: '0x' + gasLimit.toString(16),
+				gasPrice: '0x' + averageGasPrice.toString(16)
+			});
+			l1Fee = hexToBN(l1Fee.toHexString());
+		} catch (e) {
+			console.log('getOptimismL1Fee e:', e);
+			l1Fee = undefined;
+		}
+	}
+
 	if (!basicGasEstimates) {
 		let safeLow;
 		if (averageGasPrice.isZero()) {
@@ -291,7 +343,7 @@ export async function getBasicGasEstimates(transaction) {
 	} else {
 		averageGasPrice = basicGasEstimates.averageGwei;
 	}
-	basicGasEstimates = { gas: gasLimit, gasPrice: averageGasPrice, ...basicGasEstimates };
+	basicGasEstimates = { gas: gasLimit, gasPrice: averageGasPrice, ...basicGasEstimates, l1Fee };
 	util.logDebug('PPYang basicGasEstimates', basicGasEstimates);
 	return basicGasEstimates;
 }
@@ -408,7 +460,7 @@ export async function getPolygonSuggestedGasFees() {
 }
 
 export async function estimateTransactionTotalGas(from, to, chainId: string | number, minGas: number = null) {
-	const { gas, gasPrice } = await getBasicGasEstimates({
+	const { gas, gasPrice, l1Fee } = await getBasicGasEstimates({
 		from,
 		to,
 		chainId
@@ -426,7 +478,11 @@ export async function estimateTransactionTotalGas(from, to, chainId: string | nu
 			return suggestedGasFees.averageGwei.add(suggestedGasFees.estimatedBaseFee).mul(targetGas);
 		}
 	}
-	return gas.mul(gasPrice);
+	let gasFee = gas.mul(gasPrice);
+	if (l1Fee) {
+		gasFee.add(l1Fee);
+	}
+	return gasFee;
 }
 
 export async function getSuggestedGasEstimates(transaction, forceNormalFee = false) {
