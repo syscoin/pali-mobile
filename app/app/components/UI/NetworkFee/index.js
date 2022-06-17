@@ -495,12 +495,6 @@ class NetworkFee extends PureComponent {
 
 		const middleSpeed = type === ChainType.Bsc ? 0 : MAX_SLIDER / 2;
 
-		let rAmount, rPrice;
-		if (ready) {
-			rAmount = renderAmount(getEthGasFee(selectTotalGas, transaction.gas, suggestedGasFees?.l1Fee));
-			rPrice = getFiatGasFee(selectTotalGas, rate, currencyCode, transaction.gas, suggestedGasFees?.l1Fee);
-		}
-
 		return (
 			<View style={styles.root}>
 				{ready ? (
@@ -540,7 +534,19 @@ class NetworkFee extends PureComponent {
 										</Text>
 									</View>
 									<Text style={styles.amountText}>
-										{rAmount + ' ' + getTickerByType(this.props.type) + ' '}≈{' ' + rPrice}
+										{renderAmount(
+											getEthGasFee(selectTotalGas, transaction.gas, suggestedGasFees?.l1Fee)
+										) +
+											' ' +
+											getTickerByType(this.props.type) +
+											' ≈ ' +
+											getFiatGasFee(
+												selectTotalGas,
+												rate,
+												currencyCode,
+												transaction.gas,
+												suggestedGasFees?.l1Fee
+											)}
 									</Text>
 									<Slider
 										style={styles.slider}
@@ -594,11 +600,19 @@ class NetworkFee extends PureComponent {
 										</View>
 									</View>
 									<Text style={styles.amountText}>
-										{renderAmount(getEthGasFee(customTotalGas, customGasLimitBN)) +
+										{renderAmount(
+											getEthGasFee(customTotalGas, customGasLimitBN, suggestedGasFees?.l1Fee)
+										) +
 											' ' +
 											getTickerByType(this.props.type) +
-											' '}
-										≈{' ' + getFiatGasFee(customTotalGas, rate, currencyCode, customGasLimitBN)}
+											' ≈ ' +
+											getFiatGasFee(
+												customTotalGas,
+												rate,
+												currencyCode,
+												customGasLimitBN,
+												suggestedGasFees?.l1Fee
+											)}
 									</Text>
 								</View>
 							</ScrollableTabView>
