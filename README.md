@@ -32,7 +32,7 @@ or
 For release version:
 `yarn build:android`
 or
-`yarn build:ios:release:device`
+`yarn build:ios`
 
 
 
