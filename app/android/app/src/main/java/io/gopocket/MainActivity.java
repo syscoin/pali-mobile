@@ -14,10 +14,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.devio.rn.splashscreen.SplashScreen;
-import com.maochunjie.mumeng.RNReactNativeMumengModule;
-import com.umeng.message.PushAgent;
-
-import io.gopocket.utils.GooglePlayUtils;
 
 public class MainActivity extends ReactFragmentActivity {
 
@@ -40,11 +36,6 @@ public class MainActivity extends ReactFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		SplashScreen.show(this);
 		super.onCreate(null);
-
-		boolean isSupport = GooglePlayUtils.isGooglePlayCanResolved(this);
-		if (!isSupport || BuildConfig.DEBUG) {
-			PushAgent.getInstance(this).onAppStart();
-		}
 	}
 	@Override
 	public void onNewIntent(Intent intent) {
@@ -72,13 +63,11 @@ public class MainActivity extends ReactFragmentActivity {
 	@Override
 	protected void onPause() {
         super.onPause();
-        RNReactNativeMumengModule.onPause(this);
     }
 
 	@Override
     protected void onResume() {
         super.onResume();
-        RNReactNativeMumengModule.onResume(this);
     }
 
     @Override

@@ -21,7 +21,7 @@ import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
 import { withNavigation } from 'react-navigation';
 import NetworkFee from '../NetworkFee';
 import LinearGradient from 'react-native-linear-gradient';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { toLowerCaseEquals } from '../../../util/general';
 import { chainToChainType } from '../../../util/ChainTypeImages';
 

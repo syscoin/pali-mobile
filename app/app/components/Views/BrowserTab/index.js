@@ -51,7 +51,7 @@ import Modal from 'react-native-modal';
 import Clipboard from '@react-native-community/clipboard';
 import { showAlert } from '../../../actions/alert';
 import { AutoCompleteType_HOMEPAGE } from '../../../core/AutoCompleteController';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { getChainIdByType, getNetworkController, getChainTypeByChainId } from '../../../util/number';
 import { isPrefixedFormattedHexString } from '../../../util/networks';
 import { getIsRpc, getDefiIcon, getRpcName } from '../../../util/rpcUtil';

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';

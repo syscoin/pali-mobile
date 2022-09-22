@@ -27,7 +27,7 @@ import { SpringScrollView } from 'react-native-spring-scrollview';
 import FoldSecurityView from '../FoldSecurityView';
 import { strings } from '../../../../locales/i18n';
 import { iosShake } from '../../../util/NativeUtils';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { SafeAreaView } from 'react-navigation';
 import { getSecurityData } from '../../../util/security';
 

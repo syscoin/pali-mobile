@@ -26,7 +26,7 @@ import SecurityTop from './SecurityTop';
 import TokenList from './TokenList';
 import ApprovalTop from './ApprovalTop';
 import ApprovalList from './ApprovalList';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import Device from '../../../util/Device';
 
 import BgSecurityTop from '../../../images/bg_security_top.png';

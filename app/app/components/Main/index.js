@@ -69,9 +69,9 @@ import ElevatedView from 'react-native-elevated-view';
 import LottieView from 'lottie-react-native';
 import OngoingTransactions from '../UI/OngoingTransactions';
 import ShareImageView from '../UI/ShareImageView';
-import { onEvent, onEventWithMap } from 'react-native-mumeng';
+import { onEvent, onEventWithMap } from '../../util/statistics';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getAppVersionCode, getChannel, getDeviceId, getDeviceInfo } from '../../util/ApiClient';
+import { getAppVersionCode } from '../../util/ApiClient';
 import Device from '../../util/Device';
 import {
 	BIOMETRY_CHOICE_DISABLED,
@@ -819,11 +819,6 @@ const Main = props => {
 		});
 
 		if (Platform.OS === 'android') {
-			NativeModules.RNToolsManager.getUmengAndroidDeviceToken().then(event => {
-				console.log('====uemng android deviceToken = ', event);
-				util.logDebug('====uemng android deviceToken = ', event);
-			});
-
 			const eventEmitter = new NativeEventEmitter(NativeModules.RNToolsManager);
 			eventEmitter.addListener('AndroidUmengPushEvent', params => {
 				//umeng android:  {"event": "{\"display_type\":\"notification\",\"extra\":{\"dialog\":\"true\",\"url\":\"http:\\/\\/www.baidu.com\"},\"body\":{\"after_open\":\"go_app\",\"ticker\":\"b-通知标题\",\"title\":\"b-通知标题\",\"play_sound\":\"true\",\"text\":\"b-通知内容\"},\"msg_id\":\"uuk0hs1163469965087710\"}"}

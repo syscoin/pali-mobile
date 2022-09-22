@@ -33,7 +33,7 @@ import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
 import { TransactionStatus, util, BN } from 'gopocket-core';
 import WebView from 'react-native-webview';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../../util/statistics';
 import CheckPassword from '../../../UI/CheckPassword';
 import AsyncStorage from '@react-native-community/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';

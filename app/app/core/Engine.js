@@ -37,7 +37,7 @@ import { endNetworkChange } from '../actions/settings';
 import WalletConnect from './WalletConnect';
 import NotificationManager from './NotificationManager';
 import { getInternalFunctions } from '../util/threadUtils';
-import { reportError } from 'react-native-mumeng';
+import { reportError } from '../util/statistics';
 import Device from '../util/Device';
 
 class AgentProvider extends EventEmitter {

@@ -20,7 +20,7 @@ import { toLowerCaseEquals } from '../../../util/general';
 import { strings } from '../../../../locales/i18n';
 import { ChainType, TransactionStatus, util } from 'gopocket-core';
 import TransactionTypes from '../../../core/TransactionTypes';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { chainToChainType } from '../../../util/ChainTypeImages';
 
 const { width } = Dimensions.get('window');

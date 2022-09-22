@@ -5,7 +5,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.snail.antifake.jni.EmulatorDetectUtil;
-import com.umeng.message.PushAgent;
 
 import android.content.Context;
 import android.content.Intent;
@@ -157,12 +156,6 @@ public class RNToolsManager extends ReactContextBaseJavaModule {
 	private void launchAppInGooglePlay(Promise p) {
 		GooglePlayUtils.launchAppDetail(mContext, mContext.getPackageName());
 		p.resolve("");
-	}
-
-	@ReactMethod
-	public void getUmengAndroidDeviceToken(Promise p) {
-		PushAgent pushAgent = PushAgent.getInstance(mContext);
-		p.resolve(pushAgent.getRegistrationId());
 	}
 
 	@ReactMethod

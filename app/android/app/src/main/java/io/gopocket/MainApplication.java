@@ -1,9 +1,6 @@
 package io.gopocket;
 
 import com.facebook.react.ReactApplication;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.github.wuxudong.rncharts.MPAndroidChartPackage;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -25,16 +22,10 @@ import androidx.multidex.MultiDexApplication;
 
 import android.database.CursorWindow;
 import java.lang.reflect.Field;
-import com.maochunjie.mumeng.RNReactNativeMumengModule;
 import io.gopocket.nativeModules.RNToolsPackage;
-import io.gopocket.utils.GooglePlayUtils;
 
 import com.cmcewen.blurview.BlurViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
-import com.umeng.message.IUmengRegisterCallback;
-import com.umeng.message.PushAgent;
-import com.umeng.message.UmengNotificationClickHandler;
-import com.umeng.message.entity.UMessage;
 
 import com.reactlibrary.RNThreadPackage;
 
@@ -110,7 +101,6 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 	@Override
 	public void onCreate() {
 		super.onCreate();
-  		RNReactNativeMumengModule.init(this, "60af0eccdd01c71b57c73c81", getChannel(), "8c4de563e0a52d684ec06e2aa0c43205");
 		try {
 			Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
 			field.setAccessible(true);
@@ -125,63 +115,7 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 		SoLoader.init(this, /* native exopackage */ false);
 
 		initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-
-		boolean isSupport = GooglePlayUtils.isGooglePlayCanResolved(this);
-		if (!isSupport || BuildConfig.DEBUG) {
-			initPushSDK();
-		}
     }
-
-	private void initPushSDK() {
-		registerPushAgent(this);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				registerPushAgent(getApplicationContext());
-			}
-		}).start();
-
-		PushAgent pushAgent = PushAgent.getInstance(getApplicationContext());
-		UmengNotificationClickHandler notificationClickHandler = new UmengNotificationClickHandler() {
-			@Override
-			public void dealWithCustomAction(final Context context, final UMessage msg) {
-				super.dealWithCustomAction(context, msg);
-			}
-
-			@Override
-			public void launchApp(Context context, UMessage msg) {
-				super.launchApp(context, msg);
-				WritableMap params = Arguments.createMap();
-				params.putString("event", msg.getRaw().toString());
-				sendEvent("AndroidUmengPushEvent", params);
-			}
-		};
-		pushAgent.setNotificationClickHandler(notificationClickHandler);
-	}
-
-	private void registerPushAgent(Context context) {
-		PushAgent pushAgent = PushAgent.getInstance(context);
-		pushAgent.register(new IUmengRegisterCallback() {
-
-			@Override
-			public void onSuccess(String deviceToken) {
-				android.util.Log.e("===registerPushAgent", deviceToken);
-			}
-
-			@Override
-			public void onFailure(String errCode, String errDesc) {
-			}
-		});
-	}
-
-	private void sendEvent(String eventName, WritableMap params) {
-		try {
-			getReactNativeHost().getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-				.emit(eventName, params);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
     /**
      * Loads Flipper in React Native templates. Call this in the onCreate method with something like

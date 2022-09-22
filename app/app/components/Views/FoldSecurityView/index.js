@@ -28,7 +28,7 @@ import { getChainIdByType, renderCoinValue } from '../../../util/number';
 import ApprovalEvent from '../../UI/ApprovalEvent';
 import Modal from 'react-native-modal';
 import Engine from '../../../core/Engine';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import PercentageCircle from '../../UI/PercentageCircle';
 import LottieView from 'lottie-react-native';
 import { getSecurityData } from '../../../util/security';

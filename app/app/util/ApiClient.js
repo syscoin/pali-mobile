@@ -1,4 +1,3 @@
-import { getInfo } from 'react-native-mumeng';
 import { ChainType, util } from 'gopocket-core';
 import { NativeModules, Platform } from 'react-native';
 import { getVersion, getBuildNumber } from 'react-native-device-info';
@@ -101,12 +100,7 @@ export async function initApiClient() {
 		});
 	});
 	if (Platform.OS === 'android') {
-		const deviceInfo = await getInfo();
-		try {
-			global.deviceId = JSON.parse(deviceInfo.message).device_id;
-		} catch (e) {
-			global.deviceId = '';
-		}
+		global.deviceId = '';
 		global.testFlight = false;
 		global.shouldHideSthForAppStoreReviewer = false;
 	} else {

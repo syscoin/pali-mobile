@@ -6,7 +6,7 @@ import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
 import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import { toLowerCaseEquals } from '../../../util/general';
 
 const styles = StyleSheet.create({

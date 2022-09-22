@@ -18,7 +18,7 @@ import AppConstants from '../../../core/AppConstants';
 import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import MStatusBar from '../../UI/MStatusBar';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 import AddressBar from '../AddressBar';
 import Modal from 'react-native-modal';
 import Popover from '../../UI/Popover';

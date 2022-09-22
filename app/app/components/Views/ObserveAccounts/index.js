@@ -30,7 +30,7 @@ import { SafeAreaView } from 'react-navigation';
 import Device from '../../../util/Device';
 import ImageCapInset from '../../UI/ImageCapInset';
 import NFTImage from '../../UI/NFTImage';
-import { onEvent } from 'react-native-mumeng';
+import { onEvent } from '../../../util/statistics';
 
 const cardMargin = 36;
 const cardPadding = 0;
