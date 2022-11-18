@@ -914,7 +914,7 @@ class FoldSecurityView extends PureComponent {
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
 							{lp_holder_count
 								? lp_holder_count < 10000
-									? lp_holder_count === '0' && dex.length === 1
+									? lp_holder_count === '0' && dex?.length === 1
 										? '?'
 										: lp_holder_count
 									: renderCoinValue(lp_holder_count)
@@ -924,7 +924,7 @@ class FoldSecurityView extends PureComponent {
 					</View>
 					<View style={styles.securityItem}>
 						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
-							{dex.length}
+							{dex?.length || '-'}
 						</Text>
 						<Text style={styles.securityItemDesc}>{strings('security.dexs')}</Text>
 					</View>

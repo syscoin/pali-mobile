@@ -63,7 +63,7 @@ export class DefiProtocolController extends BaseController<DefiProtocolConfig, D
         const logo = defiToken.logo_url;
         const siteUrl = defiToken.site_url;
         const address = defiToken.platform_token_id;
-        const portfolioList = defiToken.portfolio_list;
+        const portfolioList = defiToken.portfolio_item_list || defiToken.portfolio_list;
         const portfolios: Portfolio[] = [];
         let allPriceUsd = 0;
         if (portfolioList?.length > 0) {
