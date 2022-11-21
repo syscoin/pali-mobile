@@ -346,7 +346,7 @@ export const NetworkConfig: { [type: number]: any } = {
     DefiTokenChain: ['arb'],
     CoingeckoId: 'ethereum',
     SwapUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap',
-    SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap/swap?inputCurrency=',
+    SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap?inputCurrency=',
     CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',
