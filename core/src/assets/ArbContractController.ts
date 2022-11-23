@@ -5,7 +5,7 @@ import { BigNumber, providers } from 'ethers';
 import { Mutex } from 'async-mutex';
 import { BaseConfig, BaseState } from '../BaseController';
 import PreferencesController from '../user/PreferencesController';
-import util, {bitAND, BNToHex, hexToBN, logDebug, logInfo, safelyExecute} from '../util';
+import util, {bitAND, BNToHex, hexToBN, logDebug, safelyExecute} from '../util';
 import TransactionController, {
   TransactionInfo,
   TransactionStatus,
@@ -228,7 +228,7 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
   async appendWithdrawsByHistory() {
     const preferencesController = this.context.PreferencesController as PreferencesController;
     const { selectedAddress } = preferencesController.state;
-    if (!selectedAddress /*|| preferencesController.isObserveAddress(selectedAddress)*/) {
+    if (!selectedAddress || preferencesController.isObserveAddress(selectedAddress)) {
       return;
     }
     const block_info = await this.getBlockInfo();
@@ -237,7 +237,6 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
       return;
     }
     const txs: TransactionInfo[] = await Sqlite.getInstance().getAllTransactions(selectedAddress, ChainType.Arbitrum, this.l2_chainId, 'tx');
-    logInfo("appendWithdrawsByHistory txs:", txs?.length, " selectedAddress:", selectedAddress, " l2_chainId:",  this.l2_chainId)
     if (!txs) {
       return;
     }
@@ -248,7 +247,6 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
         ((tx.transaction.to?.toLowerCase() === addr1[0].toLowerCase() && tx.transaction.data?.startsWith(`0x${addr1[1]}`)) ||
         (tx.transaction.to?.toLowerCase() === addr2[0].toLowerCase() && tx.transaction.data?.startsWith(`0x${addr2[1]}`)));
     });
-    logInfo("appendWithdrawsByHistory arbMigrationTxs:", arbMigrationTxs ? JSON.stringify(arbMigrationTxs) : 0)
     if (!arbMigrationTxs || arbMigrationTxs.length === 0) {
       return;
     }
@@ -304,14 +302,11 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
           timestamp,
         });
       } else {
-        logInfo("appendWithdrawsByHistory tx:", JSON.stringify(tx));
         const { address, amount, symbol, decimals, destination } = await this.safelyGetBaseInfo(tx.transaction.data, partnerChainId);
-        logInfo("appendWithdrawsByHistory address:", address, amount, symbol, decimals, destination);
         if (!address || !amount || !symbol || !decimals || (destination && isZeroAddress(destination))) {
           continue;
         }
         const { batchNumber, indexInBatch, timestamp } = await this.safelyGetBatchInfo(chainId, tx.transactionHash);
-        logInfo("appendWithdrawsByHistory batchNumber:", batchNumber, indexInBatch, timestamp);
         if (!batchNumber || !indexInBatch || !timestamp) {
           continue;
         }
@@ -329,7 +324,6 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
             logDebug('leon.w@getOutGoingMessageState: ', e);
           }
         }
-        logInfo("appendWithdrawsByHistory processed:", processed, " done", done);
         new_withdraws.push({
           chainId,
           tx: tx.transactionHash,
