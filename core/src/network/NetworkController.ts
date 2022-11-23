@@ -3,7 +3,7 @@ import Subprovider from 'web3-provider-engine/subproviders/provider';
 import createInfuraProvider from 'eth-json-rpc-infura/src/createProvider';
 import createMetamaskProvider from 'web3-provider-engine/zero';
 import { Mutex } from 'async-mutex';
-import {handleFetch, logDebug, logInfo, queryEIP1559Compatibility} from '../util';
+import {handleFetch, isEtherscanAvailableAsync, logDebug, logInfo, queryEIP1559Compatibility} from '../util';
 import {BaseNetworkController, BaseNetworkConfig, BaseNetworkState} from "./BaseNetworkController";
 
 export class NetworkController extends BaseNetworkController<BaseNetworkConfig, BaseNetworkState> {
@@ -25,11 +25,6 @@ export class NetworkController extends BaseNetworkController<BaseNetworkConfig, 
     ticker?: string,
     nickname?: string,
   ) {
-    const { infuraType } = chainId && this.getNetworkConfig(chainId);
-    if (this.config.infuraProjectId && infuraType) {
-      this.setupInfuraProvider(infuraType, chainId);
-      return;
-    }
     rpcTarget && this.setupStandardProvider(rpcTarget, chainId, ticker, nickname);
   }
 
@@ -49,13 +44,29 @@ export class NetworkController extends BaseNetworkController<BaseNetworkConfig, 
     };
 
     const { rpcTarget, nickname, chainId, ticker } = this.state.provider;
-    const rpcTargets = this.getNetworkConfig(chainId).rpcTargets;
-    if (rpcTargets && rpcTargets.length) {
-      this.checkRpcTargets(rpcTargets).then(onComplete);
-    } else {
-      this.initializeProvider(chainId, rpcTarget, ticker, nickname);
-      onComplete();
+    const { infuraType, rpcTargets } = chainId && this.getNetworkConfig(chainId);
+
+    const normalCreate = () => {
+      if (rpcTargets && rpcTargets.length) {
+        this.checkRpcTargets(rpcTargets).then(onComplete);
+      } else {
+        this.initializeProvider(chainId, rpcTarget, ticker, nickname);
+        onComplete();
+      }
     }
+
+    if (this.config.infuraProjectId && infuraType) {
+      isEtherscanAvailableAsync().then((available) => {
+        if (available) {
+          this.setupInfuraProvider(infuraType, chainId);
+          onComplete();
+        } else {
+          normalCreate();
+        }
+      });
+      return;
+    }
+    normalCreate();
   }
 
   private unRegisterProvider() {
@@ -85,10 +96,10 @@ export class NetworkController extends BaseNetworkController<BaseNetworkConfig, 
               }
             }
           } catch (e) {
-            logInfo('PPYang checkRpcTargets fail for rpc: ', rpc, e);
+            logInfo(this.name, 'checkRpcTargets fail for rpc: ', rpc, e);
           }
         }).catch((e) => {
-          logInfo('PPYang checkRpcTargets fail for rpc:', rpc, e);
+          logInfo(this.name, 'checkRpcTargets fail for rpc:', rpc, e);
         });
       });
       setTimeout(() => {

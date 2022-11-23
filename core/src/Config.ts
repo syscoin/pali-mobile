@@ -31,8 +31,8 @@ export const NetworkConfig: { [type: number]: any } = {
     Disabled: false,
     DefiTokenChain: [],
     CoingeckoId: 'ethereum',
-    SwapUrl: 'https://bafybeidlvfo3j6lbrq56uultqp5urpirthugtwcrjc642jci4ntkko5ra4.ipfs.cf-ipfs.com/#/swap',
-    SwapTokenUrl: 'https://bafybeidlvfo3j6lbrq56uultqp5urpirthugtwcrjc642jci4ntkko5ra4.ipfs.cf-ipfs.com/#/swap?inputCurrency=',
+    SwapUrl: 'https://app.uniswap.org/#/swap',
+    SwapTokenUrl: 'https://app.uniswap.org/#/swap?inputCurrency=',
     CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswapv2',
@@ -46,13 +46,21 @@ export const NetworkConfig: { [type: number]: any } = {
           "ticker": "ETH",
           "nickname": "Ethereum"
         },
+        rpcTargets: [
+          'https://rpc.ankr.com/eth',
+          'https://https://ethereum.publicnode.com',
+          'https://eth-mainnet.g.alchemy.com/v2/demo',
+          'https://eth-rpc.gateway.pokt.network',
+          'https://eth-mainnet.public.blastapi.io',
+          'https://1rpc.io/eth'
+        ],
         infuraType: "mainnet",
         ExplorerUrl: 'https://etherscan.io',
         ExplorerApiUrl: 'https://api.etherscan.io',
       },
       "Ropsten": {
         provider: {
-          "rpcTarget": "",
+          "rpcTarget": "https://rpc.ankr.com/eth_ropsten",
           "type": "Ropsten",
           "chainId": "3",
           "ticker": "ETH",
@@ -64,7 +72,7 @@ export const NetworkConfig: { [type: number]: any } = {
       },
       "Kovan": {
         provider: {
-          "rpcTarget": "",
+          "rpcTarget": "https://kovan.poa.network",
           "type": "Kovan",
           "chainId": "42",
           "ticker": "ETH",
@@ -76,7 +84,7 @@ export const NetworkConfig: { [type: number]: any } = {
       },
       "Rinkeby": {
         provider: {
-          "rpcTarget": "",
+          "rpcTarget": "https://rpc.ankr.com/eth_rinkeby",
           "type": "Rinkeby",
           "chainId": "4",
           "ticker": "ETH",
@@ -88,7 +96,7 @@ export const NetworkConfig: { [type: number]: any } = {
       },
       "Goerli": {
         provider: {
-          "rpcTarget": "",
+          "rpcTarget": "https://rpc.ankr.com/eth_goerli",
           "type": "Goerli",
           "chainId": "5",
           "ticker": "ETH",
@@ -116,12 +124,22 @@ export const NetworkConfig: { [type: number]: any } = {
     Networks: {
       "Polygon Mainnet": {
         "provider": {
-          "rpcTarget": "https://rpc-mainnet.maticvigil.com",
+          "rpcTarget": "https://polygonapi.terminet.io/rpc",
           "type": "Polygon Mainnet",
           "chainId": "137",
           "ticker": "MATIC",
           "nickname": "Polygon"
         },
+        rpcTargets: [
+          'https://poly-rpc.gateway.pokt.network',
+          'https://matic-mainnet-archive-rpc.bwarelabs.com',
+          'https://polygonapi.terminet.io/rpc',
+          'https://rpc-mainnet.matic.quiknode.pro',
+          'https://polygon-mainnet-public.unifra.io',
+          'https://1rpc.io/matic',
+          'https://polygon-mainnet.public.blastapi.io',
+          'https://polygon-bor.publicnode.com'
+        ],
         "infuraType": "polygon-mainnet",
         ExplorerUrl: 'https://polygonscan.com',
         ExplorerApiUrl: 'https://api.polygonscan.com',
@@ -280,6 +298,11 @@ export const NetworkConfig: { [type: number]: any } = {
           "ticker": "ETH",
           "nickname": "Optimism"
         },
+        rpcTargets: [
+          'https://mainnet.optimism.io',
+          'https://1rpc.io/op',
+          'https://opt-mainnet.g.alchemy.com/v2/demo'
+        ],
         "partnerChainId": "1",
         "infuraType": "optimism-mainnet",
         ExplorerUrl: 'https://optimistic.etherscan.io',
@@ -354,12 +377,18 @@ export const NetworkConfig: { [type: number]: any } = {
     Networks: {
       "Arbitrum Mainnet": {
         "provider": {
-          "rpcTarget": "https://arb1.arbitrum.io/rpc",
+          "rpcTarget": "https://1rpc.io/arb",
           "type": "Arbitrum Mainnet",
           "chainId": "42161",
           "ticker": "ETH",
           "nickname": "Arbitrum"
         },
+        rpcTargets: [
+          'https://1rpc.io/arb',
+          'https://arb1.arbitrum.io/rpc',
+          'https://rpc.ankr.com/arbitrum',
+          'https://arb-mainnet.g.alchemy.com/v2/demo'
+        ],
         ExplorerUrl: 'https://arbiscan.io',
         ExplorerApiUrl: 'https://api.arbiscan.io',
         "confirmIntervalInSecond": 604800,
