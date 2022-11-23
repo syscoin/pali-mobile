@@ -24,7 +24,7 @@ import Engine from '../../../core/Engine';
 import { passwordRequirementsMet } from '../../../util/password';
 import SecureKeychain from '../../../core/SecureKeychain';
 import AsyncStorage from '@react-native-community/async-storage';
-import { BIOMETRY_CHOICE_DISABLED, TRUE } from '../../../constants/storage';
+import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 import Popover from '../../UI/Popover';
@@ -673,10 +673,22 @@ class WalletManagement extends PureComponent {
 	removeWallet = async () => {
 		const { walletSelectedIndex } = this.state;
 		const { KeyringController } = Engine.context;
-		const deleteAccounts = this.props.keyrings[walletSelectedIndex]?.accounts;
-		await KeyringController.removeKeyring(walletSelectedIndex);
-		this.props.toggleShowHint(strings('wallet_management.wallet_deleted'));
-		WalletConnect.removeAccounts(deleteAccounts);
+		if (this.props.keyrings.length <= 1) {
+			this.props.navigation.navigate('OnboardingRootNav');
+			try {
+				await Engine.resetState();
+				await KeyringController.createNewVaultAndKeychain(`${Date.now()}`);
+
+				await AsyncStorage.removeItem(EXISTING_USER);
+			} catch (error) {
+				util.logWarn('removeWallet', error);
+			}
+		} else {
+			const deleteAccounts = this.props.keyrings[walletSelectedIndex]?.accounts;
+			await KeyringController.removeKeyring(walletSelectedIndex);
+			this.props.toggleShowHint(strings('wallet_management.wallet_deleted'));
+			WalletConnect.removeAccounts(deleteAccounts);
+		}
 	};
 
 	renderCheckPassword = () => {
@@ -1315,9 +1327,7 @@ class WalletManagement extends PureComponent {
 							showsVerticalScrollIndicator={false}
 						>
 							<View style={styles.scrollViewContent}>
-								{keyrings.map((keyring, index) =>
-									this.renderItem(keyring, keyring.index, keyrings.length > 1)
-								)}
+								{keyrings.map((keyring, index) => this.renderItem(keyring, keyring.index, true))}
 							</View>
 						</ScrollView>
 					</View>
