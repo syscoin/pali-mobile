@@ -520,7 +520,10 @@ class EngineImpl {
 			PolygonContractController,
 			CollectiblesController,
 			AssetsDataModel,
-			DefiProtocolController
+			DefiProtocolController,
+			ApprovalEventsController,
+			PreferencesController,
+			SecurityController
 		} = this.datamodel.context;
 
 		//Clear assets info
@@ -533,6 +536,9 @@ class EngineImpl {
 		CollectiblesController.update(CollectiblesController.defaultState);
 		AssetsDataModel.update(AssetsDataModel.defaultState);
 		DefiProtocolController.update(DefiProtocolController.defaultState);
+		ApprovalEventsController.update(ApprovalEventsController.defaultState);
+		PreferencesController.update(PreferencesController.defaultState);
+		SecurityController.update(SecurityController.defaultState);
 	};
 
 	getProviderConfig(chainId: string) {
