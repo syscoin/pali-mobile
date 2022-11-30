@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import SignatureRequest from '../SignatureRequest';
@@ -82,23 +82,14 @@ export default class PersonalSign extends PureComponent {
 	renderMessageText = () => {
 		const { messageParams } = this.props;
 		const { truncateMessage } = this.state;
-		const textChild = util
-			.hexToText(messageParams.data)
-			.split('\n')
-			.map((line, i) => (
-				<Text key={`txt_${i}`} style={[styles.messageText, styles.textLeft]}>
-					{line}
-				</Text>
-			));
-		const messageText = truncateMessage ? (
+
+		return truncateMessage ? (
 			<Text numberOfLines={5} ellipsizeMode={'tail'}>
-				{textChild}
+				{messageParams.data}
 			</Text>
 		) : (
-			<Text onTextLayout={this.shouldTruncateMessage}>{textChild}</Text>
+			<Text onTextLayout={this.shouldTruncateMessage}>{messageParams.data}</Text>
 		);
-
-		return messageText;
 	};
 
 	shouldTruncateMessage = e => {
@@ -119,6 +110,7 @@ export default class PersonalSign extends PureComponent {
 				messageParams={this.props.messageParams}
 				type="personalSign"
 			>
+				<View style={styles.messageWrapper}>{this.renderMessageText()}</View>
 				<PromptView
 					isVisible={this.state.error != null}
 					title={strings('transactions.transaction_error')}
