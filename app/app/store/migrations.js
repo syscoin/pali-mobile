@@ -431,6 +431,7 @@ export const migrations = {
 		if (withdraws && withdraws.length > 0) {
 			state.engine.backgroundState.ArbContractController.withdraws = [];
 		}
+		return state;
 	}
 };
 
