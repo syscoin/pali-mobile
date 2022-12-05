@@ -476,10 +476,13 @@ class MoveTab extends PureComponent {
 			});
 		}
 		let supportBridgeType = [];
-		if (this.props.supportBridge) {
-			supportBridgeType = getSupportMigration(this.props.asset);
-			subNetworks = this.combineSupportNetworks(subNetworks, supportBridgeType);
+		if (this.props.asset.type === ChainType.Ethereum) {
+			supportBridgeType.push(ChainType.Arbitrum);
 		}
+		if (this.props.supportBridge) {
+			supportBridgeType.push(...getSupportMigration(this.props.asset));
+		}
+		subNetworks = this.combineSupportNetworks(subNetworks, supportBridgeType);
 		let moveStep = this.state.moveStep;
 		let networkSelectType = subNetworks[0].type;
 		if (defaultType) {
@@ -1112,7 +1115,7 @@ class MoveTab extends PureComponent {
 		} else if (type === ChainType.Polygon) {
 			return [{ type: ChainType.Ethereum, name: getChainTypeName(ChainType.Ethereum) }];
 		} else if (type === ChainType.Ethereum) {
-			const supportNetworks = [{ type: ChainType.Arbitrum, name: getChainTypeName(ChainType.Arbitrum) }];
+			const supportNetworks = [];
 			let supportPolygon;
 			if (asset.nativeCurrency) {
 				supportPolygon = true;
@@ -1490,9 +1493,19 @@ class MoveTab extends PureComponent {
 		this.setState({ moveStep: 2 });
 	};
 
+	todoArbitrumBridge = () => {
+		const { asset } = this.props;
+		this.props.navigation.navigate('BrowserTabHome');
+		this.props.navigation.navigate('BrowserView', {
+			newTabUrl: 'https://bridge.arbitrum.io',
+			chainType: asset.type
+		});
+	};
+
 	renderBridge = () => {
 		const { asset } = this.props;
 		const { networkSelectType } = this.state;
+		const jostShowArb = asset.type === ChainType.Ethereum && networkSelectType === ChainType.Arbitrum;
 		const showArbBrige = asset.type === ChainType.Arbitrum && networkSelectType === ChainType.Ethereum;
 		const isZh = strings('other.accept_language') === 'zh';
 		const width = Device.getDeviceWidth() - 76;
@@ -1501,26 +1514,30 @@ class MoveTab extends PureComponent {
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={styles.bridgeWrapper}>
-					<TouchableOpacity
-						onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
-						activeOpacity={activeOpacity}
-					>
-						<Image
-							style={[styles.bridgeImage, { width, height }]}
-							source={isCBridge ? cBridgeImage : multichainImage}
-							resizeMode={'stretch'}
-						/>
-					</TouchableOpacity>
-					{showArbBrige && (
+					{!jostShowArb && (
 						<>
-							<TouchableOpacity onPress={this.todoNatvieBridge} activeOpacity={activeOpacity}>
+							<TouchableOpacity
+								onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
+								activeOpacity={activeOpacity}
+							>
+								<Image
+									style={[styles.bridgeImage, { width, height }]}
+									source={isCBridge ? cBridgeImage : multichainImage}
+									resizeMode={'stretch'}
+								/>
+							</TouchableOpacity>
+						</>
+					)}
+					{(showArbBrige || jostShowArb) && (
+						<>
+							<TouchableOpacity onPress={this.todoArbitrumBridge} activeOpacity={activeOpacity}>
 								<Image
 									style={[styles.bridgeImage, { width, height }]}
 									source={isZh ? arbBridgeCnImage : arbBridgeImage}
 									resizeMode={'stretch'}
 								/>
 							</TouchableOpacity>
-							<Text style={styles.bridgeText}>{strings('other.arb_bridge_withdraw_limit')}</Text>
+							{/*<Text style={styles.bridgeText}>{strings('other.arb_bridge_withdraw_limit')}</Text>*/}
 						</>
 					)}
 					{isCBridge && (

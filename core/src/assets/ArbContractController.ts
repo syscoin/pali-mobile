@@ -37,13 +37,13 @@ export interface ArbState extends BaseState {
 export class ArbContractController extends ContractController<ArbConfig, ArbState> {
   private bridge: Bridge | undefined;
 
-  private handle?: NodeJS.Timer;
+  // private handle?: NodeJS.Timer;
 
   private mutex = new Mutex();
 
   private bridgeMutex = new Mutex();
 
-  private polling_counter = 0;
+  // private polling_counter = 0;
 
   name = 'ArbContractController';
 
@@ -60,21 +60,21 @@ export class ArbContractController extends ContractController<ArbConfig, ArbStat
     this.initialize();
   }
 
-  async poll(interval?: number): Promise<void> {
-    if (this.polling_counter > 1) {
-      return;
-    }
-    this.polling_counter += 1;
-    interval && this.configure({ interval }, false, false);
-    this.handle && clearTimeout(this.handle);
-    await this.refresh();
-    this.polling_counter -= 1;
-    if (this.polling_counter > 0) {
-      return;
-    }
-    this.handle = setTimeout(() => {
-      this.poll();
-    }, this.config.interval);
+  async poll(/*interval?: number*/): Promise<void> {
+    // if (this.polling_counter > 1) {
+    //   return;
+    // }
+    // this.polling_counter += 1;
+    // interval && this.configure({ interval }, false, false);
+    // this.handle && clearTimeout(this.handle);
+    // await this.refresh();
+    // this.polling_counter -= 1;
+    // if (this.polling_counter > 0) {
+    //   return;
+    // }
+    // this.handle = setTimeout(() => {
+    //   this.poll();
+    // }, this.config.interval);
   }
 
   async refresh() {

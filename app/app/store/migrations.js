@@ -425,7 +425,13 @@ export const migrations = {
 			}
 		}
 		return state;
+	},
+	8: state => {
+		const withdraws = state?.engine?.backgroundState?.ArbContractController?.withdraws;
+		if (withdraws && withdraws.length > 0) {
+			state.engine.backgroundState.ArbContractController.withdraws = [];
+		}
 	}
 };
 
-export const version = 7;
+export const version = 8;

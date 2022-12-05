@@ -229,10 +229,7 @@ class AssetActionView extends PureComponent {
 			}
 			return true;
 		} else if (asset.type === ChainType.Arbitrum) {
-			if (!asset.nativeCurrency && !asset.l1Address) {
-				return false;
-			}
-			return true;
+			return false;
 		} else if (asset.type === ChainType.Ethereum) {
 			return true;
 		}
