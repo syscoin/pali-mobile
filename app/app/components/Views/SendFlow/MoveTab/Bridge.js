@@ -236,6 +236,22 @@ export function getSupportBridgeType(asset, selectType) {
 	return TYPE_UNKNOWN;
 }
 
+export function isSupportCBridge(asset, selectType) {
+	const cBridge = getSupportMigrationCBridge(asset);
+	if (cBridge?.find(type => type === selectType)) {
+		return true;
+	}
+	return false;
+}
+
+export function isSupportMultichain(asset, selectType) {
+	const multichain = getSupportMigrationMultichain(asset);
+	if (multichain?.find(type => type === selectType)) {
+		return true;
+	}
+	return false;
+}
+
 export function supportMigration(asset) {
 	return getSupportMigration(asset).length > 0;
 }

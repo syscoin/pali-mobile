@@ -71,7 +71,7 @@ import approveImage from '../../../../images/img_approve_bridge.png';
 import { addApproveInfo, removeApproveInfo } from '../../../../actions/settings';
 import { store } from '../../../../store';
 import CheckPassword from '../../../UI/CheckPassword';
-import { getSupportBridgeType, getSupportMigration, TYPE_CBRIDGE } from './Bridge';
+import { getSupportMigration, isSupportCBridge, isSupportMultichain } from './Bridge';
 import { getEstimatedTotalGas } from '../../../../util/Amount';
 import { getChainTypeName } from '../../../../util/ChainTypeImages';
 
@@ -476,11 +476,14 @@ class MoveTab extends PureComponent {
 			});
 		}
 		let supportBridgeType = [];
-		if (this.props.asset.type === ChainType.Ethereum) {
-			supportBridgeType.push(ChainType.Arbitrum);
-		}
 		if (this.props.supportBridge) {
 			supportBridgeType.push(...getSupportMigration(this.props.asset));
+		}
+		if (this.props.asset.type === ChainType.Ethereum || this.props.asset.type === ChainType.Arbitrum) {
+			const type = this.props.asset.type === ChainType.Ethereum ? ChainType.Arbitrum : ChainType.Ethereum;
+			if (!supportBridgeType.includes(type)) {
+				supportBridgeType.push(type);
+			}
 		}
 		subNetworks = this.combineSupportNetworks(subNetworks, supportBridgeType);
 		let moveStep = this.state.moveStep;
@@ -1110,9 +1113,7 @@ class MoveTab extends PureComponent {
 
 	getSupportNetworks = async asset => {
 		const { type, address } = asset;
-		if (type === ChainType.Arbitrum) {
-			return [{ type: ChainType.Ethereum, name: getChainTypeName(ChainType.Ethereum) }];
-		} else if (type === ChainType.Polygon) {
+		if (type === ChainType.Polygon) {
 			return [{ type: ChainType.Ethereum, name: getChainTypeName(ChainType.Ethereum) }];
 		} else if (type === ChainType.Ethereum) {
 			const supportNetworks = [];
@@ -1506,16 +1507,18 @@ class MoveTab extends PureComponent {
 	renderBridge = () => {
 		const { asset } = this.props;
 		const { networkSelectType } = this.state;
-		const jostShowArb = asset.type === ChainType.Ethereum && networkSelectType === ChainType.Arbitrum;
-		const showArbBrige = asset.type === ChainType.Arbitrum && networkSelectType === ChainType.Ethereum;
+		const showArbBrige =
+			(asset.type === ChainType.Arbitrum && networkSelectType === ChainType.Ethereum) ||
+			(asset.type === ChainType.Ethereum && networkSelectType === ChainType.Arbitrum);
 		const isZh = strings('other.accept_language') === 'zh';
 		const width = Device.getDeviceWidth() - 76;
 		const height = (width * 80) / 299;
-		const isCBridge = getSupportBridgeType(asset, networkSelectType) === TYPE_CBRIDGE;
+		const isCBridge = isSupportCBridge(asset, networkSelectType);
+		const isMultichain = isSupportMultichain(asset, networkSelectType);
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={styles.bridgeWrapper}>
-					{!jostShowArb && (
+					{isMultichain && (
 						<>
 							<TouchableOpacity
 								onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
@@ -1529,7 +1532,7 @@ class MoveTab extends PureComponent {
 							</TouchableOpacity>
 						</>
 					)}
-					{(showArbBrige || jostShowArb) && (
+					{showArbBrige && (
 						<>
 							<TouchableOpacity onPress={this.todoArbitrumBridge} activeOpacity={activeOpacity}>
 								<Image

@@ -240,7 +240,7 @@ class AssetActionView extends PureComponent {
 		const { asset, toggleShowHint } = this.props;
 		this.setState({ migrationLoading: true });
 		const supportNativeBridge = await this.supportMigrate();
-		const support = supportMigration(asset);
+		const support = this.supportOtherMigrate(asset);
 		this.setState({ migrationLoading: false });
 		if (!supportNativeBridge && !support) {
 			toggleShowHint(strings('other.not_migration'));
@@ -248,6 +248,14 @@ class AssetActionView extends PureComponent {
 		}
 
 		this.setState({ migrateModalVisible: true, supportNativeBridge, supportBridge: support });
+	};
+
+	supportOtherMigrate = () => {
+		const { asset } = this.props;
+		if (asset.type === ChainType.Arbitrum) {
+			return true;
+		}
+		return supportMigration(asset);
 	};
 
 	onSwap = () => {
