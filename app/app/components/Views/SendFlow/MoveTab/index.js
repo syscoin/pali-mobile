@@ -1500,6 +1500,7 @@ class MoveTab extends PureComponent {
 			newTabUrl: 'https://bridge.arbitrum.io',
 			chainType: asset.type
 		});
+		this.onClose();
 	};
 
 	renderBridge = () => {
