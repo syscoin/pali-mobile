@@ -1518,7 +1518,7 @@ class MoveTab extends PureComponent {
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={styles.bridgeWrapper}>
-					{isMultichain && (
+					{(isMultichain || isCBridge) && (
 						<>
 							<TouchableOpacity
 								onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
