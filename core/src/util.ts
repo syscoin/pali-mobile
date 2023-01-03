@@ -98,7 +98,20 @@ export async function getScanApiByType(type: ChainType, chainId: string, address
   if (NetworkConfig[type].NeedAvailableUrl) {
     return await getAvailableUrl(scanUrl);
   }
-  return { url: scanUrl, options: undefined }
+  return { url: scanUrl, options: {
+      method: 'GET',
+      headers: getBaseHeaders()
+    }
+  }
+}
+
+export function getBaseHeaders() {
+  return {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Android SDK built for x86 Build/OSM1.180201.023) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.92 Mobile Safari/537.36'
+  }
 }
 
 /**
@@ -645,7 +658,7 @@ export async function getAvailableUrl(url: string): Promise<{ url: string; optio
   if (!(await isEtherscanAvailableAsync())) {
     const formData = new FormData();
     formData.append('url', url);
-    options = { method: 'POST', body: formData };
+    options = { method: 'POST', body: formData, headers: getBaseHeaders() };
     url = 'https://api.gopocket.finance/proxy-json';
   }
   return { url, options };
