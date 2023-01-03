@@ -88,18 +88,9 @@ export async function getScanApiByType(type: ChainType, chainId: string, address
     }
   }
   let scanUrl = `${apiUrl}/api?module=account&action=${action}&address=${address}&tag=latest&page=1`;
-  if (ChainType.Heco === type) {
-    if (!fromBlock) {
-      fromBlock = '0';
-    }
-    scanUrl += `&startblock=${fromBlock}`;
-    scanUrl += `&endblock=${99999999}`;
-  } else {
-    if (fromBlock) {
-      scanUrl += `&startBlock=${fromBlock}`;
-    }
+  if (fromBlock) {
+    scanUrl += `&startBlock=${fromBlock}`;
   }
-
   if (etherscanApiKey) {
     scanUrl += `&apikey=${etherscanApiKey}`;
   }
