@@ -77,25 +77,7 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => (
-								<Text
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{
-											textAlign: 'center',
-											fontSize: 11,
-											...fontStyles.bold
-										},
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginBottom: 5 },
-										focused && { color: colors.$FE6E91 },
-										!focused && { color: colors.$BEC8CE }
-									]}
-								>
-									{strings('other.asset')}
-								</Text>
-							),
+							tabBarLabel: () => <Text />,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image
@@ -121,8 +103,7 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => <Text />,
+							tabBarLabel: () => <Text />,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image
@@ -147,25 +128,7 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => (
-								<Text
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{
-											textAlign: 'center',
-											fontSize: 11,
-											...fontStyles.bold
-										},
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginBottom: 5 },
-										focused && { color: colors.$FE6E91 },
-										!focused && { color: colors.$BEC8CE }
-									]}
-								>
-									{strings('app_settings.title')}
-								</Text>
-							),
+							tabBarLabel: () => <Text />,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image
