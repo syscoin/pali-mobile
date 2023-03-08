@@ -77,7 +77,7 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							tabBarLabel: () => <Text />,
+							tabBarLabel: () => null,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image
@@ -103,7 +103,7 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => <Text />,
+							tabBarLabel: () => null,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image
@@ -128,7 +128,7 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => <Text />,
+							tabBarLabel: () => null,
 							// eslint-disable-next-line react/prop-types,react/display-name
 							tabBarIcon: ({ focused }) => (
 								<Image

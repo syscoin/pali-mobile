@@ -114,12 +114,12 @@ export default class Settings extends PureComponent {
 							image={require('../../../images/ic_setting_wallet.png')}
 							title={strings('app_settings.wallet_management')}
 						/>
-						<SettingsDrawer
+						{/* <SettingsDrawer
 							onPress={this.onObserveAccounts}
 							image={require('../../../images/ic_setting_observe.png')}
 							title={strings('observer.observe_only_ccounts')}
 							hideLine
-						/>
+						/> */}
 					</View>
 					<View style={styles.cardItem}>
 						<SettingsDrawer
