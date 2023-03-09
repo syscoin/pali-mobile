@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
 	},
 	accountAddress: {
 		color: colors.white,
-		fontSize: 12
+		fontSize: 12,
+		maxWidth: 180
 	},
 	tabContainer: {
 		height: 40,
@@ -317,8 +318,8 @@ class SecurityView extends PureComponent {
 					<Text style={styles.accountName} numberOfLines={1}>
 						{account.name}
 					</Text>
-					<Text style={styles.accountAddress} numberOfLines={1}>
-						{selectedAddress.substring(0, 13) + '...' + selectedAddress.substring(30)}
+					<Text style={styles.accountAddress} numberOfLines={1} ellipsizeMode="middle">
+						{selectedAddress}
 					</Text>
 				</View>
 			</ImageBackground>
