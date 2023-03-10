@@ -26,9 +26,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center'
 	},
-	closeIcon: {
+	buttonView: {
 		marginTop: 40,
-		width: 40
+		alignItems: 'center',
+		width: '100%'
+	},
+	backButton: {
+		position: 'absolute',
+		left: 20
 	},
 	scanContainer: {
 		width: '100%',
@@ -174,9 +179,18 @@ class QrScanner extends PureComponent {
 				onStatusChange={this.onStatusChange}
 			>
 				<View style={styles.innerView}>
-					<TouchableOpacity style={styles.closeIcon} onPress={this.goBack}>
-						<Image source={require('../../../images/backwhite.png')} />
-					</TouchableOpacity>
+					<View style={styles.buttonView}>
+						<TouchableOpacity onPress={this.goBack} style={styles.backButton}>
+							<Image source={require('../../../images/ic_back_white.png')} />
+						</TouchableOpacity>
+
+						<View>
+							<TouchableOpacity onPress={this.goBack}>
+								<Image source={require('../../../images/backwhite.png')} />
+							</TouchableOpacity>
+						</View>
+					</View>
+
 					<View style={styles.scanContainer}>
 						<Animated.View style={[styles.border, { transform: [{ translateY: this.state.moveAnim }] }]}>
 							<Image style={styles.scanImage} source={require('../../../images/scan_bar.png')} />
