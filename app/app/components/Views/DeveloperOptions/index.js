@@ -124,10 +124,9 @@ class DeveloperOptions extends PureComponent {
 		const chainOrder = [
 			ChainType.Syscoin,
 			ChainType.Ethereum,
-			ChainType.Polygon,
 			ChainType.Arbitrum,
 			ChainType.Bsc,
-			ChainType.Heco,
+			ChainType.Polygon,
 			ChainType.Optimism,
 			ChainType.Avax
 		];
