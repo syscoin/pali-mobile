@@ -11,6 +11,7 @@ import AppConstants from '../../../core/AppConstants';
 import Engine from '../../../core/Engine';
 import { connect } from 'react-redux';
 import { hideScanner } from '../../../actions/scanner';
+import Device from '../../../util/Device';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -183,12 +184,13 @@ class QrScanner extends PureComponent {
 						<TouchableOpacity onPress={this.goBack} style={styles.backButton}>
 							<Image source={require('../../../images/ic_back_white.png')} />
 						</TouchableOpacity>
-
-						<View>
-							<TouchableOpacity onPress={this.goBack}>
-								<Image source={require('../../../images/backwhite.png')} />
-							</TouchableOpacity>
-						</View>
+						{!Device.isAndroid() && (
+							<View>
+								<TouchableOpacity onPress={this.goBack}>
+									<Image source={require('../../../images/backwhite.png')} />
+								</TouchableOpacity>
+							</View>
+						)}
 					</View>
 
 					<View style={styles.scanContainer}>
