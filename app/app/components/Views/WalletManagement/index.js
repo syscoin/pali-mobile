@@ -74,8 +74,7 @@ const styles = StyleSheet.create({
 	childrenWrapper: {
 		flex: 1,
 		marginHorizontal: 16,
-		marginVertical: 16,
-		backgroundColor: colors.white
+		marginVertical: 16
 	},
 	rowFlex: {
 		flex: 1,
