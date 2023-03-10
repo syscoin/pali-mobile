@@ -15,6 +15,7 @@ import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-navigation';
 import { getAllProvider } from '../../../util/ControllerUtils';
 import { getDeveloperTitle } from '../../../util/ChainTypeImages';
+import { ChainType } from 'gopocket-core';
 
 const styles = {
 	wrapper: {
@@ -119,7 +120,18 @@ class DeveloperOptions extends PureComponent {
 	renderNetworks = () => {
 		const { allProvider, allNetworkChanging } = this.props;
 		const elementMap = [];
-		for (const type in NetworkConfig) {
+
+		const chainOrder = [
+			ChainType.Syscoin,
+			ChainType.Ethereum,
+			ChainType.Arbitrum,
+			ChainType.Bsc,
+			ChainType.Polygon,
+			ChainType.Optimism,
+			ChainType.Avax
+		];
+
+		for (const type of chainOrder) {
 			const chainType = Number(type);
 			if (NetworkConfig[type].Disabled) {
 				continue;
