@@ -138,8 +138,6 @@ export function getShareImage(type) {
 		return require('../images/ic_share_bsc.png');
 	} else if (type === ChainType.Arbitrum) {
 		return require('../images/ic_share_arb.png');
-	} else if (type === ChainType.Tron) {
-		return require('../images/ic_share_tron.png');
 	} else if (type === ChainType.Heco) {
 		return require('../images/ic_share_heco.png');
 	} else if (type === ChainType.Optimism) {
@@ -177,8 +175,6 @@ export function getTabIcon(type) {
 		return require('../images/ic_tab_bsc.png');
 	} else if (type === ChainType.Arbitrum) {
 		return require('../images/ic_tab_arb.png');
-	} else if (type === ChainType.Tron) {
-		return require('../images/ic_tab_tron.png');
 	} else if (type === ChainType.Heco) {
 		return require('../images/ic_tab_heco.png');
 	} else if (type === ChainType.Optimism) {
