@@ -10,8 +10,7 @@ import {
 	TextInput,
 	ActivityIndicator,
 	StatusBar,
-	Dimensions,
-	Platform
+	Dimensions
 } from 'react-native';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
@@ -65,19 +64,13 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		borderRadius: 8,
 		backgroundColor: colors.white,
-		...Platform.select({
-			ios: {
-				shadowOffset: {
-					width: 0,
-					height: 2
-				},
-				shadowOpacity: 0.25,
-				shadowRadius: 2.5
-			},
-			android: {
-				elevation: 10
-			}
-		})
+		shadowOffset: {
+			width: 0,
+			height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 2.5,
+		elevation: 10
 	},
 	childrenWrapper: {
 		flex: 1,
