@@ -60,8 +60,7 @@ const styles = StyleSheet.create({
 	cardWrapper: {
 		flex: 1,
 		marginHorizontal: 20,
-		marginTop: 20,
-		marginBottom: 5,
+		marginBottom: 25,
 		borderRadius: 8,
 		backgroundColor: colors.white,
 		shadowOffset: {
