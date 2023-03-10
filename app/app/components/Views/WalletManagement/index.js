@@ -57,17 +57,25 @@ const styles = StyleSheet.create({
 	rowWrapper: {
 		flex: 1
 	},
-	childrenWrapper: {
-		flex: 1,
-		flexDirection: 'column',
-		marginHorizontal: 38,
-		marginVertical: 42
-	},
 	cardWrapper: {
 		flex: 1,
-		marginHorizontal: -2,
-		marginTop: -17,
-		marginBottom: -10
+		marginHorizontal: 20,
+		marginBottom: 25,
+		borderRadius: 8,
+		backgroundColor: colors.white,
+		shadowOffset: {
+			width: 0,
+			height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 2.5,
+		elevation: 10
+	},
+	childrenWrapper: {
+		flex: 1,
+		marginHorizontal: 16,
+		marginVertical: 16,
+		backgroundColor: colors.white
 	},
 	rowFlex: {
 		flex: 1,
