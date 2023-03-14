@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 		width: '80%'
 	},
 	marginLeftForBtn: {
-		marginLeft: 51
+		marginLeft: 57
 	},
 	bottomModal: {
 		justifyContent: 'flex-end',
