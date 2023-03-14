@@ -1,16 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import {
-	StyleSheet,
-	ScrollView,
-	View,
-	StatusBar,
-	NativeModules,
-	TouchableOpacity,
-	Image,
-	Text,
-	Animated
-} from 'react-native';
+import { StyleSheet, ScrollView, View, StatusBar, NativeModules } from 'react-native';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
@@ -18,7 +8,6 @@ import MStatusBar from '../../UI/MStatusBar';
 import { getInviteUrl } from '../../../util/ApiClient';
 import TitleBar from '../../UI/TitleBar';
 import Device from '../../../util/Device';
-import iconBackBlack from '../../../images/back.png';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -46,7 +35,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		paddingTop: 10
 	},
-
 	cardItemTop: {
 		backgroundColor: colors.white,
 		borderRadius: 10,
@@ -117,7 +105,6 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
-		const titleHeight = 56 + barHeight;
 
 		return (
 			<View style={baseStyles.flexGrow} testID={'wallet-screen'}>
@@ -137,7 +124,6 @@ export default class Settings extends PureComponent {
 						}}
 					/>
 				</View>
-				<View />
 
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
 					<View style={styles.cardItemTop}>

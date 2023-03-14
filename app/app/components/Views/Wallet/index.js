@@ -283,6 +283,7 @@ class Wallet extends PureComponent {
 			onScanSuccess: this.onScanSuccess
 		});
 	};
+
 	openSettings = async () => {
 		this.closeTokenSwipeRow();
 		this.props.navigation.navigate('SettingsView');
