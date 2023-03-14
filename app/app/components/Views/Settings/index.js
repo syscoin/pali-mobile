@@ -17,16 +17,22 @@ const styles = StyleSheet.create({
 		zIndex: 99999999999999
 	},
 	title: {
+		color: colors.$202020,
+		backgroundColor: colors.$F6F6F6,
 		fontSize: 22,
+		textAlign: 'center',
 		...fontStyles.bold
-	},
-	titleBar: {
-		backgroundColor: colors.$F6F6F6
 	},
 	cardItem: {
 		backgroundColor: colors.white,
 		borderRadius: 10,
 		marginTop: 20
+	},
+	headerStyle: {
+		flexDirection: 'row',
+		backgroundColor: colors.$F6F6F6,
+		alignItems: 'center',
+		justifyContent: 'center'
 	},
 	cardItemTop: {
 		backgroundColor: colors.white,
@@ -98,6 +104,7 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
+
 		return (
 			<View style={baseStyles.flexGrow} testID={'wallet-screen'}>
 				<MStatusBar
@@ -106,7 +113,17 @@ export default class Settings extends PureComponent {
 					backgroundColor={colors.transparent}
 				/>
 				<View style={{ height: barHeight, backgroundColor: colors.$F6F6F6 }} />
-				<TitleBar title={strings('app_settings.title')} titleStyle={styles.title} baseStyle={styles.titleBar} />
+				<View style={styles.headerStyle}>
+					<TitleBar
+						baseStyle={{ backgroundColor: colors.$F6F6F6 }}
+						titleStyle={styles.title}
+						title={strings('app_settings.title')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+				</View>
+
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
 					<View style={styles.cardItemTop}>
 						<SettingsDrawer

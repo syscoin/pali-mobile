@@ -68,6 +68,12 @@ export default createStackNavigator(
 									navigationOptions: {
 										header: null
 									}
+								},
+								SettingsView: {
+									screen: Settings,
+									navigationOptions: {
+										header: null
+									}
 								}
 							},
 							{
@@ -113,31 +119,6 @@ export default createStackNavigator(
 									]}
 									source={
 										focused ? require('../../images/2Hl.png') : require('../../images/2NOR.png')
-									}
-								/>
-							)
-						}
-					},
-					SettingsHome: {
-						screen: createStackNavigator({
-							SettingsView: {
-								screen: Settings,
-								navigationOptions: {
-									header: null
-								}
-							}
-						}),
-						navigationOptions: {
-							tabBarLabel: () => null,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginTop: 5 }
-									]}
-									source={
-										focused ? require('../../images/3HL.png') : require('../../images/3Nor.png')
 									}
 								/>
 							)

@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginLeft: 102
+		paddingLeft: 20
 	},
 	title: {
 		flex: 1,
@@ -88,12 +88,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	scannerButton: {
-		paddingLeft: 7,
 		paddingRight: 20
 	},
+
 	walletConnectButton: {
 		paddingLeft: 20,
-		paddingRight: 7
+		paddingRight: 14
 	},
 	buttonImg: {
 		width: 24,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 		width: '80%'
 	},
 	marginLeftForBtn: {
-		marginLeft: 51
+		marginLeft: 57
 	},
 	bottomModal: {
 		justifyContent: 'flex-end',
@@ -282,6 +282,11 @@ class Wallet extends PureComponent {
 		this.props.showScanner({
 			onScanSuccess: this.onScanSuccess
 		});
+	};
+
+	openSettings = async () => {
+		this.closeTokenSwipeRow();
+		this.props.navigation.navigate('SettingsView');
 	};
 
 	hideAssetAmount = opt => {
@@ -670,8 +675,11 @@ class Wallet extends PureComponent {
 			onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
 		>
 			<MStatusBar navigation={this.props.navigation} />
-			<View style={[styles.header, !this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-				<View style={styles.title}>
+			<View style={styles.header}>
+				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+					<Image style={styles.buttonImg} source={require('../../../images/3Nor.png')} />
+				</TouchableOpacity>
+				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
 					<Image source={require('../../../images/header_logo.png')} />
 				</View>
 				{this.props.walletConnectIconVisible && (
