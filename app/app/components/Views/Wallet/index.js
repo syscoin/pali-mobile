@@ -38,6 +38,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { showWalletConnectList } from '../../../actions/walletconnect';
 import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
+import CreateAccountCard from '../../UI/CreateAccountCard';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -95,6 +96,39 @@ const styles = StyleSheet.create({
 		paddingLeft: 20,
 		paddingRight: 7
 	},
+	addAccountLabel: {
+		fontSize: 20,
+		color: colors.$030319,
+		...fontStyles.semibold
+	},
+	addAccountDesc: {
+		fontSize: 9,
+		color: colors.$60657D,
+		marginTop: 6
+	},
+	absoluteStart: {
+		position: 'absolute',
+		left: 0,
+		top: 0
+	},
+	accountItem: {
+		marginTop: 16,
+		flex: 1
+	},
+	center: {
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	addAccountInter: {
+		flex: 1,
+		marginLeft: 11
+	},
+	addAccountContent: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'row',
+		paddingHorizontal: 22
+	},
 	buttonImg: {
 		width: 24,
 		height: 24
@@ -114,6 +148,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginLeft: -(viewportWidth - slideWidth) / 2
 	},
+
 	flexOne: {
 		flex: 1
 	},
@@ -375,7 +410,7 @@ class Wallet extends PureComponent {
 		if (identities[selectedAddress]?.currentChain) {
 			currentIndexAsset = identities[selectedAddress]?.currentChain;
 		}
-
+		console.log(currentIndexAsset, 'wow');
 		const current_assets =
 			currentIndexAsset === ChainType.All
 				? [...assets]
@@ -427,6 +462,8 @@ class Wallet extends PureComponent {
 			this.firstItem = 0;
 			currentContactEntry = contactEntrys[0];
 		}
+		//Add create account card to Carousel
+		contactEntrys.push({ type: 'add account' });
 		return (
 			<View style={styles.wrapper}>
 				<View>
@@ -435,21 +472,29 @@ class Wallet extends PureComponent {
 						ref={this.carouselRef}
 						data={contactEntrys}
 						renderItem={({ item, index }) => (
-							<View style={styles.sliderItem} key={'slider-element-' + item.address}>
-								<CardSwiper
-									ensEntry={ensEntries[item.address]}
-									wealth={wealths[item.address]}
-									hideAssetAmount={this.hideAssetAmount}
-									swipeChange={i => {
-										this.swipeChange(item.address, i);
-									}}
-									contactEntry={item}
-									amountHide={isAmountHide}
-									amountSymbol={amountSymbol}
-									toggleChainEditing={this.toggleChainEditing}
-									touchAvatar={this.showEnsSettingModal}
-								/>
-							</View>
+							<>
+								{contactEntrys.length !== index + 1 ? (
+									<View style={styles.sliderItem} key={'slider-element-' + item.address}>
+										<CardSwiper
+											ensEntry={ensEntries[item.address]}
+											wealth={wealths[item.address]}
+											hideAssetAmount={this.hideAssetAmount}
+											swipeChange={i => {
+												this.swipeChange(item.address, i);
+											}}
+											contactEntry={item}
+											amountHide={isAmountHide}
+											amountSymbol={amountSymbol}
+											toggleChainEditing={this.toggleChainEditing}
+											touchAvatar={this.showEnsSettingModal}
+										/>
+									</View>
+								) : (
+									<View style={styles.sliderItem} key={'slider-element-' + item.address}>
+										<CreateAccountCard walletSelectedIndex={currentIndexAsset} />
+									</View>
+								)}
+							</>
 						)}
 						sliderWidth={sliderWidth}
 						itemWidth={itemWidth}
@@ -464,8 +509,10 @@ class Wallet extends PureComponent {
 						layout={'default'}
 						activeSlideAlignment={'center'}
 						onSnapToItem={index => {
-							this.firstItem = index;
-							this.setSelectedAddress(contactEntrys[index].address);
+							if (this.firstItem !== index) {
+								this.firstItem = index;
+								this.setSelectedAddress(contactEntrys[index].address);
+							}
 						}}
 						scrollEnabled={!chainEditing && !searchEditing}
 					/>
