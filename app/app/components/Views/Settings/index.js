@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 	title: {
 		color: colors.$202020,
 		backgroundColor: colors.$F6F6F6,
-		fontSize: 18,
+		fontSize: 22,
 		textAlign: 'center',
 		...fontStyles.bold
 	},
@@ -32,8 +32,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		backgroundColor: colors.$F6F6F6,
 		alignItems: 'center',
-		justifyContent: 'center',
-		paddingTop: 10
+		justifyContent: 'center'
 	},
 	cardItemTop: {
 		backgroundColor: colors.white,
