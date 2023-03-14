@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text } from 'react-native';
+import { Image } from 'react-native';
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import SimpleWebview from '../Views/SimpleWebview';
@@ -14,8 +14,7 @@ import AboutView from '../Views/AboutView';
 import DeveloperOptions from '../Views/DeveloperOptions';
 import CurrencyUnit from '../Views/CurrencyUnit';
 import UpdateCheck from '../Views/UpdateCheck';
-import { colors, fontStyles } from '../../styles/common';
-import { strings } from '../../../locales/i18n';
+import { colors } from '../../styles/common';
 import WalletManagement from '../Views/WalletManagement';
 import ObserveAccounts from '../Views/ObserveAccounts';
 import NftView from '../Views/NftView';
@@ -30,6 +29,18 @@ import ImportFromSeed from '../Views/ImportFromSeed';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
 import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
+
+const SlideFromLeft = (index, position, width) => {
+	const inputRange = [index - 1, index, index + 1];
+	const translateX = position.interpolate({
+		inputRange,
+		outputRange: [-width, 0, 0]
+	});
+
+	return {
+		transform: [{ translateX }]
+	};
+};
 
 export default createStackNavigator(
 	{
@@ -77,9 +88,28 @@ export default createStackNavigator(
 								}
 							},
 							{
-								transitionConfig: () => ({
-									screenInterpolator: StackViewStyleInterpolator.forHorizontal
-								})
+								transitionConfig: transitionProps => {
+									const { scene, scenes } = transitionProps;
+									const { route } = scene;
+
+									// apply animation for SettingsView screen and when navigating to/from it
+									if (
+										route.routeName === 'SettingsView' ||
+										scenes[1]?.route.routeName === 'SettingsView'
+									) {
+										return {
+											screenInterpolator: sceneProps => {
+												const { layout, position, scene } = sceneProps;
+												const { index } = scene;
+
+												return SlideFromLeft(index, position, layout.initWidth);
+											}
+										};
+									}
+
+									// use the default screen transition for other screens
+									return {};
+								}
 							}
 						),
 						navigationOptions: {
