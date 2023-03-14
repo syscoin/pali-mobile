@@ -1,6 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { StyleSheet, ScrollView, View, StatusBar, NativeModules } from 'react-native';
+import {
+	StyleSheet,
+	ScrollView,
+	View,
+	StatusBar,
+	NativeModules,
+	TouchableOpacity,
+	Image,
+	Text,
+	Animated
+} from 'react-native';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
@@ -8,6 +18,7 @@ import MStatusBar from '../../UI/MStatusBar';
 import { getInviteUrl } from '../../../util/ApiClient';
 import TitleBar from '../../UI/TitleBar';
 import Device from '../../../util/Device';
+import iconBackBlack from '../../../images/back.png';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -17,17 +28,25 @@ const styles = StyleSheet.create({
 		zIndex: 99999999999999
 	},
 	title: {
-		fontSize: 22,
+		color: colors.$202020,
+		backgroundColor: colors.$F6F6F6,
+		fontSize: 18,
+		textAlign: 'center',
 		...fontStyles.bold
-	},
-	titleBar: {
-		backgroundColor: colors.$F6F6F6
 	},
 	cardItem: {
 		backgroundColor: colors.white,
 		borderRadius: 10,
 		marginTop: 20
 	},
+	headerStyle: {
+		flexDirection: 'row',
+		backgroundColor: colors.$F6F6F6,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingTop: 10
+	},
+
 	cardItemTop: {
 		backgroundColor: colors.white,
 		borderRadius: 10,
@@ -98,6 +117,8 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
+		const titleHeight = 56 + barHeight;
+
 		return (
 			<View style={baseStyles.flexGrow} testID={'wallet-screen'}>
 				<MStatusBar
@@ -106,7 +127,18 @@ export default class Settings extends PureComponent {
 					backgroundColor={colors.transparent}
 				/>
 				<View style={{ height: barHeight, backgroundColor: colors.$F6F6F6 }} />
-				<TitleBar title={strings('app_settings.title')} titleStyle={styles.title} baseStyle={styles.titleBar} />
+				<View style={styles.headerStyle}>
+					<TitleBar
+						baseStyle={{ backgroundColor: colors.$F6F6F6 }}
+						titleStyle={styles.title}
+						title={strings('app_settings.title')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+				</View>
+				<View />
+
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
 					<View style={styles.cardItemTop}>
 						<SettingsDrawer
