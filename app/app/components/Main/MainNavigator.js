@@ -108,7 +108,18 @@ export default createStackNavigator(
 									}
 
 									// use the default screen transition for other screens
-									return {};
+									return {
+										screenInterpolator: sceneProps => {
+											const translate = sceneProps?.scenes?.[1]?.route?.params?.translate;
+											if (translate) {
+												const translateFunc = StackViewStyleInterpolator[translate];
+												if (translateFunc) {
+													return translateFunc(sceneProps);
+												}
+											}
+											return StackViewStyleInterpolator.forHorizontal(sceneProps);
+										}
+									};
 								}
 							}
 						),
