@@ -21,6 +21,7 @@ import { strings } from '../../../../locales/i18n';
 import Modal from 'react-native-modal';
 import { CandleStickChart } from 'react-native-charts-wrapper';
 import Device from '../../../util/Device';
+import syscoinIntro from '../../../util/syscoinIntro.js';
 import Engine from '../../../core/Engine';
 import { util } from 'gopocket-core';
 import { getQueryId } from '../../../data/ContractData';
@@ -546,13 +547,17 @@ class AssetView extends PureComponent {
 	);
 
 	renderCoinInfo = () => {
-		const { coinInfo } = this.state;
+		const { coinInfo, coinGeckoId } = this.state;
 		const { asset, currencyCode, currencyCodeRate } = this.props;
 		const liquidity = coinInfo?.liquidity ? convertUsdValue(coinInfo.liquidity, currencyCodeRate) : undefined;
 		const totalVolume = coinInfo?.totalVolume ? convertUsdValue(coinInfo.totalVolume, currencyCodeRate) : undefined;
 		const ath = coinInfo?.ath ? convertUsdValue(coinInfo.ath, currencyCodeRate) : undefined;
 		const marketCap = coinInfo?.marketCap ? convertUsdValue(coinInfo.marketCap, currencyCodeRate) : undefined;
 		const fdv = coinInfo?.fdv ? convertUsdValue(coinInfo.fdv, currencyCodeRate) : undefined;
+
+		//Set an introduction to Syscoin hard-coded to protect integrity
+		const coinIntro = coinGeckoId === 'syscoin' ? syscoinIntro : coinInfo?.intro;
+
 		return (
 			<ImageCapInset
 				style={[styles.cardWrapper, styles.bodyMargin]}
@@ -626,7 +631,7 @@ class AssetView extends PureComponent {
 							<HTMLView
 								style={styles.introMsgText}
 								stylesheet={htmlStyle}
-								value={'<p>' + coinInfo.intro + '</p>'}
+								value={'<p>' + coinIntro + '</p>'}
 								onLinkPress={url => {
 									this.props.navigation.navigate('BrowserTabHome');
 									this.props.navigation.navigate('BrowserView', {
