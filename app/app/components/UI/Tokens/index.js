@@ -19,6 +19,7 @@ import {
 	DeviceEventEmitter,
 	ScrollView
 } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TokenImage from '../TokenImage';
 import { colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
@@ -77,6 +78,13 @@ const styles = StyleSheet.create({
 	bottomModal: {
 		justifyContent: 'flex-end',
 		margin: 0
+	},
+	backgroundImage: {
+		position: 'relative',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 46,
+		height: 52
 	},
 	header: {
 		flex: 1,
@@ -198,22 +206,6 @@ const styles = StyleSheet.create({
 		right: -8,
 		top: 0,
 		zIndex: 1
-	},
-	securityTouchBg: {
-		width: securityBtnWidth,
-		height: securityBtnHeight
-	},
-	securityTouch: {
-		width: securityBtnWidth,
-		height: securityBtnHeight,
-		justifyContent: 'center',
-		alignItems: 'center',
-		flexDirection: 'row'
-	},
-	securityText: {
-		fontSize: 14,
-		color: colors.white,
-		marginLeft: 5
 	},
 	number: {
 		fontSize: 11,
@@ -787,34 +779,20 @@ class Tokens extends PureComponent {
 									<Image source={require('../../../images/ic_asset_buy.png')} />
 								</TouchableOpacity>
 							)}
+
 							<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
 								<Image source={require('../../../images/ic_asset_history.png')} />
 							</TouchableOpacity>
+							<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
+								<ImageBackground
+									source={require('../../../images/ic_asset_security.png')}
+									style={styles.backgroundImage}
+								>
+									<MaterialIcons color={'#8F92A1'} size={22} name="security" />
+								</ImageBackground>
+							</TouchableOpacity>
 
 							<View style={styles.flexOne} />
-							<ImageBackground
-								source={require('../../../images/ic_asset_security_bg.png')}
-								style={styles.securityTouchBg}
-							>
-								<TouchableOpacity
-									style={styles.securityTouch}
-									onPress={this.onSecurityClick}
-									activeOpacity={0.5}
-									ref={this.securityBtnRef}
-								>
-									<Image source={require('../../../images/ic_security_white.png')} />
-									<Text style={styles.securityText} allowFontScaling={false}>
-										{strings('security.security_title')}
-									</Text>
-									{selectedAddress !== undefined && newRiskCount > 0 && (
-										<View style={styles.numberWrapper}>
-											<Text style={styles.number} numberOfLines={1}>
-												{newRiskCount}
-											</Text>
-										</View>
-									)}
-								</TouchableOpacity>
-							</ImageBackground>
 						</View>
 					)}
 					{(searchEditing || searchViewAnimed) && (
