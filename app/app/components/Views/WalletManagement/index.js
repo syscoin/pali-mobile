@@ -320,8 +320,6 @@ const styles = StyleSheet.create({
 		elevation: 0,
 		backgroundColor: colors.white,
 		borderBottomWidth: 0,
-		height: Device.isAndroid() && StatusBar.currentHeight ? 56 + StatusBar.currentHeight : 56,
-		paddingTop: Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : 0,
 		alignItems: 'center'
 	},
 	backButton: {
