@@ -70,16 +70,15 @@ export default class SimpleWebview extends PureComponent {
 		});
 
 		let height = 56;
-		let paddingTop = 0;
-		height = Device.isAndroid() && StatusBar.currentHeight ? height + StatusBar.currentHeight : height;
-		paddingTop = Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : 0;
+
+		height = Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : height;
 
 		if (uri) {
 			return (
 				<SafeAreaProvider>
 					<SafeAreaView style={baseStyles.flexGrow}>
 						<MStatusBar navigation={this.props.navigation} fixPadding={false} />
-						<View style={[styles.titleLayout, { height, paddingTop }]}>
+						<View style={[styles.titleLayout, { height }]}>
 							{Device.isAndroid() ? (
 								// eslint-disable-next-line react/jsx-no-bind
 								<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
