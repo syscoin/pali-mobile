@@ -108,7 +108,7 @@ export default class AboutView extends PureComponent {
 		return (
 			<SafeAreaProvider>
 				<SafeAreaView style={styles.wrapper}>
-					<MStatusBar navigation={this.props.navigation} />
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 					<TitleBar
 						title={strings('app_settings.about')}
 						onBack={() => {

@@ -129,7 +129,7 @@ class UpdateCheck extends PureComponent {
 		return (
 			<SafeAreaProvider testID={'wallet-screen'}>
 				<SafeAreaView style={baseStyles.flexGrow}>
-					<MStatusBar navigation={this.props.navigation} />
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 					<TitleBar
 						title={strings('app_settings.update_check')}
 						onBack={() => {
