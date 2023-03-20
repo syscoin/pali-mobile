@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
 	},
 	titleLayout: {
 		flexDirection: 'row',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		height: 56
 	}
 });
 
@@ -69,16 +70,12 @@ export default class SimpleWebview extends PureComponent {
 			'';
 		});
 
-		let height = 56;
-
-		height = Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : height;
-
 		if (uri) {
 			return (
 				<SafeAreaProvider>
 					<SafeAreaView style={baseStyles.flexGrow}>
 						<MStatusBar navigation={this.props.navigation} fixPadding={false} />
-						<View style={[styles.titleLayout, { height }]}>
+						<View style={styles.titleLayout}>
 							{Device.isAndroid() ? (
 								// eslint-disable-next-line react/jsx-no-bind
 								<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
