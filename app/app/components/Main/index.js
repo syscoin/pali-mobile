@@ -125,6 +125,10 @@ const styles = StyleSheet.create({
 		width: 52,
 		height: 52
 	},
+	navigatorView: {
+		paddingBottom: Device.isIphone14ProOrMax() ? 34 : 0,
+		flex: 1
+	},
 	shareView: {
 		position: 'absolute',
 		top: 0,
@@ -1131,7 +1135,7 @@ const Main = props => {
 	return (
 		<React.Fragment>
 			<View style={styles.flex}>
-				<View style={{ paddingBottom: Device.isIphone14ProOrMax() ? 34 : 0, flex: 1 }}>
+				<View style={styles.navigatorView}>
 					<MainNavigator navigation={props.navigation} />
 				</View>
 				<GlobalAlert />

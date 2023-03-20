@@ -101,7 +101,7 @@ class CurrencyUnit extends PureComponent {
 	render() {
 		return (
 			<SafeAreaProvider testID={'wallet-screen'}>
-				<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+				<SafeAreaView style={baseStyles.flexGrow}>
 					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 					<TitleBar
 						title={strings('app_settings.currency_unit')}
