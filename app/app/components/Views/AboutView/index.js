@@ -7,7 +7,8 @@ import { getVersion } from 'react-native-device-info';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = {
 	flex: {
@@ -105,76 +106,78 @@ export default class AboutView extends PureComponent {
 
 	render() {
 		return (
-			<SafeAreaView style={styles.wrapper}>
-				<MStatusBar navigation={this.props.navigation} />
-				<TitleBar
-					title={strings('app_settings.about')}
-					onBack={() => {
-						this.props.navigation.pop();
-					}}
-				/>
-				<View style={styles.flex} />
-				<Image style={styles.logo} source={require('../../../images/logo_about.png')} />
-				<Text style={styles.slogan}>{strings('other.scale_in_proud')}</Text>
-				<Text style={styles.version}>{this.state.version}</Text>
-				<View style={styles.flex} />
+			<SafeAreaProvider>
+				<SafeAreaView style={styles.wrapper}>
+					<MStatusBar navigation={this.props.navigation} />
+					<TitleBar
+						title={strings('app_settings.about')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+					<View style={styles.flex} />
+					<Image style={styles.logo} source={require('../../../images/logo_about.png')} />
+					<Text style={styles.slogan}>{strings('other.scale_in_proud')}</Text>
+					<Text style={styles.version}>{this.state.version}</Text>
+					<View style={styles.flex} />
 
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goWebsite}>
-						<Image style={styles.logo} source={require('../../../images/ic_website.png')} />
-						<Text style={styles.itemTitle}>{strings('other.official_website')}</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
-				<View style={styles.line} />
+					<View style={styles.line} />
+					<View style={styles.itemLayout}>
+						<TouchableOpacity style={styles.touch} onPress={this.goWebsite}>
+							<Image style={styles.logo} source={require('../../../images/ic_website.png')} />
+							<Text style={styles.itemTitle}>{strings('other.official_website')}</Text>
+							<View style={styles.flex} />
+							<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.line} />
 
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goDiscord}>
-						<Image style={styles.logo} source={require('../../../images/ic_discord.png')} />
-						<Text style={styles.itemTitle}>Discord</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
-				<View style={styles.line} />
+					<View style={styles.line} />
+					<View style={styles.itemLayout}>
+						<TouchableOpacity style={styles.touch} onPress={this.goDiscord}>
+							<Image style={styles.logo} source={require('../../../images/ic_discord.png')} />
+							<Text style={styles.itemTitle}>Discord</Text>
+							<View style={styles.flex} />
+							<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.line} />
 
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goTwitter}>
-						<Image style={styles.logo} source={require('../../../images/ic_twitter.png')} />
-						<Text style={styles.itemTitle}>Twitter</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
-				<View style={styles.line} />
+					<View style={styles.line} />
+					<View style={styles.itemLayout}>
+						<TouchableOpacity style={styles.touch} onPress={this.goTwitter}>
+							<Image style={styles.logo} source={require('../../../images/ic_twitter.png')} />
+							<Text style={styles.itemTitle}>Twitter</Text>
+							<View style={styles.flex} />
+							<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.line} />
 
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goMedium}>
-						<Image style={styles.logo} source={require('../../../images/ic_medium.png')} />
-						<Text style={styles.itemTitle}>Medium</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
-						<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />
-						<Text style={styles.itemTitle}>Telegram</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
+					<View style={styles.line} />
+					<View style={styles.itemLayout}>
+						<TouchableOpacity style={styles.touch} onPress={this.goMedium}>
+							<Image style={styles.logo} source={require('../../../images/ic_medium.png')} />
+							<Text style={styles.itemTitle}>Medium</Text>
+							<View style={styles.flex} />
+							<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.line} />
+					<View style={styles.itemLayout}>
+						<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
+							<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />
+							<Text style={styles.itemTitle}>Telegram</Text>
+							<View style={styles.flex} />
+							<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
+						</TouchableOpacity>
+					</View>
 
-				<View style={styles.line} />
+					<View style={styles.line} />
 
-				<View style={styles.flex3} />
-			</SafeAreaView>
+					<View style={styles.flex3} />
+				</SafeAreaView>
+			</SafeAreaProvider>
 		);
 	}
 }

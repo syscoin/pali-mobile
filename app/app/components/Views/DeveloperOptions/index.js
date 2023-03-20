@@ -12,7 +12,7 @@ import { startNetworkChange, toggleTestnetVisible } from '../../../actions/setti
 import MStatusBar from '../../UI/MStatusBar';
 import { NetworkConfig } from 'gopocket-core';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { getAllProvider } from '../../../util/ControllerUtils';
 import { getDeveloperTitle } from '../../../util/ChainTypeImages';
 import { ChainType } from 'gopocket-core';
@@ -192,46 +192,50 @@ class DeveloperOptions extends PureComponent {
 
 	render() {
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
-				<TitleBar
-					title={strings('app_settings.developer_options')}
-					onBack={() => {
-						this.props.navigation.pop();
-					}}
-				/>
-				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View>
-						<View style={styles.switchLayout}>
-							<Text style={styles.titleHead}>{strings('developer_options.testnet_availability')}</Text>
-							<View style={styles.flex} />
-							<Switch
-								style={styles.switch}
-								onValueChange={switchOn => {
-									this.props.toggleTestnetVisible();
-									if (!switchOn) {
-										this.setDefaultNetwork();
-									}
-								}}
-								value={this.props.testnetVisible}
-								trackColor={{ true: colors.$4CD964, false: colors.grey300 }}
-								thumbColor={colors.white}
-							/>
+			<SafeAreaProvider testID={'wallet-screen'}>
+				<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+					<TitleBar
+						title={strings('app_settings.developer_options')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+					<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
+						<View>
+							<View style={styles.switchLayout}>
+								<Text style={styles.titleHead}>
+									{strings('developer_options.testnet_availability')}
+								</Text>
+								<View style={styles.flex} />
+								<Switch
+									style={styles.switch}
+									onValueChange={switchOn => {
+										this.props.toggleTestnetVisible();
+										if (!switchOn) {
+											this.setDefaultNetwork();
+										}
+									}}
+									value={this.props.testnetVisible}
+									trackColor={{ true: colors.$4CD964, false: colors.grey300 }}
+									thumbColor={colors.white}
+								/>
+							</View>
+							{!this.props.testnetVisible ? (
+								<Text style={styles.switchDesc}>
+									{strings('developer_options.all_networks_in_product_enviroment')}
+								</Text>
+							) : (
+								<React.Fragment>
+									<Text style={styles.switchDesc}>{strings('developer_options.switch_desc')}</Text>
+									{this.renderNetworks()}
+								</React.Fragment>
+							)}
+							<View style={styles.bottomHeght} />
 						</View>
-						{!this.props.testnetVisible ? (
-							<Text style={styles.switchDesc}>
-								{strings('developer_options.all_networks_in_product_enviroment')}
-							</Text>
-						) : (
-							<React.Fragment>
-								<Text style={styles.switchDesc}>{strings('developer_options.switch_desc')}</Text>
-								{this.renderNetworks()}
-							</React.Fragment>
-						)}
-						<View style={styles.bottomHeght} />
-					</View>
-				</ScrollView>
-			</SafeAreaView>
+					</ScrollView>
+				</SafeAreaView>
+			</SafeAreaProvider>
 		);
 	}
 }
