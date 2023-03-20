@@ -12,7 +12,7 @@ import { toggleTestnetVisible } from '../../../actions/settings';
 import MStatusBar from '../../UI/MStatusBar';
 import { CURRENCIES } from '../../../util/currencies';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 const styles = {
 	wrapper: {
@@ -100,18 +100,20 @@ class CurrencyUnit extends PureComponent {
 
 	render() {
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
-				<TitleBar
-					title={strings('app_settings.currency_unit')}
-					onBack={() => {
-						this.props.navigation.pop();
-					}}
-				/>
-				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View>{this.renderCurrencyItem()}</View>
-				</ScrollView>
-			</SafeAreaView>
+			<SafeAreaProvider testID={'wallet-screen'}>
+				<SafeAreaView style={baseStyles.flexGrow}>
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+					<TitleBar
+						title={strings('app_settings.currency_unit')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+					<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
+						<View>{this.renderCurrencyItem()}</View>
+					</ScrollView>
+				</SafeAreaView>
+			</SafeAreaProvider>
 		);
 	}
 }

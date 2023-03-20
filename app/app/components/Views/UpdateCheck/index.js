@@ -14,7 +14,7 @@ import { launchAppInGooglePlay, supportGooglePlay, jumpIosApp } from '../../../u
 import Device from '../../../util/Device';
 import { appendLanguage } from '../../../util/browser';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 const styles = {
 	wrapper: {
@@ -127,57 +127,63 @@ class UpdateCheck extends PureComponent {
 
 	render() {
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
-				<TitleBar
-					title={strings('app_settings.update_check')}
-					onBack={() => {
-						this.props.navigation.pop();
-					}}
-				/>
-				<View style={styles.flex}>
-					<WebView
-						source={{ uri: this.state.updateUrl }}
-						style={styles.flex}
-						onLoadProgress={this.onLoadProgress}
+			<SafeAreaProvider testID={'wallet-screen'}>
+				<SafeAreaView style={baseStyles.flexGrow}>
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+					<TitleBar
+						title={strings('app_settings.update_check')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
 					/>
-					{this.renderProgressBar()}
-				</View>
-				<View style={styles.line} />
-				{this.state.forceUpdate ? (
-					<View style={styles.bottomView}>
-						<View style={styles.bottomDetail}>
-							<TouchableOpacity
-								style={styles.bottomBtnTouch}
-								onPress={async () => {
-									if (Device.isAndroid()) {
-										const support = await supportGooglePlay();
-										if (support) {
-											launchAppInGooglePlay();
-										} else {
-											const downloadUrl = this.props.updateConfig.download_url;
-											if (downloadUrl) {
-												Linking.openURL(downloadUrl);
+					<View style={styles.flex}>
+						<WebView
+							source={{ uri: this.state.updateUrl }}
+							style={styles.flex}
+							onLoadProgress={this.onLoadProgress}
+						/>
+						{this.renderProgressBar()}
+					</View>
+					<View style={styles.line} />
+					{this.state.forceUpdate ? (
+						<View style={styles.bottomView}>
+							<View style={styles.bottomDetail}>
+								<TouchableOpacity
+									style={styles.bottomBtnTouch}
+									onPress={async () => {
+										if (Device.isAndroid()) {
+											const support = await supportGooglePlay();
+											if (support) {
+												launchAppInGooglePlay();
+											} else {
+												const downloadUrl = this.props.updateConfig.download_url;
+												if (downloadUrl) {
+													Linking.openURL(downloadUrl);
+												}
 											}
+										} else {
+											jumpIosApp();
 										}
-									} else {
-										jumpIosApp();
-									}
-								}}
-							>
-								<Text style={styles.bottomBtnText}>{strings('version_update.update_to_latest')}</Text>
-							</TouchableOpacity>
-							<Text style={styles.bottomWarnText}>{strings('version_update.upgrade_warn')}</Text>
+									}}
+								>
+									<Text style={styles.bottomBtnText}>
+										{strings('version_update.update_to_latest')}
+									</Text>
+								</TouchableOpacity>
+								<Text style={styles.bottomWarnText}>{strings('version_update.upgrade_warn')}</Text>
+							</View>
 						</View>
-					</View>
-				) : (
-					<View style={styles.bottomView2}>
-						<TouchableOpacity style={styles.bottomDisableBtnTouch} disabled>
-							<Text style={styles.bottomDisableBtnText}>{strings('version_update.already_updated')}</Text>
-						</TouchableOpacity>
-					</View>
-				)}
-			</SafeAreaView>
+					) : (
+						<View style={styles.bottomView2}>
+							<TouchableOpacity style={styles.bottomDisableBtnTouch} disabled>
+								<Text style={styles.bottomDisableBtnText}>
+									{strings('version_update.already_updated')}
+								</Text>
+							</TouchableOpacity>
+						</View>
+					)}
+				</SafeAreaView>
+			</SafeAreaProvider>
 		);
 	}
 }

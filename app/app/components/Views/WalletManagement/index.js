@@ -12,6 +12,7 @@ import {
 	StatusBar,
 	Dimensions
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
@@ -35,7 +36,6 @@ import { ChainTypeBgWithoutShadows, ChainTypeIcons, ChainTypeNames, ChainTypes }
 import { tryVerifyPassword } from '../../../core/Vault';
 import ImageCapInset from '../../UI/ImageCapInset';
 import WalletConnect from '../../../core/WalletConnect';
-import { SafeAreaView } from 'react-navigation';
 import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
 
@@ -320,8 +320,6 @@ const styles = StyleSheet.create({
 		elevation: 0,
 		backgroundColor: colors.white,
 		borderBottomWidth: 0,
-		height: Device.isAndroid() && StatusBar.currentHeight ? 56 + StatusBar.currentHeight : 56,
-		paddingTop: Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : 0,
 		alignItems: 'center'
 	},
 	backButton: {
@@ -1302,59 +1300,64 @@ class WalletManagement extends PureComponent {
 		const { keyrings } = this.props;
 		const { createWalletLoading, error } = this.state;
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'wallet-management-screen'}>
-				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
-				<View style={styles.headerStyle}>
-					<TouchableOpacity
-						onPress={() => this.props.navigation.pop()}
-						style={styles.backButton}
-						testID={'edit-contact-back-button'}
-					>
-						<IonicIcon
-							name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
-							size={Device.isAndroid() ? 24 : 28}
-							style={styles.backIcon}
-						/>
-					</TouchableOpacity>
-					<Text style={styles.headerLabelStyle}>{strings(`wallet_management.title`)}</Text>
-					{createWalletLoading ? (
-						<View style={styles.backButton}>
-							<ActivityIndicator size="small" color="#FE6E91" />
-						</View>
-					) : (
-						<TouchableOpacity onPress={this.toggleHeaderPopModal} style={styles.backButton}>
-							<Image source={require('../../../images/ic_wallet_add.png')} ref={this.headerButtonRef} />
-						</TouchableOpacity>
-					)}
-				</View>
-				<View style={styles.flexOne}>
-					<View style={styles.rowWrapper}>
-						<ScrollView
-							style={styles.flexOne}
-							keyboardShouldPersistTaps="handled"
-							showsVerticalScrollIndicator={false}
+			<SafeAreaProvider testID={'wallet-management-screen'}>
+				<SafeAreaView style={styles.wrapper}>
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+					<View style={styles.headerStyle}>
+						<TouchableOpacity
+							onPress={() => this.props.navigation.pop()}
+							style={styles.backButton}
+							testID={'edit-contact-back-button'}
 						>
-							<View style={styles.scrollViewContent}>
-								{keyrings.map((keyring, index) => this.renderItem(keyring, keyring.index, true))}
+							<IonicIcon
+								name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+								size={Device.isAndroid() ? 24 : 28}
+								style={styles.backIcon}
+							/>
+						</TouchableOpacity>
+						<Text style={styles.headerLabelStyle}>{strings(`wallet_management.title`)}</Text>
+						{createWalletLoading ? (
+							<View style={styles.backButton}>
+								<ActivityIndicator size="small" color="#FE6E91" />
 							</View>
-						</ScrollView>
+						) : (
+							<TouchableOpacity onPress={this.toggleHeaderPopModal} style={styles.backButton}>
+								<Image
+									source={require('../../../images/ic_wallet_add.png')}
+									ref={this.headerButtonRef}
+								/>
+							</TouchableOpacity>
+						)}
 					</View>
-					{this.renderRenameAccount()}
-					{this.renderDeleteAccount()}
-					{this.renderDeleteWallet()}
-					{this.renderCheckPassword()}
-					{this.renderFaqModal()}
-					{this.renderHeaderPopModal()}
-					<PromptView
-						isVisible={error != null}
-						title={strings('wallet_management.add_new_account')}
-						message={error}
-						onRequestClose={() => {
-							this.setState({ error: null });
-						}}
-					/>
-				</View>
-			</SafeAreaView>
+					<View style={styles.flexOne}>
+						<View style={styles.rowWrapper}>
+							<ScrollView
+								style={styles.flexOne}
+								keyboardShouldPersistTaps="handled"
+								showsVerticalScrollIndicator={false}
+							>
+								<View style={styles.scrollViewContent}>
+									{keyrings.map((keyring, index) => this.renderItem(keyring, keyring.index, true))}
+								</View>
+							</ScrollView>
+						</View>
+						{this.renderRenameAccount()}
+						{this.renderDeleteAccount()}
+						{this.renderDeleteWallet()}
+						{this.renderCheckPassword()}
+						{this.renderFaqModal()}
+						{this.renderHeaderPopModal()}
+						<PromptView
+							isVisible={error != null}
+							title={strings('wallet_management.add_new_account')}
+							message={error}
+							onRequestClose={() => {
+								this.setState({ error: null });
+							}}
+						/>
+					</View>
+				</SafeAreaView>
+			</SafeAreaProvider>
 		);
 	};
 }

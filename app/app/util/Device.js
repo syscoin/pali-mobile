@@ -81,6 +81,17 @@ export default class Device {
 	static isMediumDevice() {
 		return this.getDeviceHeight() < 736;
 	}
+	static isIphone14ProMax() {
+		return this.isIos() && this.getDeviceHeight() === 932;
+	}
+
+	static isIphone14Pro() {
+		return this.isIos() && this.getDeviceHeight() === 852;
+	}
+
+	static isIphone14ProOrMax() {
+		return this.isIphone14ProMax() || this.isIphone14Pro();
+	}
 }
 
 export async function getIosDeviceInfo() {
