@@ -156,7 +156,7 @@ class SecuritySettings extends PureComponent {
 		} = this.state;
 		return (
 			<SafeAreaProvider testID={'wallet-screen'}>
-				<SafeAreaView style={{ flex: 1 }}>
+				<SafeAreaView style={baseStyles.flexGrow}>
 					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 					<TitleBar
 						title={strings('app_settings.security_settings')}

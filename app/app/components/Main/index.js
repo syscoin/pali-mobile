@@ -1131,7 +1131,7 @@ const Main = props => {
 	return (
 		<React.Fragment>
 			<View style={styles.flex}>
-				<View style={{ paddingBottom: Device.isIphone14ProMax() || Device.isIphone14Pro() ? 34 : 0, flex: 1 }}>
+				<View style={{ paddingBottom: Device.isIphone14ProOrMax() ? 34 : 0, flex: 1 }}>
 					<MainNavigator navigation={props.navigation} />
 				</View>
 				<GlobalAlert />
