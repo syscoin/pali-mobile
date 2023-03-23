@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { colors, baseStyles, fontStyles } from '../../../styles/common';
 import Tokens, { closeAllOpenRows, hideRiskPop } from '../../UI/Tokens';
+import Icon from '../../UI/Icon';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
 import { showTransactionNotification, hideCurrentNotification } from '../../../actions/notification';
@@ -683,7 +684,7 @@ class Wallet extends PureComponent {
 			<MStatusBar navigation={this.props.navigation} />
 			<View style={styles.header}>
 				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
-					<Image style={styles.buttonImg} source={require('../../../images/3Nor.png')} />
+					<Icon name="settings" width="24" height="24" />
 				</TouchableOpacity>
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
 					<Image source={require('../../../images/header_logo.png')} />
