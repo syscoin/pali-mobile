@@ -27,7 +27,7 @@ import { showScanner } from '../../../actions/scanner';
 import CardSwiper from '../../UI/CardSwiper';
 import CopyView from '../../UI/CopyView';
 import Clipboard from '@react-native-community/clipboard';
-import { ChainType, TokenType, util } from 'gopocket-core';
+import { ChainType, util } from 'gopocket-core';
 import MStatusBar from '../../UI/MStatusBar';
 import Carousel from 'react-native-snap-carousel';
 import { CURRENCIES } from '../../../util/currencies';
@@ -211,7 +211,8 @@ class Wallet extends PureComponent {
 		selectEnsEntry: null,
 		ensAvatarData: null,
 		ensSettingPage: HomePage,
-		searchEditing: false
+		searchEditing: false,
+		nftChecked: false
 	};
 
 	popupInfos = {};
@@ -262,9 +263,7 @@ class Wallet extends PureComponent {
 		await util.safelyExecuteWithTimeout(async () => await Promise.all(actions), false, 6000);
 		this.setState({ refreshing: false });
 
-		const { identities, selectedAddress } = this.props;
-		const nftChecked = identities[selectedAddress]?.currentTokenType === TokenType.NFT;
-		if (nftChecked) {
+		if (this.state.nftChecked) {
 			DeviceEventEmitter.emit('onParentScroll', 100);
 		}
 	};
@@ -291,6 +290,10 @@ class Wallet extends PureComponent {
 
 	hideAssetAmount = opt => {
 		this.setState({ isAmountHide: opt.isAmountHide });
+	};
+
+	updateNftChecked = () => {
+		this.setState({ nftChecked: !this.state.nftChecked });
 	};
 
 	swipeChange = (address, chainType) => {
@@ -375,7 +378,7 @@ class Wallet extends PureComponent {
 	renderContent = () => {
 		const { identities, selectedAddress, assets, wealths, navigation, ensEntries, famousAccounts } = this.props;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
-		const { isAmountHide, chainEditing, searchEditing } = this.state;
+		const { isAmountHide, chainEditing, searchEditing, nftChecked } = this.state;
 		let currentIndexAsset = ChainType.All;
 		if (identities[selectedAddress]?.currentChain) {
 			currentIndexAsset = identities[selectedAddress]?.currentChain;
@@ -424,7 +427,6 @@ class Wallet extends PureComponent {
 			}
 		});
 
-		const nftChecked = identities[selectedAddress]?.currentTokenType === TokenType.NFT;
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 
 		let currentContactEntry = contactEntrys[this.firstItem];
@@ -432,6 +434,7 @@ class Wallet extends PureComponent {
 			this.firstItem = 0;
 			currentContactEntry = contactEntrys[0];
 		}
+
 		return (
 			<View style={styles.wrapper}>
 				<View>
@@ -442,6 +445,7 @@ class Wallet extends PureComponent {
 						renderItem={({ item, index }) => (
 							<View style={styles.sliderItem} key={'slider-element-' + item.address}>
 								<CardSwiper
+									navigation={navigation}
 									ensEntry={ensEntries[item.address]}
 									wealth={wealths[item.address]}
 									hideAssetAmount={this.hideAssetAmount}
@@ -453,6 +457,7 @@ class Wallet extends PureComponent {
 									amountSymbol={amountSymbol}
 									toggleChainEditing={this.toggleChainEditing}
 									touchAvatar={this.showEnsSettingModal}
+									nftChecked={nftChecked}
 								/>
 							</View>
 						)}
@@ -480,26 +485,27 @@ class Wallet extends PureComponent {
 				<View style={{ paddingBottom: 6, zIndex: 1000 }}>
 					{!chainEditing && (
 						<View>
-							{nftChecked ? (
+							<Tokens
+								ref={this.tokenRef}
+								navigation={navigation}
+								tabLabel={strings('wallet.tokens')}
+								tokens={current_assets}
+								currentAddress={this.currentAddress}
+								isAmountHide={isAmountHide}
+								isFirstAccount={contactEntrys[0]?.address === selectedAddress}
+								pushToSecurity={this.pushToSecurity.bind(this, currentContactEntry)}
+								toggleSearchEditing={this.toggleSearchEditing}
+								contactEntry={currentContactEntry}
+								currentChain={currentContactEntry.currentChain}
+								currentChainType={currentIndexAsset}
+								nftChecked={nftChecked}
+								updateNftChecked={this.updateNftChecked}
+							/>
+							{nftChecked && (
 								<Nft
 									navigation={navigation}
 									currentChainType={currentIndexAsset}
 									currentAddress={this.currentAddress}
-								/>
-							) : (
-								<Tokens
-									ref={this.tokenRef}
-									navigation={navigation}
-									tabLabel={strings('wallet.tokens')}
-									tokens={current_assets}
-									currentAddress={this.currentAddress}
-									isAmountHide={isAmountHide}
-									isFirstAccount={contactEntrys[0]?.address === selectedAddress}
-									pushToSecurity={this.pushToSecurity.bind(this, currentContactEntry)}
-									toggleSearchEditing={this.toggleSearchEditing}
-									contactEntry={currentContactEntry}
-									currentChain={currentContactEntry.currentChain}
-									currentChainType={currentIndexAsset}
 								/>
 							)}
 						</View>

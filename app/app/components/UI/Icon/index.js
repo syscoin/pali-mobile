@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import AccountSettings from '../../../images/svg/account_settings.svg';
 import NFT from '../../../images/svg/nft.svg';
 import Coin from '../../../images/svg/coin.svg';
 import Visibility from '../../../images/svg/visibility.svg';
@@ -9,7 +10,8 @@ const icons = {
 	nft: NFT,
 	coin: Coin,
 	visibility: Visibility,
-	visibilityOff: VisibilityOff
+	visibilityOff: VisibilityOff,
+	accountSettings: AccountSettings
 };
 
 const Icon = _props => {
