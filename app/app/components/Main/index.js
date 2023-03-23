@@ -13,6 +13,7 @@ import {
 	NativeModules
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalAlert from '../UI/GlobalAlert';
@@ -1136,7 +1137,9 @@ const Main = props => {
 		<React.Fragment>
 			<View style={styles.flex}>
 				<View style={styles.navigatorView}>
-					<MainNavigator navigation={props.navigation} />
+					<SafeAreaProvider>
+						<MainNavigator navigation={props.navigation} />
+					</SafeAreaProvider>
 				</View>
 				<GlobalAlert />
 				<FadeOutOverlay />
