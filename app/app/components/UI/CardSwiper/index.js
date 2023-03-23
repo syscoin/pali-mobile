@@ -7,14 +7,15 @@ import { renderAmount } from '../../../util/number';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
+import Icon from '../Icon';
 import { BignumberJs as BigNumber, ChainType, defaultEnabledChains, TokenType, util } from 'gopocket-core';
 import Engine from '../../../core/Engine';
 import Modal from 'react-native-modal';
 import Popover from '../Popover';
 import Device from '../../../util/Device';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
 	ChainTypeBg,
-	ChainTypeCheckColorStyle,
 	ChainTypeIcons,
 	ChainTypeMoreIcons,
 	ChainTypeNames,
@@ -59,6 +60,12 @@ const styles = StyleSheet.create({
 		width,
 		height: cardHeight,
 		overflow: 'scroll'
+	},
+	topIconsView: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingTop: 22,
+		paddingBottom: 6
 	},
 	contentLayout: {
 		width: cardWidth,
@@ -164,20 +171,7 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 		backgroundColor: colors.transparent
 	},
-	tnChecked: {
-		backgroundColor: colors.white,
-		borderWidth: 0
-	},
-	checkedLabel: {
-		color: colors.$FE6E91,
-		fontSize: 12,
-		textAlign: 'center'
-	},
-	unCheckedLabel: {
-		color: colors.white06,
-		fontSize: 12,
-		textAlign: 'center'
-	},
+
 	paddingVertical14: {
 		paddingVertical: 14
 	},
@@ -227,6 +221,18 @@ const styles = StyleSheet.create({
 		bottom: 20,
 		right: 10
 	},
+	hitSlopLeft: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 5
+	},
+	hitSlopRight: {
+		top: 10,
+		left: 5,
+		bottom: 10,
+		right: 10
+	},
 	hitSlopAmount: {
 		top: -10
 	},
@@ -260,15 +266,11 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		lineHeight: 16
 	},
-	marginTopZero: {
-		marginTop: 0
+	paddingTopZero: {
+		paddingTop: 0
 	},
 	ensAmount: {
 		fontSize: 42
-	},
-	// eslint-disable-next-line react-native/no-color-literals
-	rpcColor: {
-		color: '#9D7DF8'
 	},
 	scrollViewMaxHeight: {
 		maxHeight: 300
@@ -277,6 +279,7 @@ const styles = StyleSheet.create({
 
 class CardSwiper extends PureComponent {
 	static propTypes = {
+		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
 		wealth: PropTypes.object,
 		hideAssetAmount: PropTypes.func,
@@ -290,14 +293,14 @@ class CardSwiper extends PureComponent {
 		ensEntry: PropTypes.object,
 		touchAvatar: PropTypes.func,
 		searchEditing: PropTypes.bool,
-		allChains: PropTypes.array
+		allChains: PropTypes.array,
+		nftChecked: PropTypes.bool
 	};
 
 	state = {
 		popMoreChains: [],
 		popModalVisible: false,
 		iconRect: {},
-		nftChecked: false,
 		currentChainType: ChainType.All
 	};
 
@@ -307,7 +310,7 @@ class CardSwiper extends PureComponent {
 		const currentChainType = this.props.contactEntry?.currentChain
 			? this.props.contactEntry.currentChain
 			: ChainType.All;
-		this.setState({ currentChainType, nftChecked: this.props.contactEntry?.currentTokenType === TokenType.NFT });
+		this.setState({ currentChainType });
 	};
 
 	UNSAFE_componentWillReceiveProps = nextProps => {
@@ -420,9 +423,10 @@ class CardSwiper extends PureComponent {
 			selectedAddress,
 			toggleChainEditing,
 			ensEntry,
-			searchEditing
+			searchEditing,
+			nftChecked
 		} = this.props;
-		const { nftChecked, currentChainType } = this.state;
+		const { currentChainType } = this.state;
 		const isObserve = contactEntry.isObserve;
 		const famousBg = contactEntry.famousBg;
 		const nftNum = wealth?.nftAmount?.[currentChainType] ? wealth.nftAmount[currentChainType] : 0;
@@ -543,72 +547,33 @@ class CardSwiper extends PureComponent {
 									)}
 
 									<View style={styles.flexSpace} />
-									<View style={[styles.tnLayout, hasEns && styles.marginTopZero]}>
+									<View style={[styles.topIconsView, hasEns && styles.paddingTopZero]}>
 										<TouchableOpacity
-											hitSlop={styles.hitSlop}
-											activeOpacity={1.0}
-											style={[styles.tokenTouch, !nftChecked && styles.tnChecked]}
+											hitSlop={styles.hitSlopLeft}
 											onPress={() => {
-												if (
-													!searchEditing &&
-													selectedAddress?.toLowerCase() ===
-														contactEntry.address?.toLowerCase()
-												) {
-													this.setState({ nftChecked: !nftChecked });
-													Engine.context.PreferencesController.updateCurrentTokenType(
-														selectedAddress,
-														!nftChecked ? TokenType.NFT : TokenType.TOKEN
-													);
-												}
+												this.props.hideAssetAmount({ isAmountHide: !amountHide });
 											}}
+											style={{ marginRight: 10 }}
 										>
-											<Text
-												style={[
-													!nftChecked ? styles.checkedLabel : styles.unCheckedLabel,
-													!nftChecked &&
-														(isObserve
-															? ObserveColorStyle
-															: isRpc
-															? styles.rpcColor
-															: ChainTypeCheckColorStyle[currentIndex])
-												]}
-												allowFontScaling={false}
-											>
-												{strings('nft.token')}
-											</Text>
+											<Icon
+												name={amountHide ? 'visibilityOff' : 'visibility'}
+												color={colors.white}
+												width="22"
+												height="22"
+											/>
 										</TouchableOpacity>
 										<TouchableOpacity
-											hitSlop={styles.hitSlop}
-											activeOpacity={1.0}
-											style={[styles.nftTouch, nftChecked && styles.tnChecked]}
+											hitSlop={styles.hitSlopRight}
 											onPress={() => {
-												if (
-													!searchEditing &&
-													selectedAddress?.toLowerCase() ===
-														contactEntry.address?.toLowerCase()
-												) {
-													this.setState({ nftChecked: !nftChecked });
-													Engine.context.PreferencesController.updateCurrentTokenType(
-														selectedAddress,
-														!nftChecked ? TokenType.NFT : TokenType.TOKEN
-													);
-												}
+												this.props.navigation.navigate('WalletManagement');
 											}}
 										>
-											<Text
-												style={[
-													nftChecked ? styles.checkedLabel : styles.unCheckedLabel,
-													nftChecked &&
-														(isObserve
-															? ObserveColorStyle
-															: isRpc
-															? styles.rpcColor
-															: ChainTypeCheckColorStyle[currentIndex])
-												]}
-												allowFontScaling={false}
-											>
-												{strings('nft.nft')}
-											</Text>
+											<Icon
+												name={'accountSettings'}
+												color={colors.white}
+												width="19"
+												height="19"
+											/>
 										</TouchableOpacity>
 									</View>
 								</View>
