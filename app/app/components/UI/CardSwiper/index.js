@@ -221,6 +221,18 @@ const styles = StyleSheet.create({
 		bottom: 20,
 		right: 10
 	},
+	hitSlopLeft: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 5
+	},
+	hitSlopRight: {
+		top: 10,
+		left: 5,
+		bottom: 10,
+		right: 10
+	},
 	hitSlopAmount: {
 		top: -10
 	},
@@ -537,6 +549,7 @@ class CardSwiper extends PureComponent {
 									<View style={styles.flexSpace} />
 									<View style={[styles.topIconsView, hasEns && styles.paddingTopZero]}>
 										<TouchableOpacity
+											hitSlop={styles.hitSlopLeft}
 											onPress={() => {
 												this.props.hideAssetAmount({ isAmountHide: !amountHide });
 											}}
@@ -550,6 +563,7 @@ class CardSwiper extends PureComponent {
 											/>
 										</TouchableOpacity>
 										<TouchableOpacity
+											hitSlop={styles.hitSlopRight}
 											onPress={() => {
 												this.props.navigation.navigate('WalletManagement');
 											}}
