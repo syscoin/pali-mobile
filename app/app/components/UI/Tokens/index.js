@@ -316,9 +316,9 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.transparent
 	},
 	tnChecked: {
-		backgroundColor: colors.$8F92A1,
 		borderWidth: 0,
-		borderRadius: 50
+		borderRadius: 50,
+		backgroundColor: colors.$8F92A1
 	},
 	buyBtn: {
 		width: '100%',
@@ -578,6 +578,8 @@ export const hideRiskPop = () => {
 	return false;
 };
 
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+
 /**
  * View that renders a list of ERC-20 Tokens
  */
@@ -624,7 +626,8 @@ class Tokens extends PureComponent {
 		loadEnd: false,
 		isLoading: true,
 		defiModalVisible: false,
-		selectedDefiToken: null
+		selectedDefiToken: null,
+		animation: new Animated.Value(0)
 	};
 
 	buttonRef = React.createRef();
@@ -768,6 +771,15 @@ class Tokens extends PureComponent {
 		this.toggleAnim();
 	};
 
+	animateSwitch = () => {
+		this.state.animation.setValue(this.props.nftChecked ? 1 : 0);
+		Animated.timing(this.state.animation, {
+			toValue: this.props.nftChecked ? 0 : 1,
+			duration: 100,
+			useNativeDriver: false
+		}).start();
+	};
+
 	renderHeader = () => {
 		const { selectedAddress, toggleSearchEditing, nftChecked, updateNftChecked } = this.props;
 		const { isEtherscanAvailable, searchEditing, searchViewAnimed } = this.state;
@@ -889,15 +901,28 @@ class Tokens extends PureComponent {
 				</View>
 				{!searchEditing && (
 					<View style={[styles.tnLayout]}>
-						<TouchableOpacity
+						<AnimatedTouchableOpacity
 							hitSlop={styles.hitSlop}
 							activeOpacity={1.0}
-							style={[styles.tokenTouch, !nftChecked && styles.tnChecked, { marginLeft: 2 }]}
+							style={[
+								styles.tokenTouch,
+								!nftChecked && styles.tnChecked,
+								{
+									borderRadius: 50,
+									marginLeft: 2,
+									backgroundColor: this.state.animation.interpolate({
+										inputRange: [0, 1],
+										outputRange: [colors.$8F92A1, colors.white]
+									})
+								}
+							]}
 							onPress={() => {
 								if (
 									!searchEditing &&
 									selectedAddress?.toLowerCase() === this.props.contactEntry.address?.toLowerCase()
 								) {
+									this.animateSwitch();
+
 									updateNftChecked();
 									Engine.context.PreferencesController.updateCurrentTokenType(
 										selectedAddress,
@@ -912,16 +937,29 @@ class Tokens extends PureComponent {
 								width="22"
 								height="20"
 							/>
-						</TouchableOpacity>
-						<TouchableOpacity
+						</AnimatedTouchableOpacity>
+						<AnimatedTouchableOpacity
 							hitSlop={styles.hitSlop}
 							activeOpacity={1.0}
-							style={[styles.nftTouch, nftChecked && styles.tnChecked, { marginRight: 2 }]}
+							style={[
+								styles.nftTouch,
+								nftChecked && styles.tnChecked,
+								{
+									borderRadius: 50,
+									marginRight: 2,
+									backgroundColor: this.state.animation.interpolate({
+										inputRange: [0, 1],
+										outputRange: [colors.white, colors.$8F92A1]
+									})
+								}
+							]}
 							onPress={() => {
 								if (
 									!searchEditing &&
 									selectedAddress?.toLowerCase() === this.props.contactEntry.address?.toLowerCase()
 								) {
+									this.animateSwitch();
+
 									updateNftChecked();
 									Engine.context.PreferencesController.updateCurrentTokenType(
 										selectedAddress,
@@ -936,7 +974,7 @@ class Tokens extends PureComponent {
 								width="17"
 								height="17"
 							/>
-						</TouchableOpacity>
+						</AnimatedTouchableOpacity>
 					</View>
 				)}
 			</View>

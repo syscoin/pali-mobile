@@ -8,7 +8,7 @@ import MStatusBar from '../../UI/MStatusBar';
 import { util } from 'gopocket-core';
 import Device from '../../../util/Device';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	backIcon: {
@@ -72,41 +72,39 @@ export default class SimpleWebview extends PureComponent {
 
 		if (uri) {
 			return (
-				<SafeAreaProvider>
-					<SafeAreaView style={baseStyles.flexGrow}>
-						<MStatusBar navigation={this.props.navigation} fixPadding={false} />
-						<View style={styles.titleLayout}>
-							{Device.isAndroid() ? (
-								// eslint-disable-next-line react/jsx-no-bind
-								<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
-									<Image source={require('../../../images/back.png')} />
-								</TouchableOpacity>
-							) : (
-								// eslint-disable-next-line react/jsx-no-bind
-								<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
-									<Image source={require('../../../images/defi_close.png')} />
-								</TouchableOpacity>
-							)}
-							<Text style={styles.centeredTitle}>{title}</Text>
-							{Device.isAndroid() ? (
-								// eslint-disable-next-line react/jsx-no-bind
-								<TouchableOpacity onPress={() => share()} style={styles.backButton}>
-									<Image source={require('../../../images/share.png')} />
-								</TouchableOpacity>
-							) : (
-								// eslint-disable-next-line react/jsx-no-bind
-								<TouchableOpacity onPress={() => share()} style={styles.backButton}>
-									<EvilIcons
-										name="share-apple"
-										size={32}
-										style={[styles.backIcon, styles.shareIconIOS]}
-									/>
-								</TouchableOpacity>
-							)}
-						</View>
-						<WebView source={{ uri }} />
-					</SafeAreaView>
-				</SafeAreaProvider>
+				<SafeAreaView style={baseStyles.flexGrow}>
+					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+					<View style={styles.titleLayout}>
+						{Device.isAndroid() ? (
+							// eslint-disable-next-line react/jsx-no-bind
+							<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+								<Image source={require('../../../images/back.png')} />
+							</TouchableOpacity>
+						) : (
+							// eslint-disable-next-line react/jsx-no-bind
+							<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+								<Image source={require('../../../images/defi_close.png')} />
+							</TouchableOpacity>
+						)}
+						<Text style={styles.centeredTitle}>{title}</Text>
+						{Device.isAndroid() ? (
+							// eslint-disable-next-line react/jsx-no-bind
+							<TouchableOpacity onPress={() => share()} style={styles.backButton}>
+								<Image source={require('../../../images/share.png')} />
+							</TouchableOpacity>
+						) : (
+							// eslint-disable-next-line react/jsx-no-bind
+							<TouchableOpacity onPress={() => share()} style={styles.backButton}>
+								<EvilIcons
+									name="share-apple"
+									size={32}
+									style={[styles.backIcon, styles.shareIconIOS]}
+								/>
+							</TouchableOpacity>
+						)}
+					</View>
+					<WebView source={{ uri }} />
+				</SafeAreaView>
 			);
 		}
 	}

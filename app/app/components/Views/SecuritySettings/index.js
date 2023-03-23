@@ -17,7 +17,7 @@ import { util } from 'gopocket-core';
 import CheckPassword from '../../UI/CheckPassword';
 import PromptView from '../../UI/PromptView';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -155,68 +155,66 @@ class SecuritySettings extends PureComponent {
 			error
 		} = this.state;
 		return (
-			<SafeAreaProvider testID={'wallet-screen'}>
-				<SafeAreaView style={baseStyles.flexGrow}>
-					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
-					<TitleBar
-						title={strings('app_settings.security_settings')}
-						onBack={() => {
-							this.props.navigation.pop();
+			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+				<TitleBar
+					title={strings('app_settings.security_settings')}
+					onBack={() => {
+						this.props.navigation.pop();
+					}}
+				/>
+				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
+					<SettingsDrawer
+						onPress={this.onResetPassword}
+						title={strings('app_settings.change_password')}
+						titleStyle={styles.title}
+						baseStyle={styles.settingDrawerStyle}
+					/>
+					<SettingsSwitch
+						message={strings(
+							isBiometryType
+								? Device.isIos()
+									? 'app_settings.use_id_message'
+									: 'app_settings.use_biometrics_message'
+								: 'app_settings.keep_login_message'
+						)}
+						title={strings(
+							isBiometryType
+								? Device.isIos()
+									? 'app_settings.use_id'
+									: 'app_settings.use_biometrics'
+								: 'app_settings.keep_login'
+						)}
+						value={biometryChoice}
+						onValueChange={this.onBiometryChange}
+					/>
+					<SettingsSwitch
+						message={strings(
+							Device.isIos()
+								? 'app_settings.verification_message_for_id'
+								: 'app_settings.verification_message_for_pwd'
+						)}
+						title={strings('app_settings.transaction_verification')}
+						value={verificationChoice}
+						onValueChange={this.onVerificationChange}
+					/>
+					{checkPasswordType && (
+						<CheckPassword
+							checkResult={this.onInputPwdResult}
+							needDelay={false}
+							onlyCheckInputPwd={onlyCheckInputPwd}
+						/>
+					)}
+					<PromptView
+						isVisible={error != null}
+						title={strings('transactions.transaction_error')}
+						message={error}
+						onRequestClose={() => {
+							this.setState({ error: null });
 						}}
 					/>
-					<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-						<SettingsDrawer
-							onPress={this.onResetPassword}
-							title={strings('app_settings.change_password')}
-							titleStyle={styles.title}
-							baseStyle={styles.settingDrawerStyle}
-						/>
-						<SettingsSwitch
-							message={strings(
-								isBiometryType
-									? Device.isIos()
-										? 'app_settings.use_id_message'
-										: 'app_settings.use_biometrics_message'
-									: 'app_settings.keep_login_message'
-							)}
-							title={strings(
-								isBiometryType
-									? Device.isIos()
-										? 'app_settings.use_id'
-										: 'app_settings.use_biometrics'
-									: 'app_settings.keep_login'
-							)}
-							value={biometryChoice}
-							onValueChange={this.onBiometryChange}
-						/>
-						<SettingsSwitch
-							message={strings(
-								Device.isIos()
-									? 'app_settings.verification_message_for_id'
-									: 'app_settings.verification_message_for_pwd'
-							)}
-							title={strings('app_settings.transaction_verification')}
-							value={verificationChoice}
-							onValueChange={this.onVerificationChange}
-						/>
-						{checkPasswordType && (
-							<CheckPassword
-								checkResult={this.onInputPwdResult}
-								needDelay={false}
-								onlyCheckInputPwd={onlyCheckInputPwd}
-							/>
-						)}
-						<PromptView
-							isVisible={error != null}
-							title={strings('transactions.transaction_error')}
-							message={error}
-							onRequestClose={() => {
-								this.setState({ error: null });
-							}}
-						/>
-					</ScrollView>
-				</SafeAreaView>
-			</SafeAreaProvider>
+				</ScrollView>
+			</SafeAreaView>
 		);
 	}
 }
