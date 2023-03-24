@@ -605,7 +605,9 @@ class HomePage extends PureComponent {
 						onLayout={this.onScrollLayout.bind(this)}
 						ref={this.scrollViewRef}
 					>
-						{!shouldHideSth && dappPage.showBanner && this.renderBanner(dappPage)}
+						{/* TODO: TODO We should add this updates banner for Pali wallet. */}
+						{/* 
+						{!shouldHideSth && dappPage.showBanner && this.renderBanner(dappPage)} */}
 						{dappPage.showContent && (
 							<ScrollableTabView
 								style={styles.tabView}

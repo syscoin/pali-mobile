@@ -1,7 +1,9 @@
-import React from 'react';
-import { Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { TouchableOpacity, Animated } from 'react-native';
+
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
 import Wallet from '../Views/Wallet';
@@ -29,6 +31,8 @@ import ImportFromSeed from '../Views/ImportFromSeed';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
 import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
+import Icon from '../UI/Icon';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const SlideFromLeft = (index, position, width) => {
 	const inputRange = [index - 1, index, index + 1];
@@ -40,6 +44,61 @@ const SlideFromLeft = (index, position, width) => {
 	return {
 		transform: [{ translateX }]
 	};
+};
+
+const GlobeIcon = ({ focused, onPress }) => {
+	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
+	const color = focused ? '#D20058' : '#9B989B';
+
+	useEffect(() => {
+		Animated.parallel([
+			Animated.timing(scale, {
+				toValue: focused ? 1.15 : 1,
+				duration: 300,
+				useNativeDriver: true
+			})
+		]).start();
+	}, [focused, scale]);
+
+	return (
+		<Animated.View
+			style={{
+				transform: [{ scale }]
+			}}
+			onPress={onPress}
+		>
+			<Icon width="22" height="22" color={color} name="globe" />
+		</Animated.View>
+	);
+};
+
+const WalletIcon = ({ focused, onPress }) => {
+	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
+	const color = focused ? '#D20058' : '#9B989B';
+
+	useEffect(() => {
+		Animated.parallel([
+			Animated.timing(scale, {
+				toValue: focused ? 1.15 : 1,
+				duration: 300,
+				useNativeDriver: true
+			})
+		]).start();
+	}, [focused, scale]);
+
+	return (
+		<Animated.View
+			style={{
+				transform: [{ scale }],
+				marginTop: 5
+			}}
+			// eslint-disable-next-line react-native/no-inline-styles
+
+			onPress={onPress}
+		>
+			<Icon width="23" height="21" color={color} name="wallet" />
+		</Animated.View>
+	);
 };
 
 export default createStackNavigator(
@@ -126,17 +185,7 @@ export default createStackNavigator(
 						navigationOptions: {
 							tabBarLabel: () => null,
 							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginTop: 5 }
-									]}
-									source={
-										focused ? require('../../images/1HL.png') : require('../../images/1Nor.png')
-									}
-								/>
-							)
+							tabBarIcon: ({ focused, onPress }) => <WalletIcon onPress={onPress} focused={focused} />
 						}
 					},
 					BrowserTabHome: {
@@ -152,17 +201,7 @@ export default createStackNavigator(
 						navigationOptions: {
 							tabBarLabel: () => null,
 							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ position: 'absolute', top: 0 }
-									]}
-									source={
-										focused ? require('../../images/2Hl.png') : require('../../images/2NOR.png')
-									}
-								/>
-							)
+							tabBarIcon: ({ focused, onPress }) => <GlobeIcon onPress={onPress} focused={focused} />
 						}
 					}
 				},
