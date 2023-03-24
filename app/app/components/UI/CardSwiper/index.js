@@ -469,16 +469,23 @@ class CardSwiper extends PureComponent {
 									defaultImg={require('../../../images/img_card_observe.png')}
 								/>
 							) : (
-								<Image
-									style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
-									source={
-										isObserve
-											? require('../../../images/img_card_observe.png')
-											: isRpc
-											? require('../../../images/letter/img_card_other.png')
-											: ChainTypeBg[currentIndex]
-									}
-								/>
+								<View style={{ position: 'relative' }}>
+									<Image
+										style={[
+											styles.absoluteStart,
+											{
+												marginTop: 20,
+												marginLeft: 20,
+												width: cardWidth - 40,
+												height: cardHeight - 60,
+												borderRadius: 15
+											}
+										]}
+										source={
+											isRpc ? require('../../../images/pali-bg.png') : ChainTypeBg[currentIndex]
+										}
+									/>
+								</View>
 							)}
 							<View style={styles.contentLayout}>
 								<View style={styles.topRow}>
