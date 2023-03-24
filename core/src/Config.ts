@@ -316,6 +316,17 @@ export const NetworkConfig: { [type: number]: any } = {
         ExplorerUrl: 'https://explorer.syscoin.org',
         ExplorerApiUrl: 'https://explorer.syscoin.org',
       },
+      'Rollux Testnet': {
+        provider: {
+          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          type: 'Rollux Testnet',
+          chainId: '57000',
+          ticker: 'TSYS',
+          nickname: 'Syscoin',
+        },
+        ExplorerUrl: 'https://rollux.tanenbaum.io',
+        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
+      },
       'Syscoin Tanenbaum Testnet': {
         provider: {
           rpcTarget: 'https://rpc.tanenbaum.io',
@@ -607,6 +618,12 @@ export const BaseChainConfig = {
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
   '57': {
+    coingecko_path: 'syscoin',
+    balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
+    tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
+    nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
+  },
+  '57000': {
     coingecko_path: 'syscoin',
     balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
     tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
