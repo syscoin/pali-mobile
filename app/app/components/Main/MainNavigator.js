@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { TouchableOpacity, Animated, Text, DeviceEventEmitter } from 'react-native';
+import { TouchableOpacity, Animated, Text, DeviceEventEmitter, StyleSheet } from 'react-native';
 import { withNavigation } from 'react-navigation';
-
+import { strings } from '../../../locales/i18n';
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
 import Wallet from '../Views/Wallet';
@@ -17,7 +17,7 @@ import AboutView from '../Views/AboutView';
 import DeveloperOptions from '../Views/DeveloperOptions';
 import CurrencyUnit from '../Views/CurrencyUnit';
 import UpdateCheck from '../Views/UpdateCheck';
-import { colors } from '../../styles/common';
+import { colors, fontStyles } from '../../styles/common';
 import WalletManagement from '../Views/WalletManagement';
 import ObserveAccounts from '../Views/ObserveAccounts';
 import NftView from '../Views/NftView';
@@ -47,6 +47,16 @@ const SlideFromLeft = (index, position, width) => {
 	};
 };
 
+const styles = StyleSheet.create({
+	globeContainer: {
+		marginTop: 5,
+		width: 28,
+		height: 28,
+		overflow: 'visible',
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
+});
 const GlobeIcon = ({ focused, onPress, navigation }) => {
 	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
 	const rotate = useRef(new Animated.Value(0)).current;
@@ -128,7 +138,7 @@ const GlobeIcon = ({ focused, onPress, navigation }) => {
 	};
 
 	return (
-		<TouchableWithoutFeedback onPress={handlePress} style={{ marginTop: 5 }}>
+		<TouchableWithoutFeedback onPress={handlePress} style={styles.globeContainer}>
 			<Animated.View
 				style={{
 					transform: [{ scale }, { rotate: spin }]
@@ -250,7 +260,22 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							tabBarLabel: () => <Text>Wallet</Text>,
+							tabBarLabel: () => (
+								<Text
+									style={[
+										// eslint-disable-next-line react-native/no-inline-styles
+										{
+											textAlign: 'center',
+											fontSize: 11,
+											...fontStyles.bold
+										},
+										// eslint-disable-next-line react-native/no-inline-styles
+										{ marginBottom: 5 }
+									]}
+								>
+									{strings('other.wallet')}
+								</Text>
+							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ navigation }) => {
 								navigation.navigate('WalletTabHome');
@@ -270,7 +295,22 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => <Text>Browser</Text>,
+							tabBarLabel: () => (
+								<Text
+									style={[
+										// eslint-disable-next-line react-native/no-inline-styles
+										{
+											textAlign: 'center',
+											fontSize: 11,
+											...fontStyles.bold
+										},
+										// eslint-disable-next-line react-native/no-inline-styles
+										{ marginBottom: 5 }
+									]}
+								>
+									{strings('other.browser')}
+								</Text>
+							),
 							tabBarIcon: ({ focused, onPress = () => {} }) => (
 								<GlobeIcon onPress={onPress} focused={focused} />
 							),
