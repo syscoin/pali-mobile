@@ -66,16 +66,16 @@ export const ChainTypeBg = [
 ];
 
 export const ChainTypeBgWithoutShadows = [
-	require('../images/img_card_all_nsd.png'),
-	require('../images/img_card_eth_nsd.png'),
-	require('../images/img_card_polygon_nsd.png'),
-	require('../images/img_card_arb_nsd.png'),
-	require('../images/img_card_bsc_nsd.png'),
-	require('../images/img_card_heco_nsd.png'),
-	require('../images/img_card_op_nsd.png'),
-	require('../images/img_card_avax_nsd.png'),
-	require('../images/img_card_syscoin_nsd.png'),
-	require('../images/img_card_other_nsd.png')
+	require('../images/pali-bg.png'),
+	require('../images/ethereum-bg.png'),
+	require('../images/polygon-bg.png'),
+	require('../images/arbitrum-bg.png'),
+	require('../images/bnb-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/avalanche-bg.png'),
+	require('../images/syscoin-bg.png'),
+	require('../images/pali-bg.png')
 ];
 export const ChainTypeCheckColorStyle = [
 	{ color: '#DBAAF5' },

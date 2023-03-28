@@ -792,7 +792,7 @@ class WalletManagement extends PureComponent {
 			<View style={styles.accountItem} key={'account-element-' + index}>
 				<Image
 					source={ChainTypeBgWithoutShadows[currentTranslateIndex]}
-					style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
+					style={[styles.absoluteStart, { width: cardWidth, height: cardHeight, borderRadius: 15 }]}
 				/>
 
 				{canRemove && (
