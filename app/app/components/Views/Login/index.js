@@ -100,7 +100,8 @@ const styles = StyleSheet.create({
 	footerImage: {
 		marginTop: 20,
 		marginBottom: 30,
-		alignSelf: 'center'
+		alignSelf: 'center',
+		width: 85
 	},
 	biometryButton: {
 		paddingTop: 2,
@@ -396,7 +397,7 @@ class Login extends PureComponent {
 			>
 				<View testID={'login'} style={baseStyles.flexGrow}>
 					<View style={baseStyles.flexGrow} />
-					<Image source={require('../../../images/loginlogo.png')} style={styles.image} />
+					<Image source={require('../../../images/logo_about.png')} style={styles.image} />
 					<View style={styles.field}>
 						<Text style={styles.label}>{strings('login.password')}</Text>
 						<View style={styles.inputWrapper}>
@@ -462,7 +463,7 @@ class Login extends PureComponent {
 					{/* eslint-disable-next-line react-native/no-inline-styles */}
 					<View style={{ flex: 2 }} />
 
-					<Image style={styles.footerImage} source={require('../../../images/footerlogo.png')} />
+					<Image style={styles.footerImage} source={require('../../../images/footer_logo.png')} />
 				</View>
 			</KeyboardAwareScrollView>
 			<FadeOutOverlay />

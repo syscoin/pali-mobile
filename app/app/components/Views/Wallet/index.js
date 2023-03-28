@@ -88,6 +88,11 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center'
 	},
+	imageTitle: {
+		width: 160,
+		height: undefined,
+		aspectRatio: 3.66
+	},
 	scannerButton: {
 		paddingRight: 20
 	},
@@ -687,7 +692,7 @@ class Wallet extends PureComponent {
 					<Icon name="settings" width="24" height="24" />
 				</TouchableOpacity>
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-					<Image source={require('../../../images/header_logo.png')} />
+					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
 				</View>
 				{this.props.walletConnectIconVisible && (
 					<TouchableOpacity

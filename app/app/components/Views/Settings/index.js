@@ -162,14 +162,15 @@ export default class Settings extends PureComponent {
 							image={require('../../../images/ic_setting_update.png')}
 							title={strings('app_settings.update_check')}
 						/>
-						<SettingsDrawer
+						{/* <SettingsDrawer
 							onPress={this.onInvite}
 							image={require('../../../images/ic_setting_invite.png')}
 							title={strings('app_settings.invite')}
-						/>
+						/> */}
 						<SettingsDrawer
 							onPress={this.onAbout}
-							image={require('../../../images/go.png')}
+							image={require('../../../images/pali.png')}
+							iconStyle={{ width: 24, height: 26, marginRight: 16 }}
 							title={strings('app_settings.about')}
 							hideLine
 						/>

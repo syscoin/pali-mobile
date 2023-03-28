@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { TouchableOpacity, Animated } from 'react-native';
+import { TouchableOpacity, Animated, Text, DeviceEventEmitter } from 'react-native';
+import { withNavigation } from 'react-navigation';
 
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
@@ -46,34 +47,102 @@ const SlideFromLeft = (index, position, width) => {
 	};
 };
 
-const GlobeIcon = ({ focused, onPress }) => {
+const GlobeIcon = ({ focused, onPress, navigation }) => {
 	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
+	const rotate = useRef(new Animated.Value(0)).current;
+	const [animating, setAnimating] = useState(false);
 	const color = focused ? '#D20058' : '#9B989B';
 
 	useEffect(() => {
+		const onWalletTabFocused = () => {
+			scale.setValue(1);
+			rotate.setValue(0);
+		};
+
+		DeviceEventEmitter.addListener('onWalletTabFocused', onWalletTabFocused);
+
+		return () => {
+			DeviceEventEmitter.removeListener('onWalletTabFocused', onWalletTabFocused);
+		};
+	}, [scale, rotate]);
+
+	useEffect(() => {
+		const onBrowserTabFocused = () => {
+			if (!animating) {
+				startAnimation();
+			}
+		};
+
+		DeviceEventEmitter.addListener('onBrowserTabFocused', onBrowserTabFocused);
+
+		return () => {
+			DeviceEventEmitter.removeListener('onBrowserTabFocused', onBrowserTabFocused);
+		};
+	}, [animating, startAnimation]);
+
+	const startAnimation = useCallback(() => {
+		setAnimating(true);
+		rotate.setValue(0);
 		Animated.parallel([
 			Animated.timing(scale, {
-				toValue: focused ? 1.15 : 1,
+				toValue: 1.2,
 				duration: 300,
 				useNativeDriver: true
+			}),
+			Animated.timing(rotate, {
+				toValue: 1,
+				duration: 400,
+				useNativeDriver: true
 			})
-		]).start();
-	}, [focused, scale]);
+		]).start(() => {
+			setAnimating(false);
+		});
+	}, [scale, rotate, setAnimating]);
+	const stopAnimation = useCallback(() => {
+		Animated.timing(rotate, {
+			toValue: 0,
+			duration: 0,
+			useNativeDriver: true
+		}).start(() => {
+			setAnimating(false);
+		});
+	}, [rotate]);
+	useEffect(() => {
+		if (focused) {
+			startAnimation();
+		} else {
+			stopAnimation();
+		}
+	}, [focused, startAnimation, stopAnimation]);
+
+	const spin = rotate.interpolate({
+		inputRange: [0, 1],
+		outputRange: ['0deg', '360deg']
+	});
+
+	const handlePress = () => {
+		if (focused) {
+			DeviceEventEmitter.emit('onBrowserTabFocused');
+		}
+		onPress();
+	};
 
 	return (
-		<Animated.View
-			style={{
-				transform: [{ scale }]
-			}}
-			onPress={onPress}
-		>
-			<Icon width="22" height="22" color={color} name="globe" />
-		</Animated.View>
+		<TouchableWithoutFeedback onPress={handlePress} style={{ marginTop: 5 }}>
+			<Animated.View
+				style={{
+					transform: [{ scale }, { rotate: spin }]
+				}}
+			>
+				<Icon width="22" height="22" color={color} name="globe" />
+			</Animated.View>
+		</TouchableWithoutFeedback>
 	);
 };
+const GlobeIconWithNavigation = withNavigation(GlobeIcon);
 
 const WalletIcon = ({ focused, onPress }) => {
-	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
+	const scale = useRef(new Animated.Value(focused ? 1.1 : 1)).current;
 	const color = focused ? '#D20058' : '#9B989B';
 
 	useEffect(() => {
@@ -92,11 +161,9 @@ const WalletIcon = ({ focused, onPress }) => {
 				transform: [{ scale }],
 				marginTop: 5
 			}}
-			// eslint-disable-next-line react-native/no-inline-styles
-
 			onPress={onPress}
 		>
-			<Icon width="23" height="21" color={color} name="wallet" />
+			<Icon width="22" height="22" color={color} name="wallet" />
 		</Animated.View>
 	);
 };
@@ -183,9 +250,12 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							tabBarLabel: () => null,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused, onPress }) => <WalletIcon onPress={onPress} focused={focused} />
+							tabBarLabel: () => <Text>Wallet</Text>,
+							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('WalletTabHome');
+								DeviceEventEmitter.emit('onWalletTabFocused');
+							}
 						}
 					},
 					BrowserTabHome: {
@@ -194,20 +264,27 @@ export default createStackNavigator(
 								screen: Browser,
 								navigationOptions: {
 									header: null,
-									gesturesEnabled: false
+									gesturesEnabled: false,
+									animationEnabled: true
 								}
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => null,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused, onPress }) => <GlobeIcon onPress={onPress} focused={focused} />
+							tabBarLabel: () => <Text>Browser</Text>,
+							tabBarIcon: ({ focused, onPress = () => {} }) => (
+								<GlobeIcon onPress={onPress} focused={focused} />
+							),
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('BrowserTabHome');
+								DeviceEventEmitter.emit('onBrowserTabFocused');
+							}
 						}
 					}
 				},
 				{
 					defaultNavigationOptions: () => ({
 						tabBarVisible: true,
+						animationEnabled: true,
 						tabBarOptions: {
 							style: {
 								backgroundColor: colors.white,

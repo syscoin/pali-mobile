@@ -22,7 +22,7 @@
 	},
 	"onboarding": {
 		"title": "Welcome to\nGO Pocket",
-		"subtitle": "Your crypto assets guardian",
+		"subtitle": "Web3 on-the-go",
 		"start_exploring_now": "Create\nNew Wallet",
 		"import_seed_phrase": "Import\nSeed Phrase",
 		"import_private_key": "Import Private Key",
@@ -362,7 +362,7 @@
 		"no_suggestions": "No suggestions found",
 		"amount": "Amount",
 		"amount2": "amount",
-		"scale_in_proud": "Your Crypto Guardian",
+		"scale_in_proud": "Web3 on-the-go",
 		"official_website": "Official website",
 		"pending": "pending",
 		"failed": "Failed",
