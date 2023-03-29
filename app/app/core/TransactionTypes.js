@@ -5,7 +5,7 @@ export default {
 		FAST_GAS: 40,
 		DEFAULT_GAS_LIMIT: '0x5208'
 	},
-	MMM: 'Go Pocket',
+	MMM: 'Pali Wallet',
 	ORIGIN_MOVE_TO_L2: 'Move To L2',
 	ORIGIN_CANCEL_APPROVAL: 'Cancel Approval',
 	ORIGIN_CLAIM: 'Claim'

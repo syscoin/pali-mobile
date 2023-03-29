@@ -1,13 +1,13 @@
-import {EventEmitter} from 'events';
-import {addHexPrefix, BN, bufferToHex} from 'ethereumjs-util';
-import {ethErrors} from 'eth-rpc-errors';
+import { EventEmitter } from 'events';
+import { addHexPrefix, BN, bufferToHex } from 'ethereumjs-util';
+import { ethErrors } from 'eth-rpc-errors';
 import MethodRegistry from 'eth-method-registry';
 import Common from '@ethereumjs/common';
 import EthQuery from 'eth-query';
-import {TransactionFactory, TypedTransaction} from '@ethereumjs/tx';
-import {v1 as random} from 'uuid';
-import {Mutex} from 'async-mutex';
-import BaseController, {BaseConfig, BaseState} from '../BaseController';
+import { TransactionFactory, TypedTransaction } from '@ethereumjs/tx';
+import { v1 as random } from 'uuid';
+import { Mutex } from 'async-mutex';
+import BaseController, { BaseConfig, BaseState } from '../BaseController';
 
 import util, {
   bitOR,
@@ -27,10 +27,10 @@ import util, {
   safelyExecute,
   validateTransaction,
 } from '../util';
-import { ChainType } from "../Config";
+import { ChainType } from '../Config';
 import PreferencesController from '../user/PreferencesController';
 import RpcNetworkController from '../network/RpcNetworkController';
-import {Sqlite} from './Sqlite';
+import { Sqlite } from './Sqlite';
 
 const HARDFORK = 'london';
 
@@ -170,7 +170,7 @@ export type TokenTransactionInfo = {
   error?: Error;
 };
 
-export const TxChanged =      0x1000000;
+export const TxChanged = 0x1000000;
 export const TokenTxChanged = 0x10000000;
 export const TxNoChange = 0x0;
 
@@ -308,10 +308,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
    * @param currentChainId - string representing the current chain id
    * @returns - TransactionMeta
    */
-  private normalizeTx(
-    txMeta: EtherscanTransactionMeta,
-    currentChainId: string,
-  ): TransactionInfo {
+  private normalizeTx(txMeta: EtherscanTransactionMeta, currentChainId: string): TransactionInfo {
     const time = parseInt(txMeta.timeStamp, 10) * 1000;
     const normalizedTransactionInfo = {
       blockNumber: txMeta.blockNumber,
@@ -349,10 +346,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     };
   }
 
-  private normalizeTokenTx = (
-    txMeta: EtherscanTransactionMeta,
-    currentChainId: string,
-  ): TokenTransactionInfo => {
+  private normalizeTokenTx = (txMeta: EtherscanTransactionMeta, currentChainId: string): TokenTransactionInfo => {
     const time = parseInt(txMeta.timeStamp, 10) * 1000;
     const { blockNumber, to, from, hash, contractAddress, tokenDecimal, tokenSymbol, value } = txMeta;
     return {
@@ -517,7 +511,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
             return reject(ethErrors.rpc.internal(meta.error ? meta.error.message : 'Unknown'));
           /* istanbul ignore next */
           default:
-            return reject(ethErrors.rpc.internal(`Go Pocket Tx Signature: Unknown problem: ${JSON.stringify(meta)}`));
+            return reject(ethErrors.rpc.internal(`Pali Wallet Tx Signature: Unknown problem: ${JSON.stringify(meta)}`));
         }
       });
     });
@@ -578,14 +572,16 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       transactionMeta.transaction.nonce = await query(useEthQuery, 'getTransactionCount', [from, 'pending']);
 
       const isEIP1559 = isEIP1559Transaction(transactionMeta.transaction);
-      const txParams = isEIP1559 ? {
-        ...transactionMeta.transaction,
-        gasLimit: transactionMeta.transaction.gas,
-        type: 2,
-      } : {
-        ...transactionMeta.transaction,
-        gasLimit: transactionMeta.transaction.gas,
-      };
+      const txParams = isEIP1559
+        ? {
+            ...transactionMeta.transaction,
+            gasLimit: transactionMeta.transaction.gas,
+            type: 2,
+          }
+        : {
+            ...transactionMeta.transaction,
+            gasLimit: transactionMeta.transaction.gas,
+          };
       if (isEIP1559) {
         delete txParams.gasPrice;
       }
@@ -682,9 +678,8 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
 
     const isEIP1559 = isEIP1559Transaction(transactionMeta.transaction);
 
-    const txParams =
-      isEIP1559
-        ? {
+    const txParams = isEIP1559
+      ? {
           chainId: transactionMeta.transaction.chainId,
           from: transactionMeta.transaction.from,
           gasLimit: transactionMeta.transaction.gas,
@@ -696,7 +691,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
           to: transactionMeta.transaction.from,
           value: '0x0',
         }
-        : {
+      : {
           chainId: transactionMeta.transaction.chainId,
           from: transactionMeta.transaction.from,
           gasLimit: transactionMeta.transaction.gas,
@@ -743,39 +738,29 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     const useEthQuery = this.getETHQueryByChainId(transactionMeta.chainId);
 
     /* istanbul ignore next */
-    const gasPrice = getIncreasedPriceFromExisting(
-      transactionMeta.transaction.gasPrice,
-      SPEED_UP_RATE,
-    );
+    const gasPrice = getIncreasedPriceFromExisting(transactionMeta.transaction.gasPrice, SPEED_UP_RATE);
 
     const existingMaxFeePerGas = transactionMeta.transaction?.maxFeePerGas;
-    const existingMaxPriorityFeePerGas =
-      transactionMeta.transaction?.maxPriorityFeePerGas;
+    const existingMaxPriorityFeePerGas = transactionMeta.transaction?.maxPriorityFeePerGas;
 
-    const newMaxFeePerGas =
-      existingMaxFeePerGas &&
-      getIncreasedPriceFromExisting(existingMaxFeePerGas, SPEED_UP_RATE);
+    const newMaxFeePerGas = existingMaxFeePerGas && getIncreasedPriceFromExisting(existingMaxFeePerGas, SPEED_UP_RATE);
     const newMaxPriorityFeePerGas =
-      existingMaxPriorityFeePerGas &&
-      getIncreasedPriceFromExisting(
-        existingMaxPriorityFeePerGas,
-        SPEED_UP_RATE,
-      );
+      existingMaxPriorityFeePerGas && getIncreasedPriceFromExisting(existingMaxPriorityFeePerGas, SPEED_UP_RATE);
 
     const txParams =
       newMaxFeePerGas && newMaxPriorityFeePerGas
         ? {
-          ...transactionMeta.transaction,
-          gasLimit: transactionMeta.transaction.gas,
-          maxFeePerGas: newMaxFeePerGas,
-          maxPriorityFeePerGas: newMaxPriorityFeePerGas,
-          type: 2,
-        }
+            ...transactionMeta.transaction,
+            gasLimit: transactionMeta.transaction.gas,
+            maxFeePerGas: newMaxFeePerGas,
+            maxPriorityFeePerGas: newMaxPriorityFeePerGas,
+            type: 2,
+          }
         : {
-          ...transactionMeta.transaction,
-          gasLimit: transactionMeta.transaction.gas,
-          gasPrice,
-        };
+            ...transactionMeta.transaction,
+            gasLimit: transactionMeta.transaction.gas,
+            gasPrice,
+          };
 
     const unsignedEthTx = this.prepareUnsignedEthTx(txParams.chainId.toString(), txParams);
 
@@ -808,8 +793,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     const estimatedTransaction = { ...transaction };
     const { gas, gasPrice: providedGasPrice, to, value, data } = estimatedTransaction;
     const useEthQuery = this.getETHQueryByChainId(transaction.chainId ? transaction.chainId.toString() : 'undefined');
-    const gasPrice =
-      typeof providedGasPrice === 'undefined' ? await query(useEthQuery, 'gasPrice') : providedGasPrice;
+    const gasPrice = typeof providedGasPrice === 'undefined' ? await query(useEthQuery, 'gasPrice') : providedGasPrice;
 
     // 1. If gas is already defined on the transaction, use it
     if (typeof gas !== 'undefined') {
@@ -853,9 +837,9 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     if (!useEthQuery) {
       return {};
     }
-    const maxPriorityFeePerGas = await this.sendAsync(chainId, 'eth_maxPriorityFeePerGas')
+    const maxPriorityFeePerGas = await this.sendAsync(chainId, 'eth_maxPriorityFeePerGas');
     const end = await query(useEthQuery, 'getBlockByNumber', ['latest', false]);
-    return { maxPriorityFeePerGas , baseFeePerGas: end?.baseFeePerGas};
+    return { maxPriorityFeePerGas, baseFeePerGas: end?.baseFeePerGas };
   }
 
   async sendAsync(chainId: string | number, method: string) {
@@ -866,14 +850,14 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     if (!useEthQuery) {
       return undefined;
     }
-    return new Promise((resolve => {
+    return new Promise((resolve) => {
       useEthQuery.sendAsync({ method }, (error: Error, result: string) => {
         if (error) {
           resolve(undefined);
         }
         resolve(result);
       });
-    }));
+    });
   }
 
   async onNetworkChange(chainType: ChainType) {
@@ -929,7 +913,10 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
                 transactionMetas[txIndex].status = TransactionStatus.cancelled;
                 this.hub.emit(`${meta.id}:confirmed`, meta);
                 this.updateTransaction(transactionMetas[txIndex]);
-              } else if (!ctxObj && Date.now() - (meta.extraInfo.tryCancelTime ? meta.extraInfo.tryCancelTime : 0) >= 5 * 60 * 1000) {
+              } else if (
+                !ctxObj &&
+                Date.now() - (meta.extraInfo.tryCancelTime ? meta.extraInfo.tryCancelTime : 0) >= 5 * 60 * 1000
+              ) {
                 logWarn('PPYang safelyExecute, ctxObj remains empty after 5 minutes, meta:', meta);
                 const txIndex = transactionMetas.findIndex(({ id }) => meta.id === id);
                 transactionMetas[txIndex].status = TransactionStatus.failed;
@@ -946,8 +933,7 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
           }
         }),
       );
-      },
-    );
+    });
   }
 
   /**
@@ -966,24 +952,38 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
 
   getCurrentChainId(type: ChainType, opt?: FetchAllOptions) {
     if (util.isRpcChainType(type)) {
-      return opt?.chainId ? opt.chainId : (this.context.RpcNetworkController as RpcNetworkController).getProviderChainId(type);
+      return opt?.chainId
+        ? opt.chainId
+        : (this.context.RpcNetworkController as RpcNetworkController).getProviderChainId(type);
     } else {
       return this.networks[type].state.provider.chainId;
     }
   }
 
   getTxChangedType(changed: number) {
-    return changed &~ TxChanged &~ TokenTxChanged;
+    return changed & ~TxChanged & ~TokenTxChanged;
   }
 
-  async handleScanTx(address: string, type: ChainType, currentChainId: string, loadToken: boolean, txInternal: boolean, txResponse: any) {
+  async handleScanTx(
+    address: string,
+    type: ChainType,
+    currentChainId: string,
+    loadToken: boolean,
+    txInternal: boolean,
+    txResponse: any,
+  ) {
     let changed = TxNoChange;
     if (!loadToken || txInternal) {
       const normalizedTxs = txResponse?.result?.map((tx: EtherscanTransactionMeta) =>
         this.normalizeTx(tx, currentChainId),
       );
       if (normalizedTxs?.length > 0) {
-        const txCount = await Sqlite.getInstance().getTransactionCount(address, type, currentChainId, txInternal ? 'internaltx' : 'tx');
+        const txCount = await Sqlite.getInstance().getTransactionCount(
+          address,
+          type,
+          currentChainId,
+          txInternal ? 'internaltx' : 'tx',
+        );
         if (txCount <= 0) {
           const txs = normalizedTxs.filter((item: TransactionInfo, index: number, arr: TransactionInfo[]) => {
             return arr.findIndex((item2) => item2.transactionHash === item.transactionHash) === index;
@@ -992,9 +992,22 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
           Sqlite.getInstance().insertTransactions(address, type, txs, txInternal);
         } else {
           for (const normalizedTx of normalizedTxs) {
-            const existInfo = await Sqlite.getInstance().getTransactionHash(address, type, currentChainId, normalizedTx.transactionHash, txInternal);
+            const existInfo = await Sqlite.getInstance().getTransactionHash(
+              address,
+              type,
+              currentChainId,
+              normalizedTx.transactionHash,
+              txInternal,
+            );
             if (existInfo) {
-              await Sqlite.getInstance().updateTransactionInfo(address, type, currentChainId, normalizedTx.transactionHash || '', normalizedTx, txInternal);
+              await Sqlite.getInstance().updateTransactionInfo(
+                address,
+                type,
+                currentChainId,
+                normalizedTx.transactionHash || '',
+                normalizedTx,
+                txInternal,
+              );
             } else {
               changed = bitOR(changed, bitOR(type, TxChanged));
               Sqlite.getInstance().insertTransactions(address, type, [normalizedTx], txInternal);
@@ -1009,21 +1022,40 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       if (normalizedTokenTxs?.length > 0) {
         const tokenTxCount = await Sqlite.getInstance().getTransactionCount(address, type, currentChainId, 'tokentx');
         if (tokenTxCount <= 0) {
-          const txs = normalizedTokenTxs.filter((item: TokenTransactionInfo, index: number, arr: TokenTransactionInfo[]) => {
-            return arr.findIndex((item2) =>
-              item2.transactionHash === item.transactionHash &&
-              item2.transferInformation.contractAddress === item.transferInformation.contractAddress &&
-              item2.amount === item.amount) === index;
-          });
+          const txs = normalizedTokenTxs.filter(
+            (item: TokenTransactionInfo, index: number, arr: TokenTransactionInfo[]) => {
+              return (
+                arr.findIndex(
+                  (item2) =>
+                    item2.transactionHash === item.transactionHash &&
+                    item2.transferInformation.contractAddress === item.transferInformation.contractAddress &&
+                    item2.amount === item.amount,
+                ) === index
+              );
+            },
+          );
           changed = bitOR(changed, bitOR(type, TokenTxChanged));
           Sqlite.getInstance().insertTokenTransactions(address, type, txs);
         } else {
           for (const normalizedToken of normalizedTokenTxs) {
-            const existInfo = await Sqlite.getInstance().getTokenTransactionHash(address, type,
-              currentChainId, normalizedToken.transactionHash, normalizedToken.transferInformation.contractAddress, normalizedToken.amount);
+            const existInfo = await Sqlite.getInstance().getTokenTransactionHash(
+              address,
+              type,
+              currentChainId,
+              normalizedToken.transactionHash,
+              normalizedToken.transferInformation.contractAddress,
+              normalizedToken.amount,
+            );
             if (existInfo) {
-              Sqlite.getInstance().updateTokenTransactionInfo(address, type, currentChainId, normalizedToken.transactionHash,
-                normalizedToken.transferInformation.contractAddress, normalizedToken.amount, normalizedToken);
+              Sqlite.getInstance().updateTokenTransactionInfo(
+                address,
+                type,
+                currentChainId,
+                normalizedToken.transactionHash,
+                normalizedToken.transferInformation.contractAddress,
+                normalizedToken.amount,
+                normalizedToken,
+              );
             } else {
               changed = bitOR(changed, bitOR(type, TokenTxChanged));
               Sqlite.getInstance().insertTokenTransactions(address, type, [normalizedToken]);
@@ -1052,8 +1084,13 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     };
   }
 
-  async fetchAll(address: string, type: ChainType, loadToken: boolean, txInternal: boolean, opt?: FetchAllOptions):
-    Promise<{latestIncomingTxBlockNumber: number; needUpdate: number}> {
+  async fetchAll(
+    address: string,
+    type: ChainType,
+    loadToken: boolean,
+    txInternal: boolean,
+    opt?: FetchAllOptions,
+  ): Promise<{ latestIncomingTxBlockNumber: number; needUpdate: number }> {
     const preferences = this.context.PreferencesController as PreferencesController;
     if (preferences.isDisabledChain(address, type)) {
       return {
@@ -1063,10 +1100,14 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
     }
     const chainId = this.getCurrentChainId(type, opt);
     const etherscanTxResponse = await handleTransactionFetch(type, chainId, address, loadToken, txInternal, opt);
-    const {
-      commonChanged,
-      latestIncomingTxBlockNumber,
-    } = await this.handleScanTx(address, type, chainId, loadToken, txInternal, etherscanTxResponse);
+    const { commonChanged, latestIncomingTxBlockNumber } = await this.handleScanTx(
+      address,
+      type,
+      chainId,
+      loadToken,
+      txInternal,
+      etherscanTxResponse,
+    );
 
     if (commonChanged !== TxNoChange) {
       this.update({
@@ -1129,7 +1170,9 @@ export class TransactionController extends BaseController<TransactionConfig, Tra
       const existAddress = Object.keys(identities);
       const allAddress = await Sqlite.getInstance().getAllAddresses();
       if (allAddress && allAddress.length > 0) {
-        const diffAddress = allAddress.filter((address) => !existAddress?.find((eAddress) => address.toLowerCase() === eAddress.toLowerCase()));
+        const diffAddress = allAddress.filter(
+          (address) => !existAddress?.find((eAddress) => address.toLowerCase() === eAddress.toLowerCase()),
+        );
         if (diffAddress && diffAddress.length > 0) {
           logInfo('PPYang TransactionController delete diffAddress:', diffAddress);
           for (const address of diffAddress) {

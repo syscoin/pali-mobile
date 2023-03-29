@@ -105,12 +105,12 @@ export class TypedMessageManager extends AbstractMessageManager<
           case 'signed':
             return resolve(data.rawSig as string);
           case 'rejected':
-            return reject(new Error('Go Pocket Typed Message Signature: User denied message signature.'));
+            return reject(new Error('Pali Wallet Typed Message Signature: User denied message signature.'));
           case 'errored':
-            return reject(new Error(`Go Pocket Typed Message Signature: ${data.error}`));
+            return reject(new Error(`Pali Wallet Typed Message Signature: ${data.error}`));
           default:
             return reject(
-              new Error(`Go Pocket Typed Message Signature: Unknown problem: ${JSON.stringify(messageParams)}`),
+              new Error(`Pali Wallet Typed Message Signature: Unknown problem: ${JSON.stringify(messageParams)}`),
             );
         }
       });
