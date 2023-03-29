@@ -1,10 +1,11 @@
 import { Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import Icon from '../Icon';
+import { colors } from '../../../styles/common';
 
 const WalletIcon = ({ focused, onPress }) => {
 	const scale = useRef(new Animated.Value(focused ? 1.15 : 1)).current;
-	const color = focused ? '#D20058' : '#9B989B';
+	const color = focused ? colors.$D20058 : colors.$9B989B;
 
 	useEffect(() => {
 		Animated.parallel([

@@ -2,6 +2,7 @@ import { Animated, DeviceEventEmitter, StyleSheet, InteractionManager } from 're
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Icon from '../Icon';
+import { colors } from '../../../styles/common';
 
 const styles = StyleSheet.create({
 	globeContainer: {
@@ -15,10 +16,10 @@ const styles = StyleSheet.create({
 });
 
 const GlobeIcon = ({ focused, onPress }) => {
-	const scale = useRef(new Animated.Value(focused ? 1.15 : 1)).current;
+	const scale = useRef(new Animated.Value(1)).current;
 	const rotate = useRef(new Animated.Value(0)).current;
 	const [animating, setAnimating] = useState(false);
-	const color = focused ? '#D20058' : '#9B989B';
+	const color = focused ? colors.$D20058 : colors.$9B989B;
 
 	useEffect(() => {
 		const onWalletTabFocused = () => {
@@ -36,7 +37,9 @@ const GlobeIcon = ({ focused, onPress }) => {
 	useEffect(() => {
 		const onBrowserTabFocused = () => {
 			if (!animating) {
-				startAnimation();
+				InteractionManager.runAfterInteractions(() => {
+					startAnimation();
+				});
 			}
 		};
 
@@ -65,28 +68,6 @@ const GlobeIcon = ({ focused, onPress }) => {
 			setAnimating(false);
 		});
 	}, [scale, rotate, setAnimating]);
-
-	const stopAnimation = useCallback(() => {
-		Animated.timing(rotate, {
-			toValue: 0,
-			duration: 0,
-			useNativeDriver: true
-		}).start(() => {
-			setAnimating(false);
-		});
-	}, [rotate]);
-
-	useEffect(() => {
-		if (focused) {
-			InteractionManager.runAfterInteractions(() => {
-				startAnimation();
-			});
-		} else {
-			InteractionManager.runAfterInteractions(() => {
-				stopAnimation();
-			});
-		}
-	}, [focused, startAnimation, stopAnimation]);
 
 	const spin = rotate.interpolate({
 		inputRange: [0, 1],
