@@ -147,6 +147,13 @@ const styles = StyleSheet.create({
 		marginTop: 3,
 		height: 15
 	},
+	cardSizePosition: {
+		marginTop: 20,
+		marginLeft: 20,
+		width: cardWidth - 40,
+		height: cardHeight - 60,
+		borderRadius: 15
+	},
 	tnLayout: {
 		width: 90,
 		height: 24,
@@ -471,16 +478,7 @@ class CardSwiper extends PureComponent {
 							) : (
 								<View style={{ position: 'relative' }}>
 									<Image
-										style={[
-											styles.absoluteStart,
-											{
-												marginTop: 20,
-												marginLeft: 20,
-												width: cardWidth - 40,
-												height: cardHeight - 60,
-												borderRadius: 15
-											}
-										]}
+										style={[styles.absoluteStart, styles.cardSizePosition]}
 										source={
 											isRpc ? require('../../../images/pali-bg.png') : ChainTypeBg[currentIndex]
 										}

@@ -1163,7 +1163,8 @@ const Main = props => {
 			{renderHintView()}
 			{renderWcLoadingModal()}
 			{ongoingTransactionsModalVisible()}
-			{renderUpdateModal()}
+			{/* TODO: updates the renderUpdateModal to Pali wallet logic and information */}
+			{/* {renderUpdateModal()} */}
 			{renderNotificationsModal()}
 			{renderWalletConnectListModal()}
 		</React.Fragment>
