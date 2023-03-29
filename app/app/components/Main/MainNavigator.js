@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-
+import React from 'react';
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { TouchableOpacity, Animated, Text, DeviceEventEmitter, StyleSheet } from 'react-native';
-import { withNavigation } from 'react-navigation';
+import { Text, DeviceEventEmitter } from 'react-native';
+
 import { strings } from '../../../locales/i18n';
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
@@ -32,8 +31,8 @@ import ImportFromSeed from '../Views/ImportFromSeed';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
 import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
-import Icon from '../UI/Icon';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import GlobeIcon from '../UI/GlobeIcon';
+import WalletIcon from '../UI/WalletIcon';
 
 const SlideFromLeft = (index, position, width) => {
 	const inputRange = [index - 1, index, index + 1];
@@ -45,137 +44,6 @@ const SlideFromLeft = (index, position, width) => {
 	return {
 		transform: [{ translateX }]
 	};
-};
-
-const styles = StyleSheet.create({
-	globeContainer: {
-		marginTop: 5,
-		width: 28,
-		height: 28,
-		overflow: 'visible',
-		alignItems: 'center',
-		justifyContent: 'center'
-	}
-});
-const GlobeIcon = ({ focused, onPress, navigation }) => {
-	const scale = useRef(new Animated.Value(focused ? 1.2 : 1)).current;
-	const rotate = useRef(new Animated.Value(0)).current;
-	const [animating, setAnimating] = useState(false);
-	const color = focused ? '#D20058' : '#9B989B';
-
-	useEffect(() => {
-		const onWalletTabFocused = () => {
-			scale.setValue(1);
-			rotate.setValue(0);
-		};
-
-		DeviceEventEmitter.addListener('onWalletTabFocused', onWalletTabFocused);
-
-		return () => {
-			DeviceEventEmitter.removeListener('onWalletTabFocused', onWalletTabFocused);
-		};
-	}, [scale, rotate]);
-
-	useEffect(() => {
-		const onBrowserTabFocused = () => {
-			if (!animating) {
-				startAnimation();
-			}
-		};
-
-		DeviceEventEmitter.addListener('onBrowserTabFocused', onBrowserTabFocused);
-
-		return () => {
-			DeviceEventEmitter.removeListener('onBrowserTabFocused', onBrowserTabFocused);
-		};
-	}, [animating, startAnimation]);
-
-	const startAnimation = useCallback(() => {
-		setAnimating(true);
-		rotate.setValue(0);
-		Animated.parallel([
-			Animated.timing(scale, {
-				toValue: 1.2,
-				duration: 300,
-				useNativeDriver: true
-			}),
-			Animated.timing(rotate, {
-				toValue: 1,
-				duration: 400,
-				useNativeDriver: true
-			})
-		]).start(() => {
-			setAnimating(false);
-		});
-	}, [scale, rotate, setAnimating]);
-	const stopAnimation = useCallback(() => {
-		Animated.timing(rotate, {
-			toValue: 0,
-			duration: 0,
-			useNativeDriver: true
-		}).start(() => {
-			setAnimating(false);
-		});
-	}, [rotate]);
-	useEffect(() => {
-		if (focused) {
-			startAnimation();
-		} else {
-			stopAnimation();
-		}
-	}, [focused, startAnimation, stopAnimation]);
-
-	const spin = rotate.interpolate({
-		inputRange: [0, 1],
-		outputRange: ['0deg', '360deg']
-	});
-
-	const handlePress = () => {
-		if (focused) {
-			DeviceEventEmitter.emit('onBrowserTabFocused');
-		}
-		onPress();
-	};
-
-	return (
-		<TouchableWithoutFeedback onPress={handlePress} style={styles.globeContainer}>
-			<Animated.View
-				style={{
-					transform: [{ scale }, { rotate: spin }]
-				}}
-			>
-				<Icon width="22" height="22" color={color} name="globe" />
-			</Animated.View>
-		</TouchableWithoutFeedback>
-	);
-};
-const GlobeIconWithNavigation = withNavigation(GlobeIcon);
-
-const WalletIcon = ({ focused, onPress }) => {
-	const scale = useRef(new Animated.Value(focused ? 1.1 : 1)).current;
-	const color = focused ? '#D20058' : '#9B989B';
-
-	useEffect(() => {
-		Animated.parallel([
-			Animated.timing(scale, {
-				toValue: focused ? 1.15 : 1,
-				duration: 300,
-				useNativeDriver: true
-			})
-		]).start();
-	}, [focused, scale]);
-
-	return (
-		<Animated.View
-			style={{
-				transform: [{ scale }],
-				marginTop: 5
-			}}
-			onPress={onPress}
-		>
-			<Icon width="22" height="22" color={color} name="wallet" />
-		</Animated.View>
-	);
 };
 
 export default createStackNavigator(
