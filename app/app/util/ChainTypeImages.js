@@ -53,28 +53,29 @@ export const ChainTypeMoreIcons = [
 	require('../images/ic_card_more_other.png')
 ];
 export const ChainTypeBg = [
-	require('../images/img_card_all.png'),
-	require('../images/img_card_eth.png'),
-	require('../images/img_card_polygon.png'),
-	require('../images/img_card_arb.png'),
-	require('../images/img_card_bsc.png'),
-	require('../images/img_card_heco.png'),
-	require('../images/img_card_op.png'),
-	require('../images/img_card_avax.png'),
-	require('../images/img_card_syscoin.png'),
-	require('../images/img_card_other.png')
+	require('../images/pali-bg.png'),
+	require('../images/ethereum-bg.png'),
+	require('../images/polygon-bg.png'),
+	require('../images/arbitrum-bg.png'),
+	require('../images/bnb-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/avalanche-bg.png'),
+	require('../images/syscoin-bg.png'),
+	require('../images/pali-bg.png')
 ];
+
 export const ChainTypeBgWithoutShadows = [
-	require('../images/img_card_all_nsd.png'),
-	require('../images/img_card_eth_nsd.png'),
-	require('../images/img_card_polygon_nsd.png'),
-	require('../images/img_card_arb_nsd.png'),
-	require('../images/img_card_bsc_nsd.png'),
-	require('../images/img_card_heco_nsd.png'),
-	require('../images/img_card_op_nsd.png'),
-	require('../images/img_card_avax_nsd.png'),
-	require('../images/img_card_syscoin_nsd.png'),
-	require('../images/img_card_other_nsd.png')
+	require('../images/pali-bg.png'),
+	require('../images/ethereum-bg.png'),
+	require('../images/polygon-bg.png'),
+	require('../images/arbitrum-bg.png'),
+	require('../images/bnb-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/pali-bg.png'),
+	require('../images/avalanche-bg.png'),
+	require('../images/syscoin-bg.png'),
+	require('../images/pali-bg.png')
 ];
 export const ChainTypeCheckColorStyle = [
 	{ color: '#DBAAF5' },

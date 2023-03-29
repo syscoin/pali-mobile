@@ -50,10 +50,10 @@ const defaultProps = {
 	titleStyle: undefined
 };
 
-const SettingsDrawer = ({ image, title, onPress, titleStyle, hideLine, baseStyle }) => (
+const SettingsDrawer = ({ image, title, iconStyle, onPress, titleStyle, hideLine, baseStyle }) => (
 	<TouchableOpacity onPress={onPress}>
 		<View style={[styles.root, baseStyle, hideLine && styles.hideLineStyle]}>
-			{image && <Image style={styles.image} source={image} />}
+			{image && <Image style={[styles.image, iconStyle]} source={image} />}
 			<View style={styles.content}>
 				<Text style={[styles.title, titleStyle]}>{title}</Text>
 			</View>

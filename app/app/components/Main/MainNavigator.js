@@ -1,7 +1,9 @@
 import React from 'react';
-import { Image } from 'react-native';
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Text, DeviceEventEmitter } from 'react-native';
+
+import { strings } from '../../../locales/i18n';
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
 import Wallet from '../Views/Wallet';
@@ -14,7 +16,7 @@ import AboutView from '../Views/AboutView';
 import DeveloperOptions from '../Views/DeveloperOptions';
 import CurrencyUnit from '../Views/CurrencyUnit';
 import UpdateCheck from '../Views/UpdateCheck';
-import { colors } from '../../styles/common';
+import { colors, fontStyles } from '../../styles/common';
 import WalletManagement from '../Views/WalletManagement';
 import ObserveAccounts from '../Views/ObserveAccounts';
 import NftView from '../Views/NftView';
@@ -29,6 +31,8 @@ import ImportFromSeed from '../Views/ImportFromSeed';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
 import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
+import GlobeIcon from '../UI/GlobeIcon';
+import WalletIcon from '../UI/WalletIcon';
 
 const SlideFromLeft = (index, position, width) => {
 	const inputRange = [index - 1, index, index + 1];
@@ -124,19 +128,27 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							tabBarLabel: () => null,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
+							tabBarLabel: () => (
+								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginTop: 5 }
+										{
+											textAlign: 'center',
+											fontSize: 11,
+											...fontStyles.bold
+										},
+										// eslint-disable-next-line react-native/no-inline-styles
+										{ marginBottom: 5 }
 									]}
-									source={
-										focused ? require('../../images/1HL.png') : require('../../images/1Nor.png')
-									}
-								/>
-							)
+								>
+									{strings('other.wallet')}
+								</Text>
+							),
+							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('WalletTabHome');
+								DeviceEventEmitter.emit('onWalletTabFocused');
+							}
 						}
 					},
 					BrowserTabHome: {
@@ -145,30 +157,42 @@ export default createStackNavigator(
 								screen: Browser,
 								navigationOptions: {
 									header: null,
-									gesturesEnabled: false
+									gesturesEnabled: false,
+									animationEnabled: true
 								}
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => null,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
+							tabBarLabel: () => (
+								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
-										{ position: 'absolute', top: 0 }
+										{
+											textAlign: 'center',
+											fontSize: 11,
+											...fontStyles.bold
+										},
+										// eslint-disable-next-line react-native/no-inline-styles
+										{ marginBottom: 5 }
 									]}
-									source={
-										focused ? require('../../images/2Hl.png') : require('../../images/2NOR.png')
-									}
-								/>
-							)
+								>
+									{strings('other.browser')}
+								</Text>
+							),
+							tabBarIcon: ({ focused, onPress = () => {} }) => (
+								<GlobeIcon onPress={onPress} focused={focused} />
+							),
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('BrowserTabHome');
+								DeviceEventEmitter.emit('onBrowserTabFocused');
+							}
 						}
 					}
 				},
 				{
 					defaultNavigationOptions: () => ({
 						tabBarVisible: true,
+						animationEnabled: true,
 						tabBarOptions: {
 							style: {
 								backgroundColor: colors.white,
