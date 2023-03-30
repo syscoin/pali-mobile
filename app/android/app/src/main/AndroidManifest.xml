@@ -93,7 +93,7 @@
 		<meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
 					android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
 
-		<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/umeng_push_notification_default_small_icon" />
+		<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_logo" />
 
 		<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" android:exported="true"/>
 		<receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" android:exported="true"/>
