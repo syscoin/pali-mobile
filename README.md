@@ -4,11 +4,11 @@
 
 Pali Wallet is a new generation multi-chain wallet that provides security safeguard for Crypto users.
 
-🔗[Official Website](https://gopocket.security)
+🔗[Official Website](https://paliwallet.com/)
 
-🎙[Discord](https://discord.gg/78e9u4Xa)
+🎙[Discord](https://discord.gg/syscoin)
 
-🐦[Twitter](https://twitter.com/GoplusSecurity)
+🐦[Twitter](https://twitter.com/PaliWallet)
 
 ## Build Steps
 
