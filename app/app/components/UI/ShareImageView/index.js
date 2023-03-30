@@ -57,7 +57,9 @@ const styles = StyleSheet.create({
 	bottomLogo: {
 		alignSelf: 'center',
 		marginTop: 35,
-		marginBottom: 16
+		marginBottom: 16,
+		width: 210,
+		height: 52
 	},
 	directionRow: {
 		marginTop: 22,
