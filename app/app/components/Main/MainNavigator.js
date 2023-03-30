@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { Text, DeviceEventEmitter } from 'react-native';
+import { Text, DeviceEventEmitter, Vibration } from 'react-native';
 
 import { strings } from '../../../locales/i18n';
 import SimpleWebview from '../Views/SimpleWebview';
@@ -146,6 +146,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ navigation }) => {
+								Vibration.vibrate(30);
 								navigation.navigate('WalletTabHome');
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -183,6 +184,7 @@ export default createStackNavigator(
 								<GlobeIcon onPress={onPress} focused={focused} />
 							),
 							tabBarOnPress: ({ navigation }) => {
+								Vibration.vibrate(30);
 								navigation.navigate('BrowserTabHome');
 								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}
