@@ -9,7 +9,8 @@ import {
 	Image,
 	TouchableOpacity,
 	ActivityIndicator,
-	ScrollView
+	ScrollView,
+	Vibration
 } from 'react-native';
 import { AddressTo } from './../AddressInputs';
 import NetworkFee from '../../../UI/NetworkFee';
@@ -707,6 +708,7 @@ class SendTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
+				Vibration.vibrate(100);
 			});
 		} else {
 			this.setLoading(false);
