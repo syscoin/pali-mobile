@@ -1,6 +1,5 @@
-import { Animated, DeviceEventEmitter, StyleSheet, InteractionManager } from 'react-native';
+import { Animated, DeviceEventEmitter, StyleSheet, View } from 'react-native';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Icon from '../Icon';
 import { colors } from '../../../styles/common';
 
@@ -37,9 +36,7 @@ const GlobeIcon = ({ focused, onPress }) => {
 	useEffect(() => {
 		const onBrowserTabFocused = () => {
 			if (!animating) {
-				InteractionManager.runAfterInteractions(() => {
-					startAnimation();
-				});
+				startAnimation();
 			}
 		};
 
@@ -82,7 +79,7 @@ const GlobeIcon = ({ focused, onPress }) => {
 	}, [onPress, focused]);
 
 	return (
-		<TouchableWithoutFeedback onPress={handlePress} style={styles.globeContainer}>
+		<View onPress={handlePress} style={styles.globeContainer}>
 			<Animated.View
 				style={{
 					transform: [{ scale }, { rotate: spin }]
@@ -90,7 +87,7 @@ const GlobeIcon = ({ focused, onPress }) => {
 			>
 				<Icon width="22" height="22" color={color} name="globe" />
 			</Animated.View>
-		</TouchableWithoutFeedback>
+		</View>
 	);
 };
 
