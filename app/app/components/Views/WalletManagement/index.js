@@ -835,7 +835,7 @@ class WalletManagement extends PureComponent {
 					</Text>
 					<View style={styles.accountAddressLayout}>
 						<Text style={styles.accountAddress} allowFontScaling={false}>
-							{address.substring(0, 13) + '...' + address.substring(30)}
+							{address.substring(0, 6) + '...' + address.slice(-4)}
 						</Text>
 					</View>
 

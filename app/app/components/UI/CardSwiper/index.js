@@ -540,10 +540,10 @@ class CardSwiper extends PureComponent {
 													onPress={this.copyAccountToClipboard}
 												>
 													<Text allowFontScaling={false} style={styles.ensAddress}>
-														{contactEntry.address.substring(0, 8) +
+														{contactEntry.address.substring(0, 6) +
 															'...' +
 															contactEntry.address.substring(
-																contactEntry.address.length - 7
+																contactEntry.address.length - 4
 															)}
 													</Text>
 												</TouchableOpacity>
@@ -620,7 +620,7 @@ class CardSwiper extends PureComponent {
 											<Text style={styles.address} allowFontScaling={false}>
 												{contactEntry.address.substring(0, 6) +
 													'...' +
-													contactEntry.address.substring(38)}
+													contactEntry.address.substring(contactEntry.address.length - 4)}
 											</Text>
 										</TouchableOpacity>
 										<TouchableOpacity

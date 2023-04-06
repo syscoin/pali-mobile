@@ -42,9 +42,9 @@ const GlobeIcon = ({ focused, onPress }) => {
 
 		DeviceEventEmitter.addListener('onBrowserTabFocused', onBrowserTabFocused);
 
-		return () => {
-			DeviceEventEmitter.removeAllListeners('onBrowserTabFocused', onBrowserTabFocused);
-		};
+		// return () => {
+		// 	DeviceEventEmitter.removeAllListeners('onBrowserTabFocused', onBrowserTabFocused);
+		// };
 	}, [animating, startAnimation]);
 
 	const startAnimation = useCallback(() => {
@@ -54,14 +54,12 @@ const GlobeIcon = ({ focused, onPress }) => {
 			Animated.timing(scale, {
 				toValue: 1.15,
 				duration: 300,
-				useNativeDriver: true,
-				isInteraction: false
+				useNativeDriver: true
 			}),
 			Animated.timing(rotate, {
 				toValue: 1,
-				duration: 300,
-				useNativeDriver: true,
-				isInteraction: false
+				duration: 400,
+				useNativeDriver: true
 			})
 		]).start(() => {
 			setAnimating(false);
