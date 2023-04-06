@@ -1,41 +1,41 @@
 const favoritesDapps = [
 	{
-		logo: 'https://cdn.gopocket.finance/files/RSS3logo111.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/ChainListLogo.png',
 		name: 'Chainlist',
-		url: 'https://rss3.io/'
+		url: 'https://chainlist.org'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/ZerionLogo.png',
 		name: 'Zerion',
 		url: 'https://app.zerion.io/'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/RevokeIconLogo.png',
 		name: 'Revoke Cash',
 		url: 'https://revoke.cash'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/AlchemyLogo.png',
 		name: 'Alchemy Dapps',
 		url: 'https://www.alchemy.com/ecosystem/ethereum'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/DuneAnaliticsLogo.png',
 		name: 'Dune Analytics',
 		url: 'https://dune.com/'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/LunarCrushLogo.png',
 		name: 'LunarCrush',
 		url: 'https://lunarcrush.com/'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/dextools.png',
 		name: 'DexTools',
 		url: 'https://www.dextools.io/app/'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/default.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/DefiLlama.png',
 		name: 'DefiLlama',
 		url: 'https://defillama.com'
 	},
