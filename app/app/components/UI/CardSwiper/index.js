@@ -618,9 +618,9 @@ class CardSwiper extends PureComponent {
 											activeOpacity={1.0}
 										>
 											<Text style={styles.address} allowFontScaling={false}>
-												{contactEntry.address.substring(0, 13) +
+												{contactEntry.address.substring(0, 6) +
 													'...' +
-													contactEntry.address.substring(30)}
+													contactEntry.address.substring(38)}
 											</Text>
 										</TouchableOpacity>
 										<TouchableOpacity
