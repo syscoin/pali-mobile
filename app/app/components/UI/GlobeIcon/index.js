@@ -54,12 +54,14 @@ const GlobeIcon = ({ focused, onPress }) => {
 			Animated.timing(scale, {
 				toValue: 1.15,
 				duration: 300,
-				useNativeDriver: true
+				useNativeDriver: true,
+				isInteraction: false
 			}),
 			Animated.timing(rotate, {
 				toValue: 1,
 				duration: 400,
-				useNativeDriver: true
+				useNativeDriver: true,
+				isInteraction: false
 			})
 		]).start(() => {
 			setAnimating(false);
