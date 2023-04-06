@@ -59,7 +59,7 @@ const GlobeIcon = ({ focused, onPress }) => {
 			}),
 			Animated.timing(rotate, {
 				toValue: 1,
-				duration: 400,
+				duration: 300,
 				useNativeDriver: true,
 				isInteraction: false
 			})
