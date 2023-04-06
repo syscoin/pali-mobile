@@ -54,6 +54,7 @@ const fetchConfig = async () => {
 				}
 				if (dappPage) {
 					dappPage.en = suggestedWebsites;
+					dappPage.zh = suggestedWebsites;
 					store.dispatch(updateDappPage(dappPage));
 					callSqlite('updateWhitelistDapps', getDapp(dappPage));
 					store.dispatch(addFavouriteDapps(favoritesDapps));
