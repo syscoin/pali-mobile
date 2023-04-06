@@ -7,11 +7,13 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Blockchain explorer for Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyscoinLogo.png',
 							name: 'Syscoin Explorer',
 							url: 'https://explorer.syscoin.org'
 						},
 						{
 							desc: 'RPC info for Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ChainListLogo.png',
 							name: 'Syscoin RPC Info',
 							url: 'https://chainlist.org/chain/57'
 						}
@@ -22,11 +24,13 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized exchange on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/PegasysLogo.png',
 							name: 'Pegasys',
 							url: 'https://app.pegasys.finance/#/swap'
 						},
 						{
 							desc: 'Decentralized exchange on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ApeSwapLogo.png',
 							name: 'Apeswap',
 							url: 'https://apeswap.finance/swap'
 						}
@@ -37,36 +41,43 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Lending and borrowing platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/PegasysLogo.png',
 							name: 'Pegasys',
 							url: 'https://app.pegasys.finance/#/swap'
 						},
 						{
 							desc: 'Staking and yield farming protocol',
+							logo: 'https://pali-images.s3.amazonaws.com/files/QiDaoLogo.png',
 							name: 'QiDAO',
 							url: 'https://app.mai.finance'
 						},
 						{
 							desc: 'Yield farming optimization platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BeefyLogo.png',
 							name: 'Beefy',
 							url: 'https://app.beefy.com'
 						},
 						{
 							desc: 'Decentralized cloud infrastructure provider on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AnkrLogo.png',
 							name: 'Ankr',
 							url: 'https://www.ankr.com'
 						},
 						{
 							desc: 'Protocol for token vesting and unlocking on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/RevestLogo.png',
 							name: 'Revest',
 							url: 'https://app.revest.finance'
 						},
 						{
 							desc: 'Oracle service provider on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SuperOraclesLogo.png',
 							name: 'SupraOracles',
 							url: 'https://supraoracles.com/'
 						},
 						{
 							desc: 'Launchpad for blockchain projects on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyspadLogo.png',
 							name: 'Syspad',
 							url: 'https://twitter.com/syspad_official'
 						}
@@ -77,6 +88,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ChaingeLogo.png',
 							name: 'Chainge',
 							url: 'https://www.chainge.finance/info/trading'
 						},
@@ -88,6 +100,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/CelerBridgeLogo.png',
 							name: 'Celer cBridge',
 							url: 'https://cbridge.celer.network'
 						}
@@ -98,11 +111,13 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'NFT marketplace for buying, selling, and trading digital assets on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/LuxyLogo.png',
 							name: 'Luxy',
 							url: 'https://luxy.io'
 						},
 						{
 							desc: 'NFT marketplace for buying, selling, and trading digital assets on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/TribeOneLogo.png',
 							name: 'TribeOne',
 							url: 'https://www.tribeone.io/'
 						}
@@ -113,21 +128,19 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Digital asset management platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/CoinifyLogo.png',
 							name: 'Coinify',
 							url: 'https://www.coinify.com'
 						},
 						{
 							desc: 'Blockchain Academy',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BlockdemyLogo.png',
 							name: 'Blockdemy',
 							url: 'https://blockdemy.com'
 						},
 						{
-							desc: 'DAO platform on Syscoin',
-							name: 'DaoSys',
-							url: 'https://daosys.com/'
-						},
-						{
 							desc: 'Overview of the Syscoin ecosystem',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyscoinLogo.png',
 							name: 'Syscoin Ecosystem',
 							url: 'https://syscoin.org/ecosystem'
 						}
@@ -311,6 +324,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Blockchain infrastructure provider that enables developers to build and scale decentralized applications (dapps) on Ethereum',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AlchemyLogo.png',
 							name: 'Alchemy Dapps',
 							url: 'https://www.alchemy.com/ecosystem/ethereum'
 						},
@@ -418,6 +432,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Staking and yield farming protocol on Polygon',
+							logo: 'https://pali-images.s3.amazonaws.com/files/QiDaoLogo.png',
 							name: 'QiDAO',
 							url: 'https://app.mai.finance'
 						},
@@ -434,6 +449,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Yield farming optimization platform on Polygon',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BeefyLogo.png',
 							name: 'Beefy',
 							url: 'https://polygon.beefy.finance/'
 						},
@@ -492,6 +508,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Blockchain infrastructure provider that enables developers to build and scale decentralized applications (dapps) on Polygon',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AlchemyLogo.png',
 							name: 'Alchemy Dapps',
 							url: 'https://www.alchemy.com/ecosystem/polygon'
 						}
@@ -591,6 +608,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Yield farming optimization platform on Arbitrum',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BeefyLogo.png',
 							name: 'Beefy',
 							url: 'https://app.beefy.finance/'
 						},
@@ -654,6 +672,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Blockchain infrastructure provider that enables developers to build and scale decentralized applications (dapps) on Arbitrum',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AlchemyLogo.png',
 							name: 'Alchemy Dapps',
 							url: 'https://www.alchemy.com/ecosystem/arbitrum'
 						},
@@ -722,6 +741,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized exchange and yield farming platform',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ApeSwapLogo.png',
 							name: 'Apeswap',
 							url: 'https://apeswap.finance/swap'
 						},
@@ -764,6 +784,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Yield farming optimization platform on Binance Smart Chain',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BeefyLogo.png',
 							name: 'Beefy',
 							url: 'https://app.beefy.finance/'
 						},
@@ -774,6 +795,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Node hosting and infrastructure platform on Binance Smart Chain',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AnkrLogo.png',
 							name: 'Ankr',
 							url: 'https://app.ankr.com/'
 						},
@@ -829,6 +851,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Blockchain infrastructure provider that enables developers to build and scale decentralized applications (dapps) on Binance Smart Chain',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AlchemyLogo.png',
 							name: 'Alchemy Dapps',
 							url: 'https://www.alchemy.com/dapps?chain=BNB+Chain'
 						},
