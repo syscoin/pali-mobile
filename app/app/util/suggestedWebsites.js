@@ -493,7 +493,7 @@ const suggestedWebsites = {
 							desc:
 								'Blockchain infrastructure provider that enables developers to build and scale decentralized applications (dapps) on Polygon',
 							name: 'Alchemy Dapps',
-							url: 'https://www.alchemy.com/dapps?chain=Arbitrum'
+							url: 'https://www.alchemy.com/ecosystem/polygon'
 						}
 					],
 					name: 'Misc'
@@ -574,7 +574,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized lending platform on Arbitrum',
-							name: 'TenderFi',
+							name: 'Tender.fi',
 							url: 'https://app.tender.fi'
 						},
 						{
@@ -660,6 +660,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Decentralized platform for creating, deploying, and managing smart contracts on Arbitrum',
+							logo: 'https://cdn.gopocket.finance/files/arbilogo.png',
 							name: 'Arbiproject',
 							url: 'https://www.arbiproject.io'
 						},
@@ -699,7 +700,7 @@ const suggestedWebsites = {
 						{
 							desc: 'Automated market maker (AMM) decentralized exchange',
 							logo: 'https://gopocket.security/images/defi/PancakeSwap.png',
-							name: 'Pancakeswap',
+							name: 'PancakeSwap',
 							url: 'https://pancakeswap.finance/swap'
 						},
 						{
