@@ -309,29 +309,9 @@ class Browser extends PureComponent {
 		setActiveTab(tab);
 	};
 
-	switchLeftTab = tabId => {
-		const tab = this.getTabById(tabId);
-		const activeTabIndex = this.findTabIndex(tab);
-		if (activeTabIndex === 0) {
-			this.tabCreating = true;
-			this.newTab(null, false);
-			if (Device.isIos()) {
-				setTimeout(() => {
-					this.gotoPage(0);
-				}, 200);
-			} else {
-				setTimeout(() => {
-					this.tabCreating = false;
-					this.gotoPage(0);
-				}, 500);
-			}
-		} else {
-			const preTab = this.props.tabs[activeTabIndex - 1];
-			this.switchToTab(preTab);
-			const index = this.findTabIndex(preTab);
-			this.gotoPage(index);
-			this.delayUpdateInitialPage();
-		}
+	goHome = tabId => {
+		this.setState({ securityModalVisible: false });
+		DeviceEventEmitter.emit('AddressbarStateEmitter', { state: 'goHome' });
 	};
 
 	switchRightTab = tabId => {
@@ -588,8 +568,9 @@ class Browser extends PureComponent {
 				key={`tab_addressbar_${tab.id}`}
 				leftTabUrl={index === 0 ? 'add' : this.props.tabs[index - 1].url}
 				rightTabUrl={index === this.props.tabs.length - 1 ? 'add' : this.props.tabs[index + 1]?.url}
-				switchLeftTab={this.switchLeftTab}
+				goHome={this.goHome}
 				switchRightTab={this.switchRightTab}
+				tabCount={this.props.tabs.length}
 				tabId={tab.id}
 				title={tab.title}
 				url={tab.url}

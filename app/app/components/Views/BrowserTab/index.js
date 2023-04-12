@@ -359,6 +359,7 @@ const BrowserTab = props => {
 	const [refreshing, setRefreshing] = useState(false);
 	const [refreshEnable, setRefreshEnable] = useState(Device.isIos());
 	const [initListener, setInitListener] = useState(false);
+	const [showOpenedTabs, setShowOpenedTabs] = useState(false);
 
 	const isTabActive = useCallback(() => getActiveTabId() === props.tabId, [props.tabId]);
 
@@ -1817,7 +1818,54 @@ const BrowserTab = props => {
 	return (
 		<View style={[styles.wrapper]}>
 			<View style={styles.webview}>
-				{(!showHomepage || animToHome) && !!entryScriptWeb3 && (
+				{showOpenedTabs ? (
+					<>
+						{(!showHomepage || animToHome) && !!entryScriptWeb3 && (
+							<ScrollView
+								refreshControl={
+									<RefreshControl
+										refreshing={refreshing}
+										enabled={refreshEnable}
+										onRefresh={handleRefresh}
+									/>
+								}
+								showsVerticalScrollIndicator={false}
+								scrollEnabled={refreshEnable}
+								contentContainerStyle={styles.flexOne}
+							>
+								<WebView
+									{...panResponder.panHandlers}
+									ref={webviewRef}
+									setSupportMultipleWindows={false}
+									renderError={() => <WebviewError error={error} onReload={reload} />}
+									source={{ uri: initialUrl }}
+									injectedJavaScriptBeforeContentLoaded={entryScriptWeb3}
+									injectedJavaScript={entryScriptVConsole}
+									style={[
+										styles.webview,
+										// eslint-disable-next-line react-native/no-inline-styles
+										animToHome && { left: Device.getDeviceWidth(), index: 10000 }
+									]}
+									onLoadStart={onLoadStart}
+									onLoadEnd={onLoadEnd}
+									onLoadProgress={onLoadProgress}
+									onMessage={onMessage}
+									onError={onError}
+									onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+									originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
+									userAgent={USER_AGENT}
+									sendCookies
+									javascriptEnabled
+									allowsInlineMediaPlayback
+									allowsLinkPreview
+									useWebkit
+									allowsBackForwardNavigationGestures
+									onScroll={handleScroll}
+								/>
+							</ScrollView>
+						)}
+					</>
+				) : (
 					<ScrollView
 						refreshControl={
 							<RefreshControl refreshing={refreshing} enabled={refreshEnable} onRefresh={handleRefresh} />
@@ -1826,35 +1874,7 @@ const BrowserTab = props => {
 						scrollEnabled={refreshEnable}
 						contentContainerStyle={styles.flexOne}
 					>
-						<WebView
-							{...panResponder.panHandlers}
-							ref={webviewRef}
-							setSupportMultipleWindows={false}
-							renderError={() => <WebviewError error={error} onReload={reload} />}
-							source={{ uri: initialUrl }}
-							injectedJavaScriptBeforeContentLoaded={entryScriptWeb3}
-							injectedJavaScript={entryScriptVConsole}
-							style={[
-								styles.webview,
-								// eslint-disable-next-line react-native/no-inline-styles
-								animToHome && { left: Device.getDeviceWidth(), index: 10000 }
-							]}
-							onLoadStart={onLoadStart}
-							onLoadEnd={onLoadEnd}
-							onLoadProgress={onLoadProgress}
-							onMessage={onMessage}
-							onError={onError}
-							onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-							originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
-							userAgent={USER_AGENT}
-							sendCookies
-							javascriptEnabled
-							allowsInlineMediaPlayback
-							allowsLinkPreview
-							useWebkit
-							allowsBackForwardNavigationGestures
-							onScroll={handleScroll}
-						/>
+						<Text> salve</Text>
 					</ScrollView>
 				)}
 				{showHomepage && (

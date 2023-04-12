@@ -131,14 +131,15 @@ export default class AddressBar extends PureComponent {
 		toggleSecurityModal: PropTypes.func,
 		onSubmit: PropTypes.func,
 		toggleTipModal: PropTypes.func,
-		switchLeftTab: PropTypes.func,
+		goHome: PropTypes.func,
 		switchRightTab: PropTypes.func,
 		leftTabUrl: PropTypes.string,
 		rightTabUrl: PropTypes.string,
 		tabId: PropTypes.number,
 		closeTab: PropTypes.func,
 		title: PropTypes.string,
-		url: PropTypes.string
+		url: PropTypes.string,
+		tabCount: PropTypes.number
 	};
 
 	state = {
@@ -249,12 +250,13 @@ export default class AddressBar extends PureComponent {
 			onFocusChange,
 			onTextChange,
 			onSubmit,
-			switchLeftTab,
+			goHome,
 			switchRightTab,
 			leftTabUrl,
 			rightTabUrl,
 			tabId,
-			closeTab
+			closeTab,
+			tabCount
 		} = this.props;
 
 		let { currentTitle } = this.state;
@@ -295,7 +297,7 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						switchLeftTab(tabId);
+						goHome(tabId);
 					}}
 				>
 					<ImageBackground
@@ -303,13 +305,7 @@ export default class AddressBar extends PureComponent {
 						source={require('../../../images/img_left_tab_bg.png')}
 						resizeMode={'stretch'}
 					>
-						{!leftTabUrl || leftTabUrl === HOMEPAGE_URL ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_home_tab.png')} />
-						) : leftTabUrl === 'add' ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
-						) : (
-							<Favicon style={styles.iconSize} url={leftTabUrl} />
-						)}
+						<Image style={styles.iconSize} source={require('../../../images/ic_search_home.png')} />
 					</ImageBackground>
 				</TouchableOpacity>
 				<View style={styles.baseLayout}>
@@ -371,15 +367,9 @@ export default class AddressBar extends PureComponent {
 								style={styles.inputBaseLayout}
 							>
 								<View style={styles.operateLayout}>
-									{webPageState && (
+									{webPageState && backEnabled && (
 										<TouchableOpacity onPress={this.backPress} hitSlop={styles.hitSlop}>
-											<Image
-												source={
-													backEnabled
-														? require('../../../images/ic_search_back.png')
-														: require('../../../images/ic_search_home.png')
-												}
-											/>
+											<Image source={require('../../../images/ic_search_back.png')} />
 										</TouchableOpacity>
 									)}
 
@@ -476,6 +466,20 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
+						console.log('new tabs', tabCount);
+					}}
+				>
+					<ImageBackground
+						style={styles.rightTabBg}
+						source={require('../../../images/img_right_tab_bg.png')}
+						resizeMode={'stretch'}
+					>
+						<Text>{tabCount}</Text>
+					</ImageBackground>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={inputEditing && styles.hide}
+					onPress={() => {
 						switchRightTab(tabId);
 					}}
 				>
@@ -484,13 +488,7 @@ export default class AddressBar extends PureComponent {
 						source={require('../../../images/img_right_tab_bg.png')}
 						resizeMode={'stretch'}
 					>
-						{!rightTabUrl || rightTabUrl === HOMEPAGE_URL ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_home_tab.png')} />
-						) : rightTabUrl === 'add' ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
-						) : (
-							<Favicon style={styles.iconSize} url={rightTabUrl} />
-						)}
+						<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
 					</ImageBackground>
 				</TouchableOpacity>
 			</View>
