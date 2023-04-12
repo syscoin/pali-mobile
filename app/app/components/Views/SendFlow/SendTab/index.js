@@ -708,7 +708,7 @@ class SendTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
-				Vibration.vibrate(100);
+				Vibration.vibrate(30);
 			});
 		} else {
 			this.setLoading(false);

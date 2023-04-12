@@ -146,7 +146,6 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ navigation }) => {
-								Vibration.vibrate(30);
 								navigation.navigate('WalletTabHome');
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -184,7 +183,6 @@ export default createStackNavigator(
 								<GlobeIcon onPress={onPress} focused={focused} />
 							),
 							tabBarOnPress: ({ navigation }) => {
-								Vibration.vibrate(30);
 								navigation.navigate('BrowserTabHome');
 								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}

@@ -99,7 +99,6 @@
 		15FDD86021B76461006B7C35 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		178440FE3F1C4F4180D14622 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = GoPocket.entitlements; path = GoPocket/GoPocket.entitlements; sourceTree = "<group>"; };
-		
 		1BDE537926E611790027269D /* InpageVConsole.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageVConsole.js; path = ../app/core/InpageVConsole.js; sourceTree = "<group>"; };
 		1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageBridgeWeb3.js; path = ../app/core/InpageBridgeWeb3.js; sourceTree = "<group>"; };
 		1C516951C09F43CB97129B66 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -318,7 +317,7 @@
 				ORGANIZATIONNAME = GoPocket;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 8F838VHVDB;
+						DevelopmentTeam = 6YCW295639;
 						LastSwiftMigration = 1140;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -583,7 +582,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 8F838VHVDB;
+				DEVELOPMENT_TEAM = 6YCW295639;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -624,7 +623,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tops.gopocket;
+				PRODUCT_BUNDLE_IDENTIFIER = io.pollum.paliwallet;
 				PRODUCT_MODULE_NAME = GoPocket;
 				PRODUCT_NAME = GoPocket;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -647,7 +646,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 8F838VHVDB;
+				DEVELOPMENT_TEAM = 6YCW295639;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -689,7 +688,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tops.gopocket;
+				PRODUCT_BUNDLE_IDENTIFIER = io.pollum.paliwallet;
 				PRODUCT_MODULE_NAME = GoPocket;
 				PRODUCT_NAME = GoPocket;
 				PROVISIONING_PROFILE_SPECIFIER = "";
