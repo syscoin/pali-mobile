@@ -1,4 +1,4 @@
-# GoPocket App
+# Pali Wallet App
 
 ![logo](logo.png)
 
