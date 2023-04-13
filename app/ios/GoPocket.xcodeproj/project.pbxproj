@@ -17,6 +17,7 @@
 		15ACC9FC22655C3A0063978B /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; };
 		15ACC9FD22655C3A0063978B /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B0BF5032653AB9900AFC828 /* GoPocket.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */; };
+		1B4628AC26DE27200096E17E /* splash_screen.json in Resources */ = {isa = PBXBuildFile; fileRef = 1B4628A726DE271F0096E17E /* splash_screen.json */; };
 		1BDE537E26E611790027269D /* InpageVConsole.js in Resources */ = {isa = PBXBuildFile; fileRef = 1BDE537926E611790027269D /* InpageVConsole.js */; };
 		1BF815B926B3F5FA0000DC6C /* InpageBridgeWeb3.js in Resources */ = {isa = PBXBuildFile; fileRef = 1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */; };
 		1DA5BF652704303F00D0AC41 /* img_0.png in Resources */ = {isa = PBXBuildFile; fileRef = 1DA5BF602704303F00D0AC41 /* img_0.png */; };
@@ -99,6 +100,7 @@
 		15FDD86021B76461006B7C35 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		178440FE3F1C4F4180D14622 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = GoPocket.entitlements; path = GoPocket/GoPocket.entitlements; sourceTree = "<group>"; };
+		1B4628A726DE271F0096E17E /* splash_screen.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splash_screen.json; sourceTree = "<group>"; };
 		1BDE537926E611790027269D /* InpageVConsole.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageVConsole.js; path = ../app/core/InpageVConsole.js; sourceTree = "<group>"; };
 		1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageBridgeWeb3.js; path = ../app/core/InpageBridgeWeb3.js; sourceTree = "<group>"; };
 		1C516951C09F43CB97129B66 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			children = (
 				0417412027E9A32500C54857 /* tempdb.db */,
 				04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */,
+				1B4628A726DE271F0096E17E /* splash_screen.json */,
 				AA9EDF17249955C7005D89EE /* GoPocketDebug.entitlements */,
 				15205D6221596AD90049EA93 /* GoPocket.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -394,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BDE537E26E611790027269D /* InpageVConsole.js in Resources */,
+				1B4628AC26DE27200096E17E /* splash_screen.json in Resources */,
 				1BF815B926B3F5FA0000DC6C /* InpageBridgeWeb3.js in Resources */,
 				1DA5BF652704303F00D0AC41 /* img_0.png in Resources */,
 				1B0BF5032653AB9900AFC828 /* GoPocket.entitlements in Resources */,
