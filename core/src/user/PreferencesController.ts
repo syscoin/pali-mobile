@@ -109,7 +109,7 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
     switch (type) {
       case 'walletName':
         identities[address].walletName = label;
-        return;
+        break;
       default:
         identities[address].name = label;
     }
