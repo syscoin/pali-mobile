@@ -639,6 +639,7 @@
 		"import_seed_phrase": "导入助记词",
 		"import_private_key": "导入私钥",
 		"rename_account": "重命名账户",
+		"rename_wallet": "重命名钱包",
 		"rename": "重命名",
 		"confirm_delete": "确认删除",
 		"rename_eg": "例如，长线投资，HODL，流动性等",

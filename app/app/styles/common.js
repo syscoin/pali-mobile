@@ -63,6 +63,7 @@ export const colors = {
 	$8F92A1Alpha: `rgba(143, 146, 161, 0.24)`,
 	$8F92A1: '#8F92A1',
 	$8F92A13D: '#8F92A13D',
+	$1A1A1A: '#1A1A1A',
 	$030319: '#030319',
 	$DCDCDC: '#DCDCDC',
 	$F5F5F5: '#F5F5F5',
