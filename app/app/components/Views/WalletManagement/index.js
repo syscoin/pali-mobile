@@ -665,6 +665,7 @@ class WalletManagement extends PureComponent {
 							style={styles.textInput}
 							value={walletNameValue}
 							onChangeText={this.onWalletNameChange}
+							maxLength={30}
 						/>
 						<View style={styles.underline} />
 						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
@@ -702,6 +703,7 @@ class WalletManagement extends PureComponent {
 							style={styles.textInput}
 							value={accountNameValue}
 							onChangeText={this.onAccountNameChange}
+							maxLength={30}
 						/>
 						<View style={styles.underline} />
 						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
