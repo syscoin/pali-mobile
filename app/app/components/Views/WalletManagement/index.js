@@ -484,6 +484,7 @@ class WalletManagement extends PureComponent {
 		walletSelectedCanRemove: true,
 		addAccountLoadingIndex: -1,
 		renameAddressLoading: '',
+		renameWalletLoading: '',
 		deleteAddressLoading: '',
 		passwordValue: '',
 		wrongPwVisible: false,
@@ -615,10 +616,10 @@ class WalletManagement extends PureComponent {
 			const { PreferencesController } = Engine.context;
 			this.setState({
 				renameWalletModalVisible: false,
-				renameAddressLoading: this.currentModalWallet.address
+				renameWalletLoading: this.currentModalWallet.address
 			});
 			await PreferencesController.setAccountLabel(this.currentModalWallet.address, walletNameValue, 'walletName');
-			this.setState({ renameAddressLoading: '' });
+			this.setState({ renameWalletLoading: '' });
 		}
 	};
 
@@ -1094,7 +1095,7 @@ class WalletManagement extends PureComponent {
 			walletSelectedName,
 			walletMainAddress,
 			walletSelectedCanRemove,
-			renameAddressLoading
+			renameWalletLoading
 		} = this.state;
 		const { isLockScreen, identities } = this.props;
 
@@ -1154,7 +1155,7 @@ class WalletManagement extends PureComponent {
 							<TouchableOpacity
 								style={styles.walletPopItemButton}
 								onPress={() => {
-									if (!renameAddressLoading || renameAddressLoading === '') {
+									if (!renameWalletLoading || renameWalletLoading === '') {
 										this.onRenameWallet(wallet, walletSelectedIndex);
 									}
 								}}
@@ -1224,7 +1225,7 @@ class WalletManagement extends PureComponent {
 	};
 
 	renderItem = (keyring, keyringIndex, canRemove) => {
-		const { addAccountLoadingIndex, renameAddressLoading } = this.state;
+		const { addAccountLoadingIndex } = this.state;
 		const { identities } = this.props;
 		const walletButtonRef = React.createRef();
 
