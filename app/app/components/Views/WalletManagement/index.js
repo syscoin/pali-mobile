@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
 	walletTitle: {
 		color: colors.$1A1A1A,
 		fontSize: 18,
+		flexShrink: 1,
 		...fontStyles.bold
 	},
 	scrollViewContent: {
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
 	accountName: {
 		color: colors.$F7F7F7,
 		fontSize: 14,
+		flexShrink: 1,
 		...fontStyles.bold,
 		marginLeft: 10
 	},
@@ -665,7 +667,6 @@ class WalletManagement extends PureComponent {
 							style={styles.textInput}
 							value={walletNameValue}
 							onChangeText={this.onWalletNameChange}
-							maxLength={30}
 						/>
 						<View style={styles.underline} />
 						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
@@ -703,7 +704,6 @@ class WalletManagement extends PureComponent {
 							style={styles.textInput}
 							value={accountNameValue}
 							onChangeText={this.onAccountNameChange}
-							maxLength={30}
 						/>
 						<View style={styles.underline} />
 						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
@@ -907,7 +907,12 @@ class WalletManagement extends PureComponent {
 						) : (
 							<Image source={require('../../../images/ic_account_rename.png')} />
 						)}
-						<Text style={styles.accountName} allowFontScaling={false}>
+						<Text
+							style={styles.accountName}
+							allowFontScaling={false}
+							numberOfLines={1}
+							ellipsizeMode="tail"
+						>
 							{account.name}
 						</Text>
 					</TouchableOpacity>
@@ -1241,7 +1246,12 @@ class WalletManagement extends PureComponent {
 				<View style={styles.childrenWrapper} activeOpacity={1}>
 					<View style={styles.flexOne}>
 						<View style={styles.rowFlex}>
-							<Text style={styles.walletTitle}>
+							<Text
+								style={styles.walletTitle}
+								allowFontScaling={false}
+								numberOfLines={1}
+								ellipsizeMode="tail"
+							>
 								{identities[keyring.accounts[0]] && identities[keyring.accounts[0]].walletName ? (
 									identities[keyring.accounts[0]].walletName
 								) : (
