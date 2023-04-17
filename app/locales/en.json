@@ -639,6 +639,7 @@
 		"import_seed_phrase": "Import from Seed Phrase",
 		"import_private_key": "Import from Private Key",
 		"rename_account": "Rename Account",
+		"rename_wallet": "Rename Wallet",
 		"rename": "Rename",
 		"confirm_delete": "Delete",
 		"rename_eg": "Eg.Moonbag, HODL, Gigawhale, Stake",

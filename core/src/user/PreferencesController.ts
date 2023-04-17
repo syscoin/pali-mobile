@@ -99,31 +99,21 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
    * @param address - Address of the identity to associate
    * @param label - New label to assign
    */
-  setAccountLabel(address: string, label: string) {
+  setAccountLabel(address: string, label: string, type: string) {
     address = toChecksumAddress(address);
     const { identities } = this.state;
     if (!identities[address]) {
       logDebug('PPYang setAccountLabel, no find address:', address);
       return;
     }
-    identities[address].name = label;
-    this.update({ identities: { ...identities } });
-  }
-
-  /**
-   * Associates a new label with an identity
-   *
-   * @param address - Address of the identity to associate
-   * @param label - New label to assign
-   */
-  setWalletLabel(address: string, label: string) {
-    address = toChecksumAddress(address);
-    const { identities } = this.state;
-    if (!identities[address]) {
-      logDebug('PPYang setWalletLabel, no find address:', address);
-      return;
+    switch (type) {
+      case 'walletName':
+        identities[address].walletName = label;
+        return;
+      default:
+        identities[address].name = label;
     }
-    identities[address].walletName = label;
+
     this.update({ identities: { ...identities } });
   }
 
