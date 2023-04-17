@@ -1,7 +1,7 @@
 import { toChecksumAddress } from 'ethereumjs-util';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import { isRpcChainType, logDebug } from '../util';
-import {defaultEnabledChains, allChains, ChainType} from "../Config";
+import { defaultEnabledChains, allChains, ChainType } from '../Config';
 
 /**
  * @type ContactEntry
@@ -11,6 +11,7 @@ import {defaultEnabledChains, allChains, ChainType} from "../Config";
  * @property address - Hex address of a recipient account
  * @property name - Nickname associated with this address
  * @property importTime - Data time when an account as created/imported
+ * @property walletName - Wallet nickname associated with just the first account(unremovable).
  */
 export interface ContactEntry {
   address: string;
@@ -20,8 +21,8 @@ export interface ContactEntry {
   currentChain: ChainType;
   enabledChains: ChainType[];
   isObserve?: boolean;
+  walletName?: string;
 }
-
 /**
  * @type PreferencesState
  *
@@ -87,7 +88,8 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
       return;
     }
     delete identities[address];
-    const selectedAddress = address === this.state.selectedAddress ? Object.keys(identities)[0] : this.state.selectedAddress;
+    const selectedAddress =
+      address === this.state.selectedAddress ? Object.keys(identities)[0] : this.state.selectedAddress;
     this.update({ identities: { ...identities }, selectedAddress });
   }
 
@@ -105,6 +107,23 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
       return;
     }
     identities[address].name = label;
+    this.update({ identities: { ...identities } });
+  }
+
+  /**
+   * Associates a new label with an identity
+   *
+   * @param address - Address of the identity to associate
+   * @param label - New label to assign
+   */
+  setWalletLabel(address: string, label: string) {
+    address = toChecksumAddress(address);
+    const { identities } = this.state;
+    if (!identities[address]) {
+      logDebug('PPYang setWalletLabel, no find address:', address);
+      return;
+    }
+    identities[address].walletName = label;
     this.update({ identities: { ...identities } });
   }
 
@@ -308,7 +327,10 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
       logDebug('PPYang updateFavouriteChains, no find address:', address);
       return;
     }
-    const newEnabledChains = enabledChains.filter((eType) => eType !== ChainType.All && (this.state.allChains.find((aType) => aType === eType) || isRpcChainType(eType)));
+    const newEnabledChains = enabledChains.filter(
+      (eType) =>
+        eType !== ChainType.All && (this.state.allChains.find((aType) => aType === eType) || isRpcChainType(eType)),
+    );
     identities[address].enabledChains = [...newEnabledChains];
     const currentChain = identities[address].currentChain || ChainType.All;
     if (identities[address].enabledChains.indexOf(currentChain) === -1) {
@@ -342,7 +364,10 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
     const { identities } = this.state;
     let needUpdate = false;
     if (this.state.allChains.includes(chain)) {
-      this.state.allChains.splice(this.state.allChains.findIndex((type) => type === chain), 1);
+      this.state.allChains.splice(
+        this.state.allChains.findIndex((type) => type === chain),
+        1,
+      );
       needUpdate = true;
     }
 
@@ -355,7 +380,7 @@ export class PreferencesController extends BaseController<PreferencesConfig, Pre
         identities[identity].enabledChains = enabledChains;
       }
     }
-    needUpdate && this.update({ identities: { ...identities }, allChains: [ ...this.state.allChains ] });
+    needUpdate && this.update({ identities: { ...identities }, allChains: [...this.state.allChains] });
   }
 
   setHideDefiPortfolio(isHide: boolean) {
