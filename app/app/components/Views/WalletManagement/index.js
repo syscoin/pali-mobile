@@ -1111,10 +1111,6 @@ class WalletManagement extends PureComponent {
 
 		const wallet = identities[walletMainAddress];
 
-		if (!wallet) {
-			return;
-		}
-
 		return (
 			<Modal
 				style={styles.margin0}
