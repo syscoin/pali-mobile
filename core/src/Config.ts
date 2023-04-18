@@ -34,7 +34,7 @@ export const NetworkConfig: { [type: number]: any } = {
   [ChainType.Ethereum]: {
     Name: 'Ethereum',
     MainChainId: '1',
-    UseInfura: true,
+    UseInfura: false,
     Disabled: false,
     DefiTokenChain: [],
     CoingeckoId: 'ethereum',
