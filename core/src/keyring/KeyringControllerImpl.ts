@@ -711,7 +711,7 @@ class KeyringController extends EventEmitter {
     return keyring.getAccounts().then((accounts: string[]) => {
       return {
         type: keyring.type,
-        isImported: keyring.opts.isImported,
+        isImported: keyring.opts ? keyring.opts.isImported : true,
         accounts: accounts.map(normalizeAddress),
       };
     });
