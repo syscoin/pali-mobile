@@ -84,11 +84,27 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center'
 	},
+	rowFlex2: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
 	walletTitle: {
 		color: colors.$1A1A1A,
 		fontSize: 18,
 		flexShrink: 1,
 		...fontStyles.bold
+	},
+	importedText: {
+		fontSize: 12,
+		color: colors.brandPink500
+	},
+	importedView: {
+		backgroundColor: colors.brandPink50,
+		borderRadius: 15,
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		marginLeft: 10
 	},
 	scrollViewContent: {
 		flex: 1,
@@ -417,7 +433,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 7
 	},
 	walletMoreTouch: {
-		paddingLeft: 20,
+		paddingLeft: 10,
 		paddingRight: 18,
 		marginRight: -18,
 		paddingTop: 16,
@@ -1130,7 +1146,10 @@ class WalletManagement extends PureComponent {
 									this.hideHeaderPopModal();
 									this.props.navigation.navigate('RevealPrivateCredential', {
 										keyringIndex: walletSelectedIndex,
-										walletName: walletSelectedName
+										walletName:
+											walletSelectedName.length > 10
+												? walletSelectedName.slice(0, 10) + '...'
+												: walletSelectedName
 									});
 								}}
 							>
@@ -1149,7 +1168,10 @@ class WalletManagement extends PureComponent {
 										this.hideHeaderPopModal();
 										this.props.navigation.navigate('VerifySeedPhrase', {
 											keyringIndex: walletSelectedIndex,
-											walletName: walletSelectedName
+											walletName:
+												walletSelectedName.length > 10
+													? walletSelectedName.slice(0, 10) + '...'
+													: walletSelectedName
 										});
 									}}
 								>
@@ -1246,22 +1268,29 @@ class WalletManagement extends PureComponent {
 				<View style={styles.childrenWrapper} activeOpacity={1}>
 					<View style={styles.flexOne}>
 						<View style={styles.rowFlex}>
-							<Text
-								style={styles.walletTitle}
-								allowFontScaling={false}
-								numberOfLines={1}
-								ellipsizeMode="tail"
-							>
-								{identities[keyring.accounts[0]] && identities[keyring.accounts[0]].walletName ? (
-									identities[keyring.accounts[0]].walletName
-								) : (
-									<>
-										{strings('wallet_management.wallet_index', {
-											number: keyringIndex + 1
-										})}
-									</>
+							<View style={styles.rowFlex2}>
+								<Text
+									style={styles.walletTitle}
+									allowFontScaling={false}
+									numberOfLines={1}
+									ellipsizeMode="tail"
+								>
+									{identities[keyring.accounts[0]] && identities[keyring.accounts[0]].walletName ? (
+										identities[keyring.accounts[0]].walletName
+									) : (
+										<>
+											{strings('wallet_management.wallet_index', {
+												number: keyringIndex + 1
+											})}
+										</>
+									)}
+								</Text>
+								{keyring && keyring.isImported && (
+									<View style={styles.importedView}>
+										<Text style={styles.importedText}>Imported</Text>
+									</View>
 								)}
-							</Text>
+							</View>
 
 							<TouchableOpacity
 								style={styles.walletMoreTouch}
