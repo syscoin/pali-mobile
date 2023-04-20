@@ -51,6 +51,8 @@ export const colors = {
 	orange: '#f66a0a',
 	orange300: '#faa66c',
 	orange000: '#fef5ef',
+	brandPink50: '#FFE1ED',
+	brandPink500: '#FA005D',
 	spinnerColor: '#037DD6',
 	success: '#219E37',
 	dimmed: '#00000080',

@@ -140,9 +140,11 @@ export default class DrawingBoard extends PureComponent {
 		try {
 			const { KeyringController } = Engine.context;
 			if (fromWalletManager) {
-				await KeyringController.importAccountWithSeed(parsedSeed);
+				//Passing that isImported is false
+				await KeyringController.importAccountWithSeed(parsedSeed, false);
 			} else {
-				await KeyringController.createNewVaultAndRestore(password, parsedSeed);
+				//Passing that isImported is false
+				await KeyringController.createNewVaultAndRestore(password, parsedSeed, false);
 				// mark the user as existing so it doesn't see the create password screen again
 				await AsyncStorage.setItem(EXISTING_USER, TRUE);
 				await NativeThreads.get().callEngineAsync('importAccounts');
