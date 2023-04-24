@@ -122,7 +122,7 @@ const suggestedWebsites = {
 							url: 'https://www.tribeone.io/'
 						}
 					],
-					name: 'NFT/Misc'
+					name: 'NFT'
 				},
 				{
 					items: [

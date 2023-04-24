@@ -14,11 +14,11 @@ export enum ChainType {
 
 export const defaultEnabledChains = [
   ChainType.Ethereum,
+  ChainType.Syscoin,
   ChainType.Polygon,
   ChainType.Arbitrum,
   ChainType.Bsc,
   ChainType.Avax,
-  ChainType.Syscoin,
 ];
 export const allChains = [...defaultEnabledChains, ChainType.Optimism, ChainType.Heco];
 
