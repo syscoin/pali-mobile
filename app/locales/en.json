@@ -28,7 +28,7 @@
 		"import_private_key": "Import Private Key",
 		"import_wallet": "Import Wallet",
 		"create_wallet": "Create Wallet",
-		"prompt_text": "Supported Network"
+		"prompt_text": "Supported Networks"
 	},
 	"login": {
 		"password": "Password",

@@ -84,7 +84,9 @@ const styles = StyleSheet.create({
 	},
 	footerLogo: {
 		marginTop: 6,
-		marginBottom: 23
+		marginBottom: 23,
+		width: 270,
+		height: 25
 	},
 	importKeyWrapper: {
 		borderRadius: 10,
@@ -204,7 +206,7 @@ class Onboarding extends PureComponent {
 
 				<View style={baseStyles.flexGrow} />
 				<Text style={styles.bottomText}>{strings('onboarding.prompt_text')}</Text>
-				<Image style={styles.footerLogo} source={Logo} />
+				<Image style={styles.footerLogo} resizeMode="contain" source={Logo} />
 			</View>
 		);
 	}
