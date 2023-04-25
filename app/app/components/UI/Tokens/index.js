@@ -797,96 +797,94 @@ class Tokens extends PureComponent {
 					</TouchableOpacity>
 				)}
 				<View style={styles.headerSearch}>
-					{!nftChecked && (
-						<>
-							{!searchEditing && (
-								<View style={styles.headerRight}>
-									<TouchableOpacity
-										style={styles.header_add}
-										onPress={() => {
-											this.setState({ searchEditing: true });
-											// this.toggleAnim();
-											this.animWidth.setValue(0);
-											toggleSearchEditing && toggleSearchEditing(true);
-											Animated.timing(this.animWidth, {
-												toValue: searchViewWidth,
-												duration: 200,
-												easing: Easing.linear,
-												useNativeDriver: true
-											}).start(({ finished }) => {
-												this.setState({ searchViewAnimed: true });
+					{!searchEditing && (
+						<View style={styles.headerRight}>
+							{!nftChecked && (
+								<TouchableOpacity
+									style={styles.header_add}
+									onPress={() => {
+										this.setState({ searchEditing: true });
+										// this.toggleAnim();
+										this.animWidth.setValue(0);
+										toggleSearchEditing && toggleSearchEditing(true);
+										Animated.timing(this.animWidth, {
+											toValue: searchViewWidth,
+											duration: 200,
+											easing: Easing.linear,
+											useNativeDriver: true
+										}).start(({ finished }) => {
+											this.setState({ searchViewAnimed: true });
+										});
+									}}
+								>
+									<Image source={require('../../../images/ic_asset_search.png')} />
+								</TouchableOpacity>
+							)}
+							{isEtherscanAvailable && !shouldHideSthForAppStoreReviewer() && (
+								<TouchableOpacity style={styles.header_add} onPress={this.showOtcModal}>
+									<Image source={require('../../../images/ic_asset_buy.png')} />
+								</TouchableOpacity>
+							)}
+
+							<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
+								<Image source={require('../../../images/ic_asset_history.png')} />
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
+								<ImageBackground
+									source={require('../../../images/ic_asset_security.png')}
+									style={styles.backgroundImage}
+								>
+									<MaterialIcons color={colors.$8F92A1} size={22} name="security" />
+								</ImageBackground>
+							</TouchableOpacity>
+
+							<View style={styles.flexOne} />
+						</View>
+					)}
+					{(searchEditing || searchViewAnimed) && (
+						<View style={styles.flexOne}>
+							<View style={styles.flexOne}>
+								<ImageCapInset
+									style={{ flex: 1, marginLeft: 8 }}
+									source={
+										Device.isAndroid()
+											? { uri: 'token_search_bg' }
+											: require('../../../images/token_search_bg.png')
+									}
+									capInsets={{
+										top: 15,
+										left: 12,
+										bottom: 0,
+										right: 15
+									}}
+								>
+									<AssetSearch
+										onSearch={opts => {
+											// this.listTokens = [];
+											this.setState({
+												searchResults: opts.results,
+												searchQuery: opts.searchQuery
 											});
 										}}
-									>
-										<Image source={require('../../../images/ic_asset_search.png')} />
-									</TouchableOpacity>
-									{isEtherscanAvailable && !shouldHideSthForAppStoreReviewer() && (
-										<TouchableOpacity style={styles.header_add} onPress={this.showOtcModal}>
-											<Image source={require('../../../images/ic_asset_buy.png')} />
-										</TouchableOpacity>
-									)}
-
-									<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
-										<Image source={require('../../../images/ic_asset_history.png')} />
-									</TouchableOpacity>
-									<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
-										<ImageBackground
-											source={require('../../../images/ic_asset_security.png')}
-											style={styles.backgroundImage}
-										>
-											<MaterialIcons color={colors.$8F92A1} size={22} name="security" />
-										</ImageBackground>
-									</TouchableOpacity>
-
-									<View style={styles.flexOne} />
-								</View>
-							)}
-							{(searchEditing || searchViewAnimed) && (
-								<View style={styles.flexOne}>
-									<View style={styles.flexOne}>
-										<ImageCapInset
-											style={{ flex: 1, marginLeft: 8 }}
-											source={
-												Device.isAndroid()
-													? { uri: 'token_search_bg' }
-													: require('../../../images/token_search_bg.png')
-											}
-											capInsets={{
-												top: 15,
-												left: 12,
-												bottom: 0,
-												right: 15
-											}}
-										>
-											<AssetSearch
-												onSearch={opts => {
-													// this.listTokens = [];
-													this.setState({
-														searchResults: opts.results,
-														searchQuery: opts.searchQuery
-													});
-												}}
-												contactEntry={this.props.contactEntry}
-												currentChain={this.props.currentChain}
-											/>
-										</ImageCapInset>
-									</View>
-
-									<Animated.View
-										style={[
-											styles.animCover,
-											{
-												transform: [
-													{
-														translateX: this.animWidth
-													}
-												]
-											}
-										]}
+										contactEntry={this.props.contactEntry}
+										currentChain={this.props.currentChain}
 									/>
-								</View>
-							)}
-						</>
+								</ImageCapInset>
+							</View>
+
+							<Animated.View
+								style={[
+									styles.animCover,
+									{
+										transform: [
+											{
+												translateX: this.animWidth
+											}
+										]
+									}
+								]}
+							/>
+						</View>
 					)}
 				</View>
 				{!searchEditing && (
