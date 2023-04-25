@@ -8,8 +8,8 @@
     android:background="#ffffffff">
     <com.airbnb.lottie.LottieAnimationView
 		android:layout_centerHorizontal="true"
-		android:layout_width="375dp"
-		android:layout_height="812dp"
+		android:layout_width="355dp"
+		android:layout_height="512dp"
 		app:lottie_autoPlay="true"
 		app:lottie_rawRes="@raw/splash_screen" />
 </RelativeLayout>
