@@ -5,10 +5,10 @@ import { chainToChainType } from './ChainTypeImages';
 export const CLIENT_OPTIONS = {
 	clientMeta: {
 		// Required
-		description: 'GoPocket Mobile app',
-		url: 'https://gopocket.finance/',
-		icons: ['https://gopocket.finance/images/index/main_title.png'],
-		name: 'GoPocket',
+		description: 'Pali Wallet Mobile app',
+		url: 'https://paliwallet.com',
+		icons: ['https://pali-images.s3.amazonaws.com/files/main_title.png'],
+		name: 'Pali Wallet',
 		ssl: true
 	}
 };
