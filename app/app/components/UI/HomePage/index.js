@@ -625,7 +625,7 @@ class HomePage extends PureComponent {
 					</ScrollView>
 				) : (
 					<View style={styles.loader}>
-						<ActivityIndicator size="large" color={colors.$FE6E91} />
+						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
 			</View>

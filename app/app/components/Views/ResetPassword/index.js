@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 	TouchableOpacity
 } from 'react-native';
-// eslint-disable-next-line import/no-unresolved
+
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux';
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
 		marginTop: 8
 	},
 	completeButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
-		borderColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
+		borderColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
 		color: colors.$A6A6A6
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

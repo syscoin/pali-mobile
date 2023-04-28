@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 		marginBottom: 30
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

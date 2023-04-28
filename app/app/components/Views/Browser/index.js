@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 		fontSize: 13
 	},
 	tipOk: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 13
 	},
 	flexRow: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 		width: 220,
 		height: 36,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},

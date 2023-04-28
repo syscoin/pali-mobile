@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 	bgWrapper: {
 		position: 'absolute',
 		top: 0,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		bottom: 0,
 		left: 0,
 		right: 0
@@ -210,7 +210,7 @@ class Asset extends PureComponent {
 
 	renderLoader = () => (
 		<View style={styles.loader}>
-			<ActivityIndicator size="small" color={colors.$FE6E91} />
+			<ActivityIndicator size="small" color={colors.brandPink300} />
 		</View>
 	);
 

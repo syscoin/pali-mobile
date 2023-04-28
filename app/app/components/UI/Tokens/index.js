@@ -119,10 +119,10 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 		backgroundColor: colors.transparent,
 		fontSize: 10,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		paddingHorizontal: 9,
 		paddingVertical: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		borderWidth: 1
 	},
 	titleItem: {
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
 	},
 	moveText: {
 		fontSize: 12,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		marginTop: 5
 	},
 	moveTextDiabled: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 30
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	popButtonSelected: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	popButtonTextNoraml: {
 		fontSize: 11,
@@ -1174,7 +1174,7 @@ class Tokens extends PureComponent {
 	renderLoadMoreView() {
 		return (
 			<View style={styles.loadMorePadding}>
-				{!this.state.loadEnd && <ActivityIndicator size={'small'} color={colors.$FE6E91} />}
+				{!this.state.loadEnd && <ActivityIndicator size={'small'} color={colors.brandPink300} />}
 			</View>
 		);
 	}
@@ -1280,7 +1280,7 @@ class Tokens extends PureComponent {
 								style={[
 									styles.popItem,
 									{
-										color: currentSortType === SORT_NETWORTH ? colors.$FE6E91 : colors.$666666
+										color: currentSortType === SORT_NETWORTH ? colors.brandPink300 : colors.$666666
 									}
 								]}
 							>
@@ -1296,7 +1296,7 @@ class Tokens extends PureComponent {
 							<Text
 								style={[
 									styles.popItem,
-									{ color: currentSortType === SORT_NAME ? colors.$FE6E91 : colors.$666666 }
+									{ color: currentSortType === SORT_NAME ? colors.brandPink300 : colors.$666666 }
 								]}
 							>
 								{strings('other.sort_by_name')}
@@ -1312,7 +1312,7 @@ class Tokens extends PureComponent {
 								style={[
 									styles.popItem,
 									{
-										color: currentSortType === SORT_NETWORK ? colors.$FE6E91 : colors.$666666
+										color: currentSortType === SORT_NETWORK ? colors.brandPink300 : colors.$666666
 									}
 								]}
 							>

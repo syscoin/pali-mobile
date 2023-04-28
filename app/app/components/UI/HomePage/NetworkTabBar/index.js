@@ -66,11 +66,11 @@ class NetworkTabBar extends PureComponent {
 		});
 	}
 
-	//fontWeight 400 - 700, fontSize 14 - 22, color: colors.$8F92A1  colors.$FE6E91
+	//fontWeight 400 - 700, fontSize 14 - 22, color: colors.$8F92A1  colors.brandPink300
 	renderTab = (name, chain, page, isTabActive, animated, onPressHandler) => {
 		const color = animated.interpolate({
 			inputRange: [0, 1],
-			outputRange: [colors.$8F92A1, colors.$FE6E91]
+			outputRange: [colors.$8F92A1, colors.brandPink300]
 		});
 		const backgroundColor = animated.interpolate({
 			inputRange: [0, 1],

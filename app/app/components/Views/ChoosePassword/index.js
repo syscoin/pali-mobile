@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 		...fontStyles.semibold
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

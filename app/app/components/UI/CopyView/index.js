@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	okButtonText: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 16,
 		...fontStyles.bold
 	},

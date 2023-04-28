@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		width: 148,
 		height: 40,
-		backgroundColor: colors.$FE6E9126,
+		backgroundColor: colors.brandPink30026,
 		borderRadius: 10,
 		flexDirection: 'row',
 		alignItems: 'center'
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 		marginLeft: 10
 	},
 	tryUnlockButton: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
 		marginTop: 8
 	},
 	completeButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
-		borderColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
+		borderColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
 		color: colors.$030319
 	},
 	varifyButton: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

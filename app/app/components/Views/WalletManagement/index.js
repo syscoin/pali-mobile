@@ -186,19 +186,19 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	okButton: {
 		flex: 1.5,
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
 		justifyContent: 'center'

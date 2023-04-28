@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		lineHeight: 15,
 		textAlign: 'center',
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		...fontStyles.medium,
 		marginTop: 4,
 		backgroundColor: tokenBg,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		height: 44,
 		borderRadius: 10,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		borderWidth: 1,
 		marginHorizontal: 48,
 		marginBottom: 24,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 	cancelButtonText: {
 		fontSize: 16,
 		textAlign: 'center',
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	containStyle: {
 		height: 590
@@ -212,7 +212,7 @@ class ReceiveTab extends PureComponent {
 						</View>
 						<TouchableOpacity style={styles.shareRow} onPress={this.onShare} disabled={shareLoading}>
 							{shareLoading ? (
-								<ActivityIndicator style={styles.iconShar} color={colors.$FE6E91} />
+								<ActivityIndicator style={styles.iconShar} color={colors.brandPink300} />
 							) : (
 								<Image style={styles.iconShar} source={iconShar} />
 							)}

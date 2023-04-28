@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		textAlign: 'center',
 		textAlignVertical: 'center',
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	domainLogo: {
 		width: 58,

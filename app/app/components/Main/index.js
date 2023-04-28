@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	updateNow: {
 		fontSize: 16,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	viewDetail: {
 		fontSize: 16,

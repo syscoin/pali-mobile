@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
 		color: colors.$666666
 	},
 	currentNumberWrapper: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	confirmedNumberWrapper: {
 		backgroundColor: colors.white
@@ -133,12 +133,12 @@ const styles = StyleSheet.create({
 		color: colors.$A6A6A6
 	},
 	currentWord: {
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		borderWidth: 1,
 		backgroundColor: colors.white
 	},
 	confirmedWord: {
-		backgroundColor: colors.$FE6E9126
+		backgroundColor: colors.brandPink30026
 	},
 	tryAgainWrapper: {
 		flexDirection: 'row',
@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	completeButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
-		borderColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
+		borderColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

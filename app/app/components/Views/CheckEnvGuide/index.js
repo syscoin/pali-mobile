@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	readyText: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 20,
 		lineHeight: 28,
 		...fontStyles.semibold,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 	},
 	nextButton: {
 		height: 44,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		borderRadius: 10,
 		alignSelf: 'stretch',
 		justifyContent: 'center',
@@ -129,7 +129,7 @@ export default class CheckEnvGuide extends PureComponent {
 				<View style={styles.flexOne}>
 					{type === 2 ? (
 						<View style={styles.centerLabel}>
-							<ActivityIndicator size="large" color={colors.$FE6E91} />
+							<ActivityIndicator size="large" color={colors.brandPink300} />
 						</View>
 					) : (
 						<>

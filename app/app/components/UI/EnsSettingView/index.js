@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 	openSeaTouch: {
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		flexDirection: 'row',
@@ -745,7 +745,7 @@ class EnsSettingView extends PureComponent {
 						<View style={styles.flexOne} />
 						<TouchableOpacity
 							disabled={!avatarLoadSuccess}
-							style={[styles.urlDoneTouch, avatarLoadSuccess && { backgroundColor: colors.$FE6E91 }]}
+							style={[styles.urlDoneTouch, avatarLoadSuccess && { backgroundColor: colors.brandPink300 }]}
 							onPress={() => {
 								const data = {
 									address: ensEntry.address,

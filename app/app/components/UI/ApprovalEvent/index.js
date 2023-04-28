@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
 		width: 72,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		borderRadius: 5
 	},
 	approveBtnText: {

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 		fontSize: 16
 	},
 	nextButtonEnable: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	nextLabelEnable: {
 		color: colors.white
@@ -194,7 +194,7 @@ export default class DrawingBoard extends PureComponent {
 					</View>
 					<Draw
 						initialValues={{
-							color: colors.$FE6E91,
+							color: colors.brandPink300,
 							thickness: 4,
 							opacity: 1,
 							paths: []

@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	},
 	nextButton: {
 		height: 44,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		borderRadius: 10,
 		alignSelf: 'stretch',
 		justifyContent: 'center',

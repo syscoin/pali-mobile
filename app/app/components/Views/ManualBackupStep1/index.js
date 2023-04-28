@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		width: 148,
 		height: 40,
-		backgroundColor: colors.$FE6E9126,
+		backgroundColor: colors.brandPink30026,
 		borderRadius: 10,
 		flexDirection: 'row',
 		alignItems: 'center'
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 		marginLeft: 10
 	},
 	goButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
