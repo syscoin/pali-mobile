@@ -242,6 +242,7 @@ class SuggestPage extends PureComponent {
 	}
 
 	rennderFavoriteItem = (item, index) => {
+		//TODO: update api url to Pali ones
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
 		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
 		return (

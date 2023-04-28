@@ -680,6 +680,7 @@ class MoveTab extends PureComponent {
 			return true;
 		}
 		try {
+			//TODO: update api url to Pali ones
 			const response = await fetch('https://gopocket.finance/1.txt');
 			if (response.status === 200) {
 				await AsyncStorage.setItem(AVAILABLE_ARB, 'true');

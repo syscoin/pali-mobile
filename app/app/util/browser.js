@@ -75,6 +75,7 @@ export function getDapp(dappPageAll) {
 				netwrok.content.forEach(dapps => {
 					if (dapps?.items?.length) {
 						dapps.items.forEach(dapp => {
+							//TODO: update api url to Pali ones
 							const img = dapp.logo || 'https://gopocket.finance/images/defi/' + dapp.name + '.png';
 							dApps.push({ title: dapp.name, url: dapp.url, img, chain: netwrok.chain });
 						});

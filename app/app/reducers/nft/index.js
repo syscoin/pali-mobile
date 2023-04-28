@@ -9,6 +9,7 @@ const initialState = {
 	videoUrls: [],
 	imageUrls: [],
 	audioUrls: [],
+	//TODO: update api url to Pali ones
 	outofMemoryUrls: [
 		'https://api.gopocket.finance/proxy-png?url=https://storage.opensea.io/files/fb23bc7b452086e7e2aaa841cefc487d.gif',
 		'https://storage.opensea.io/files/fb23bc7b452086e7e2aaa841cefc487d.gif'

@@ -105,6 +105,7 @@ class UpdateCheck extends PureComponent {
 			}
 		}
 		if (!detailUrl) {
+			//TODO: update api url to Pali ones
 			detailUrl = 'https://gopocket.finance/release-notes-plain';
 		}
 		detailUrl = appendLanguage(detailUrl);

@@ -350,6 +350,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'ethereum',
     SwapUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap',
     SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap?inputCurrency=',
+    //TODO: update api url to Pali ones
     CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',

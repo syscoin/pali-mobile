@@ -17,12 +17,14 @@ import favoritesDapps from './favoritesList';
 import suggestedWebsites from './suggestedWebsites';
 
 const TEST_INVITE_URL = 'http://pocket.libsss.com';
+//TODO: update api url to Pali ones
 const RELEASE_INVITE_URL = 'https://community.gopocket.xyz';
 
 const log = util.logInfo;
 let fetch_config_success = false;
 
 const fetchConfig = async () => {
+	//TODO: update api url to Pali ones
 	const configUrl = util.useTestServer()
 		? 'https://api.beta.gopocket.finance/app/config'
 		: 'https://api.gopocket.finance/app/config';
