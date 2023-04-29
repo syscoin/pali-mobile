@@ -128,7 +128,8 @@ const PASSCODE_NOT_SET_ERROR = 'Error: Passcode not set.';
 const WRONG_PASSWORD_ERROR = 'Error: Decrypt failed';
 const WRONG_PASSWORD_ERROR_ANDROID = 'Error: error:1e000065:Cipher functions:OPENSSL_internal:BAD_DECRYPT';
 const VAULT_ERROR = 'Error: Cannot unlock without a previous vault.';
-const CLEAN_VAULT_ERROR = 'GoPocket encountered an error, Please reinstall GoPocket and restore with your seed phrase.';
+const CLEAN_VAULT_ERROR =
+	'Pali Wallet encountered an error, Please reinstall Pali Wallet and restore with your seed phrase.';
 
 /**
  * View where returning users can authenticate

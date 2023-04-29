@@ -392,6 +392,7 @@ class HomePage extends PureComponent {
 
 	renderSingleItems(items, chain) {
 		return items?.map((item, index) => {
+			//TODO: update api url to Pali ones
 			const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
 			const isFavourite = this.props.favouriteDapps.find(
 				dapp => !dapp.del && dapp.url === item.url && dapp.chain === chain
@@ -513,6 +514,7 @@ class HomePage extends PureComponent {
 		if (!item) {
 			return;
 		}
+		//TODO: update api url to Pali ones
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
 		this.props.openUrl &&
 			this.props.openUrl({
@@ -524,6 +526,7 @@ class HomePage extends PureComponent {
 	}
 
 	renderDragItem(item) {
+		//TODO: update api url to Pali ones
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
 		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
 		const key = JSON.stringify({ url: item.url, chain: item.chain });

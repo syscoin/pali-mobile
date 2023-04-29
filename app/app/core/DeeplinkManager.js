@@ -45,6 +45,7 @@ class DeeplinkManager {
 			case 'https':
 				// eslint-disable-next-line no-case-declarations
 				let newUrl = unescape(url);
+				//TODO: update api url to Pali ones
 				if (newUrl.startsWith('https://gopocket.security/wc?uri=')) {
 					newUrl = newUrl.replace('https://gopocket.security/wc?uri=', '');
 					handled();
@@ -69,6 +70,7 @@ class DeeplinkManager {
 				break;
 			case 'gopocket':
 				newUrl = unescape(url);
+				//TODO: update api url to Pali ones
 				newUrl = newUrl.replace('gopocket://wc?uri=', '');
 				handled();
 				if (!WalletConnect.isValidUri(newUrl)) return;

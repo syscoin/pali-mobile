@@ -14,7 +14,7 @@ import { PersonalMessageParams } from './message-manager/PersonalMessageManager'
 import { TypedMessageParams } from './message-manager/TypedMessageManager';
 import { Token } from './assets/TokenRatesController';
 import isIPFS from 'is-ipfs';
-import {NetworkConfig, ChainType} from "./Config";
+import { NetworkConfig, ChainType } from './Config';
 
 const hexRe = /^[0-9A-Fa-f]+$/gu;
 
@@ -28,16 +28,14 @@ const NORMALIZERS: { [param in keyof Transaction]: any } = {
   value: (value: string) => addHexPrefix(value),
   chainId: (value: number) => Number(value),
   maxFeePerGas: (maxFeePerGas: string) => addHexPrefix(maxFeePerGas),
-  maxPriorityFeePerGas: (maxPriorityFeePerGas: string) =>
-    addHexPrefix(maxPriorityFeePerGas),
-  estimatedBaseFee: (maxPriorityFeePerGas: string) =>
-    addHexPrefix(maxPriorityFeePerGas),
+  maxPriorityFeePerGas: (maxPriorityFeePerGas: string) => addHexPrefix(maxPriorityFeePerGas),
+  estimatedBaseFee: (maxPriorityFeePerGas: string) => addHexPrefix(maxPriorityFeePerGas),
 };
 
 export enum CollectibleType {
   UNKNOWN = 0,
   ERC721 = 1,
-  ERC1155 = 2
+  ERC1155 = 2,
 }
 
 /**
@@ -65,17 +63,21 @@ export function fractionBN(targetBN: any, numerator: number | string, denominato
   return targetBN.mul(numBN).div(denomBN);
 }
 
-export function getTronAccountUrl(
-  chainId: string,
-  address: string,
-): string {
+export function getTronAccountUrl(chainId: string, address: string): string {
   if (chainId === '123454321') {
     return `https://api.trongrid.io/v1/accounts/${address}`;
   }
   return `https://api.shasta.trongrid.io/v1/accounts/${address}`;
 }
 
-export async function getScanApiByType(type: ChainType, chainId: string, address: string, action: string, fromBlock?: string, etherscanApiKey?: string) {
+export async function getScanApiByType(
+  type: ChainType,
+  chainId: string,
+  address: string,
+  action: string,
+  fromBlock?: string,
+  etherscanApiKey?: string,
+) {
   let apiUrl;
   const networks = NetworkConfig[type]?.Networks;
   if (!networks) {
@@ -107,20 +109,23 @@ export async function getScanApiByType(type: ChainType, chainId: string, address
   if (NetworkConfig[type].NeedAvailableUrl) {
     return await getAvailableUrl(scanUrl);
   }
-  return { url: scanUrl, options: {
+  return {
+    url: scanUrl,
+    options: {
       method: 'GET',
-      headers: getBaseHeaders()
-    }
-  }
+      headers: getBaseHeaders(),
+    },
+  };
 }
 
 export function getBaseHeaders() {
   return {
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Content-Type': 'application/json',
-    'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Android SDK built for x86 Build/OSM1.180201.023) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.92 Mobile Safari/537.36'
-  }
+    Connection: 'keep-alive',
+    'User-Agent':
+      'Mozilla/5.0 (Linux; Android 10; Android SDK built for x86 Build/OSM1.180201.023) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.92 Mobile Safari/537.36',
+  };
 }
 
 /**
@@ -502,12 +507,8 @@ export function query(ethQuery: any, method: string, args: any[] = []): Promise<
  * @returns - Boolean that is true if the transaction is EIP-1559 (has maxFeePerGas and maxPriorityFeePerGas), otherwise returns false
  */
 export const isEIP1559Transaction = (transaction: Transaction): boolean => {
-  const hasOwnProp = (obj: Transaction, key: string) =>
-    Object.prototype.hasOwnProperty.call(obj, key);
-  return (
-    hasOwnProp(transaction, 'maxFeePerGas') &&
-    hasOwnProp(transaction, 'maxPriorityFeePerGas')
-  );
+  const hasOwnProp = (obj: Transaction, key: string) => Object.prototype.hasOwnProperty.call(obj, key);
+  return hasOwnProp(transaction, 'maxFeePerGas') && hasOwnProp(transaction, 'maxPriorityFeePerGas');
 };
 
 export function bitOR(b1: number, b2: number) {
@@ -600,10 +601,7 @@ export const convertPriceToDecimal = (value: string | undefined): number =>
 export const getIncreasedPriceHex = (value: number, rate: number): string =>
   addHexPrefix(`${parseInt(`${value * rate}`, 10).toString(16)}`);
 
-export const getIncreasedPriceFromExisting = (
-  value: string | undefined,
-  rate: number,
-): string => {
+export const getIncreasedPriceFromExisting = (value: string | undefined, rate: number): string => {
   return getIncreasedPriceHex(convertPriceToDecimal(value), rate);
 };
 
@@ -612,18 +610,14 @@ export async function queryEIP1559Compatibility(ethQuery: any): Promise<boolean>
     return Promise.resolve(false);
   }
   return new Promise((resolve, reject) => {
-    ethQuery.sendAsync(
-      { method: 'eth_getBlockByNumber', params: ['latest', false] },
-      (error: Error, block: any) => {
-        if (error) {
-          reject(error);
-        } else {
-          const isEIP1559Compatible =
-            typeof block.baseFeePerGas !== 'undefined';
-          resolve(isEIP1559Compatible);
-        }
-      },
-    );
+    ethQuery.sendAsync({ method: 'eth_getBlockByNumber', params: ['latest', false] }, (error: Error, block: any) => {
+      if (error) {
+        reject(error);
+      } else {
+        const isEIP1559Compatible = typeof block.baseFeePerGas !== 'undefined';
+        resolve(isEIP1559Compatible);
+      }
+    });
   });
 }
 
@@ -647,10 +641,14 @@ export function isEtherscanAvailableChecked() {
 
 export async function checkEtherscanAvailable(address: string, etherToken: string) {
   let res = null;
-  await safelyExecuteWithTimeout(async () => {
-    const url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${etherToken}`;
-    res = await handleFetch(url);
-  }, true, 3000);
+  await safelyExecuteWithTimeout(
+    async () => {
+      const url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${etherToken}`;
+      res = await handleFetch(url);
+    },
+    true,
+    3000,
+  );
   if (res) {
     return true;
   }
@@ -668,6 +666,7 @@ export async function getAvailableUrl(url: string): Promise<{ url: string; optio
     const formData = new FormData();
     formData.append('url', url);
     options = { method: 'POST', body: formData, headers: getBaseHeaders() };
+    //TODO: update api url to Pali ones
     url = 'https://api.gopocket.finance/proxy-json';
   }
   return { url, options };
@@ -689,11 +688,11 @@ export function isIPFSUrl(url: string): boolean {
   return isIPFS.ipfsUrl(url) || isIPFS.ipfsPath(url) || isIPFS.cid(url) || url.startsWith('ipfs:');
 }
 
-export function makeIPFSUrl(url: string, ipfsHost = "https://infura-ipfs.io/ipfs/") {
+export function makeIPFSUrl(url: string, ipfsHost = 'https://infura-ipfs.io/ipfs/') {
   if (isIPFS.cid(url)) return `${ipfsHost}${url}`;
 
   const subUrls = url.split('/');
-  for (let i = subUrls.length - 1; i>= 0; i--) {
+  for (let i = subUrls.length - 1; i >= 0; i--) {
     if (isIPFS.cid(subUrls[i])) {
       return `${ipfsHost}${subUrls[i]}`;
     }
@@ -721,12 +720,18 @@ export function resolveURI(uri: string, tokenId: string, locale: string) {
 export function getEthereumNetworkType(chainId: string) {
   chainId = chainId?.toString();
   switch (chainId) {
-    case '1': return 'mainnet';
-    case '42': return 'kovan';
-    case '4': return 'rinkeby';
-    case '5': return 'goerli';
-    case '3': return 'ropsten';
-    default: return '';
+    case '1':
+      return 'mainnet';
+    case '42':
+      return 'kovan';
+    case '4':
+      return 'rinkeby';
+    case '5':
+      return 'goerli';
+    case '3':
+      return 'ropsten';
+    default:
+      return '';
   }
 }
 
@@ -754,7 +759,9 @@ export function rehydrate(name: string, state: any) {
           for (const key2 in new_state.allContractBalances[key]) {
             for (const key3 in new_state.allContractBalances[key][key2]) {
               if (new_state.allContractBalances[key][key2][key3]) {
-                new_state.allContractBalances[key][key2][key3] = hexToBN(String(new_state.allContractBalances[key][key2][key3]));
+                new_state.allContractBalances[key][key2][key3] = hexToBN(
+                  String(new_state.allContractBalances[key][key2][key3]),
+                );
               }
             }
           }
@@ -845,7 +852,8 @@ export function rehydrate(name: string, state: any) {
       }
       break;
     }
-    default: break;
+    default:
+      break;
   }
   return new_state;
 }
@@ -883,5 +891,5 @@ export default {
   setAgentUtil,
   getScanApiByType,
   isIPFSUrl,
-  makeIPFSUrl
+  makeIPFSUrl,
 };
