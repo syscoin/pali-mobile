@@ -1327,9 +1327,16 @@ class WalletManagement extends PureComponent {
 						{keyring.type === KeyringTypes.hd &&
 							(addAccountLoadingIndex === keyringIndex ? (
 								<View style={styles.accountItem}>
-									<Image
-										source={require('../../../images/img_add_account_bg.png')}
-										style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
+									<View
+										style={[
+											styles.absoluteStart,
+											{
+												width: cardWidth,
+												height: cardHeight,
+												backgroundColor: colors.brandPink50,
+												borderRadius: 15
+											}
+										]}
 									/>
 									<View
 										style={[
@@ -1360,9 +1367,16 @@ class WalletManagement extends PureComponent {
 									}}
 								>
 									<View style={styles.accountItem}>
-										<Image
-											source={require('../../../images/img_add_account_bg.png')}
-											style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
+										<View
+											style={[
+												styles.absoluteStart,
+												{
+													width: cardWidth,
+													height: cardHeight,
+													backgroundColor: colors.brandPink50,
+													borderRadius: 15
+												}
+											]}
 										/>
 										<View
 											style={[
