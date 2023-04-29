@@ -54,8 +54,8 @@ static void InitializeFlipper(UIApplication *application) {
 
  
   LOTAnimationView *animation = [LOTAnimationView animationNamed:@"splash_screen" inBundle:[NSBundle mainBundle]];
-   CGFloat newWidth = 416
-   CGFloat newHeight = 682
+   CGFloat newWidth = 416;
+   CGFloat newHeight = 682;
 
     // Calculate the new x and y positions
    CGFloat newX = self.window.bounds.size.width / 2 - newWidth / 2;
