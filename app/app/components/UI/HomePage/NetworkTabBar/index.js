@@ -7,8 +7,6 @@ import { chainToChainType, getTabIcon } from '../../../../util/ChainTypeImages';
 
 import tabFavourites from '../../../../images/ic_tab_favourites.png';
 
-const bgColor = '#FE6E9129';
-
 const styles = StyleSheet.create({
 	tab: {
 		height: 30,
@@ -70,11 +68,11 @@ class NetworkTabBar extends PureComponent {
 	renderTab = (name, chain, page, isTabActive, animated, onPressHandler) => {
 		const color = animated.interpolate({
 			inputRange: [0, 1],
-			outputRange: [colors.$8F92A1, colors.brandPink300]
+			outputRange: [colors.$8F92A1, colors.brandPink500]
 		});
 		const backgroundColor = animated.interpolate({
 			inputRange: [0, 1],
-			outputRange: [colors.transparent, bgColor]
+			outputRange: [colors.transparent, colors.brandPink50]
 		});
 		const scaleOpacity = animated.interpolate({
 			inputRange: [0, 1],
