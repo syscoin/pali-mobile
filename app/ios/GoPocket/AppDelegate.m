@@ -13,6 +13,7 @@
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 #import <UMCommon/UMCommon.h>
 #import <React/RCTLinkingManager.h>
+#import <Lottie/Lottie.h>
 #import "RNSplashScreen.h"
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
@@ -52,9 +53,23 @@ static void InitializeFlipper(UIApplication *application) {
   [self.window makeKeyAndVisible];
 
  
+  LOTAnimationView *animation = [LOTAnimationView animationNamed:@"splash_screen" inBundle:[NSBundle mainBundle]];
+   CGFloat newWidth = 416;
+   CGFloat newHeight = 682;
+
+    // Calculate the new x and y positions
+   CGFloat newX = self.window.bounds.size.width / 2 - newWidth / 2;
+   CGFloat newY = self.window.bounds.size.height / 2 - newHeight / 2;
+
+   // Set the new frame for the animation
+   animation.frame = CGRectMake(newX, newY, newWidth, newHeight);
+   animation.loopAnimation = NO;
+   [animation playWithCompletion:^(BOOL animationFinished) {
+     // Do Something
+  }];
 
   [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
-  
+  [rootView.subviews[rootView.subviews.count - 1] addSubview:animation];  
 
   [UMConfigure initWithAppkey:@"60af0efb6c421a3d97cec8e8" channel:@"App Store"];
   
