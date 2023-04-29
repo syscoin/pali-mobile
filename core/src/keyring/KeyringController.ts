@@ -15,7 +15,7 @@ import { TypedMessageParams } from '../message-manager/TypedMessageManager';
 import { logDebug } from '../util';
 import { NetworkConfig } from '../Config';
 import KeyringControllerImpl from './KeyringControllerImpl';
-import { ChainType } from "../Config";
+import { ChainType } from '../Config';
 
 const privates = new WeakMap();
 
@@ -72,6 +72,7 @@ export interface Keyring {
   accounts: string[];
   type: string;
   index?: number;
+  isImported?: boolean;
 }
 
 /**
@@ -143,9 +144,9 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
       }
       const accounts = await keyring.getAccounts();
       let selectedAddress = null;
-      const index = this.state.removeAccounts.findIndex((remove) =>
-        accounts.findIndex((address: string) =>
-          ethUtil.toChecksumAddress(address) === remove) !== -1);
+      const index = this.state.removeAccounts.findIndex(
+        (remove) => accounts.findIndex((address: string) => ethUtil.toChecksumAddress(address) === remove) !== -1,
+      );
       if (index === -1) {
         const oldAccounts = await privates.get(this).keyring.getAccounts();
         await privates.get(this).keyring.addNewAccount(keyring);
@@ -207,14 +208,15 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
    *
    * @param password - Password to unlock keychain
    * @param seed - Seed phrase to restore keychain
+   * @param {boolean} isImported - Whether the keyring is imported or not
    * @returns - Promise resolving to th restored keychain object
    */
-  async createNewVaultAndRestore(password: string, seed: string) {
+  async createNewVaultAndRestore(password: string, seed: string, isImported: boolean = true) {
     const preferences = this.context.PreferencesController as PreferencesController;
     const releaseLock = await this.mutex.acquire();
     try {
       preferences.updateIdentities([]);
-      const vault = await privates.get(this).keyring.createNewVaultAndRestore(password, seed);
+      const vault = await privates.get(this).keyring.createNewVaultAndRestore(password, seed, isImported);
       await this.fullUpdate();
       preferences.updateIdentities(await this.getAccounts());
       return vault;
@@ -248,8 +250,8 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
     }
     const { keyring } = privates.get(this);
     await keyring.clearKeyrings();
-
-    return keyring.persistAllKeyrings(password)
+    return keyring
+      .persistAllKeyrings(password)
       .then(() => {
         return keyring.addNewKeyring(KeyringTypes.simple, [privateKey]);
       })
@@ -301,7 +303,9 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
   }
 
   async createKeyTree() {
-    return privates.get(this).keyring.addNewKeyring(KeyringTypes.hd, { numberOfAccounts: 1 })
+    return privates
+      .get(this)
+      .keyring.addNewKeyring(KeyringTypes.hd, { numberOfAccounts: 1 })
       .then((keyring: any) => {
         return keyring.getAccounts();
       })
@@ -408,11 +412,11 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
       }
 
       const accounts = await this.tryGetAccounts(KeyringTypes.simple, [privateKey]);
-      if (!await this.checkForRemoveAccounts(accounts)) {
-        if (!await this.checkForDuplicate(accounts)) {
+      if (!(await this.checkForRemoveAccounts(accounts))) {
+        if (!(await this.checkForDuplicate(accounts))) {
           await privates.get(this).keyring.addNewKeyring(KeyringTypes.simple, [privateKey]);
         } else {
-          throw new Error('The account you\'re are trying to import is a duplicate');
+          throw new Error("The account you're are trying to import is a duplicate");
         }
       }
       await this.fullUpdate();
@@ -427,24 +431,30 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
    * Imports an account with the seed
    *
    * @param seed
+   * @param {boolean} isImported - Whether the keyring is imported or not
    */
-  async importAccountWithSeed(seed: string) {
+  async importAccountWithSeed(seed: string, isImported: boolean = true) {
     const preferences = this.context.PreferencesController as PreferencesController;
     const releaseLock = await this.mutex.acquire();
     try {
       const opts = {
         mnemonic: seed,
         numberOfAccounts: 1,
+        isImported,
       };
       const accounts = await this.tryGetAccounts(KeyringTypes.hd, opts);
-      if (!await this.checkForRemoveAccounts(accounts)) {
-        if (!await this.checkForDuplicate(accounts)) {
-          await privates.get(this).keyring.addNewKeyring(KeyringTypes.hd, {
-            mnemonic: seed,
-            numberOfAccounts: 1,
-          });
+      if (!(await this.checkForRemoveAccounts(accounts))) {
+        if (!(await this.checkForDuplicate(accounts))) {
+          await privates.get(this).keyring.addNewKeyring(
+            KeyringTypes.hd,
+            {
+              mnemonic: seed,
+              numberOfAccounts: 1,
+            },
+            isImported,
+          );
         } else {
-          throw new Error('The account you\'re are trying to import is a duplicate');
+          throw new Error("The account you're are trying to import is a duplicate");
         }
       }
       await this.fullUpdate();
@@ -552,7 +562,8 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
       }
       keyringController.keyrings = validKeyrings;
       resolve(true);
-    }).then(keyringController.persistAllKeyrings.bind(keyringController, keyringController.password))
+    })
+      .then(keyringController.persistAllKeyrings.bind(keyringController, keyringController.password))
       .then(keyringController._updateMemStoreKeyrings.bind(keyringController))
       .then(keyringController.fullUpdate.bind(keyringController));
   }
@@ -759,10 +770,12 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
           accounts,
           index,
           type: keyring.type,
+          isImported: keyring.opts ? keyring.opts.isImported : true,
         };
         keyrings.push(targetKeyring);
       }
     }
+
     this.update({ keyrings: [...keyrings] });
     if (!NetworkConfig[ChainType.Tron].Disabled) {
       await this.fullUpdateTronKeyrings();
@@ -832,9 +845,11 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
   }
 
   getNormalAccounts(accounts: string[]) {
-    return accounts.filter((address) =>
-      this.state.removeAccounts.findIndex((removeAddress) =>
-        ethUtil.toChecksumAddress(address) === removeAddress) === -1);
+    return accounts.filter(
+      (address) =>
+        this.state.removeAccounts.findIndex((removeAddress) => ethUtil.toChecksumAddress(address) === removeAddress) ===
+        -1,
+    );
   }
 
   getTronAddress(address: string) {
@@ -860,7 +875,10 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
     this.posSeed = '';
   }
 
-  appendToTRGenerator(x: number, y: number): {count: number; length: number; true_random: string[]; mnemonic: string} {
+  appendToTRGenerator(
+    x: number,
+    y: number,
+  ): { count: number; length: number; true_random: string[]; mnemonic: string } {
     if (this.posLength === 0) {
       throw new Error('resetTRGenerator should be called first.');
     }
@@ -898,7 +916,10 @@ export class KeyringController extends BaseController<KeyringConfig, KeyringStat
 
   onComposed() {
     super.onComposed();
-    privates.set(this, { keyring: new KeyringControllerImpl(Object.assign({ initState: { vault: this.state.vault } }, this.config)), tronKeyring: new KeyringControllerImpl(Object.assign({ initState: {} }, this.config)) });
+    privates.set(this, {
+      keyring: new KeyringControllerImpl(Object.assign({ initState: { vault: this.state.vault } }, this.config)),
+      tronKeyring: new KeyringControllerImpl(Object.assign({ initState: {} }, this.config)),
+    });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     privates.get(this).keyring.store.subscribe(({ vault }) => {

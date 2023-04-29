@@ -34,7 +34,7 @@ export const NetworkConfig: { [type: number]: any } = {
   [ChainType.Ethereum]: {
     Name: 'Ethereum',
     MainChainId: '1',
-    UseInfura: true,
+    UseInfura: false,
     Disabled: false,
     DefiTokenChain: [],
     CoingeckoId: 'ethereum',
@@ -82,7 +82,7 @@ export const NetworkConfig: { [type: number]: any } = {
   [ChainType.Polygon]: {
     Name: 'Polygon',
     MainChainId: '137',
-    UseInfura: true,
+    UseInfura: false,
     Disabled: false,
     DefiTokenChain: ['matic'],
     CoingeckoId: 'matic-network',
@@ -104,6 +104,7 @@ export const NetworkConfig: { [type: number]: any } = {
         rpcTargets: [
           'https://poly-rpc.gateway.pokt.network',
           'https://matic-mainnet-archive-rpc.bwarelabs.com',
+          'https://polygon.llamarpc.com',
           'https://polygonapi.terminet.io/rpc',
           'https://rpc-mainnet.matic.quiknode.pro',
           'https://polygon-mainnet-public.unifra.io',
@@ -250,7 +251,7 @@ export const NetworkConfig: { [type: number]: any } = {
   [ChainType.Optimism]: {
     Name: 'Op',
     MainChainId: '10',
-    UseInfura: true,
+    UseInfura: false,
     Disabled: false,
     DefiTokenChain: ['op'],
     CoingeckoId: 'ethereum',
@@ -343,7 +344,7 @@ export const NetworkConfig: { [type: number]: any } = {
   [ChainType.Arbitrum]: {
     Name: 'Arb',
     MainChainId: '42161',
-    UseInfura: true,
+    UseInfura: false,
     Disabled: false,
     DefiTokenChain: ['arb'],
     CoingeckoId: 'ethereum',
