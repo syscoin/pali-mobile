@@ -502,8 +502,8 @@ class EnsSettingView extends PureComponent {
 				) : (
 					<View style={styles.homeNoAvatarLayout}>
 						<Image
-							style={{ width: 100, height: 100 }}
-							source={require('../../../images/img_ens_ftz.png')}
+							style={{ width: 80, height: 80 }}
+							source={require('../../../images/ic_ens_avatar.png')}
 						/>
 						<View style={styles.homeNoAvatarContent}>
 							<Image source={require('../../../images/img_ens_tip_arrow.png')} />
