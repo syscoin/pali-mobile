@@ -14,6 +14,7 @@ import Create from '../../../images/Add.png';
 import Import from '../../../images/seedphrase.png';
 import Logo from '../../../images/img_support_network.png';
 import importKey from '../../../images/ic_import_key.png';
+import importKeyBackground from '../../../images/import_key_background.png';
 import MStatusBar from '../../UI/MStatusBar';
 import { ChooseTypeCreate, ChooseTypeImportPrivateKey, ChooseTypeImportSeedPhrase } from '../ChoosePassword';
 
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	title: {
-		fontSize: 36,
+		fontSize: 34,
 		color: colors.fontPrimary,
 		...fontStyles.bold,
 		lineHeight: 48,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 		...fontStyles.normal,
 		fontSize: 20,
 		textAlign: 'center',
-		color: colors.grey,
+		color: colors.grey600,
 		lineHeight: 30
 	},
 	importWrapper: {
@@ -51,13 +52,13 @@ const styles = StyleSheet.create({
 	},
 	createButtonWrapper: {
 		width: 320,
-		height: 129,
-		marginTop: 62
+		height: 110,
+		marginTop: 15
 	},
 	importButtonWrapper: {
 		marginTop: 16,
 		width: 320,
-		height: 129
+		height: 110
 	},
 	buttonBackground: {
 		flex: 1
@@ -67,6 +68,18 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginLeft: 36
+	},
+	addButton: {
+		width: 50,
+		height: 50
+	},
+	importButton: {
+		width: 50,
+		height: 50
+	},
+	importKey: {
+		width: 50,
+		height: 50
 	},
 	createWalletText: {
 		marginLeft: 15.5,
@@ -177,7 +190,7 @@ class Onboarding extends PureComponent {
 				>
 					<ImageBackground style={styles.buttonBackground} source={CreateBackground} resizeMode={'stretch'}>
 						<View style={styles.createWallet}>
-							<Image source={Create} />
+							<Image source={Create} style={styles.addButton} />
 							<Text style={styles.createWalletText}>{strings('onboarding.start_exploring_now')}</Text>
 						</View>
 					</ImageBackground>
@@ -189,19 +202,26 @@ class Onboarding extends PureComponent {
 				>
 					<ImageBackground style={styles.buttonBackground} source={ImportBackground} resizeMode={'stretch'}>
 						<View style={styles.createWallet}>
-							<Image source={Import} />
+							<Image source={Import} style={styles.importButton} />
 							<Text style={styles.createWalletText}>{strings('onboarding.import_seed_phrase')}</Text>
 						</View>
 					</ImageBackground>
 				</TouchableOpacity>
-
 				<TouchableOpacity
-					style={styles.importKeyWrapper}
+					style={styles.importButtonWrapper}
 					onPress={this.onPressImportPrivateKey}
 					activeOpacity={activeOpacity}
 				>
-					<Image source={importKey} />
-					<Text style={styles.importKeyText}>{strings('onboarding.import_private_key')}</Text>
+					<ImageBackground
+						style={styles.buttonBackground}
+						source={importKeyBackground}
+						resizeMode={'stretch'}
+					>
+						<View style={styles.createWallet}>
+							<Image source={importKey} style={styles.importButton} />
+							<Text style={styles.createWalletText}>{strings('onboarding.import_private_key')}</Text>
+						</View>
+					</ImageBackground>
 				</TouchableOpacity>
 
 				<View style={baseStyles.flexGrow} />
