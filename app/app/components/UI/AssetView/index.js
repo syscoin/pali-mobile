@@ -722,7 +722,7 @@ class AssetView extends PureComponent {
 								</View>
 							) : (
 								<View style={[styles.chart, styles.chartLayout, styles.loading]}>
-									<ActivityIndicator size="large" color={colors.$FE6E91} />
+									<ActivityIndicator size="large" color={colors.brandPink300} />
 								</View>
 							)}
 						</View>

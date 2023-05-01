@@ -455,6 +455,10 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		paddingHorizontal: 22
 	},
+	addButton: {
+		width: 60,
+		height: 60
+	},
 	addAccountInter: {
 		flex: 1,
 		marginLeft: 11
@@ -1388,7 +1392,10 @@ class WalletManagement extends PureComponent {
 											]}
 										>
 											<View style={styles.addAccountContent}>
-												<Image source={require('../../../images/ic_add_account.png')} />
+												<Image
+													style={styles.addButton}
+													source={require('../../../images/ic_add_account.png')}
+												/>
 												<View style={styles.addAccountInter}>
 													<Text style={styles.addAccountLabel}>
 														{strings('wallet_management.add_new_account')}
