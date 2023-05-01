@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
 	},
 	createButtonWrapper: {
 		width: 320,
-		height: 110,
+		height: '15%',
 		marginTop: 62
 	},
 	importButtonWrapper: {
 		marginTop: 16,
 		width: 320,
-		height: 110
+		height: '15%'
 	},
 	buttonBackground: {
 		flex: 1
