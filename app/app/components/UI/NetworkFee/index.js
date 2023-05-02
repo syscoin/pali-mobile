@@ -506,7 +506,7 @@ class NetworkFee extends PureComponent {
 									<ActivityIndicator
 										style={styles.customButton}
 										size="small"
-										color={colors.$FE6E91}
+										color={colors.brandPink300}
 									/>
 								)}
 								<TouchableOpacity
@@ -558,7 +558,7 @@ class NetworkFee extends PureComponent {
 										onValueChange={this.onSlidingChange}
 										thumbImage={sliderThumb}
 										maximumTrackTintColor={colors.$8F92A13D}
-										minimumTrackTintColor={colors.$FE6E91}
+										minimumTrackTintColor={colors.brandPink300}
 									/>
 								</Animated.View>
 								<View style={baseStyles.flexGrow}>
@@ -620,7 +620,7 @@ class NetworkFee extends PureComponent {
 					</>
 				) : (
 					<View style={styles.loader}>
-						<ActivityIndicator size="large" color={colors.$FE6E91} />
+						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
 			</View>

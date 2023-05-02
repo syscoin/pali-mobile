@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 10
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
 	},
 	cancelButtonText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	claimText: {
 		fontSize: 14,

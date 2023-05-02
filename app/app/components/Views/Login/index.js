@@ -27,7 +27,7 @@ import Device from '../../../util/Device';
 import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'gopocket-core';
 import { updateLockScreen } from '../../../actions/settings';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		flexGrow: 1
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -128,7 +128,8 @@ const PASSCODE_NOT_SET_ERROR = 'Error: Passcode not set.';
 const WRONG_PASSWORD_ERROR = 'Error: Decrypt failed';
 const WRONG_PASSWORD_ERROR_ANDROID = 'Error: error:1e000065:Cipher functions:OPENSSL_internal:BAD_DECRYPT';
 const VAULT_ERROR = 'Error: Cannot unlock without a previous vault.';
-const CLEAN_VAULT_ERROR = 'GoPocket encountered an error, Please reinstall GoPocket and restore with your seed phrase.';
+const CLEAN_VAULT_ERROR =
+	'Pali Wallet encountered an error, Please reinstall Pali Wallet and restore with your seed phrase.';
 
 /**
  * View where returning users can authenticate

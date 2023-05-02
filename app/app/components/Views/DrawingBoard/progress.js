@@ -8,13 +8,13 @@ const styles = StyleSheet.create({
 		height: 12,
 		alignSelf: 'stretch',
 		marginHorizontal: 30,
-		backgroundColor: colors.$FE6E91Alpha3,
+		backgroundColor: colors.brandPink300Alpha3,
 		borderRadius: 7
 	},
 	progressIn: {
 		height: 12,
 		width: '0%',
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		borderRadius: 7
 	}
 });

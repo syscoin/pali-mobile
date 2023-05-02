@@ -38,6 +38,7 @@ import ImageCapInset from '../../UI/ImageCapInset';
 import WalletConnect from '../../../core/WalletConnect';
 import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
+import Icon from '../../UI/Icon';
 
 const cardMargin = 20;
 const cardPadding = 18;
@@ -83,10 +84,27 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center'
 	},
+	rowFlex2: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
 	walletTitle: {
-		color: colors.$030319,
+		color: colors.$1A1A1A,
 		fontSize: 18,
+		flexShrink: 1,
 		...fontStyles.bold
+	},
+	importedText: {
+		fontSize: 12,
+		color: colors.brandPink500
+	},
+	importedView: {
+		backgroundColor: colors.brandPink50,
+		borderRadius: 15,
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		marginLeft: 10
 	},
 	scrollViewContent: {
 		flex: 1,
@@ -100,7 +118,7 @@ const styles = StyleSheet.create({
 	},
 	importPhraseButtonText: {
 		fontSize: 14,
-		color: colors.$030319
+		color: colors.$1A1A1A
 	},
 	importPrivateKeyButton: {
 		height: 40,
@@ -109,7 +127,7 @@ const styles = StyleSheet.create({
 	},
 	importPrivateKeyButtonText: {
 		fontSize: 14,
-		color: colors.$030319
+		color: colors.$1A1A1A
 	},
 	createWalletButton: {
 		height: 40,
@@ -119,7 +137,7 @@ const styles = StyleSheet.create({
 	},
 	createWalletButtonText: {
 		fontSize: 14,
-		color: colors.$030319
+		color: colors.$1A1A1A
 	},
 	askButton: {
 		paddingLeft: 10,
@@ -133,6 +151,7 @@ const styles = StyleSheet.create({
 	accountName: {
 		color: colors.$F7F7F7,
 		fontSize: 14,
+		flexShrink: 1,
 		...fontStyles.bold,
 		marginLeft: 10
 	},
@@ -151,7 +170,7 @@ const styles = StyleSheet.create({
 	textInput: {
 		height: 25,
 		fontSize: 13,
-		color: colors.$030319,
+		color: colors.$1A1A1A,
 		lineHeight: 15,
 		marginTop: 20,
 		paddingVertical: 0,
@@ -167,19 +186,19 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	okButton: {
 		flex: 1.5,
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -199,7 +218,7 @@ const styles = StyleSheet.create({
 	},
 	cancelText2: {
 		fontSize: 16,
-		color: colors.$030319
+		color: colors.$1A1A1A
 	},
 	okButton2: {
 		flex: 1,
@@ -299,7 +318,7 @@ const styles = StyleSheet.create({
 	faqTitle: {
 		...fontStyles.bold,
 		fontSize: 20,
-		color: colors.$030319
+		color: colors.$1A1A1A
 	},
 	faqDesc: {
 		fontSize: 14,
@@ -380,7 +399,7 @@ const styles = StyleSheet.create({
 	},
 	walletPopItemText: {
 		fontSize: 14,
-		color: colors.$030319,
+		color: colors.$1A1A1A,
 		marginLeft: 12
 	},
 	accountItem: {
@@ -414,7 +433,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 7
 	},
 	walletMoreTouch: {
-		paddingLeft: 20,
+		paddingLeft: 10,
 		paddingRight: 18,
 		marginRight: -18,
 		paddingTop: 16,
@@ -436,13 +455,17 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		paddingHorizontal: 22
 	},
+	addButton: {
+		width: 60,
+		height: 60
+	},
 	addAccountInter: {
 		flex: 1,
 		marginLeft: 11
 	},
 	addAccountLabel: {
 		fontSize: 20,
-		color: colors.$030319,
+		color: colors.$1A1A1A,
 		...fontStyles.semibold
 	},
 	addAccountDesc: {
@@ -472,13 +495,18 @@ class WalletManagement extends PureComponent {
 	state = {
 		deleteAccountModalVisible: false,
 		renameAccountModalVisible: false,
+		renameWalletModalVisible: false,
 		checkPasswordModalVisible: false,
 		accountNameValue: 'Main Account',
+		walletNameValue: 'Wallet',
 		walletSelectedIndex: -1,
+		walletMainAddress: '',
 		walletSelectedType: KeyringTypes.hd,
+		walletSelectedName: '',
 		walletSelectedCanRemove: true,
 		addAccountLoadingIndex: -1,
 		renameAddressLoading: '',
+		renameWalletLoading: '',
 		deleteAddressLoading: '',
 		passwordValue: '',
 		wrongPwVisible: false,
@@ -495,6 +523,7 @@ class WalletManagement extends PureComponent {
 	headerButtonRef = React.createRef();
 
 	currentModalAccount = {}; //ContactEntry
+	currentModalWallet = {}; //ContactEntry
 
 	onAddAccount = async keyringIndex => {
 		this.setState({ addAccountLoadingIndex: keyringIndex });
@@ -590,8 +619,30 @@ class WalletManagement extends PureComponent {
 		this.setState({ renameAccountModalVisible: false });
 	};
 
+	hideRenameWalletModal = () => {
+		this.setState({ renameWalletModalVisible: false });
+	};
+
 	onRenameCancal = () => {
 		this.hideRenameAccountModal();
+	};
+
+	onRenameWalletCancel = () => {
+		this.hideRenameWalletModal();
+	};
+
+	onRenameWalletOk = async () => {
+		const { walletNameValue } = this.state;
+
+		if (walletNameValue && walletNameValue !== '') {
+			const { PreferencesController } = Engine.context;
+			this.setState({
+				renameWalletModalVisible: false,
+				renameWalletLoading: this.currentModalWallet.address
+			});
+			await PreferencesController.setAccountLabel(this.currentModalWallet.address, walletNameValue, 'walletName');
+			this.setState({ renameWalletLoading: '' });
+		}
 	};
 
 	onRenameOk = async () => {
@@ -607,8 +658,50 @@ class WalletManagement extends PureComponent {
 		}
 	};
 
+	onWalletNameChange = value => {
+		this.setState({ walletNameValue: value });
+	};
 	onAccountNameChange = value => {
 		this.setState({ accountNameValue: value });
+	};
+
+	renderRenameWallet = () => {
+		const { renameWalletModalVisible, walletNameValue } = this.state;
+
+		const { isLockScreen } = this.props;
+
+		return (
+			<Modal
+				isVisible={renameWalletModalVisible && !isLockScreen}
+				onBackdropPress={this.hideRenameWalletModal}
+				onBackButtonPress={this.hideRenameWalletModal}
+				onSwipeComplete={this.hideRenameWalletModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.centerModal}
+			>
+				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+					<View style={styles.modalContainer}>
+						<Text style={styles.modalTitle}>{strings('wallet_management.rename_account')}</Text>
+						<TextInput
+							style={styles.textInput}
+							value={walletNameValue}
+							onChangeText={this.onWalletNameChange}
+						/>
+						<View style={styles.underline} />
+						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
+						<View style={styles.modalButtons}>
+							<TouchableOpacity style={styles.cancelButton} onPress={this.onRenameWalletCancel}>
+								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.okButton} onPress={this.onRenameWalletOk}>
+								<Text style={styles.okText}>{strings('wallet_management.rename')}</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</KeyboardAvoidingView>
+			</Modal>
+		);
 	};
 
 	renderRenameAccount = () => {
@@ -747,6 +840,16 @@ class WalletManagement extends PureComponent {
 		this.setState({ renameAccountModalVisible: true, accountNameValue: account.name });
 	};
 
+	onRenameWallet = (wallet, keyringIndex) => {
+		this.hideHeaderPopModal();
+
+		const walletName = wallet.walletName ? wallet.walletName : `Wallet${keyringIndex + 1}`;
+		wallet.walletName = walletName;
+
+		this.currentModalWallet = wallet;
+		this.setState({ renameWalletModalVisible: true, walletNameValue: walletName });
+	};
+
 	showDeleteAccountModal = account => {
 		this.currentModalAccount = account;
 		this.setState({ deleteAccountModalVisible: true });
@@ -754,6 +857,7 @@ class WalletManagement extends PureComponent {
 
 	renderAccountItem = (address, index, canRemove) => {
 		const { currencyCode, identities, wealths } = this.props;
+
 		const { renameAddressLoading, deleteAddressLoading, currentChainTypes } = this.state;
 		const account = identities[address];
 		if (!account) {
@@ -823,7 +927,12 @@ class WalletManagement extends PureComponent {
 						) : (
 							<Image source={require('../../../images/ic_account_rename.png')} />
 						)}
-						<Text style={styles.accountName} allowFontScaling={false}>
+						<Text
+							style={styles.accountName}
+							allowFontScaling={false}
+							numberOfLines={1}
+							ellipsizeMode="tail"
+						>
 							{account.name}
 						</Text>
 					</TouchableOpacity>
@@ -923,7 +1032,7 @@ class WalletManagement extends PureComponent {
 	};
 
 	renderDeleteWallet = () => {
-		const { deleteWalletModalVisible, walletSelectedIndex } = this.state;
+		const { deleteWalletModalVisible, walletSelectedName } = this.state;
 		const { isLockScreen } = this.props;
 		return (
 			<Modal
@@ -939,9 +1048,7 @@ class WalletManagement extends PureComponent {
 					<View style={styles.modalContainer2}>
 						<Text style={styles.modalTitle}>
 							{strings('wallet_management.delete_wallet', {
-								name: strings('wallet_management.wallet_index', {
-									number: walletSelectedIndex + 1
-								})
+								name: walletSelectedName
 							})}
 						</Text>
 
@@ -1012,9 +1119,15 @@ class WalletManagement extends PureComponent {
 			isWalletPop,
 			walletSelectedIndex,
 			walletSelectedType,
-			walletSelectedCanRemove
+			walletSelectedName,
+			walletMainAddress,
+			walletSelectedCanRemove,
+			renameWalletLoading
 		} = this.state;
-		const { isLockScreen } = this.props;
+		const { isLockScreen, identities } = this.props;
+
+		const wallet = identities[walletMainAddress];
+
 		return (
 			<Modal
 				style={styles.margin0}
@@ -1037,19 +1150,21 @@ class WalletManagement extends PureComponent {
 									this.hideHeaderPopModal();
 									this.props.navigation.navigate('RevealPrivateCredential', {
 										keyringIndex: walletSelectedIndex,
-										walletName: strings('wallet_management.wallet_index', {
-											number: walletSelectedIndex + 1
-										})
+										walletName:
+											walletSelectedName.length > 10
+												? walletSelectedName.slice(0, 10) + '...'
+												: walletSelectedName
 									});
 								}}
 							>
-								<Image source={require('../../../images/ic_wallet_reveal.png')} />
+								<Icon width="19" height="19" color={colors.$1A1A1A} name="visibility" />
 								<Text style={styles.walletPopItemText}>
 									{walletSelectedType === KeyringTypes.hd
 										? strings('reveal_credential.seed_phrase_title')
 										: strings('reveal_credential.private_key_title')}
 								</Text>
 							</TouchableOpacity>
+
 							{walletSelectedType === KeyringTypes.hd && (
 								<TouchableOpacity
 									style={styles.walletPopItemButton}
@@ -1057,24 +1172,38 @@ class WalletManagement extends PureComponent {
 										this.hideHeaderPopModal();
 										this.props.navigation.navigate('VerifySeedPhrase', {
 											keyringIndex: walletSelectedIndex,
-											walletName: strings('wallet_management.wallet_index', {
-												number: walletSelectedIndex + 1
-											})
+											walletName:
+												walletSelectedName.length > 10
+													? walletSelectedName.slice(0, 10) + '...'
+													: walletSelectedName
 										});
 									}}
 								>
-									<Image source={require('../../../images/ic_wallet_verify.png')} />
+									<Icon width="18" height="18" color={colors.$1A1A1A} name="shield" />
 									<Text style={styles.walletPopItemText}>
 										{strings('wallet_management.verify_seed_phrase')}
 									</Text>
 								</TouchableOpacity>
 							)}
+							<TouchableOpacity
+								style={styles.walletPopItemButton}
+								onPress={() => {
+									if (!renameWalletLoading || renameWalletLoading === '') {
+										this.onRenameWallet(wallet, walletSelectedIndex);
+									}
+								}}
+							>
+								<Icon width="18" height="18" color={colors.$1A1A1A} name="edit" />
+								<Text style={styles.walletPopItemText}>
+									{strings('wallet_management.rename_wallet')}
+								</Text>
+							</TouchableOpacity>
 							{walletSelectedCanRemove && (
 								<TouchableOpacity
 									style={styles.walletPopItemButton}
 									onPress={this.showDeleteWalletModal}
 								>
-									<Image source={require('../../../images/ic_wallet_delete.png')} />
+									<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
 									<Text style={styles.walletPopItemText}>
 										{strings('wallet_management.delete_this_wallet')}
 									</Text>
@@ -1130,7 +1259,9 @@ class WalletManagement extends PureComponent {
 
 	renderItem = (keyring, keyringIndex, canRemove) => {
 		const { addAccountLoadingIndex } = this.state;
+		const { identities } = this.props;
 		const walletButtonRef = React.createRef();
+
 		return (
 			<ImageCapInset
 				style={styles.cardWrapper}
@@ -1141,11 +1272,30 @@ class WalletManagement extends PureComponent {
 				<View style={styles.childrenWrapper} activeOpacity={1}>
 					<View style={styles.flexOne}>
 						<View style={styles.rowFlex}>
-							<Text style={styles.walletTitle}>
-								{strings('wallet_management.wallet_index', {
-									number: keyringIndex + 1
-								})}
-							</Text>
+							<View style={styles.rowFlex2}>
+								<Text
+									style={styles.walletTitle}
+									allowFontScaling={false}
+									numberOfLines={1}
+									ellipsizeMode="tail"
+								>
+									{identities[keyring.accounts[0]] && identities[keyring.accounts[0]].walletName ? (
+										identities[keyring.accounts[0]].walletName
+									) : (
+										<>
+											{strings('wallet_management.wallet_index', {
+												number: keyringIndex + 1
+											})}
+										</>
+									)}
+								</Text>
+								{keyring && keyring.isImported && (
+									<View style={styles.importedView}>
+										<Text style={styles.importedText}>Imported</Text>
+									</View>
+								)}
+							</View>
+
 							<TouchableOpacity
 								style={styles.walletMoreTouch}
 								onPress={async () => {
@@ -1158,6 +1308,13 @@ class WalletManagement extends PureComponent {
 											walletSelectedCanRemove: canRemove,
 											walletSelectedIndex: keyringIndex,
 											walletSelectedType: keyring.type,
+											walletSelectedName: identities[keyring.accounts[0]].walletName
+												? identities[keyring.accounts[0]].walletName
+												: strings('wallet_management.wallet_index', {
+														number: keyringIndex + 1
+												  }),
+
+											walletMainAddress: keyring.accounts[0],
 											headerIconRect: { x: px, y: py - dis, width, height }
 										});
 									});
@@ -1174,9 +1331,16 @@ class WalletManagement extends PureComponent {
 						{keyring.type === KeyringTypes.hd &&
 							(addAccountLoadingIndex === keyringIndex ? (
 								<View style={styles.accountItem}>
-									<Image
-										source={require('../../../images/img_add_account_bg.png')}
-										style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
+									<View
+										style={[
+											styles.absoluteStart,
+											{
+												width: cardWidth,
+												height: cardHeight,
+												backgroundColor: colors.brandPink50,
+												borderRadius: 15
+											}
+										]}
 									/>
 									<View
 										style={[
@@ -1207,9 +1371,16 @@ class WalletManagement extends PureComponent {
 									}}
 								>
 									<View style={styles.accountItem}>
-										<Image
-											source={require('../../../images/img_add_account_bg.png')}
-											style={[styles.absoluteStart, { width: cardWidth, height: cardHeight }]}
+										<View
+											style={[
+												styles.absoluteStart,
+												{
+													width: cardWidth,
+													height: cardHeight,
+													backgroundColor: colors.brandPink50,
+													borderRadius: 15
+												}
+											]}
 										/>
 										<View
 											style={[
@@ -1221,7 +1392,10 @@ class WalletManagement extends PureComponent {
 											]}
 										>
 											<View style={styles.addAccountContent}>
-												<Image source={require('../../../images/ic_add_account.png')} />
+												<Image
+													style={styles.addButton}
+													source={require('../../../images/ic_add_account.png')}
+												/>
 												<View style={styles.addAccountInter}>
 													<Text style={styles.addAccountLabel}>
 														{strings('wallet_management.add_new_account')}
@@ -1299,6 +1473,7 @@ class WalletManagement extends PureComponent {
 	render = () => {
 		const { keyrings } = this.props;
 		const { createWalletLoading, error } = this.state;
+
 		return (
 			<SafeAreaView style={styles.wrapper} testID={'wallet-management-screen'}>
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
@@ -1338,6 +1513,7 @@ class WalletManagement extends PureComponent {
 						</ScrollView>
 					</View>
 					{this.renderRenameAccount()}
+					{this.renderRenameWallet()}
 					{this.renderDeleteAccount()}
 					{this.renderDeleteWallet()}
 					{this.renderCheckPassword()}

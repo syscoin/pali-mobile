@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 	openSeaTouch: {
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		flexDirection: 'row',
@@ -370,8 +370,10 @@ class EnsSettingView extends PureComponent {
 					urlValue = util.makeIPFSUrl(urlValue, Engine.context.CollectiblesController.state.ipfsGateway);
 				}
 				if (!util.isEtherscanAvailable() && !!urlValue) {
+					//TODO: update api url to Pali ones
 					urlValue = 'https://api.gopocket.finance/proxy-png?url=' + urlValue;
 				} else if (!!urlValue && urlValue.startsWith('http://')) {
+					//TODO: update api url to Pali ones
 					urlValue = 'https://api.gopocket.finance/proxy-png?url=' + urlValue;
 				}
 				if ((urlValue && urlValue.startsWith('http://')) || urlValue.startsWith('https://')) {
@@ -499,7 +501,10 @@ class EnsSettingView extends PureComponent {
 					</View>
 				) : (
 					<View style={styles.homeNoAvatarLayout}>
-						<Image source={require('../../../images/img_ens_ftz.png')} />
+						<Image
+							style={{ width: 80, height: 80 }}
+							source={require('../../../images/ic_ens_avatar.png')}
+						/>
 						<View style={styles.homeNoAvatarContent}>
 							<Image source={require('../../../images/img_ens_tip_arrow.png')} />
 							<View style={styles.homeNoAvatarTip}>
@@ -743,7 +748,7 @@ class EnsSettingView extends PureComponent {
 						<View style={styles.flexOne} />
 						<TouchableOpacity
 							disabled={!avatarLoadSuccess}
-							style={[styles.urlDoneTouch, avatarLoadSuccess && { backgroundColor: colors.$FE6E91 }]}
+							style={[styles.urlDoneTouch, avatarLoadSuccess && { backgroundColor: colors.brandPink300 }]}
 							onPress={() => {
 								const data = {
 									address: ensEntry.address,

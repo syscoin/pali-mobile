@@ -33,7 +33,7 @@ import FlashMessage from 'react-native-flash-message';
 import Device from '../../../util/Device';
 import SafeArea from 'react-native-safe-area';
 import { toggleShowHint } from '../../../actions/hint';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
 
 const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 		color: colors.$60657D
 	},
 	importButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 30,
 		width: 60,
 		borderRadius: 10,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		width: 148,
 		height: 40,
-		backgroundColor: colors.$FE6E9126,
+		backgroundColor: colors.brandPink30026,
 		borderRadius: 10,
 		flexDirection: 'row',
 		alignItems: 'center'
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 	wordInputWrapper: {
 		backgroundColor: colors.white,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		opacity: 1
 	},
 	numberWrapper: {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	numberInputWrapper: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	number: {
 		fontSize: 10,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		paddingVertical: 10,
 		paddingHorizontal: 0,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		marginLeft: 10
 	},
 	candidateWrapper: {

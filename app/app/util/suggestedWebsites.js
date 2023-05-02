@@ -93,6 +93,7 @@ const suggestedWebsites = {
 							url: 'https://www.chainge.finance/info/trading'
 						},
 						{
+							//TODO: update api url to Pali ones
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
 							logo: 'https://cdn.gopocket.finance/files/multichain.png',
 							name: 'Multichain',
@@ -122,7 +123,7 @@ const suggestedWebsites = {
 							url: 'https://www.tribeone.io/'
 						}
 					],
-					name: 'NFT/Misc'
+					name: 'NFT'
 				},
 				{
 					items: [

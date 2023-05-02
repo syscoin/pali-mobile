@@ -856,7 +856,7 @@ class Transactions extends PureComponent {
 					<></>
 				)
 			) : (
-				<ActivityIndicator size={'small'} color={colors.$FE6E91} />
+				<ActivityIndicator size={'small'} color={colors.brandPink300} />
 			)}
 		</View>
 	);

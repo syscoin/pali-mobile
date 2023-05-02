@@ -9,7 +9,7 @@ import { strings } from '../../../../locales/i18n';
 import SecureKeychain from '../../../core/SecureKeychain';
 import { passwordRequirementsMet } from '../../../util/password';
 import { TRUE, BIOMETRY_CHOICE_DISABLED } from '../../../constants/storage';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import PromptView from '../../UI/PromptView';
 import Device from '../../../util/Device';
 
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 		...fontStyles.semibold
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

@@ -18,7 +18,7 @@ const GlobeIcon = ({ focused, onPress }) => {
 	const scale = useRef(new Animated.Value(1)).current;
 	const rotate = useRef(new Animated.Value(0)).current;
 	const [animating, setAnimating] = useState(false);
-	const color = focused ? colors.$D20058 : colors.$9B989B;
+	const color = focused ? colors.brandPink300 : colors.$9B989B;
 
 	useEffect(() => {
 		const onWalletTabFocused = () => {

@@ -1,9 +1,9 @@
-import BaseController, {BaseConfig, BaseState} from "../BaseController";
-import {Mutex} from "async-mutex";
+import BaseController, { BaseConfig, BaseState } from '../BaseController';
+import { Mutex } from 'async-mutex';
 import { Sqlite } from '../transaction/Sqlite';
 import RNFS from 'react-native-fs';
 
-import {handleFetch, logInfo, logWarn} from "../util";
+import { handleFetch, logInfo, logWarn } from '../util';
 
 export interface StaticTokenConfig extends BaseConfig {
   isIos: boolean;
@@ -26,7 +26,7 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Bas
     super(config, state);
     this.defaultConfig = {
       isIos: false,
-      interval: 6 * 60 * 60 * 1000
+      interval: 6 * 60 * 60 * 1000,
     };
     this.initialize();
   }
@@ -59,18 +59,25 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Bas
       do {
         const maxTokenId = await Sqlite.getInstance().getStaticTokensMaxId();
         logInfo('PPYang start load static token, id:', maxTokenId);
+        //TODO: update api url to Pali ones
         const url = `https://relayer.gopocket.finance/api/v1/getTokens?startId=${maxTokenId + 1}&count=${maxLoadCount}`;
         const response: any = await handleFetch(url);
-        if (!response || response.errmsg != 'ok' || !response.data || !Array.isArray(response.data) || !response.data.length) {
+        if (
+          !response ||
+          response.errmsg != 'ok' ||
+          !response.data ||
+          !Array.isArray(response.data) ||
+          !response.data.length
+        ) {
           break;
         }
         loadCount = response.data.length;
         logInfo('PPYang load static token loadCount:', loadCount);
         const tokens = response.data;
         await Sqlite.getInstance().insetStaticTokens(tokens);
-        await new Promise((resolve => {
+        await new Promise((resolve) => {
           setTimeout(() => resolve(true), 3000);
-        }));
+        });
       } while (loadCount >= maxLoadCount);
     } catch (e) {
       logInfo('PPYang getTokens fail', e);

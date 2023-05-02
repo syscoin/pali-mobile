@@ -149,7 +149,7 @@ class DeveloperOptions extends PureComponent {
 				if (allNetworkChanging[chainType]) {
 					selected =
 						allNetworkChanging[chainType] === name ? (
-							<ActivityIndicator size="small" color={colors.$FE6E91} />
+							<ActivityIndicator size="small" color={colors.brandPink300} />
 						) : null;
 				} else {
 					selected =

@@ -48,7 +48,7 @@ const styles = {
 		width: '100%',
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
@@ -105,6 +105,7 @@ class UpdateCheck extends PureComponent {
 			}
 		}
 		if (!detailUrl) {
+			//TODO: update api url to Pali ones
 			detailUrl = 'https://gopocket.finance/release-notes-plain';
 		}
 		detailUrl = appendLanguage(detailUrl);

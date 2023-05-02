@@ -100,10 +100,10 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 		backgroundColor: colors.transparent,
 		fontSize: 10,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		paddingHorizontal: 9,
 		paddingVertical: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		borderWidth: 1
 	},
 	titleItem: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
 	},
 	moveText: {
 		fontSize: 12,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		marginTop: 5
 	},
 	moveTextDiabled: {

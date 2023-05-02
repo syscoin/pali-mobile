@@ -11,12 +11,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Device from '../../../util/Device';
 import SecureKeychain from '../../../core/SecureKeychain';
 
-import contextImage from '../../../images/img_creat_biometric.png';
+import contextImage from '../../../images/img_create_biometric.png';
 import imgTouchId from '../../../images/ic_touchid.png';
 import imgFaceId from '../../../images/ic_faceid.png';
 import imgbiometrics from '../../../images/ic_auth.png';
 import PromptView from '../../UI/PromptView';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -47,10 +47,12 @@ const styles = StyleSheet.create({
 		color: colors.$60657D
 	},
 	contextImage: {
+		width: 325,
+		height: 325,
 		alignSelf: 'center'
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -218,7 +220,7 @@ class BiometricSecurity extends PureComponent {
 							{strings('choose_password.biometric_security_hint', { biometric: this.getBiometricStr() })}
 						</Text>
 						<View style={baseStyles.flexGrow} />
-						<Image style={styles.contextImage} source={contextImage} />
+						<Image style={styles.contextImage} source={contextImage} resizeMode="contain" />
 						<View style={baseStyles.flex2} />
 
 						<TouchableOpacity

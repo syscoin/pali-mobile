@@ -39,6 +39,7 @@ const favoritesDapps = [
 		name: 'DefiLlama',
 		url: 'https://defillama.com'
 	},
+	//TODO: update api url to Pali ones
 	{
 		logo: 'https://cdn.gopocket.finance/files/CoinGeckologo.png',
 		name: 'Coingecko',

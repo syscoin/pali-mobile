@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 10
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
 	addButton: {
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$E6E6E6, //$FE6E91,
+		backgroundColor: colors.$E6E6E6, //brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 10
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
 	},
 	rpcList: {
 		fontSize: 13,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	rpcItem: {
 		justifyContent: 'center',
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	rpcItemTitle: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 18,
 		...fontStyles.semibold
 	},
@@ -442,7 +442,7 @@ class ChainSettingView extends PureComponent {
 				</View>
 				<TouchableOpacity
 					activeOpacity={0.8}
-					style={[styles.addButton, rpcBtnEnalbe && { backgroundColor: colors.$FE6E91 }]}
+					style={[styles.addButton, rpcBtnEnalbe && { backgroundColor: colors.brandPink300 }]}
 					disabled={!rpcBtnEnalbe}
 					onPress={this.addRpc}
 				>

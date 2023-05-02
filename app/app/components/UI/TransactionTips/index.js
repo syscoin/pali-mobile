@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 	},
 	waitText: {
 		fontSize: 18,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	animation: {
 		width: 44,

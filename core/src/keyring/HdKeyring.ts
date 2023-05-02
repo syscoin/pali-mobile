@@ -8,7 +8,6 @@ const hdPathString = `m/44'/60'/0'/0`;
 const type = 'HD Key Tree';
 
 export class HdKeyring extends SimpleKeyring {
-
   type: string = type;
 
   mnemonic: string | null | undefined;
@@ -21,6 +20,8 @@ export class HdKeyring extends SimpleKeyring {
 
   hdWallet: any;
 
+  isImported: boolean | undefined;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
@@ -31,6 +32,7 @@ export class HdKeyring extends SimpleKeyring {
       mnemonic: this.mnemonic,
       numberOfAccounts: this.wallets.length,
       hdPath: this.hdPath,
+      isImported: this.isImported,
     });
   }
 
@@ -40,6 +42,7 @@ export class HdKeyring extends SimpleKeyring {
     this.mnemonic = null;
     this.root = null;
     this.hdPath = opts.hdPath || hdPathString;
+    this.isImported = opts.isImported;
 
     if (opts.mnemonic) {
       await this._initFromMnemonic(opts.mnemonic);
@@ -72,9 +75,11 @@ export class HdKeyring extends SimpleKeyring {
   }
 
   getAccounts() {
-    return Promise.resolve(this.wallets.map((w) => {
-      return normalize(w.getAddress().toString('hex'));
-    }));
+    return Promise.resolve(
+      this.wallets.map((w) => {
+        return normalize(w.getAddress().toString('hex'));
+      }),
+    );
   }
 
   async _initFromMnemonic(mnemonic: string) {

@@ -304,9 +304,14 @@ class SecurityView extends PureComponent {
 		const identities = Engine.context.PreferencesController.state.identities;
 		const account = identities[selectedAddress];
 		return (
-			<ImageBackground
-				style={[styles.topLayout, { height: 240 + titleHeight }]}
-				source={tabIndex === 0 ? BgSecurityTop : BgApprovalTop}
+			<View
+				style={[
+					styles.topLayout,
+					{
+						height: 240 + titleHeight,
+						backgroundColor: tabIndex === 0 ? colors.brandBlue600 : colors.brandBlue900
+					}
+				]}
 			>
 				<View style={{ height: titleHeight }} />
 				{this.renderTabs()}
@@ -322,7 +327,7 @@ class SecurityView extends PureComponent {
 						{selectedAddress}
 					</Text>
 				</View>
-			</ImageBackground>
+			</View>
 		);
 	};
 

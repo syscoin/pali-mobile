@@ -102,7 +102,7 @@ const TransactionHeader = props => {
 						style={styles.deeplinkIcon}
 						name={origin === ORIGIN_DEEPLINK ? 'link' : 'qrcode'}
 						size={32}
-						color={colors.$FE6E91}
+						color={colors.brandPink300}
 					/>
 				</View>
 			);

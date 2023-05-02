@@ -1023,7 +1023,7 @@ export function calcAddressSinglePrices(nativeCurrencyAsset, tokens, type, opt) 
 	}
 	return { totalUsdAmount, totalCurrencyAmount, totalBalance };
 }
-
+//TODO: update api url to Pali ones
 const rpcLogo = 'https://cdn.gopocket.finance/files/rpc.png';
 
 export async function getAssetLogo(asset) {
@@ -1042,6 +1042,7 @@ export async function getAssetLogo(asset) {
 
 	const token = await callSqlite('getStaticToken', type, asset.address, asset.l1Address);
 	const result = token?.image;
+	//TODO: update api url to Pali ones
 	if (!util.isEtherscanAvailable() && result && result.includes('coingecko.com')) {
 		return `https://api.gopocket.finance/proxy-png?url=${result}`;
 	}

@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
 		...fontStyles.normal
 	},
 	networkSelectBg: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	networkSelectLabel: {
 		color: colors.white,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	confirmButtonEnabled: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	confirmButtonText: {
 		fontSize: 14,
@@ -204,13 +204,13 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelButtonText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	labelWrapper: {
 		alignSelf: 'center',
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
 	},
 	saftyText2: {
 		fontSize: 12,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		...fontStyles.medium,
 		lineHeight: 17
 	},
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
 	mentionText: {
 		fontSize: 14,
 		lineHeight: 16,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	suggestionText: {
 		fontSize: 14,
