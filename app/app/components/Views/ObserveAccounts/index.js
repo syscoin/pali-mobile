@@ -26,7 +26,7 @@ import { CURRENCIES } from '../../../util/currencies';
 import { ChainTypeBgWithoutShadows, ChainTypeIcons, ChainTypeNames, ChainTypes } from '../../../util/ChainTypeImages';
 import MStatusBar from '../../UI/MStatusBar';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Device from '../../../util/Device';
 import ImageCapInset from '../../UI/ImageCapInset';
 import NFTImage from '../../UI/NFTImage';

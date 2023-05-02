@@ -35,7 +35,7 @@ import NFTImage from '../../UI/NFTImage';
 import convertToProxyURL from 'react-native-video-cache';
 import { toggleShowHint } from '../../../actions/hint';
 import ImageCapInset from '../../UI/ImageCapInset';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getDefiIcon } from '../../../util/rpcUtil';
 import { isSvgFile } from '../../../util/general';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';

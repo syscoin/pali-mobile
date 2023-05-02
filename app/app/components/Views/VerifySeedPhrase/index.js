@@ -13,7 +13,7 @@ import { util } from 'gopocket-core';
 import { tryVerifyPassword } from '../../../core/Vault';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	wrapper: {

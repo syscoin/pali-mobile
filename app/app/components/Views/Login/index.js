@@ -27,7 +27,7 @@ import Device from '../../../util/Device';
 import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'gopocket-core';
 import { updateLockScreen } from '../../../actions/settings';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flex: {

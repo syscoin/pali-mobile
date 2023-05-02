@@ -33,7 +33,7 @@ import FlashMessage from 'react-native-flash-message';
 import Device from '../../../util/Device';
 import SafeArea from 'react-native-safe-area';
 import { toggleShowHint } from '../../../actions/hint';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
 
 const styles = StyleSheet.create({

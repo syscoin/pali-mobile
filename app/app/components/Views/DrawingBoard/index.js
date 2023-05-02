@@ -23,7 +23,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import { Mutex, util } from 'gopocket-core';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
 
 const { height } = Dimensions.get('window');

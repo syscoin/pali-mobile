@@ -6,7 +6,7 @@ import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import MStatusBar from '../../UI/MStatusBar';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	mainWrapper: {

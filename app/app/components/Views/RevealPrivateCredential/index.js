@@ -12,7 +12,7 @@ import MStatusBar from '../../UI/MStatusBar';
 import { util } from 'gopocket-core';
 import { isHDMainAddress, tryVerifyPassword } from '../../../core/Vault';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	wrapper: {

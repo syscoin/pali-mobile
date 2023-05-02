@@ -28,7 +28,7 @@ import FoldSecurityView from '../FoldSecurityView';
 import { strings } from '../../../../locales/i18n';
 import { iosShake } from '../../../util/NativeUtils';
 import { onEvent } from '../../../util/statistics';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getSecurityData } from '../../../util/security';
 
 const activeOpacity = 0.8;

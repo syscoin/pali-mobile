@@ -16,7 +16,7 @@ import imgTouchId from '../../../images/ic_touchid.png';
 import imgFaceId from '../../../images/ic_faceid.png';
 import imgbiometrics from '../../../images/ic_auth.png';
 import PromptView from '../../UI/PromptView';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
 		color: colors.$60657D
 	},
 	contextImage: {
-		width: 350,
-		height: 350,
+		width: 325,
+		height: 325,
 		alignSelf: 'center'
 	},
 	createButtonWrapper: {

@@ -16,7 +16,7 @@ import { strings } from '../../../../locales/i18n';
 import MStatusBar from '../../UI/MStatusBar';
 import { getWords } from '../../../util/validators';
 import { PanGestureHandler } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flexOne: {

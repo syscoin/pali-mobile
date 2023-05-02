@@ -19,7 +19,7 @@ import { MANUAL_BACKUP_STEPS, SEED_PHRASE, CONFIRM_PASSWORD } from '../../../con
 import { connect } from 'react-redux';
 import { getSeedPhraseSplit } from '../../../core/Vault';
 import MStatusBar from '../../UI/MStatusBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
