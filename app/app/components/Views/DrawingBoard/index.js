@@ -23,7 +23,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import { Mutex, util } from 'gopocket-core';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
 
 const { height } = Dimensions.get('window');
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 		fontSize: 16
 	},
 	nextButtonEnable: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	nextLabelEnable: {
 		color: colors.white
@@ -194,7 +194,7 @@ export default class DrawingBoard extends PureComponent {
 					</View>
 					<Draw
 						initialValues={{
-							color: colors.$FE6E91,
+							color: colors.brandPink300,
 							thickness: 4,
 							opacity: 1,
 							paths: []

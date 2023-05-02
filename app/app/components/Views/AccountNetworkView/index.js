@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	dappNetTouchItemSeleted: {
-		backgroundColor: colors.$FE6E911A,
+		backgroundColor: colors.brandPink3001A,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91
+		borderColor: colors.brandPink300
 	},
 	dappAccountTouchItem: {
 		width: 120,
@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12
 	},
 	dappAccountTouchItemSeleted: {
-		backgroundColor: colors.$FE6E911A,
+		backgroundColor: colors.brandPink3001A,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91
+		borderColor: colors.brandPink300
 	},
 	dappNetName: {
 		marginTop: 6,

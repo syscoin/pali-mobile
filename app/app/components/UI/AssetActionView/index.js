@@ -346,7 +346,7 @@ class AssetActionView extends PureComponent {
 					>
 						<TouchableOpacity onPress={this.showMigrateModal} activeOpacity={activeOpacity}>
 							{migrationLoading ? (
-								<ActivityIndicator style={styles.buttonIcon} color={colors.$FE6E91} />
+								<ActivityIndicator style={styles.buttonIcon} color={colors.brandPink300} />
 							) : (
 								<Image
 									style={imageWidths[3] && { width: imageWidths[3] }}

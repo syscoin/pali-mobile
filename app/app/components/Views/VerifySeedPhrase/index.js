@@ -13,7 +13,7 @@ import { util } from 'gopocket-core';
 import { tryVerifyPassword } from '../../../core/Vault';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
 		marginTop: 8
 	},
 	completeButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
-		borderColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
+		borderColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 		marginTop: 14
 	},
 	importButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

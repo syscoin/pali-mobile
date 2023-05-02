@@ -25,7 +25,7 @@
 		"subtitle": "Web3 on-the-go",
 		"start_exploring_now": "Create\nNew Wallet",
 		"import_seed_phrase": "Import\nSeed Phrase",
-		"import_private_key": "Import Private Key",
+		"import_private_key": "Import\nPrivate Key",
 		"import_wallet": "Import Wallet",
 		"create_wallet": "Create Wallet",
 		"prompt_text": "Supported Networks"
@@ -795,7 +795,7 @@
 		"enter_http_ipfs": "Enter http or ipfs link here",
 		"unable_load_content": "Unable to load content",
 		"hi_ens_name": "Hi, {{name}}",
-		"set_url_tip": "You haven't set an avatar so here is just a placeholder photo of GoGo.",
+		"set_url_tip": "You haven't set an avatar so here is just a placeholder photo of Pali.",
 		"about_ens_avatar": "About ENS Avatar",
 		"about_title_1": "What's this?",
 		"about_title_2": "Available format?",

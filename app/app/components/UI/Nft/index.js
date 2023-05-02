@@ -672,7 +672,7 @@ class Nft extends PureComponent {
 	renderLoadMoreView() {
 		return (
 			<View style={styles.loadMorePadding}>
-				{!this.state.loadEnd && <ActivityIndicator size={'small'} color={colors.$FE6E91} />}
+				{!this.state.loadEnd && <ActivityIndicator size={'small'} color={colors.brandPink300} />}
 			</View>
 		);
 	}

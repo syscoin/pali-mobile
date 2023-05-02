@@ -35,7 +35,7 @@ import NFTImage from '../../UI/NFTImage';
 import convertToProxyURL from 'react-native-video-cache';
 import { toggleShowHint } from '../../../actions/hint';
 import ImageCapInset from '../../UI/ImageCapInset';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getDefiIcon } from '../../../util/rpcUtil';
 import { isSvgFile } from '../../../util/general';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
 	},
 	createdByAddr: {
 		fontSize: 12,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		paddingVertical: 8,
 		paddingRight: 10
 	},
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
 	},
 	collectionName: {
 		fontSize: 14,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		marginTop: 8,
 		marginRight: 70
 	},
@@ -382,7 +382,7 @@ class NftView extends PureComponent {
 
 	renderLoader = () => (
 		<View style={styles.loader}>
-			<ActivityIndicator size="small" color={colors.$FE6E91} />
+			<ActivityIndicator size="small" color={colors.brandPink300} />
 		</View>
 	);
 

@@ -27,7 +27,7 @@ import Device from '../../../util/Device';
 import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'gopocket-core';
 import { updateLockScreen } from '../../../actions/settings';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		flexGrow: 1
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

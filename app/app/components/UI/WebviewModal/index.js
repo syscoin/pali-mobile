@@ -5,7 +5,7 @@ import { colors } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	bottomModal: {

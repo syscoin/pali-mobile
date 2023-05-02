@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	confirmButtonEnabled: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	confirmButtonText: {
 		fontSize: 14,
@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelButtonText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	}
 });
 

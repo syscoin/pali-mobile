@@ -378,7 +378,7 @@ class ApprovalList extends Component {
 				</View>
 				{(loading || updateTime === 0) && (
 					<View style={styles.loading}>
-						<ActivityIndicator size="large" color={colors.$FE6E91} />
+						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
 				{this.renderTokens()}

@@ -6,7 +6,7 @@ import { strings } from '../../../../locales/i18n';
 import LottieView from 'lottie-react-native';
 import MStatusBar from '../../UI/MStatusBar';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flexOne: {
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	},
 	nextButton: {
 		height: 44,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		borderRadius: 10,
 		alignSelf: 'stretch',
 		justifyContent: 'center',
