@@ -16,12 +16,13 @@ import { colors } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
 import { strings } from '../../../../locales/i18n';
-import { URL } from 'gopocket-core';
+import { URL, util } from 'gopocket-core';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImageCapInset from '../../UI/ImageCapInset';
 import Favicon from '../../UI/Favicon';
 import AppConstants from '../../../core/AppConstants';
 import { getActiveTabId } from '../../../util/browser';
+import { captureRef } from 'react-native-view-shot';
 
 const styles = StyleSheet.create({
 	topTabbar: {
@@ -139,7 +140,11 @@ export default class AddressBar extends PureComponent {
 		closeTab: PropTypes.func,
 		title: PropTypes.string,
 		url: PropTypes.string,
-		tabCount: PropTypes.number
+		tabCount: PropTypes.number.apply,
+		navigation: PropTypes.object,
+		tabRef: PropTypes.object,
+		updateTab: PropTypes.func,
+		tabData: PropTypes.object
 	};
 
 	state = {
@@ -157,6 +162,7 @@ export default class AddressBar extends PureComponent {
 	inputTextRef = React.createRef();
 	securityButtonRef = React.createRef();
 	moreButtonRef = React.createRef();
+	imageRef = React.createRef();
 
 	componentDidMount = () => {
 		AsyncStorage.getItem('hasShownMoreTip').then(previouslyShown => {
@@ -242,6 +248,22 @@ export default class AddressBar extends PureComponent {
 
 	setBackEnabled = enable => {
 		this.setState({ backEnabled: enable });
+	};
+
+	captureImage = () => {
+		const { id, ...tabDataFiltered } = this.props.tabData;
+		setTimeout(() => {
+			captureRef(this.props.tabRef, { format: 'png', quality: 1 })
+				.then(uri => {
+					console.log('atualizou');
+					const updatedTabData = { ...tabDataFiltered, uri };
+					this.props.updateTab(this.props.tabId, updatedTabData);
+				})
+				.catch(error => {
+					util.logError('PPYang takeSnapshot browserTab error:', error);
+				})
+				.finally(() => {});
+		}, 3000);
 	};
 
 	render = () => {
@@ -466,7 +488,12 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						console.log('new tabs', tabCount);
+						this.captureImage();
+						// if (this.props.navigation.state.routeName !== 'BrowserTabs') {
+						// 	this.props.navigation.navigate('BrowserTabs');
+						// }
+
+						// console.log(this.props.navigation.state.routeName, 'new tabs', tabCount);
 					}}
 				>
 					<ImageBackground

@@ -1,6 +1,7 @@
 import { REHYDRATE } from 'redux-persist';
 import { URL, util } from 'gopocket-core';
 import { getLanguageDapp, setActiveTab } from '../../util/browser';
+import AppConstants from '../../core/AppConstants';
 
 const initialState = {
 	defaultChainTypesV2: {
@@ -19,6 +20,8 @@ const initialState = {
 	// url: string, hostname: string, name: string, desc: string, chain: number, logo: string, pos: number, del: number, timestamp: string
 	favouriteDapps: []
 };
+
+const { HOMEPAGE_URL } = AppConstants;
 
 const MAX_POS = 0x100000000;
 
@@ -40,10 +43,10 @@ const browserReducer = (state = initialState, action) => {
 				dappPage: { ...action.dappPage, timestamp: Date.now() }
 			};
 		case 'CLOSE_ALL_TABS': {
-			setActiveTab(null);
+			setActiveTab({ id: action.activeTabId, url: HOMEPAGE_URL });
 			return {
 				...state,
-				tabs: []
+				tabs: [{ id: action.activeTabId, url: HOMEPAGE_URL }]
 			};
 		}
 		case 'CREATE_NEW_TAB': {
@@ -70,6 +73,7 @@ const browserReducer = (state = initialState, action) => {
 			}
 			const activeTab = newTabs[activeIndex];
 			setActiveTab(activeTab);
+
 			return {
 				...state,
 				tabs: [...newTabs]
@@ -88,6 +92,7 @@ const browserReducer = (state = initialState, action) => {
 				}
 			}
 			setActiveTab(activeTab);
+			console.log(activeTab, 'wow777', filterTabs, 'dadada', action.id, action.activeTabId);
 			return {
 				...state,
 				tabs: [...filterTabs]

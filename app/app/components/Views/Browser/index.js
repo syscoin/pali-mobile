@@ -28,6 +28,7 @@ import { getActiveTabId, getStorageActiveTabId, setActiveTab } from '../../../ut
 import SuggestPage from '../../UI/SuggestPage';
 import { AutoCompleteType_DAPP } from '../../../core/AutoCompleteController';
 import TabPageView from '../../UI/TabPageView';
+import OpenedTabs from '../OpenedTabs';
 import SafeArea from 'react-native-safe-area';
 import { callSqlite } from '../../../util/ControllerUtils';
 
@@ -579,7 +580,11 @@ class Browser extends PureComponent {
 				closeTab={this.closeTab}
 				onFocusChange={this.onFocusChange}
 				onTextChange={this.onTextChange}
+				navigation={this.props.navigation}
 				onSubmit={this.onSubmit}
+				tabRef={this.pageTabRef}
+				updateTab={this.props.updateTab}
+				tabData={tab}
 			/>
 		));
 
@@ -612,6 +617,9 @@ class Browser extends PureComponent {
 				this.addressBarRefs[tab.id] = addressBarRef;
 			}
 		});
+		// onSelectTab = selectedIndex => {
+		// 	this.setState({ initialPage: selectedIndex });
+		// };
 
 		return (
 			<SafeAreaView style={styles.wrapper} {...(Device.isAndroid() ? { collapsable: false } : {})}>
@@ -646,6 +654,12 @@ class Browser extends PureComponent {
 							</TabPageView>
 						</View>
 						<View style={styles.topLayout}>
+							{/* <OpenedTabs
+								tabs={this.props.tabs}
+								closeTab={this.closeTab}
+								closeAllTabs={this.props.closeAllTabs}
+							/> */}
+
 							<TabPageView
 								ref={this.pageTabRef}
 								spaceSize={tabSpaceSize}

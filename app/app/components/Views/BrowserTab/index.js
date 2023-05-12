@@ -359,7 +359,6 @@ const BrowserTab = props => {
 	const [refreshing, setRefreshing] = useState(false);
 	const [refreshEnable, setRefreshEnable] = useState(Device.isIos());
 	const [initListener, setInitListener] = useState(false);
-	const [showOpenedTabs, setShowOpenedTabs] = useState(false);
 
 	const isTabActive = useCallback(() => getActiveTabId() === props.tabId, [props.tabId]);
 
@@ -937,7 +936,7 @@ const BrowserTab = props => {
 			onEvent('DappMediumRisk');
 		}
 	};
-
+	console.log(props.addressBarRef);
 	const checkSecurity = async urlStr => {
 		if (!urlStr) {
 			return;
@@ -1062,6 +1061,11 @@ const BrowserTab = props => {
 			const { current } = webviewRef;
 			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
+
+		const getHtmlScript = `
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'WEBSITE_HTML', payload: { html: document.documentElement.outerHTML }}));
+  `;
+		webviewRef.current.injectJavaScript(getHtmlScript);
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
 		load_start_called.current = true;
 		webviewUrlPostMessagePromiseResolve.current = null;
@@ -1118,6 +1122,10 @@ const BrowserTab = props => {
 
 	const onMessage = ({ nativeEvent }) => {
 		let data = nativeEvent.data;
+		console.log(data, 'wow');
+		//data.icon vem o icon da webview
+
+		if (data.payload && data.payload.html) console.log(data.payload.html, 'mundo');
 		try {
 			data = typeof data === 'string' ? JSON.parse(data) : data;
 			if (!data || (!data.type && !data.name)) {
@@ -1133,6 +1141,10 @@ const BrowserTab = props => {
 					}
 				});
 				return;
+			}
+
+			if (data.payload && data.payload.url) {
+				props.updateTab(props.tabId, { url: data.payload.url, title: title, favicon: data.payload.icon });
 			}
 			switch (data.type) {
 				case 'GET_WEBVIEW_URL': {
@@ -1818,54 +1830,7 @@ const BrowserTab = props => {
 	return (
 		<View style={[styles.wrapper]}>
 			<View style={styles.webview}>
-				{showOpenedTabs ? (
-					<>
-						{(!showHomepage || animToHome) && !!entryScriptWeb3 && (
-							<ScrollView
-								refreshControl={
-									<RefreshControl
-										refreshing={refreshing}
-										enabled={refreshEnable}
-										onRefresh={handleRefresh}
-									/>
-								}
-								showsVerticalScrollIndicator={false}
-								scrollEnabled={refreshEnable}
-								contentContainerStyle={styles.flexOne}
-							>
-								<WebView
-									{...panResponder.panHandlers}
-									ref={webviewRef}
-									setSupportMultipleWindows={false}
-									renderError={() => <WebviewError error={error} onReload={reload} />}
-									source={{ uri: initialUrl }}
-									injectedJavaScriptBeforeContentLoaded={entryScriptWeb3}
-									injectedJavaScript={entryScriptVConsole}
-									style={[
-										styles.webview,
-										// eslint-disable-next-line react-native/no-inline-styles
-										animToHome && { left: Device.getDeviceWidth(), index: 10000 }
-									]}
-									onLoadStart={onLoadStart}
-									onLoadEnd={onLoadEnd}
-									onLoadProgress={onLoadProgress}
-									onMessage={onMessage}
-									onError={onError}
-									onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-									originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
-									userAgent={USER_AGENT}
-									sendCookies
-									javascriptEnabled
-									allowsInlineMediaPlayback
-									allowsLinkPreview
-									useWebkit
-									allowsBackForwardNavigationGestures
-									onScroll={handleScroll}
-								/>
-							</ScrollView>
-						)}
-					</>
-				) : (
+				{(!showHomepage || animToHome) && !!entryScriptWeb3 && (
 					<ScrollView
 						refreshControl={
 							<RefreshControl refreshing={refreshing} enabled={refreshEnable} onRefresh={handleRefresh} />
@@ -1874,12 +1839,41 @@ const BrowserTab = props => {
 						scrollEnabled={refreshEnable}
 						contentContainerStyle={styles.flexOne}
 					>
-						<Text> salve</Text>
+						<WebView
+							{...panResponder.panHandlers}
+							ref={webviewRef}
+							setSupportMultipleWindows={false}
+							renderError={() => <WebviewError error={error} onReload={reload} />}
+							source={{ uri: initialUrl }}
+							injectedJavaScriptBeforeContentLoaded={entryScriptWeb3}
+							injectedJavaScript={entryScriptVConsole}
+							style={[
+								styles.webview,
+								// eslint-disable-next-line react-native/no-inline-styles
+								animToHome && { left: Device.getDeviceWidth(), index: 10000 }
+							]}
+							onLoadStart={onLoadStart}
+							onLoadEnd={onLoadEnd}
+							onLoadProgress={onLoadProgress}
+							onMessage={onMessage}
+							onError={onError}
+							onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+							originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
+							userAgent={USER_AGENT}
+							sendCookies
+							javascriptEnabled
+							allowsInlineMediaPlayback
+							allowsLinkPreview
+							useWebkit
+							allowsBackForwardNavigationGestures
+							onScroll={handleScroll}
+						/>
 					</ScrollView>
 				)}
 				{showHomepage && (
 					<HomePage style={styles.homepage} openUrl={openHomepageUrl} navigation={props.navigation} />
 				)}
+
 				{showPopup && renderPopup()}
 			</View>
 			{renderProgressBar()}
