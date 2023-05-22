@@ -103,7 +103,7 @@ const browserReducer = (state = initialState, action) => {
 		}
 		case 'CREATE_NEW_TAB_LAST': {
 			const newTabs = [...state.tabs];
-			const activeIndex = state.tabs.length + 1;
+			const activeIndex = state.tabs.length;
 
 			newTabs.push({
 				url: action.url,

@@ -94,7 +94,7 @@ export function setActiveTab(tab) {
 		AsyncStorage.setItem('storage_activeTabId', String(tab.id));
 	} else {
 		activeTabRef.current = null;
-		AsyncStorage.setItem('storage_activeTabId', null);
+		AsyncStorage.removeItem('storage_activeTabId');
 	}
 }
 

@@ -140,7 +140,7 @@ export default class AddressBar extends PureComponent {
 		closeTab: PropTypes.func,
 		title: PropTypes.string,
 		url: PropTypes.string,
-		tabCount: PropTypes.number.apply,
+		tabCount: PropTypes.number,
 		navigation: PropTypes.object,
 		tabRef: PropTypes.object,
 		updateTab: PropTypes.func,

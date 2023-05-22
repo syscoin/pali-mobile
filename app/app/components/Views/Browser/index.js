@@ -548,18 +548,6 @@ class Browser extends PureComponent {
 		}
 	};
 
-	newTabOpenedTabs = () => {
-		this.props.createNewTabLast(AppConstants.HOMEPAGE_URL, true, this.props.tabs.length);
-		this.setState({ initialPage: this.props.tabs.length });
-
-		setTimeout(() => {
-			this.setState({ showOpenedTabs: false });
-
-			const tab = this.props.tabs[this.props.tabs.length];
-			this.switchToTab(tab);
-			this.gotoPage(this.props.tabs.length);
-		}, 200);
-	};
 	newTabRight = () => {
 		let activeTabIndex = this.props.tabs.length;
 
@@ -742,7 +730,7 @@ class Browser extends PureComponent {
 									closeTab={this.closeTab}
 									closeAllTabs={this.closeAllTabs}
 									openOpenedTab={this.openOpenedTab}
-									newTab={this.newTabOpenedTabs}
+									newTab={this.newTabRight}
 									activeTab={this.state.initialPage}
 								/>
 							) : (
