@@ -28,6 +28,21 @@ export function createNewTab(url, addRight, activeTabId) {
 }
 
 /**
+ * Creates a new tab at last position
+ *
+ * @param {string} url - The website's url
+ */
+export function createNewTabLast(url, addRight, activeTabId) {
+	return {
+		type: 'CREATE_NEW_TAB_LAST',
+		url,
+		id: Date.now(),
+		addRight,
+		activeTabId
+	};
+}
+
+/**
  * Closes an exiting tab
  *
  * @param {number} id - The Tab ID

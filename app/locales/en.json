@@ -185,6 +185,7 @@
 		"approve": "Approve"
 	},
 	"browser": {
+		"addTab": "Add New Tab",
 		"enter_link": "Search name or link",
 		"refresh": "Refresh",
 		"share": "Share",
@@ -203,6 +204,7 @@
 		"more_tip": "Tap here to switch Network or Account.",
 		"add_asset_tip": "%{symbol} has been added to your asset list",
 		"home": "Home",
+		"closeAll": "Close All Tabs",
 		"favourite": "Favourite",
 		"close_tab": "Close Tab",
 		"dont_remind_again": "Don't remind again",
@@ -643,7 +645,7 @@
 		"rename": "Rename",
 		"confirm_delete": "Delete",
 		"rename_eg": "Eg.Moonbag, HODL, Gigawhale, Stake",
-		"delete_warn": "This will only affect UI visibility. If you have any tokens left on this account, they won’t get lost.\n\nYou can add the account back later if you want.",
+		"delete_warn": "This will only affect UI visibility. If you have any tokens left on this account, they won’t get lost.\n\nYou can add the account back later, by selecting \"Add New Account\".",
 		"delete_account": "Delete Account “{{name}}”?",
 		"delete_this_wallet": "Delete this Wallet",
 		"wallet_index": "Wallet{{number}}",
@@ -652,7 +654,7 @@
 		"password": "Password",
 		"wrong_password": "Wrong Password",
 		"delete_wallet": "Delete {{name}}?",
-		"delete_wallet_warn": "If you have any tokens left on this wallet, you should memorize the seed phrase or private key, or your asset could be lost permanently!",
+		"delete_wallet_warn": "If you have any tokens left on this wallet, you should memorize the seed phrase or private key, or your asset could be lost permanently! \n\nBy deleting the wallet, you will also remove your access to the accounts created. \n\nYou can recover them later by selecting \"Add new account\" after you recover the wallet.",
 		"create_new_wallet": "Create New Wallet",
 		"account_wallet_difference": "New account or New wallet?",
 		"account_wallet_difference_desc": "One suite of seed phrase corresponds to one wallet, and you can add new accounts within a wallet.\nUnder normal conditions adding new account will meet the demand for multi addresses.",

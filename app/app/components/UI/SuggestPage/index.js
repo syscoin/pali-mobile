@@ -251,7 +251,6 @@ class SuggestPage extends PureComponent {
 				activeOpacity={1}
 				key={`favorite_${index}`}
 				onPress={() => {
-					console.log('..item?.url = ', this.props.openUrl);
 					this.props.openUrl &&
 						this.props.openUrl({
 							url: item?.url,

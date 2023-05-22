@@ -1,6 +1,7 @@
 import { REHYDRATE } from 'redux-persist';
 import { URL, util } from 'gopocket-core';
 import { getLanguageDapp, setActiveTab } from '../../util/browser';
+import AppConstants from '../../core/AppConstants';
 
 const initialState = {
 	defaultChainTypesV2: {
@@ -19,6 +20,8 @@ const initialState = {
 	// url: string, hostname: string, name: string, desc: string, chain: number, logo: string, pos: number, del: number, timestamp: string
 	favouriteDapps: []
 };
+
+const { HOMEPAGE_URL } = AppConstants;
 
 const MAX_POS = 0x100000000;
 
@@ -39,8 +42,30 @@ const browserReducer = (state = initialState, action) => {
 				...state,
 				dappPage: { ...action.dappPage, timestamp: Date.now() }
 			};
+		case 'CLOSE_TAB': {
+			const currentTab = state.tabs.find(tab => tab.id === action.id);
+			const activeIndex = state.tabs.indexOf(currentTab);
+
+			const filterTabs = state.tabs.filter(tab => tab.id !== action.id);
+			let activeTab = state.tabs.find(tab => tab.id === action.activeTabId);
+			if (filterTabs.length > 0) {
+				if (activeIndex <= filterTabs.length - 1) {
+					activeTab = filterTabs[activeIndex];
+				} else {
+					activeTab = filterTabs[activeIndex - 1];
+				}
+			}
+			setActiveTab(activeTab);
+
+			return {
+				...state,
+				tabs: [...filterTabs]
+			};
+		}
 		case 'CLOSE_ALL_TABS': {
-			setActiveTab(null);
+			const activeTab = { id: action.activeTabId, url: HOMEPAGE_URL };
+			setActiveTab(activeTab);
+
 			return {
 				...state,
 				tabs: []
@@ -70,27 +95,27 @@ const browserReducer = (state = initialState, action) => {
 			}
 			const activeTab = newTabs[activeIndex];
 			setActiveTab(activeTab);
+
 			return {
 				...state,
 				tabs: [...newTabs]
 			};
 		}
-		case 'CLOSE_TAB': {
-			const currentTab = state.tabs.find(tab => tab.id === action.id);
-			const activeIndex = state.tabs.indexOf(currentTab);
-			const filterTabs = state.tabs.filter(tab => tab.id !== action.id);
-			let activeTab = state.tabs.find(tab => tab.id === action.activeTabId);
-			if (filterTabs.length > 0) {
-				if (activeIndex <= filterTabs.length - 1) {
-					activeTab = filterTabs[activeIndex];
-				} else {
-					activeTab = filterTabs[activeIndex - 1];
-				}
-			}
+		case 'CREATE_NEW_TAB_LAST': {
+			const newTabs = [...state.tabs];
+			const activeIndex = state.tabs.length;
+
+			newTabs.push({
+				url: action.url,
+				id: action.id
+			});
+
+			const activeTab = newTabs[activeIndex];
 			setActiveTab(activeTab);
+
 			return {
 				...state,
-				tabs: [...filterTabs]
+				tabs: [...newTabs]
 			};
 		}
 		case 'SET_ACTIVE_TAB':
@@ -146,6 +171,7 @@ const browserReducer = (state = initialState, action) => {
 				return state;
 			}
 			let needUpdate = false;
+
 			action.dapps.forEach(dapp => {
 				if (
 					!state.favouriteDapps.find(

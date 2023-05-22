@@ -1061,6 +1061,7 @@ const BrowserTab = props => {
 			const { current } = webviewRef;
 			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
+
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
 		load_start_called.current = true;
 		webviewUrlPostMessagePromiseResolve.current = null;
@@ -1117,6 +1118,7 @@ const BrowserTab = props => {
 
 	const onMessage = ({ nativeEvent }) => {
 		let data = nativeEvent.data;
+
 		try {
 			data = typeof data === 'string' ? JSON.parse(data) : data;
 			if (!data || (!data.type && !data.name)) {
@@ -1133,6 +1135,7 @@ const BrowserTab = props => {
 				});
 				return;
 			}
+
 			switch (data.type) {
 				case 'GET_WEBVIEW_URL': {
 					const { url } = data.payload;
@@ -1860,6 +1863,7 @@ const BrowserTab = props => {
 				{showHomepage && (
 					<HomePage style={styles.homepage} openUrl={openHomepageUrl} navigation={props.navigation} />
 				)}
+
 				{showPopup && renderPopup()}
 			</View>
 			{renderProgressBar()}
