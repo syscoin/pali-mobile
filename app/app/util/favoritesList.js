@@ -39,11 +39,11 @@ const favoritesDapps = [
 		name: 'DefiLlama',
 		url: 'https://defillama.com'
 	},
-	//TODO: update api url to Pali ones
 	{
 		logo: 'https://cdn.gopocket.finance/files/CoinGeckologo.png',
 		name: 'Coingecko',
 		url: 'https://www.coingecko.com'
 	}
 ];
+//TODO: update api url to Pali ones
 export default favoritesDapps;

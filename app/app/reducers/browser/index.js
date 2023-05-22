@@ -42,11 +42,33 @@ const browserReducer = (state = initialState, action) => {
 				...state,
 				dappPage: { ...action.dappPage, timestamp: Date.now() }
 			};
-		case 'CLOSE_ALL_TABS': {
-			setActiveTab({ id: action.activeTabId, url: HOMEPAGE_URL });
+		case 'CLOSE_TAB': {
+			const currentTab = state.tabs.find(tab => tab.id === action.id);
+			const activeIndex = state.tabs.indexOf(currentTab);
+
+			const filterTabs = state.tabs.filter(tab => tab.id !== action.id);
+			let activeTab = state.tabs.find(tab => tab.id === action.activeTabId);
+			if (filterTabs.length > 0) {
+				if (activeIndex <= filterTabs.length - 1) {
+					activeTab = filterTabs[activeIndex];
+				} else {
+					activeTab = filterTabs[activeIndex - 1];
+				}
+			}
+			setActiveTab(activeTab);
+
 			return {
 				...state,
-				tabs: [{ id: action.activeTabId, url: HOMEPAGE_URL }]
+				tabs: [...filterTabs]
+			};
+		}
+		case 'CLOSE_ALL_TABS': {
+			const activeTab = { id: action.activeTabId, url: HOMEPAGE_URL };
+			setActiveTab(activeTab);
+
+			return {
+				...state,
+				tabs: []
 			};
 		}
 		case 'CREATE_NEW_TAB': {
@@ -79,23 +101,21 @@ const browserReducer = (state = initialState, action) => {
 				tabs: [...newTabs]
 			};
 		}
-		case 'CLOSE_TAB': {
-			const currentTab = state.tabs.find(tab => tab.id === action.id);
-			const activeIndex = state.tabs.indexOf(currentTab);
-			const filterTabs = state.tabs.filter(tab => tab.id !== action.id);
-			let activeTab = state.tabs.find(tab => tab.id === action.activeTabId);
-			if (filterTabs.length > 0) {
-				if (activeIndex <= filterTabs.length - 1) {
-					activeTab = filterTabs[activeIndex];
-				} else {
-					activeTab = filterTabs[activeIndex - 1];
-				}
-			}
+		case 'CREATE_NEW_TAB_LAST': {
+			const newTabs = [...state.tabs];
+			const activeIndex = state.tabs.length + 1;
+
+			newTabs.push({
+				url: action.url,
+				id: action.id
+			});
+
+			const activeTab = newTabs[activeIndex];
 			setActiveTab(activeTab);
-			console.log(activeTab, 'wow777', filterTabs, 'dadada', action.id, action.activeTabId);
+
 			return {
 				...state,
-				tabs: [...filterTabs]
+				tabs: [...newTabs]
 			};
 		}
 		case 'SET_ACTIVE_TAB':
@@ -151,6 +171,7 @@ const browserReducer = (state = initialState, action) => {
 				return state;
 			}
 			let needUpdate = false;
+
 			action.dapps.forEach(dapp => {
 				if (
 					!state.favouriteDapps.find(

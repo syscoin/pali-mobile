@@ -22,7 +22,6 @@ export const convertImageUrl = imageUrl => {
 	if (imageUrl && imageUrl.startsWith('https://api.gopocket.finance/proxy-png?url=')) {
 		return imageUrl;
 	}
-
 	if (!util.isEtherscanAvailable() && !!imageUrl && !isVideoFile(imageUrl)) {
 		//TODO: update api url to Pali ones
 		imageUrl = 'https://api.gopocket.finance/proxy-png?url=' + imageUrl;
