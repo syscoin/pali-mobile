@@ -19,10 +19,10 @@ import { strings } from '../../../../locales/i18n';
 import { URL, util } from 'gopocket-core';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImageCapInset from '../../UI/ImageCapInset';
-import Favicon from '../../UI/Favicon';
 import AppConstants from '../../../core/AppConstants';
 import { getActiveTabId } from '../../../util/browser';
-import { captureRef } from 'react-native-view-shot';
+import { captureRef, dirs } from 'react-native-view-shot';
+import RNFS from 'react-native-fs';
 
 const styles = StyleSheet.create({
 	topTabbar: {
@@ -144,7 +144,10 @@ export default class AddressBar extends PureComponent {
 		navigation: PropTypes.object,
 		tabRef: PropTypes.object,
 		updateTab: PropTypes.func,
-		tabData: PropTypes.object
+		tabData: PropTypes.object,
+		gotoOpenedPages: PropTypes.func,
+		showOpenedTabs: PropTypes.bool,
+		newTab: PropTypes.func
 	};
 
 	state = {
@@ -252,18 +255,27 @@ export default class AddressBar extends PureComponent {
 
 	captureImage = () => {
 		const { id, ...tabDataFiltered } = this.props.tabData;
-		setTimeout(() => {
-			captureRef(this.props.tabRef, { format: 'png', quality: 1 })
-				.then(uri => {
-					console.log('atualizou');
-					const updatedTabData = { ...tabDataFiltered, uri };
-					this.props.updateTab(this.props.tabId, updatedTabData);
-				})
-				.catch(error => {
-					util.logError('PPYang takeSnapshot browserTab error:', error);
-				})
-				.finally(() => {});
-		}, 3000);
+
+		captureRef(this.props.tabRef, { format: 'png', quality: 1 })
+			.then(uri => {
+				// save the image to a persistent location
+				const timestamp = Date.now();
+				const newImagePath = `${RNFS.DocumentDirectoryPath}/screenshot_${timestamp}.png`;
+				RNFS.moveFile(uri, newImagePath)
+					.then(() => {
+						const updatedTabData = {
+							...tabDataFiltered,
+							uri: Device.isAndroid ? `file://${newImagePath}` : newImagePath
+						};
+						this.props.updateTab(this.props.tabId, updatedTabData);
+					})
+					.catch(err => {
+						console.log('Failed to move image file: ', err);
+					});
+			})
+			.catch(error => {
+				util.logError('PPYang takeSnapshot browserTab error:', error);
+			});
 	};
 
 	render = () => {
@@ -348,6 +360,7 @@ export default class AddressBar extends PureComponent {
 						<View style={styles.topTabbar}>
 							<TouchableOpacity
 								activeOpacity={1}
+								disabled={this.props.showOpenedTabs}
 								onPress={() => {
 									if (tabId !== getActiveTabId() && inputEditing) {
 										this.setInputEditing(false);
@@ -445,6 +458,7 @@ export default class AddressBar extends PureComponent {
 
 									<TouchableOpacity
 										style={(inputEditing || (onlyOneTab && isHomePage)) && styles.noDisplay}
+										disabled={this.props.showOpenedTabs}
 										onPress={() => {
 											if (isHomePage) {
 												closeTab && closeTab(tabId);
@@ -488,7 +502,10 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						this.captureImage();
+						if (!this.props.showOpenedTabs) {
+							this.captureImage();
+							setTimeout(() => this.props.gotoOpenedPages(true), 200);
+						}
 						// if (this.props.navigation.state.routeName !== 'BrowserTabs') {
 						// 	this.props.navigation.navigate('BrowserTabs');
 						// }
@@ -507,7 +524,7 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						switchRightTab(tabId);
+						this.props.gotoOpenedPages(false), this.props.newTab();
 					}}
 				>
 					<ImageBackground

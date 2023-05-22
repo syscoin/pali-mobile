@@ -186,6 +186,7 @@
 		"approve": "批准"
 	},
 	"browser": {
+		"addTab": "添加新标签",
 		"enter_link": "搜索名称或输入网址",
 		"refresh": "刷新",
 		"share": "分享",
@@ -204,6 +205,7 @@
 		"more_tip": "点击此处切换网络或帐户。",
 		"add_asset_tip": "%{symbol}已添加至你的资产列表",
 		"home": "首页",
+		"closeAll": "关闭所有标签",
 		"favourite": "收藏",
 		"close_tab": "关闭标签",
 		"dont_remind_again": "不再提示",

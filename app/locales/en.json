@@ -185,6 +185,7 @@
 		"approve": "Approve"
 	},
 	"browser": {
+		"addTab": "Add New Tab",
 		"enter_link": "Search name or link",
 		"refresh": "Refresh",
 		"share": "Share",
@@ -203,6 +204,7 @@
 		"more_tip": "Tap here to switch Network or Account.",
 		"add_asset_tip": "%{symbol} has been added to your asset list",
 		"home": "Home",
+		"closeAll": "Close All Tabs",
 		"favourite": "Favourite",
 		"close_tab": "Close Tab",
 		"dont_remind_again": "Don't remind again",
