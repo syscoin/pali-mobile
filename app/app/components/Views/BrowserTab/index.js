@@ -936,7 +936,7 @@ const BrowserTab = props => {
 			onEvent('DappMediumRisk');
 		}
 	};
-	console.log(props.addressBarRef);
+
 	const checkSecurity = async urlStr => {
 		if (!urlStr) {
 			return;
@@ -1122,10 +1122,7 @@ const BrowserTab = props => {
 
 	const onMessage = ({ nativeEvent }) => {
 		let data = nativeEvent.data;
-		console.log(data, 'wow');
-		//data.icon vem o icon da webview
 
-		if (data.payload && data.payload.html) console.log(data.payload.html, 'mundo');
 		try {
 			data = typeof data === 'string' ? JSON.parse(data) : data;
 			if (!data || (!data.type && !data.name)) {
@@ -1143,9 +1140,6 @@ const BrowserTab = props => {
 				return;
 			}
 
-			if (data.payload && data.payload.url) {
-				props.updateTab(props.tabId, { url: data.payload.url, title: title, favicon: data.payload.icon });
-			}
 			switch (data.type) {
 				case 'GET_WEBVIEW_URL': {
 					const { url } = data.payload;
