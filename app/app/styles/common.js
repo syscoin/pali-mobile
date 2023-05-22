@@ -81,6 +81,7 @@ export const colors = {
 	$9B989B: '#9B989B',
 	$4CD964: '#4CD964',
 	$D20058: '#D20058',
+	blackAlpha300: "'rgba(0, 0, 0, 0.16)'",
 	brandPink300Alpha: 'rgba(254, 110, 145, 0.14)',
 	brandPink300Alpha3: 'rgba(254, 110, 145, 0.3)',
 	brandPink30026: '#FE6E9126',

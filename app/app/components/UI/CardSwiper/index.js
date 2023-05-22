@@ -140,12 +140,20 @@ const styles = StyleSheet.create({
 		height: 24,
 		opacity: 1
 	},
+	chainNameView: {
+		borderRadius: 20,
+		paddingHorizontal: 4,
+		marginTop: 5,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
 	chainName: {
 		fontSize: 9,
 		color: colors.$F7F7F7,
 		alignSelf: 'center',
 		marginTop: 3,
-		height: 15
+		height: 15,
+		textAlign: 'center'
 	},
 	cardSizePosition: {
 		marginTop: 20,
@@ -459,6 +467,7 @@ class CardSwiper extends PureComponent {
 				}
 			});
 		}
+
 		const hasInMore = moreChains.indexOf(currentChainType) !== -1;
 
 		const hasEns = !!ensEntry?.ensName;
@@ -638,6 +647,12 @@ class CardSwiper extends PureComponent {
 									{favouriteChains.map((chainType, index) => {
 										const translateIndex = ChainTypes.indexOf(chainType);
 										const isRpc = getIsRpc(chainType);
+										const networkName = () =>
+											currentChainType !== chainType
+												? ''
+												: isRpc
+												? getRpcName(chainType)
+												: ChainTypeNames[translateIndex];
 										return (
 											<TouchableOpacity
 												style={styles.networkTouch}
@@ -662,18 +677,31 @@ class CardSwiper extends PureComponent {
 															: ChainTypeIcons[translateIndex]
 													}
 												/>
-												<Text
-													style={styles.chainName}
-													allowFontScaling={false}
-													numberOfLines={1}
-													ellipsizeMode={'middle'}
+
+												<View
+													style={[
+														styles.chainNameView,
+														{
+															width:
+																networkName().length > 8
+																	? 55
+																	: networkName().length > 5
+																	? 50
+																	: 30,
+															backgroundColor:
+																currentChainType === chainType && colors.blackAlpha300
+														}
+													]}
+													key={currentChainType}
 												>
-													{currentChainType !== chainType
-														? ''
-														: isRpc
-														? getRpcName(chainType)
-														: ChainTypeNames[translateIndex]}
-												</Text>
+													<Text
+														style={styles.chainName}
+														allowFontScaling={false}
+														numberOfLines={1}
+													>
+														{networkName()}
+													</Text>
+												</View>
 											</TouchableOpacity>
 										);
 									})}
@@ -705,17 +733,27 @@ class CardSwiper extends PureComponent {
 											}
 											source={require('../../../images/ic_card_more.png')}
 										/>
-										<Text
-											style={styles.chainName}
-											allowFontScaling={false}
-											ref={this.iconRef}
-											numberOfLines={1}
+										<View
+											style={[
+												styles.chainNameView,
+												{
+													backgroundColor: hasInMore && colors.blackAlpha300
+												}
+											]}
+											key={currentChainType}
 										>
-											{hasInMore &&
-												(isRpc
-													? getRpcName(currentChainType) + '...'
-													: ChainTypeNames[currentIndex] + '...')}
-										</Text>
+											<Text
+												style={styles.chainName}
+												allowFontScaling={false}
+												ref={this.iconRef}
+												numberOfLines={1}
+											>
+												{hasInMore &&
+													(isRpc
+														? getRpcName(currentChainType)
+														: ChainTypeNames[currentIndex])}
+											</Text>
+										</View>
 									</TouchableOpacity>
 								</View>
 							</View>
