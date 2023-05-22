@@ -1062,10 +1062,6 @@ const BrowserTab = props => {
 			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
 
-		const getHtmlScript = `
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'WEBSITE_HTML', payload: { html: document.documentElement.outerHTML }}));
-  `;
-		webviewRef.current.injectJavaScript(getHtmlScript);
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
 		load_start_called.current = true;
 		webviewUrlPostMessagePromiseResolve.current = null;

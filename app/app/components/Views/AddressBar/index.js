@@ -506,11 +506,6 @@ export default class AddressBar extends PureComponent {
 							this.captureImage();
 							setTimeout(() => this.props.gotoOpenedPages(true), 200);
 						}
-						// if (this.props.navigation.state.routeName !== 'BrowserTabs') {
-						// 	this.props.navigation.navigate('BrowserTabs');
-						// }
-
-						// console.log(this.props.navigation.state.routeName, 'new tabs', tabCount);
 					}}
 				>
 					<ImageBackground

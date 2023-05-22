@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 		flexShrink: 1
 	},
 	touchableOpacity: {
-		borderColor: colors.brandPink500, // You have to replace 'colors.brandPink500' with an actual color code.
+		borderColor: colors.brandPink500,
 		borderWidth: 0,
 		marginTop: 10
 	},
@@ -75,12 +75,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-around',
-		backgroundColor: colors.brandPink50, // replace with your color
+		backgroundColor: colors.brandPink50,
 		padding: 10,
 		borderRadius: 50
 	},
 	addButtonText: {
-		color: colors.brandPink300, // replace with your color
+		color: colors.brandPink300,
 		marginLeft: 5
 	},
 	optionsButton: {
@@ -169,6 +169,7 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 					{favicon && (
 						<View style={styles.faviconContainer}>
 							{favicon.uri && favicon.uri.slice(-4) === '.svg' ? (
+								//some favicon come as .svg
 								<SvgUri width="18" height="18" uri={favicon.uri} />
 							) : (
 								<Image style={styles.faviconImage} source={favicon} />

@@ -686,9 +686,6 @@ class Browser extends PureComponent {
 				this.addressBarRefs[tab.id] = addressBarRef;
 			}
 		});
-		// onSelectTab = selectedIndex => {
-		// 	this.setState({ initialPage: selectedIndex });
-		// };
 
 		return (
 			<SafeAreaView style={styles.wrapper} {...(Device.isAndroid() ? { collapsable: false } : {})}>
