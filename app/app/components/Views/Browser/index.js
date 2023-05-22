@@ -668,14 +668,14 @@ class Browser extends PureComponent {
 	onChangeTab = page => {
 		const tab = this.props.tabs[page];
 		this.switchToTab(tab);
-		// if (Device.isAndroid() && !this.tabCreating) {
-		// 	this.timeoutUpdatePage();
-		// 	this.props.tabs.forEach((tab, index) => {
-		// 		if (!this.addressBarRefs[tab.id]) {
-		// 			this.addressBarRefs[tab.id].current?.setInputEditing(false);
-		// 		}
-		// 	});
-		// }
+		if (Device.isAndroid() && !this.tabCreating) {
+			this.timeoutUpdatePage();
+			this.props.tabs.forEach((tab, index) => {
+				if (!this.addressBarRefs[tab.id]) {
+					this.addressBarRefs[tab.id].current?.setInputEditing(false);
+				}
+			});
+		}
 	};
 
 	gotoPage = page => {
