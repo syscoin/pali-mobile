@@ -1,5 +1,5 @@
 
-package io.gopocket.utils;
+package io.paliwallet.utils;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

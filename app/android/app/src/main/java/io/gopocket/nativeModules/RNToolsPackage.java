@@ -1,4 +1,4 @@
-package io.gopocket.nativeModules;
+package io.paliwallet.nativeModules;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;

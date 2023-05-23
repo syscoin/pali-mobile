@@ -580,23 +580,7 @@ class Browser extends PureComponent {
 					key={`tab_browser_${tab.id}`}
 					tabId={tab.id}
 					initialUrl={tab.url}
-					newTab={() => {
-						const activeTab = this.getTabById(getActiveTabId());
-						let activeTabIndex = 0;
-						if (activeTab) {
-							activeTabIndex = this.findTabIndex(activeTab);
-						}
-						this.newTab(null, true);
-						setTimeout(() => {
-							activeTabIndex += 1;
-							if (this.props.tabs.length > activeTabIndex) {
-								const tab = this.props.tabs[activeTabIndex];
-								this.switchToTab(tab);
-								this.gotoPage(activeTabIndex);
-								this.delayUpdateInitialPage();
-							}
-						}, 500);
-					}}
+					newTab={this.newTabRight}
 					addressBarRef={addressBarRefs[tab.id]}
 					closeTab={this.closeTab}
 				/>

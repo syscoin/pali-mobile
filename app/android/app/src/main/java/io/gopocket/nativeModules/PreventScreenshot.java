@@ -1,4 +1,4 @@
-package io.gopocket.nativeModules;
+package io.paliwallet.nativeModules;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -7,7 +7,7 @@ import com.facebook.react.bridge.Promise;
 
 import android.view.WindowManager;
 
-import io.gopocket.MainApplication;
+import io.paliwallet.MainApplication;
 
 import static com.facebook.react.bridge.UiThreadUtil.runOnUiThread;
 

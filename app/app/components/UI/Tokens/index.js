@@ -20,6 +20,7 @@ import {
 	ScrollView
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import Icon from '../Icon';
 import TokenImage from '../TokenImage';
 import { colors, fontStyles } from '../../../styles/common';
@@ -276,8 +277,9 @@ const styles = StyleSheet.create({
 		marginHorizontal: 22
 	},
 	otcModalRoot: {
-		borderRadius: 8,
-		backgroundColor: colors.white
+		backgroundColor: colors.white,
+		position: 'relative',
+		borderRadius: 15
 	},
 	hitSlop: {
 		top: 10,
@@ -332,7 +334,9 @@ const styles = StyleSheet.create({
 	otcCloseBtn: {
 		alignSelf: 'flex-end',
 		paddingTop: 10,
-		paddingRight: 12
+		paddingRight: 12,
+		position: 'absolute',
+		zIndex: 99
 	},
 	otcInterLayout: {
 		alignItems: 'center',
@@ -1500,18 +1504,21 @@ class Tokens extends PureComponent {
 			statusBarTranslucent
 		>
 			<View style={styles.otcModalRoot}>
+				<Image
+					style={{ width: '100%', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
+					resizeMode="cover"
+					source={require('../../../images/coinifyBanner.png')}
+				/>
 				<TouchableOpacity onPress={this.hideOtcModal} style={styles.otcCloseBtn} hitSlop={styles.hitSlop}>
-					<Image source={require('../../../images/ic_pop_close.png')} />
+					<AntIcon color={colors.white} name="close" size={16} />
 				</TouchableOpacity>
-
 				<View style={styles.otcInterLayout}>
-					<Image source={require('../../../images/ic_transak.png')} />
-
 					<View>
 						<Text style={styles.otcContent1}>{strings('otc.content1')}</Text>
-
 						<Text style={styles.otcContent2}>{strings('otc.content2')}</Text>
 						<Text style={styles.otcContent2}>{strings('otc.content3')}</Text>
+						{/* 
+
 						<View>
 							<Text style={styles.otcContent2}>
 								<Text style={styles.otcClickHereLabel}>{strings('otc.content4')}</Text>
@@ -1526,7 +1533,9 @@ class Tokens extends PureComponent {
 									);
 								}}
 							/>
+							
 						</View>
+						*/}
 					</View>
 
 					<TouchableOpacity
@@ -1534,7 +1543,7 @@ class Tokens extends PureComponent {
 						style={styles.buyBtn}
 						onPress={() => {
 							this.hideOtcModal();
-							this.goWeb('https://global.transak.com/?apiKey=2bd8015d-d8e6-4972-bcca-22770dcbe595');
+							this.goWeb('https://mycoinify.com');
 						}}
 					>
 						<Text style={styles.otcBuyLabel}>{strings('otc.buy_now')}</Text>

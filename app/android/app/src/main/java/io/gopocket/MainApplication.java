@@ -1,4 +1,4 @@
-package io.gopocket;
+package io.paliwallet;
 
 import com.facebook.react.ReactApplication;
 import com.github.wuxudong.rncharts.MPAndroidChartPackage;
@@ -14,7 +14,7 @@ import com.facebook.soloader.SoLoader;
 import cl.json.ShareApplication;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import io.gopocket.nativeModules.PreventScreenshotPackage;
+import io.paliwallet.nativeModules.PreventScreenshotPackage;
 
 import android.text.TextUtils;
 
@@ -22,7 +22,7 @@ import androidx.multidex.MultiDexApplication;
 
 import android.database.CursorWindow;
 import java.lang.reflect.Field;
-import io.gopocket.nativeModules.RNToolsPackage;
+import io.paliwallet.nativeModules.RNToolsPackage;
 
 import com.cmcewen.blurview.BlurViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
@@ -132,7 +132,7 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
     		   We use reflection here to pick up the class that initializes Flipper,
     		  since Flipper library is not available in release mode
     		  */
-    		  Class<?> aClass = Class.forName("io.gopocket.ReactNativeFlipper");
+    		  Class<?> aClass = Class.forName("io.paliwallet.ReactNativeFlipper");
     		  aClass
     		      .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
     		      .invoke(null, context, reactInstanceManager);
