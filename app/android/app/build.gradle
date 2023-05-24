@@ -106,7 +106,8 @@ dependencies {
 	implementation project(':lottie-react-native')
 
 	implementation project(':react-native-gesture-handler')
-
+	implementation project(path: ":@react-native-firebase_analytics")
+	
 	implementation 'androidx.multidex:multidex:2.0.1'
 	implementation 'androidx.annotation:annotation:1.1.0'
 	implementation 'androidx.appcompat:appcompat:1.2.0'

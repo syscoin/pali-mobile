@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 import cl.json.ShareApplication;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import io.paliwallet.nativeModules.PreventScreenshotPackage;
 
 import android.text.TextUtils;
