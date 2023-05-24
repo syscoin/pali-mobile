@@ -123,13 +123,12 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 	const [favicon, setFavicon] = useState(null);
 
 	const handlePress = () => {
+		onPress();
 		Animated.timing(scaleAnim, {
 			toValue: 1.05,
 			duration: 150,
 			useNativeDriver: true
-		}).start(() => {
-			onPress();
-		});
+		}).start();
 	};
 
 	useEffect(() => {
