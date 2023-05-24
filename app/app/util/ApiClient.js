@@ -13,14 +13,18 @@ import Engine from '../core/Engine';
 import NativeThreads from '../threads/NativeThreads';
 import { API_KEY } from '@env';
 import { callSqlite } from './ControllerUtils';
+import favoritesDapps from './favoritesList';
+import suggestedWebsites from './suggestedWebsites';
 
 const TEST_INVITE_URL = 'http://pocket.libsss.com';
+//TODO: update api url to Pali ones
 const RELEASE_INVITE_URL = 'https://community.gopocket.xyz';
 
 const log = util.logInfo;
 let fetch_config_success = false;
 
 const fetchConfig = async () => {
+	//TODO: update api url to Pali ones
 	const configUrl = util.useTestServer()
 		? 'https://api.beta.gopocket.finance/app/config'
 		: 'https://api.gopocket.finance/app/config';
@@ -35,7 +39,7 @@ const fetchConfig = async () => {
 				const updateConfig = jsonContent.update_config;
 				const chainTypes = jsonContent.chain_types_v2;
 				const appstoreBaseVersion = jsonContent.appstore_base_version;
-				const dappPage = jsonContent.dapp_page;
+				let dappPage = jsonContent.dapp_page;
 				const contractList = jsonContent.contract_list;
 				const useOffchainEndPoint = jsonContent.use_offchain_endpoint;
 				const ipfsGateway = jsonContent.ipfs_gateway;
@@ -51,10 +55,11 @@ const fetchConfig = async () => {
 					store.dispatch(SetAppstoreBaseVersion(appstoreBaseVersion));
 				}
 				if (dappPage) {
+					dappPage.en = suggestedWebsites;
+					dappPage.zh = suggestedWebsites;
 					store.dispatch(updateDappPage(dappPage));
 					callSqlite('updateWhitelistDapps', getDapp(dappPage));
-					const lDapp = getLanguageDapp(dappPage);
-					lDapp?.favourites && store.dispatch(addFavouriteDapps(lDapp?.favourites));
+					store.dispatch(addFavouriteDapps(favoritesDapps));
 				}
 				if (contractList) {
 					store.dispatch(updateContractList(contractList));

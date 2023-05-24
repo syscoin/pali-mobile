@@ -1,7 +1,9 @@
 import React from 'react';
-import { Image, Text } from 'react-native';
 import { createStackNavigator, StackViewStyleInterpolator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Text, DeviceEventEmitter, Vibration } from 'react-native';
+
+import { strings } from '../../../locales/i18n';
 import SimpleWebview from '../Views/SimpleWebview';
 import Settings from '../Views/Settings';
 import Wallet from '../Views/Wallet';
@@ -15,7 +17,6 @@ import DeveloperOptions from '../Views/DeveloperOptions';
 import CurrencyUnit from '../Views/CurrencyUnit';
 import UpdateCheck from '../Views/UpdateCheck';
 import { colors, fontStyles } from '../../styles/common';
-import { strings } from '../../../locales/i18n';
 import WalletManagement from '../Views/WalletManagement';
 import ObserveAccounts from '../Views/ObserveAccounts';
 import NftView from '../Views/NftView';
@@ -30,6 +31,20 @@ import ImportFromSeed from '../Views/ImportFromSeed';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
 import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
+import GlobeIcon from '../UI/GlobeIcon';
+import WalletIcon from '../UI/WalletIcon';
+
+const SlideFromLeft = (index, position, width) => {
+	const inputRange = [index - 1, index, index + 1];
+	const translateX = position.interpolate({
+		inputRange,
+		outputRange: [-width, 0, 0]
+	});
+
+	return {
+		transform: [{ translateX }]
+	};
+};
 
 export default createStackNavigator(
 	{
@@ -68,17 +83,52 @@ export default createStackNavigator(
 									navigationOptions: {
 										header: null
 									}
+								},
+								SettingsView: {
+									screen: Settings,
+									navigationOptions: {
+										header: null
+									}
 								}
 							},
 							{
-								transitionConfig: () => ({
-									screenInterpolator: StackViewStyleInterpolator.forHorizontal
-								})
+								transitionConfig: transitionProps => {
+									const { scene, scenes } = transitionProps;
+									const { route } = scene;
+
+									// apply animation for SettingsView screen and when navigating to/from it
+									if (
+										route.routeName === 'SettingsView' ||
+										scenes[1]?.route.routeName === 'SettingsView'
+									) {
+										return {
+											screenInterpolator: sceneProps => {
+												const { layout, position, scene } = sceneProps;
+												const { index } = scene;
+
+												return SlideFromLeft(index, position, layout.initWidth);
+											}
+										};
+									}
+
+									// use the default screen transition for other screens
+									return {
+										screenInterpolator: sceneProps => {
+											const translate = sceneProps?.scenes?.[1]?.route?.params?.translate;
+											if (translate) {
+												const translateFunc = StackViewStyleInterpolator[translate];
+												if (translateFunc) {
+													return translateFunc(sceneProps);
+												}
+											}
+											return StackViewStyleInterpolator.forHorizontal(sceneProps);
+										}
+									};
+								}
 							}
 						),
 						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => (
+							tabBarLabel: () => (
 								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
@@ -88,26 +138,17 @@ export default createStackNavigator(
 											...fontStyles.bold
 										},
 										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginBottom: 5 },
-										focused && { color: colors.$FE6E91 },
-										!focused && { color: colors.$BEC8CE }
+										{ marginBottom: 5 }
 									]}
 								>
-									{strings('other.asset')}
+									{strings('other.wallet')}
 								</Text>
 							),
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginTop: 5 }
-									]}
-									source={
-										focused ? require('../../images/1HL.png') : require('../../images/1Nor.png')
-									}
-								/>
-							)
+							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('WalletTabHome');
+								DeviceEventEmitter.emit('onWalletTabFocused');
+							}
 						}
 					},
 					BrowserTabHome: {
@@ -116,39 +157,13 @@ export default createStackNavigator(
 								screen: Browser,
 								navigationOptions: {
 									header: null,
-									gesturesEnabled: false
+									gesturesEnabled: false,
+									animationEnabled: true
 								}
 							}
 						}),
 						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => <Text />,
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ position: 'absolute', top: 0 }
-									]}
-									source={
-										focused ? require('../../images/2Hl.png') : require('../../images/2NOR.png')
-									}
-								/>
-							)
-						}
-					},
-					SettingsHome: {
-						screen: createStackNavigator({
-							SettingsView: {
-								screen: Settings,
-								navigationOptions: {
-									header: null
-								}
-							}
-						}),
-						navigationOptions: {
-							// eslint-disable-next-line react/display-name,react/prop-types
-							tabBarLabel: ({ focused }) => (
+							tabBarLabel: () => (
 								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
@@ -158,32 +173,26 @@ export default createStackNavigator(
 											...fontStyles.bold
 										},
 										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginBottom: 5 },
-										focused && { color: colors.$FE6E91 },
-										!focused && { color: colors.$BEC8CE }
+										{ marginBottom: 5 }
 									]}
 								>
-									{strings('app_settings.title')}
+									{strings('other.browser')}
 								</Text>
 							),
-							// eslint-disable-next-line react/prop-types,react/display-name
-							tabBarIcon: ({ focused }) => (
-								<Image
-									style={[
-										// eslint-disable-next-line react-native/no-inline-styles
-										{ marginTop: 5 }
-									]}
-									source={
-										focused ? require('../../images/3HL.png') : require('../../images/3Nor.png')
-									}
-								/>
-							)
+							tabBarIcon: ({ focused, onPress = () => {} }) => (
+								<GlobeIcon onPress={onPress} focused={focused} />
+							),
+							tabBarOnPress: ({ navigation }) => {
+								navigation.navigate('BrowserTabHome');
+								DeviceEventEmitter.emit('onBrowserTabFocused');
+							}
 						}
 					}
 				},
 				{
 					defaultNavigationOptions: () => ({
 						tabBarVisible: true,
+						animationEnabled: true,
 						tabBarOptions: {
 							style: {
 								backgroundColor: colors.white,

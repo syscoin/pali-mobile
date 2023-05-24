@@ -17,16 +17,22 @@ const styles = StyleSheet.create({
 		zIndex: 99999999999999
 	},
 	title: {
+		color: colors.$202020,
+		backgroundColor: colors.$F6F6F6,
 		fontSize: 22,
+		textAlign: 'center',
 		...fontStyles.bold
-	},
-	titleBar: {
-		backgroundColor: colors.$F6F6F6
 	},
 	cardItem: {
 		backgroundColor: colors.white,
 		borderRadius: 10,
 		marginTop: 20
+	},
+	headerStyle: {
+		flexDirection: 'row',
+		backgroundColor: colors.$F6F6F6,
+		alignItems: 'center',
+		justifyContent: 'center'
 	},
 	cardItemTop: {
 		backgroundColor: colors.white,
@@ -98,6 +104,7 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
+
 		return (
 			<View style={baseStyles.flexGrow} testID={'wallet-screen'}>
 				<MStatusBar
@@ -106,7 +113,17 @@ export default class Settings extends PureComponent {
 					backgroundColor={colors.transparent}
 				/>
 				<View style={{ height: barHeight, backgroundColor: colors.$F6F6F6 }} />
-				<TitleBar title={strings('app_settings.title')} titleStyle={styles.title} baseStyle={styles.titleBar} />
+				<View style={styles.headerStyle}>
+					<TitleBar
+						baseStyle={{ backgroundColor: colors.$F6F6F6 }}
+						titleStyle={styles.title}
+						title={strings('app_settings.title')}
+						onBack={() => {
+							this.props.navigation.pop();
+						}}
+					/>
+				</View>
+
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
 					<View style={styles.cardItemTop}>
 						<SettingsDrawer
@@ -114,12 +131,12 @@ export default class Settings extends PureComponent {
 							image={require('../../../images/ic_setting_wallet.png')}
 							title={strings('app_settings.wallet_management')}
 						/>
-						<SettingsDrawer
+						{/* <SettingsDrawer
 							onPress={this.onObserveAccounts}
 							image={require('../../../images/ic_setting_observe.png')}
 							title={strings('observer.observe_only_ccounts')}
 							hideLine
-						/>
+						/> */}
 					</View>
 					<View style={styles.cardItem}>
 						<SettingsDrawer
@@ -140,19 +157,23 @@ export default class Settings extends PureComponent {
 						/>
 					</View>
 					<View style={styles.cardItem}>
-						<SettingsDrawer
+						{/* {TODO: Update the update Check to Pali one instead of Pali Wallet} */}
+						{/* <SettingsDrawer
 							onPress={this.onUpdateCheck}
 							image={require('../../../images/ic_setting_update.png')}
 							title={strings('app_settings.update_check')}
-						/>
-						<SettingsDrawer
+						/> */}
+						{/* {TODO: Update the onInvite to Pali one instead of Pali Wallet
+							and probably update to send for the download page, or invite rewards page, idk}
+						{/* <SettingsDrawer
 							onPress={this.onInvite}
 							image={require('../../../images/ic_setting_invite.png')}
 							title={strings('app_settings.invite')}
-						/>
+						/> */}
 						<SettingsDrawer
 							onPress={this.onAbout}
-							image={require('../../../images/go.png')}
+							image={require('../../../images/pali.png')}
+							iconStyle={{ width: 24, height: 26, marginRight: 16 }}
 							title={strings('app_settings.about')}
 							hideLine
 						/>

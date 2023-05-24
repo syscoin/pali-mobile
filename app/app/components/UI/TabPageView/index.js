@@ -21,13 +21,15 @@ export default class TabPageView extends PureComponent {
 		onScroll: PropTypes.func,
 		spaceSize: PropTypes.number,
 		onChangeTab: PropTypes.func,
-		isIos: PropTypes.bool
+		isIos: PropTypes.bool,
+		disableBottomBarSwitch: PropTypes.bool
 	};
 
 	static defaultProps = {
 		initialPage: 0,
 		spaceSize: 0,
-		isIos: Platform.OS === 'ios'
+		isIos: Platform.OS === 'ios',
+		disableBottomBarSwitch: false
 	};
 
 	state = {
@@ -126,7 +128,7 @@ export default class TabPageView extends PureComponent {
 			<AnimatedViewPagerAndroid
 				style={styles.flexOne}
 				keyboardDismissMode="on-drag"
-				scrollEnabled={!this.props.locked}
+				scrollEnabled={!this.props.disableBottomBarSwitch && !this.props.locked}
 				ref={this.scrollRef}
 				onPageSelected={e => {
 					this.activePage = e.nativeEvent.position;
@@ -153,7 +155,7 @@ export default class TabPageView extends PureComponent {
 	};
 
 	renderScrollableContentIOS = () => {
-		const { children } = this.props;
+		const { children, disableBottomBarSwitch } = this.props;
 		return (
 			<AnimatedScrollView
 				ref={this.scrollRef}
@@ -174,7 +176,7 @@ export default class TabPageView extends PureComponent {
 				onMomentumScrollBegin={this._onMomentumScrollBeginAndEnd}
 				onMomentumScrollEnd={this._onMomentumScrollBeginAndEnd}
 				scrollEventThrottle={16}
-				scrollEnabled={!this.props.locked}
+				scrollEnabled={!this.props.disableBottomBarSwitch && !this.props.locked}
 				alwaysBounceVertical={false}
 				keyboardDismissMode="on-drag"
 				style={styles.flexOne}

@@ -21,11 +21,11 @@
 		"ok": "确认"
 	},
 	"onboarding": {
-		"title": "欢迎使用\nGO Pocket",
+		"title": "欢迎使用\nPali Wallet",
 		"subtitle": "为加密资产安全保驾护航",
 		"start_exploring_now": "创建\n新钱包",
 		"import_seed_phrase": "导入\n助记词",
-		"import_private_key": "导入私钥",
+		"import_private_key": "导入\n私钥",
 		"import_wallet": "导入钱包",
 		"create_wallet": "创建钱包",
 		"prompt_text": "支持的网络"
@@ -78,10 +78,10 @@
 		"wrong_private_key": "私钥错误",
 		"private_key_imported": "私钥已经导入",
 		"enter_private_key": "导入私钥",
-		"enter_private_key_tips": "由于私钥非人类可读，不便记忆，大部分私钥都存储在不安全的设备中并以复制粘贴的形式导入，Go Pocket非常不推荐这种使用方式。导入私钥后，最好将资产转移到由Go Pocket通过助记词生成的钱包中以获得更好的安全性。"
+		"enter_private_key_tips": "由于私钥非人类可读，不便记忆，大部分私钥都存储在不安全的设备中并以复制粘贴的形式导入，Pali Wallet非常不推荐这种使用方式。导入私钥后，最好将资产转移到由Pali Wallet通过助记词生成的钱包中以获得更好的安全性。"
 	},
 	"wallet": {
-		"title": "Go Pocket",
+		"title": "Pali Wallet",
 		"tokens": "TOKENS",
 		"all_network": "所有",
 		"eth_etwork": "以太坊",
@@ -114,11 +114,11 @@
 		"network_symbol_label": "主货币符号",
 		"network_explorer_label": "区块浏览器",
 		"keep_login": "保持登录状态",
-		"keep_login_message": "每次启动Go Pocket不需要输入密码",
+		"keep_login_message": "每次启动Pali Wallet不需要输入密码",
 		"use_id": "使用面容ID或指纹",
-		"use_id_message": "使用FaceID或指纹来解锁Go Pocket",
+		"use_id_message": "使用FaceID或指纹来解锁Pali Wallet",
 		"use_biometrics": "使用生物验证",
-		"use_biometrics_message": "每次启动Go Pocket不需要输入密码",
+		"use_biometrics_message": "每次启动Pali Wallet不需要输入密码",
 		"transaction_verification": "交易需要验证",
 		"verification_message_for_pwd": "每次交易需要输入密码",
 		"verification_message_for_id": "每次交易需要输入密码或验证FaceID/指纹"
@@ -129,7 +129,7 @@
 		"wrong_password": "密码错误，请重试",
 		"your_private_key": "你的私钥",
 		"confirm": "OK",
-		"enter_password": "解锁GO Pocket的密码"
+		"enter_password": "解锁Pali Wallet的密码"
 	},
 	"password_reset": {
 		"change_password": "修改密码"
@@ -186,6 +186,7 @@
 		"approve": "批准"
 	},
 	"browser": {
+		"addTab": "添加新标签",
 		"enter_link": "搜索名称或输入网址",
 		"refresh": "刷新",
 		"share": "分享",
@@ -194,16 +195,17 @@
 		"dapp_network": "dApp连接网络",
 		"dapp_account": "dApp账户",
 		"link_copied": "链接已复制",
-		"security_alert": "Go Pocket安全警告",
+		"security_alert": "Pali Wallet安全警告",
 		"close_the_page": "关闭页面",
 		"continue_to_browse": "继续访问",
 		"unknown_desc": "该网站或应用尚未被检测，请注意安全。",
-		"safe_desc": "该应用或网站已通过Go Pocket安全引擎检测。",
+		"safe_desc": "该应用或网站已通过Pali Wallet安全引擎检测。",
 		"unkown_website_title": "未知网站",
 		"whitelisted_dapp": "白名单应用",
 		"more_tip": "点击此处切换网络或帐户。",
 		"add_asset_tip": "%{symbol}已添加至你的资产列表",
 		"home": "首页",
+		"closeAll": "关闭所有标签",
 		"favourite": "收藏",
 		"close_tab": "关闭标签",
 		"dont_remind_again": "不再提示",
@@ -262,7 +264,7 @@
 		"auth_prompt_title": "需要授权",
 		"auth_prompt_desc": "使用钱包请先授权",
 		"fingerprint_prompt_title": "需要授权",
-		"fingerprint_prompt_desc": "需要指纹来解锁Go Pocket",
+		"fingerprint_prompt_desc": "需要指纹来解锁Pali Wallet",
 		"fingerprint_prompt_cancel": "取消"
 	},
 	"accountApproval": {
@@ -286,7 +288,7 @@
 		"confirm_password": "验证密码",
 		"before_continiuing": "进行下一步之前需验证密码",
 		"confirm": "确认",
-		"go": "我已记下",
+		"go": "立即检查",
 		"later": "稍后再做",
 		"password": "密码",
 		"wallet_backup": "备份助记词",
@@ -398,6 +400,7 @@
 		"custom_gas": "自定义:",
 		"coins_on_network": "币种所在网络",
 		"asset": "资产",
+		"browser": "浏览器",
 		"gas_paid": "燃气将在 {{network}} 上以 {{symbol}} 支付, {{amount}} 可用",
 		"sort_by_net_worth": "按净值排序",
 		"sort_by_name": "按名称排序",
@@ -411,6 +414,7 @@
 		"connected_change": "连接地址已经更新",
 		"transaction_submitted": "交易已提交",
 		"accept_language": "zh",
+		"wallet:": "钱包",
 		"wallet_connect_loading": "正在连接\nWallet Connect…",
 		"wallet_connect_load_fail": "WalletConnect连接超时，请刷新二维码后扫码重试",
 		"ongoing_tx": "进行中的交易",
@@ -607,7 +611,7 @@
 		"try_it_later": "稍后再试",
 		"owner_address": "Onwer 地址",
 		"owner_address_desc": "如果Owner地址为0x00..000或任何黑洞地址，则合约中的特殊或恶意方法都无法被手动调起，即使这些方法的确存在。",
-		"token_security": "${{symbol}}安全报告 - 来自Go Pocket代币安全检测",
+		"token_security": "${{symbol}}安全报告 - 来自Pali Wallet代币安全检测",
 		"share_security_report": "分享安全报告"
 	},
 	"approval_management": {
@@ -637,10 +641,11 @@
 		"import_seed_phrase": "导入助记词",
 		"import_private_key": "导入私钥",
 		"rename_account": "重命名账户",
+		"rename_wallet": "重命名钱包",
 		"rename": "重命名",
 		"confirm_delete": "确认删除",
 		"rename_eg": "例如，长线投资，HODL，流动性等",
-		"delete_warn": "删除账户只影响UI显示。如果在账户中有代币，代币不会丢失。之后如果需要可以再将本账户添加回来。",
+		"delete_warn": "这只会影响UI的可见性。如果您在此帐户上有任何代币，它们将不会丢失。\n\n您可以稍后通过选择“添加新帐户”来添加该帐户。",
 		"delete_account": "确认删除账户 “{{name}}”?",
 		"delete_this_wallet": "删除该钱包",
 		"wallet_index": "钱包{{number}}",
@@ -649,7 +654,7 @@
 		"password": "密码",
 		"wrong_password": "密码错误",
 		"delete_wallet": "删除{{name}}?",
-		"delete_wallet_warn": "如果钱包中有任何代币，请记住其助记词或私钥，否则资产可能永久丢失。",
+		"delete_wallet_warn": "如果您在此钱包中有任何代币，您应该记住助记词或私钥，否则您的资产可能会永久丢失！\n\n删除钱包后，您将无法再访问创建的账户。\n\n您可以在恢复钱包后选择“添加新账户”来恢复它们。",
 		"create_new_wallet": "创建新钱包",
 		"account_wallet_difference": "钱包与账户的区别",
 		"account_wallet_difference_desc": "一套助记词对应一个钱包，而一个钱包中又可以添加多个账户（地址）。\n一般情况下添加新账户即可满足多地址需求。",
@@ -659,7 +664,7 @@
 		"what_seed_phrase": " 助记词是什么？",
 		"what_seed_phrase_desc": "助记词是一种私钥生成手段，适用于所有区块链，已成为行业标准。\n\n相比原始的仅私钥方案，助记词对用户更加友好，人类可读性完爆私钥，实际使用上比私钥更安全。\n\n只需要一组助记词，就能使用所有的区块链并创建多个账户。",
 		"keep_seed_phrase_safe": "妥善保存助记词",
-		"keep_seed_phrase_safe_desc": "助记词泄露了，资产有可能被盗。\n助记词丢失了，没人能够帮你恢复（Go Pocket也不行）。\n\n所以你有责任保管好助记词，以下为一些守则：\n\n​将助记词写到纸上或记录在任何不联网的介质中。另外，你也可以记在脑海里。\n\n​因为助记词是人类可读的，所以在导入的时候请直接输入，永远不要复制粘贴。复制粘贴不安全，省事但可能费钱。\n\n切勿将助记词分享给任何人。\n\n可以验证一下你是否记住了或者抄对了助记词",
+		"keep_seed_phrase_safe_desc": "助记词泄露了，资产有可能被盗。\n助记词丢失了，没人能够帮你恢复（Pali Wallet也不行）。\n\n所以你有责任保管好助记词，以下为一些守则：\n\n​将助记词写到纸上或记录在任何不联网的介质中。另外，你也可以记在脑海里。\n\n​因为助记词是人类可读的，所以在导入的时候请直接输入，永远不要复制粘贴。复制粘贴不安全，省事但可能费钱。\n\n切勿将助记词分享给任何人。\n\n你可以在下面检查自己是否正确记忆了！",
 		"verify_your_seed_phrase": "验证助记词",
 		"verify": "验证",
 		"wrong_seed_phrase": "助记词错误，请检查后再试试",
@@ -750,7 +755,7 @@
 	"observer": {
 		"observe_only_ccounts": "观察账户",
 		"enter_address_here": "输入地址或ENS",
-		"only_support_evm_chain": "仅支持Go Pocket支持的链",
+		"only_support_evm_chain": "仅支持Pali Wallet支持的链",
 		"wrong_address": "地址或ENS错误",
 		"account_already": "该账户与你的非观察者账户重复",
 		"add_an_address": "添加地址",
@@ -774,7 +779,7 @@
 		"buy_crypto": "为本账户购买加密货币",
 		"content1": "用法币购买加密货币。",
 		"content2": "购买后，加密货币会直接发送至本账户。",
-		"content3": "法币入金服务方为TRANSAK",
+		"content3": "法币入金服务方为COINIFY",
 		"content4": "点此",
 		"content5": "查看可用国家或地区，费率和支付方式。",
 		"buy_now": "立即购买"
@@ -800,8 +805,8 @@
 		"about_title_4": "有费用吗?",
 		"about_desc_1": "ENS已经支持了设置头像，它将成为你的去中心化Web3身份的一部分。",
 		"about_desc_2": "你可以将NFT（仅以太坊），http/ipfs链接图片设置为头像。",
-		"about_desc_3": "你的头像信息存储在以太坊上的ENS系统上，而非在Go Pocket中。",
-		"about_desc_4": "提交ENS头像信息至以太坊需要支付矿工费。Go Pocket不收取任何费用。",
+		"about_desc_3": "你的头像信息存储在以太坊上的ENS系统上，而非在Pali Wallet中。",
+		"about_desc_4": "提交ENS头像信息至以太坊需要支付矿工费。Pali Wallet不收取任何费用。",
 		"not_any_nft": "ENS只接受以太坊上的NFT\n你还有没噢",
 		"your_can_buy_on": "可以先买一些",
 		"opensea": "OpenSea"

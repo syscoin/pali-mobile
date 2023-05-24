@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fontStyles } from '../../../styles/common';
 import Transactions from '../Transactions';
 import { strings } from '../../../../locales/i18n';
 import GlobalAlert from '../GlobalAlert';
 import TransactionsSwitch from '../TransactionsSwitch';
-import { SafeAreaView } from 'react-navigation';
+
 import MStatusBar from '../MStatusBar';
 
 import { connect } from 'react-redux';
@@ -61,7 +62,7 @@ class TransactionsView extends PureComponent {
 
 		return (
 			<SafeAreaView style={styles.wrapper}>
-				<MStatusBar navigation={navigation} fixPadding backgroundColor={colors.transparent} />
+				<MStatusBar navigation={navigation} fixPadding={false} backgroundColor={colors.transparent} />
 				<TitleBar
 					title={strings('other.transactions')}
 					titleStyle={styles.txTitle}

@@ -649,7 +649,7 @@ class TokenList extends PureComponent {
 				/>
 				{((searchLoading && isQuery) || (!initLoaded && !isQuery)) && (
 					<View style={styles.emptyView}>
-						<ActivityIndicator size="large" color={colors.$FE6E91} />
+						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
 				{isQuery && !searchLoading && searchResult.length > 0 && this.renderList(searchResult, true)}

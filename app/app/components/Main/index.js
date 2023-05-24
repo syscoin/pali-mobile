@@ -13,6 +13,7 @@ import {
 	NativeModules
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GlobalAlert from '../UI/GlobalAlert';
@@ -125,6 +126,10 @@ const styles = StyleSheet.create({
 		width: 52,
 		height: 52
 	},
+	navigatorView: {
+		paddingBottom: Device.isIphone14ProOrMax() ? 34 : 0,
+		flex: 1
+	},
 	shareView: {
 		position: 'absolute',
 		top: 0,
@@ -171,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	updateNow: {
 		fontSize: 16,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	viewDetail: {
 		fontSize: 16,
@@ -1127,10 +1132,15 @@ const Main = props => {
 			</View>
 		</Modal>
 	);
+
 	return (
 		<React.Fragment>
 			<View style={styles.flex}>
-				<MainNavigator navigation={props.navigation} />
+				<View style={styles.navigatorView}>
+					<SafeAreaProvider>
+						<MainNavigator navigation={props.navigation} />
+					</SafeAreaProvider>
+				</View>
 				<GlobalAlert />
 				<FadeOutOverlay />
 				<Notification navigation={props.navigation} />
@@ -1153,7 +1163,8 @@ const Main = props => {
 			{renderHintView()}
 			{renderWcLoadingModal()}
 			{ongoingTransactionsModalVisible()}
-			{renderUpdateModal()}
+			{/* TODO: updates the renderUpdateModal to Pali wallet logic and information */}
+			{/* {renderUpdateModal()} */}
 			{renderNotificationsModal()}
 			{renderWalletConnectListModal()}
 		</React.Fragment>

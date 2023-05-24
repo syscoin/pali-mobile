@@ -12,7 +12,7 @@ import { toggleTestnetVisible } from '../../../actions/settings';
 import MStatusBar from '../../UI/MStatusBar';
 import { CURRENCIES } from '../../../util/currencies';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = {
 	wrapper: {
@@ -101,7 +101,7 @@ class CurrencyUnit extends PureComponent {
 	render() {
 		return (
 			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
+				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.currency_unit')}
 					onBack={() => {

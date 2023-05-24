@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center'
 	},
 	errorButton: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		marginTop: 22,

@@ -27,7 +27,7 @@ import Device from '../../../util/Device';
 import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'gopocket-core';
 import { updateLockScreen } from '../../../actions/settings';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		flexGrow: 1
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',
@@ -100,7 +100,8 @@ const styles = StyleSheet.create({
 	footerImage: {
 		marginTop: 20,
 		marginBottom: 30,
-		alignSelf: 'center'
+		alignSelf: 'center',
+		width: 85
 	},
 	biometryButton: {
 		paddingTop: 2,
@@ -127,7 +128,8 @@ const PASSCODE_NOT_SET_ERROR = 'Error: Passcode not set.';
 const WRONG_PASSWORD_ERROR = 'Error: Decrypt failed';
 const WRONG_PASSWORD_ERROR_ANDROID = 'Error: error:1e000065:Cipher functions:OPENSSL_internal:BAD_DECRYPT';
 const VAULT_ERROR = 'Error: Cannot unlock without a previous vault.';
-const CLEAN_VAULT_ERROR = 'GoPocket encountered an error, Please reinstall GoPocket and restore with your seed phrase.';
+const CLEAN_VAULT_ERROR =
+	'Pali Wallet encountered an error, Please reinstall Pali Wallet and restore with your seed phrase.';
 
 /**
  * View where returning users can authenticate
@@ -396,7 +398,7 @@ class Login extends PureComponent {
 			>
 				<View testID={'login'} style={baseStyles.flexGrow}>
 					<View style={baseStyles.flexGrow} />
-					<Image source={require('../../../images/loginlogo.png')} style={styles.image} />
+					<Image source={require('../../../images/logo_about.png')} style={styles.image} />
 					<View style={styles.field}>
 						<Text style={styles.label}>{strings('login.password')}</Text>
 						<View style={styles.inputWrapper}>
@@ -462,7 +464,7 @@ class Login extends PureComponent {
 					{/* eslint-disable-next-line react-native/no-inline-styles */}
 					<View style={{ flex: 2 }} />
 
-					<Image style={styles.footerImage} source={require('../../../images/footerlogo.png')} />
+					<Image style={styles.footerImage} source={require('../../../images/footer_logo.png')} />
 				</View>
 			</KeyboardAwareScrollView>
 			<FadeOutOverlay />

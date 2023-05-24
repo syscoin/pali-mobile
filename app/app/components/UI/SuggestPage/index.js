@@ -242,6 +242,7 @@ class SuggestPage extends PureComponent {
 	}
 
 	rennderFavoriteItem = (item, index) => {
+		//TODO: update api url to Pali ones
 		const imageUri = item?.logo || 'https://gopocket.finance/images/defi/' + item?.name + '.png';
 		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
 		return (
@@ -250,7 +251,6 @@ class SuggestPage extends PureComponent {
 				activeOpacity={1}
 				key={`favorite_${index}`}
 				onPress={() => {
-					console.log('..item?.url = ', this.props.openUrl);
 					this.props.openUrl &&
 						this.props.openUrl({
 							url: item?.url,

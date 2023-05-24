@@ -16,12 +16,13 @@ import { colors } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
 import { strings } from '../../../../locales/i18n';
-import { URL } from 'gopocket-core';
+import { URL, util } from 'gopocket-core';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImageCapInset from '../../UI/ImageCapInset';
-import Favicon from '../../UI/Favicon';
 import AppConstants from '../../../core/AppConstants';
 import { getActiveTabId } from '../../../util/browser';
+import { captureRef, dirs } from 'react-native-view-shot';
+import RNFS from 'react-native-fs';
 
 const styles = StyleSheet.create({
 	topTabbar: {
@@ -131,14 +132,22 @@ export default class AddressBar extends PureComponent {
 		toggleSecurityModal: PropTypes.func,
 		onSubmit: PropTypes.func,
 		toggleTipModal: PropTypes.func,
-		switchLeftTab: PropTypes.func,
+		goHome: PropTypes.func,
 		switchRightTab: PropTypes.func,
 		leftTabUrl: PropTypes.string,
 		rightTabUrl: PropTypes.string,
 		tabId: PropTypes.number,
 		closeTab: PropTypes.func,
 		title: PropTypes.string,
-		url: PropTypes.string
+		url: PropTypes.string,
+		tabCount: PropTypes.number,
+		navigation: PropTypes.object,
+		tabRef: PropTypes.object,
+		updateTab: PropTypes.func,
+		tabData: PropTypes.object,
+		gotoOpenedPages: PropTypes.func,
+		showOpenedTabs: PropTypes.bool,
+		newTab: PropTypes.func
 	};
 
 	state = {
@@ -156,6 +165,7 @@ export default class AddressBar extends PureComponent {
 	inputTextRef = React.createRef();
 	securityButtonRef = React.createRef();
 	moreButtonRef = React.createRef();
+	imageRef = React.createRef();
 
 	componentDidMount = () => {
 		AsyncStorage.getItem('hasShownMoreTip').then(previouslyShown => {
@@ -243,18 +253,44 @@ export default class AddressBar extends PureComponent {
 		this.setState({ backEnabled: enable });
 	};
 
+	captureImage = () => {
+		const { id, ...tabDataFiltered } = this.props.tabData;
+
+		captureRef(this.props.tabRef, { format: 'png', quality: 1 })
+			.then(uri => {
+				// save the image to a persistent location
+				const timestamp = Date.now();
+				const newImagePath = `${RNFS.DocumentDirectoryPath}/screenshot_${timestamp}.png`;
+				RNFS.moveFile(uri, newImagePath)
+					.then(() => {
+						const updatedTabData = {
+							...tabDataFiltered,
+							uri: Device.isAndroid ? `file://${newImagePath}` : newImagePath
+						};
+						this.props.updateTab(this.props.tabId, updatedTabData);
+					})
+					.catch(err => {
+						console.log('Failed to move image file: ', err);
+					});
+			})
+			.catch(error => {
+				util.logError('PPYang takeSnapshot browserTab error:', error);
+			});
+	};
+
 	render = () => {
 		const { inputValue, inputEditing, safeHostUrl } = this.state;
 		const {
 			onFocusChange,
 			onTextChange,
 			onSubmit,
-			switchLeftTab,
+			goHome,
 			switchRightTab,
 			leftTabUrl,
 			rightTabUrl,
 			tabId,
-			closeTab
+			closeTab,
+			tabCount
 		} = this.props;
 
 		let { currentTitle } = this.state;
@@ -295,7 +331,7 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						switchLeftTab(tabId);
+						goHome(tabId);
 					}}
 				>
 					<ImageBackground
@@ -303,13 +339,7 @@ export default class AddressBar extends PureComponent {
 						source={require('../../../images/img_left_tab_bg.png')}
 						resizeMode={'stretch'}
 					>
-						{!leftTabUrl || leftTabUrl === HOMEPAGE_URL ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_home_tab.png')} />
-						) : leftTabUrl === 'add' ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
-						) : (
-							<Favicon style={styles.iconSize} url={leftTabUrl} />
-						)}
+						<Image style={styles.iconSize} source={require('../../../images/ic_search_home.png')} />
 					</ImageBackground>
 				</TouchableOpacity>
 				<View style={styles.baseLayout}>
@@ -330,6 +360,7 @@ export default class AddressBar extends PureComponent {
 						<View style={styles.topTabbar}>
 							<TouchableOpacity
 								activeOpacity={1}
+								disabled={this.props.showOpenedTabs}
 								onPress={() => {
 									if (tabId !== getActiveTabId() && inputEditing) {
 										this.setInputEditing(false);
@@ -371,15 +402,9 @@ export default class AddressBar extends PureComponent {
 								style={styles.inputBaseLayout}
 							>
 								<View style={styles.operateLayout}>
-									{webPageState && (
+									{webPageState && backEnabled && (
 										<TouchableOpacity onPress={this.backPress} hitSlop={styles.hitSlop}>
-											<Image
-												source={
-													backEnabled
-														? require('../../../images/ic_search_back.png')
-														: require('../../../images/ic_search_home.png')
-												}
-											/>
+											<Image source={require('../../../images/ic_search_back.png')} />
 										</TouchableOpacity>
 									)}
 
@@ -433,6 +458,7 @@ export default class AddressBar extends PureComponent {
 
 									<TouchableOpacity
 										style={(inputEditing || (onlyOneTab && isHomePage)) && styles.noDisplay}
+										disabled={this.props.showOpenedTabs}
 										onPress={() => {
 											if (isHomePage) {
 												closeTab && closeTab(tabId);
@@ -476,7 +502,10 @@ export default class AddressBar extends PureComponent {
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
 					onPress={() => {
-						switchRightTab(tabId);
+						if (!this.props.showOpenedTabs) {
+							this.captureImage();
+							setTimeout(() => this.props.gotoOpenedPages(true), 200);
+						}
 					}}
 				>
 					<ImageBackground
@@ -484,13 +513,21 @@ export default class AddressBar extends PureComponent {
 						source={require('../../../images/img_right_tab_bg.png')}
 						resizeMode={'stretch'}
 					>
-						{!rightTabUrl || rightTabUrl === HOMEPAGE_URL ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_home_tab.png')} />
-						) : rightTabUrl === 'add' ? (
-							<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
-						) : (
-							<Favicon style={styles.iconSize} url={rightTabUrl} />
-						)}
+						<Text>{tabCount}</Text>
+					</ImageBackground>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={inputEditing && styles.hide}
+					onPress={() => {
+						this.props.gotoOpenedPages(false), this.props.newTab();
+					}}
+				>
+					<ImageBackground
+						style={styles.rightTabBg}
+						source={require('../../../images/img_right_tab_bg.png')}
+						resizeMode={'stretch'}
+					>
+						<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
 					</ImageBackground>
 				</TouchableOpacity>
 			</View>

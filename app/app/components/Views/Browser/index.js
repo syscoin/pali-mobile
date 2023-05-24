@@ -12,7 +12,7 @@ import {
 	Keyboard
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { createNewTab, closeAllTabs, closeTab, updateTab, saveTabs } from '../../../actions/browser';
+import { createNewTab, createNewTabLast, closeAllTabs, closeTab, updateTab, saveTabs } from '../../../actions/browser';
 import BrowserTab from '../BrowserTab';
 import AppConstants from '../../../core/AppConstants';
 import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
@@ -28,8 +28,10 @@ import { getActiveTabId, getStorageActiveTabId, setActiveTab } from '../../../ut
 import SuggestPage from '../../UI/SuggestPage';
 import { AutoCompleteType_DAPP } from '../../../core/AutoCompleteController';
 import TabPageView from '../../UI/TabPageView';
+import OpenedTabs from '../OpenedTabs';
 import SafeArea from 'react-native-safe-area';
 import { callSqlite } from '../../../util/ControllerUtils';
+import RNFS from 'react-native-fs';
 
 const screenWidth = Dimensions.get('window').width;
 const tabSpaceSize = 20;
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
 		fontSize: 13
 	},
 	tipOk: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 13
 	},
 	flexRow: {
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
 		width: 220,
 		height: 36,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
@@ -155,6 +157,12 @@ class Browser extends PureComponent {
 		 * Function to create a new tab
 		 */
 		createNewTab: PropTypes.func,
+
+		/**
+		 * Function to create a new tab at the last position
+		 */
+		createNewTabLast: PropTypes.func,
+
 		/**
 		 * Function to close all the existing tabs
 		 */
@@ -181,7 +189,8 @@ class Browser extends PureComponent {
 		tipModalVisible: false,
 		securityModalVisible: false,
 		showSuggestPage: false,
-		tabBarHeight: 0
+		tabBarHeight: 0,
+		showOpenedTabs: false
 	};
 
 	pageViewRef = React.createRef();
@@ -202,6 +211,7 @@ class Browser extends PureComponent {
 
 	componentDidMount = async () => {
 		onEvent('openDapp');
+		this.removeUnusedImages();
 		if (!this.props.tabs.length) {
 			this.newTab();
 			setTimeout(async () => {
@@ -285,7 +295,15 @@ class Browser extends PureComponent {
 	getTabById = id => this.props.tabs.find(tab => tab.id === id);
 
 	newTab = (url, addRight) => {
-		this.props.createNewTab(url || AppConstants.HOMEPAGE_URL, addRight, getActiveTabId());
+		this.props.createNewTab(url || AppConstants.HOMEPAGE_URL, addRight, this.props.tabs.length);
+	};
+
+	closeAllTabs = () => {
+		const { tabs } = this.props;
+		this.props.closeAllTabs();
+		this.newTab(null, false);
+		this.setState({ initialPage: 0 });
+		this.setState({ showOpenedTabs: false });
 	};
 
 	closeTab = tabId => {
@@ -295,6 +313,8 @@ class Browser extends PureComponent {
 			const activeTabIndex = this.findTabIndex(tab);
 			if (tabs.length === 1) {
 				this.newTab(null, false);
+				this.setState({ initialPage: 0 });
+				this.setState({ showOpenedTabs: false });
 			} else if (activeTabIndex === 0) {
 				this.switchToTab(tabs[1]);
 			} else {
@@ -309,36 +329,16 @@ class Browser extends PureComponent {
 		setActiveTab(tab);
 	};
 
-	switchLeftTab = tabId => {
-		const tab = this.getTabById(tabId);
-		const activeTabIndex = this.findTabIndex(tab);
-		if (activeTabIndex === 0) {
-			this.tabCreating = true;
-			this.newTab(null, false);
-			if (Device.isIos()) {
-				setTimeout(() => {
-					this.gotoPage(0);
-				}, 200);
-			} else {
-				setTimeout(() => {
-					this.tabCreating = false;
-					this.gotoPage(0);
-				}, 500);
-			}
-		} else {
-			const preTab = this.props.tabs[activeTabIndex - 1];
-			this.switchToTab(preTab);
-			const index = this.findTabIndex(preTab);
-			this.gotoPage(index);
-			this.delayUpdateInitialPage();
-		}
+	goHome = tabId => {
+		this.setState({ securityModalVisible: false });
+		DeviceEventEmitter.emit('AddressbarStateEmitter', { state: 'goHome' });
 	};
 
 	switchRightTab = tabId => {
 		const tab = this.getTabById(tabId);
 		const activeTabIndex = this.findTabIndex(tab);
 		if (activeTabIndex === this.props.tabs.length - 1) {
-			this.newTab(null, true);
+			this.newTab(null, false);
 			setTimeout(() => {
 				const activeTab = this.getTabById(getActiveTabId());
 				const activeTabIndex = this.findTabIndex(activeTab);
@@ -493,11 +493,9 @@ class Browser extends PureComponent {
 	};
 
 	delayUpdateInitialPage = () => {
-		if (Device.isAndroid()) {
-			setTimeout(() => {
-				this.updateInitialPage();
-			}, 50);
-		}
+		setTimeout(() => {
+			this.updateInitialPage();
+		}, 500);
 	};
 
 	updateInitialPage = () => {
@@ -550,6 +548,30 @@ class Browser extends PureComponent {
 		}
 	};
 
+	newTabRight = () => {
+		let activeTabIndex = this.props.tabs.length;
+
+		this.props.createNewTabLast(AppConstants.HOMEPAGE_URL, true, this.props.tabs.length);
+		setTimeout(() => {
+			const tab = this.props.tabs[activeTabIndex];
+			this.switchToTab(tab);
+			this.gotoPage(activeTabIndex);
+			this.gotoOpenedPages(false);
+
+			this.delayUpdateInitialPage();
+		}, 200);
+	};
+
+	openOpenedTab = activeTabIndex => {
+		setTimeout(() => {
+			const tab = this.props.tabs[activeTabIndex];
+			this.switchToTab(tab);
+			this.gotoPage(activeTabIndex);
+			this.gotoOpenedPages(false);
+			this.delayUpdateInitialPage();
+		}, 200);
+	};
+
 	renderBrowserTabs = addressBarRefs =>
 		this.props.tabs.map((tab, index) => (
 			// eslint-disable-next-line react-native/no-inline-styles
@@ -558,23 +580,7 @@ class Browser extends PureComponent {
 					key={`tab_browser_${tab.id}`}
 					tabId={tab.id}
 					initialUrl={tab.url}
-					newTab={() => {
-						const activeTab = this.getTabById(getActiveTabId());
-						let activeTabIndex = 0;
-						if (activeTab) {
-							activeTabIndex = this.findTabIndex(activeTab);
-						}
-						this.newTab(null, true);
-						setTimeout(() => {
-							activeTabIndex += 1;
-							if (this.props.tabs.length > activeTabIndex) {
-								const tab = this.props.tabs[activeTabIndex];
-								this.switchToTab(tab);
-								this.gotoPage(activeTabIndex);
-								this.delayUpdateInitialPage();
-							}
-						}, 500);
-					}}
+					newTab={this.newTabRight}
 					addressBarRef={addressBarRefs[tab.id]}
 					closeTab={this.closeTab}
 				/>
@@ -588,8 +594,10 @@ class Browser extends PureComponent {
 				key={`tab_addressbar_${tab.id}`}
 				leftTabUrl={index === 0 ? 'add' : this.props.tabs[index - 1].url}
 				rightTabUrl={index === this.props.tabs.length - 1 ? 'add' : this.props.tabs[index + 1]?.url}
-				switchLeftTab={this.switchLeftTab}
+				goHome={this.goHome}
 				switchRightTab={this.switchRightTab}
+				newTab={this.newTabRight}
+				tabCount={this.props.tabs.length}
 				tabId={tab.id}
 				title={tab.title}
 				url={tab.url}
@@ -598,9 +606,36 @@ class Browser extends PureComponent {
 				closeTab={this.closeTab}
 				onFocusChange={this.onFocusChange}
 				onTextChange={this.onTextChange}
+				navigation={this.props.navigation}
 				onSubmit={this.onSubmit}
+				tabRef={this.pageTabRef}
+				updateTab={this.props.updateTab}
+				tabData={tab}
+				gotoOpenedPages={this.gotoOpenedPages}
+				showOpenedTabs={this.state.showOpenedTabs}
 			/>
 		));
+
+	removeUnusedImages = () => {
+		const usedUris = Object.values(this.props.tabs)
+			.map(tab => tab.uri)
+			.filter(Boolean);
+
+		// Read the directory
+		RNFS.readDir(RNFS.DocumentDirectoryPath)
+			.then(files => {
+				files.forEach(file => {
+					// If the file is an image and it's not currently in use, delete it
+					const filePath = Device.isAndroid ? `file://${file.path}` : file.path;
+					if (file.name.endsWith('.png') && !usedUris.includes(filePath)) {
+						RNFS.unlink(file.path)
+							.then(() => console.log(`Image file ${file.path} deleted`))
+							.catch(err => console.log(`Failed to delete image file ${file.path}: `, err));
+					}
+				});
+			})
+			.catch(err => console.log(`Failed to read directory ${RNFS.DocumentDirectoryPath}: `, err));
+	};
 
 	onChangeTab = page => {
 		const tab = this.props.tabs[page];
@@ -618,6 +653,10 @@ class Browser extends PureComponent {
 	gotoPage = page => {
 		this.pageTabRef?.current?.goToPage(page, true, false);
 		this.pageBarRef?.current?.goToPage(page, true, false);
+	};
+
+	gotoOpenedPages = show => {
+		this.setState({ showOpenedTabs: show });
 	};
 
 	render() {
@@ -652,6 +691,7 @@ class Browser extends PureComponent {
 								ref={this.pageBarRef}
 								initialPage={this.state.initialPage}
 								spaceSize={0}
+								disableBottomBarSwitch={this.state.showOpenedTabs}
 								onScroll={e => {
 									this.pageTabRef?.current?.refScrollto(e);
 
@@ -665,15 +705,26 @@ class Browser extends PureComponent {
 							</TabPageView>
 						</View>
 						<View style={styles.topLayout}>
-							<TabPageView
-								ref={this.pageTabRef}
-								spaceSize={tabSpaceSize}
-								locked
-								initialPage={this.state.initialPage}
-								isIos
-							>
-								{this.renderBrowserTabs(this.addressBarRefs)}
-							</TabPageView>
+							{this.state.showOpenedTabs ? (
+								<OpenedTabs
+									tabs={this.props.tabs}
+									closeTab={this.closeTab}
+									closeAllTabs={this.closeAllTabs}
+									openOpenedTab={this.openOpenedTab}
+									newTab={this.newTabRight}
+									activeTab={this.state.initialPage}
+								/>
+							) : (
+								<TabPageView
+									ref={this.pageTabRef}
+									spaceSize={tabSpaceSize}
+									locked
+									initialPage={this.state.initialPage}
+									isIos
+								>
+									{this.renderBrowserTabs(this.addressBarRefs)}
+								</TabPageView>
+							)}
 						</View>
 					</View>
 
@@ -693,6 +744,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
 	createNewTab: (url, addRight, activeTabId) => dispatch(createNewTab(url, addRight, activeTabId)),
+	createNewTabLast: (url, addRight, activeTabId) => dispatch(createNewTabLast(url, addRight, activeTabId)),
 	closeAllTabs: () => dispatch(closeAllTabs()),
 	closeTab: (id, activeTabId) => dispatch(closeTab(id, activeTabId)),
 	updateTab: (id, url) => dispatch(updateTab(id, url)),

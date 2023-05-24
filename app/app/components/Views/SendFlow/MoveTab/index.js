@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
 		...fontStyles.normal
 	},
 	networkSelectBg: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	networkSelectLabel: {
 		color: colors.white,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	nextButtonEnabled: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	nextButtonText: {
 		fontSize: 14,
@@ -303,13 +303,13 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelButtonText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	rightText: {
 		fontSize: 15,
@@ -680,6 +680,7 @@ class MoveTab extends PureComponent {
 			return true;
 		}
 		try {
+			//TODO: update api url to Pali ones
 			const response = await fetch('https://gopocket.finance/1.txt');
 			if (response.status === 200) {
 				await AsyncStorage.setItem(AVAILABLE_ARB, 'true');

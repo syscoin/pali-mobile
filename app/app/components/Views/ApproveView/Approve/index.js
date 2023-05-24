@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		textAlign: 'center',
 		textAlignVertical: 'center',
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	loadingContainer: {
 		marginTop: 39,
@@ -413,7 +413,7 @@ class Approve extends PureComponent {
 						/>
 						{loading ? (
 							<View style={styles.loadingContainer}>
-								<ActivityIndicator size="small" color={colors.$FE6E91} />
+								<ActivityIndicator size="small" color={colors.brandPink300} />
 							</View>
 						) : (
 							<View style={styles.actionContainer}>

@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderWidth: 1,
 		borderRadius: 10,
-		borderColor: colors.$FE6E91
+		borderColor: colors.brandPink300
 	},
 	btnText: {
 		fontSize: 16,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	bottomModal: {
 		justifyContent: 'flex-end',
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	dappNetTouchItemSeleted: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	dappAccountTouchItem: {
 		width: 120,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12
 	},
 	dappAccountTouchItemSeleted: {
-		backgroundColor: colors.$FE6E91
+		backgroundColor: colors.brandPink300
 	},
 	dappNetName: {
 		marginTop: 6,
@@ -302,20 +302,20 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	addChainModalCancelText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	addChainModalConfirm: {
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
@@ -1061,6 +1061,7 @@ const BrowserTab = props => {
 			const { current } = webviewRef;
 			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
+
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
 		load_start_called.current = true;
 		webviewUrlPostMessagePromiseResolve.current = null;
@@ -1117,6 +1118,7 @@ const BrowserTab = props => {
 
 	const onMessage = ({ nativeEvent }) => {
 		let data = nativeEvent.data;
+
 		try {
 			data = typeof data === 'string' ? JSON.parse(data) : data;
 			if (!data || (!data.type && !data.name)) {
@@ -1133,6 +1135,7 @@ const BrowserTab = props => {
 				});
 				return;
 			}
+
 			switch (data.type) {
 				case 'GET_WEBVIEW_URL': {
 					const { url } = data.payload;
@@ -1860,6 +1863,7 @@ const BrowserTab = props => {
 				{showHomepage && (
 					<HomePage style={styles.homepage} openUrl={openHomepageUrl} navigation={props.navigation} />
 				)}
+
 				{showPopup && renderPopup()}
 			</View>
 			{renderProgressBar()}

@@ -1,4 +1,4 @@
-# GoPocket Core Module
+# Pali Wallet Core Module
 
 `yarn && yarn build`
 

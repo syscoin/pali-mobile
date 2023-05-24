@@ -21,14 +21,14 @@
 		"ok": "OK"
 	},
 	"onboarding": {
-		"title": "Welcome to\nGO Pocket",
-		"subtitle": "Your crypto assets guardian",
+		"title": "Welcome to\nPali Wallet",
+		"subtitle": "Web3 on-the-go",
 		"start_exploring_now": "Create\nNew Wallet",
 		"import_seed_phrase": "Import\nSeed Phrase",
-		"import_private_key": "Import Private Key",
+		"import_private_key": "Import\nPrivate Key",
 		"import_wallet": "Import Wallet",
 		"create_wallet": "Create Wallet",
-		"prompt_text": "Supported Network"
+		"prompt_text": "Supported Networks"
 	},
 	"login": {
 		"password": "Password",
@@ -78,10 +78,10 @@
 		"wrong_private_key": "Wrong Private Key",
 		"private_key_imported": "Private Key Imported",
 		"enter_private_key": "Enter private key",
-		"enter_private_key_tips": "Since private key is not human-readable and memorable, most private keys are stored on unsafe devices and imported by copy&paste, which is STRONGLY not recommended by Go Pocket. After import from private key, better to transfer your asset to a new wallet generated on Seed Phrase by Go Pocket to get better security."
+		"enter_private_key_tips": "Since private key is not human-readable and memorable, most private keys are stored on unsafe devices and imported by copy&paste, which is STRONGLY not recommended by Pali Wallet. After import from private key, better to transfer your asset to a new wallet generated on Seed Phrase by Pali Wallet to get better security."
 	},
 	"wallet": {
-		"title": "Go Pocket",
+		"title": "Pali Wallet",
 		"tokens": "TOKENS",
 		"all_network": "All",
 		"eth_etwork": "Ethereum",
@@ -113,11 +113,11 @@
 		"network_symbol_label": "Currency Symbol",
 		"network_explorer_label": "Explorer URL",
 		"keep_login": "Keep login status",
-		"keep_login_message": "You don't have to enter password everytime you open Go Pocket.",
+		"keep_login_message": "You don't have to enter password everytime you open Pali Wallet.",
 		"use_id": "Use FaceID / Fingerprint",
-		"use_id_message": "Instead of entering password, use FaceID or fingerprint to unlock Go Pocket.",
+		"use_id_message": "Instead of entering password, use FaceID or fingerprint to unlock Pali Wallet.",
 		"use_biometrics": "Use Bio Auth",
-		"use_biometrics_message": "Instead of entering password, use Bio Auth to unlock Go Pocket.",
+		"use_biometrics_message": "Instead of entering password, use Bio Auth to unlock Pali Wallet.",
 		"transaction_verification": "Transaction needs verification",
 		"verification_message_for_pwd": "Password required for every transaction.",
 		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction."
@@ -128,7 +128,7 @@
 		"wrong_password": "Wrong Password, please try again",
 		"your_private_key": "Your Private Key",
 		"confirm": "OK",
-		"enter_password": "Password to unlock GO Pocket"
+		"enter_password": "Password to unlock Pali Wallet"
 	},
 	"password_reset": {
 		"change_password": "Change password"
@@ -185,6 +185,7 @@
 		"approve": "Approve"
 	},
 	"browser": {
+		"addTab": "Add New Tab",
 		"enter_link": "Search name or link",
 		"refresh": "Refresh",
 		"share": "Share",
@@ -193,16 +194,17 @@
 		"dapp_network": "dApp Network",
 		"dapp_account": "dApp Account",
 		"link_copied": "Link copied",
-		"security_alert": "Go Pocket Security Alert",
+		"security_alert": "Pali Wallet Security Alert",
 		"close_the_page": "Close the Page",
 		"continue_to_browse": "Continue to browse",
 		"unknown_desc": "This website or dApp has not been verified yet, please be cautious.",
-		"safe_desc": "This website or dApp has passed Go Pocket Security Engine detection.",
+		"safe_desc": "This website or dApp has passed Pali Wallet Security Engine detection.",
 		"unkown_website_title": "Unknown website",
 		"whitelisted_dapp": "Whitelisted dApp",
 		"more_tip": "Tap here to switch Network or Account.",
 		"add_asset_tip": "%{symbol} has been added to your asset list",
 		"home": "Home",
+		"closeAll": "Close All Tabs",
 		"favourite": "Favourite",
 		"close_tab": "Close Tab",
 		"dont_remind_again": "Don't remind again",
@@ -255,13 +257,13 @@
 		"enable_touchid": "Enable Touch ID",
 		"enable_faceid": "Enable Face ID",
 		"enable_biometrics": "Enable Bio Auth",
-		"rejectBiometry": "FaceID or fingerprint has exceeded max retry limits. Please lock your phone screen and open again, or go to Settings > GoPocket to enable FaceID or fingerprint."
+		"rejectBiometry": "FaceID or fingerprint has exceeded max retry limits. Please lock your phone screen and open again, or go to Settings > Pali Wallet to enable FaceID or fingerprint."
 	},
 	"authentication": {
 		"auth_prompt_title": "Authentication required",
-		"auth_prompt_desc": "Please authenticate in order to use Go Pocket",
+		"auth_prompt_desc": "Please authenticate in order to use Pali Wallet",
 		"fingerprint_prompt_title": "Authentication required",
-		"fingerprint_prompt_desc": "Use your fingerprint to unlock Go Pocket",
+		"fingerprint_prompt_desc": "Use your fingerprint to unlock Pali Wallet",
 		"fingerprint_prompt_cancel": "Cancel"
 	},
 	"accountApproval": {
@@ -285,7 +287,7 @@
 		"confirm_password": "Confirm your password",
 		"before_continiuing": "Before continuing we need you to confirm your password",
 		"confirm": "confirm",
-		"go": "I've written down",
+		"go": "Verify it now",
 		"later": "Do it later",
 		"password": "Password",
 		"wallet_backup": "Backup Wallet",
@@ -362,7 +364,7 @@
 		"no_suggestions": "No suggestions found",
 		"amount": "Amount",
 		"amount2": "amount",
-		"scale_in_proud": "Your Crypto Guardian",
+		"scale_in_proud": "Web3 on-the-go",
 		"official_website": "Official website",
 		"pending": "pending",
 		"failed": "Failed",
@@ -397,6 +399,7 @@
 		"custom_gas": "Custom:",
 		"coins_on_network": "Assets on network",
 		"asset": "Asset",
+		"browser": "Browser",
 		"gas_paid": "Gas will be paid by {{symbol}} on {{network}}, {{amount}} available",
 		"sort_by_net_worth": "Sort by net worth",
 		"sort_by_name": "Sort by name",
@@ -410,6 +413,7 @@
 		"connected_change": "The connect address has been updated",
 		"transaction_submitted": "Transaction submitted",
 		"accept_language": "en",
+		"wallet": "Wallet",
 		"wallet_connect_loading": "Wallet Connect…",
 		"wallet_connect_load_fail": "WalletConnect timeout, refresh QR code and retry.",
 		"ongoing_tx": "Ongoing Tx",
@@ -524,7 +528,7 @@
 		"pop_tip": "{{number}} tokens facing abnormal security issue.",
 		"security_score": "Security Score",
 		"no_detectable_tokens": "No detectable tokens",
-		"faq_desc_undetected": "There are {{num}} tokens without being logged and detected by Go Pocket Security Engine in this account.",
+		"faq_desc_undetected": "There are {{num}} tokens without being logged and detected by Pali Wallet Security Engine in this account.",
 		"security_risk_unknown": "Undetected",
 		"security_risk_low": "Low Risk",
 		"security_risk_medium": "Medium Risk",
@@ -607,7 +611,7 @@
 		"try_it_later": "Try it later",
 		"owner_address": "Owner Address",
 		"owner_address_desc": "If the owner address is set to 0x00..000 or any blackhole address, then it's unable to execute any special or malicious function manually even if those function exists, i.e we consider it's safe.",
-		"token_security": "${{symbol}} Security - Token security report by Go Pocket",
+		"token_security": "${{symbol}} Security - Token security report by Pali Wallet",
 		"share_security_report": "Share Security Report"
 	},
 	"approval_management": {
@@ -637,10 +641,11 @@
 		"import_seed_phrase": "Import from Seed Phrase",
 		"import_private_key": "Import from Private Key",
 		"rename_account": "Rename Account",
+		"rename_wallet": "Rename Wallet",
 		"rename": "Rename",
 		"confirm_delete": "Delete",
 		"rename_eg": "Eg.Moonbag, HODL, Gigawhale, Stake",
-		"delete_warn": "This will only affect UI visibility. If you have any tokens left on this account, they won’t get lost.\n\nYou can add the account back later if you want.",
+		"delete_warn": "This will only affect UI visibility. If you have any tokens left on this account, they won’t get lost.\n\nYou can add the account back later, by selecting \"Add New Account\".",
 		"delete_account": "Delete Account “{{name}}”?",
 		"delete_this_wallet": "Delete this Wallet",
 		"wallet_index": "Wallet{{number}}",
@@ -649,7 +654,7 @@
 		"password": "Password",
 		"wrong_password": "Wrong Password",
 		"delete_wallet": "Delete {{name}}?",
-		"delete_wallet_warn": "If you have any tokens left on this wallet, you should memorize the seed phrase or private key, or your asset could be lost permanently!",
+		"delete_wallet_warn": "If you have any tokens left on this wallet, you should memorize the seed phrase or private key, or your asset could be lost permanently! \n\nBy deleting the wallet, you will also remove your access to the accounts created. \n\nYou can recover them later by selecting \"Add new account\" after you recover the wallet.",
 		"create_new_wallet": "Create New Wallet",
 		"account_wallet_difference": "New account or New wallet?",
 		"account_wallet_difference_desc": "One suite of seed phrase corresponds to one wallet, and you can add new accounts within a wallet.\nUnder normal conditions adding new account will meet the demand for multi addresses.",
@@ -659,7 +664,7 @@
 		"what_seed_phrase": "What’s seed phrase?",
 		"what_seed_phrase_desc": "Seed phrase is an universal standard for private key generation in all blockchains.\n\nIt's more user-friendly, human-readable and even secure (in practice) than primitive private-key-only solutions.\n\nJust with one suite of seed phrase, you can access all blockchains and create multiple accounts.",
 		"keep_seed_phrase_safe": "Keep seed phrase safe",
-		"keep_seed_phrase_safe_desc": "Seed phrase leaked, assets would be stolen.\nSeed phrase lost, no one is able to recover it (include Go Pocket).\n\nSo you're obliged to keep it safe. Here are some rules.\n\n1. Write it on a paper or store in any media disconnected from the Internet. Additionally you can memorize them in your head.\n\n2. Since it's human-readable, input directly when import into a wallet and NEVER copy & paste, which is risky.\n\n3. Do NOT share it with ANYONE.\n\nYou can have a test for if you have memorized or stored them correctly by",
+		"keep_seed_phrase_safe_desc": "Seed phrase leaked, assets would be stolen.\nSeed phrase lost, no one is able to recover it (include Pali Wallet).\n\nSo you're obliged to keep it safe. Here are some rules.\n\n1. Write it on a paper or store in any media disconnected from the Internet. Additionally you can memorize them in your head.\n\n2. Since it's human-readable, input directly when import into a wallet and NEVER copy & paste, which is risky.\n\n3. Do NOT share it with ANYONE.\n\nYou can check if you have memorized it correctly below!",
 		"verify_your_seed_phrase": "Verify your seed phrase",
 		"verify": "Verify",
 		"wrong_seed_phrase": "Wrong seed phrase, try again.",
@@ -750,7 +755,7 @@
 	"observer": {
 		"observe_only_ccounts": "Observe-only Accounts",
 		"enter_address_here": "Address or ENS",
-		"only_support_evm_chain": "Only support chains that Go Pocket supported.",
+		"only_support_evm_chain": "Only support chains that Pali Wallet supported.",
 		"wrong_address": "Wrong address or ENS",
 		"account_already": "The account is already in your active account list.",
 		"add_an_address": "Add an Address",
@@ -774,7 +779,7 @@
 		"buy_crypto": "Buy Crypto to this account",
 		"content1": "Buy crypto with fiat.",
 		"content2": "After purchasing, the crypto currency you bought will be sent to current account.",
-		"content3": "Fiat on ramp service is provided by TRANSAK.",
+		"content3": "Fiat on ramp service is provided by COINIFY.",
 		"content4": "Click here",
 		"content5": " to check details like available countries or regions, fees and payment method.",
 		"buy_now": "Buy Now"
@@ -792,7 +797,7 @@
 		"enter_http_ipfs": "Enter http or ipfs link here",
 		"unable_load_content": "Unable to load content",
 		"hi_ens_name": "Hi, {{name}}",
-		"set_url_tip": "You haven't set an avatar so here is just a placeholder photo of GoGo.",
+		"set_url_tip": "You haven't set an avatar so here is just a placeholder photo of Pali.",
 		"about_ens_avatar": "About ENS Avatar",
 		"about_title_1": "What's this?",
 		"about_title_2": "Available format?",
@@ -800,8 +805,8 @@
 		"about_title_4": "Any fee?",
 		"about_desc_1": "ENS has supported avatars for your ENS profile. It will be part of your decentralized Web3 identity.",
 		"about_desc_2": "You can set your avatar from  NFT(Ethereum only), photo, or http/ipfs URL.",
-		"about_desc_3": "The avatar you set is stored in ENS on Ethereum blockchain, not in Go Pocket. ",
-		"about_desc_4": "You need to pay miner fee to submit your ENS avatar to Ethereum. Go Pocket won't charge anything.",
+		"about_desc_3": "The avatar you set is stored in ENS on Ethereum blockchain, not in Pali Wallet. ",
+		"about_desc_4": "You need to pay miner fee to submit your ENS avatar to Ethereum. Pali Wallet won't charge anything.",
 		"not_any_nft": "ENS only accepts NFTs on Ethereum.\nYou don’t have any NFT there.",
 		"your_can_buy_on": "You can buy on",
 		"opensea": "OpenSea"

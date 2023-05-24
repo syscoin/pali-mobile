@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { colors, baseStyles, fontStyles } from '../../../styles/common';
 import Tokens, { closeAllOpenRows, hideRiskPop } from '../../UI/Tokens';
+import Icon from '../../UI/Icon';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
 import { showTransactionNotification, hideCurrentNotification } from '../../../actions/notification';
@@ -27,7 +28,7 @@ import { showScanner } from '../../../actions/scanner';
 import CardSwiper from '../../UI/CardSwiper';
 import CopyView from '../../UI/CopyView';
 import Clipboard from '@react-native-community/clipboard';
-import { ChainType, TokenType, util } from 'gopocket-core';
+import { ChainType, util } from 'gopocket-core';
 import MStatusBar from '../../UI/MStatusBar';
 import Carousel from 'react-native-snap-carousel';
 import { CURRENCIES } from '../../../util/currencies';
@@ -80,20 +81,25 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginLeft: 102
+		paddingLeft: 20
 	},
 	title: {
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'center'
 	},
+	imageTitle: {
+		width: 160,
+		height: undefined,
+		aspectRatio: 3.66
+	},
 	scannerButton: {
-		paddingLeft: 7,
 		paddingRight: 20
 	},
+
 	walletConnectButton: {
 		paddingLeft: 20,
-		paddingRight: 7
+		paddingRight: 14
 	},
 	buttonImg: {
 		width: 24,
@@ -140,19 +146,19 @@ const styles = StyleSheet.create({
 		height: 44,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: colors.$FE6E91,
+		borderColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cancelText: {
 		fontSize: 14,
-		color: colors.$FE6E91
+		color: colors.brandPink300
 	},
 	okButton: {
 		flex: 1.5,
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -171,7 +177,7 @@ const styles = StyleSheet.create({
 		width: '80%'
 	},
 	marginLeftForBtn: {
-		marginLeft: 51
+		marginLeft: 57
 	},
 	bottomModal: {
 		justifyContent: 'flex-end',
@@ -211,7 +217,8 @@ class Wallet extends PureComponent {
 		selectEnsEntry: null,
 		ensAvatarData: null,
 		ensSettingPage: HomePage,
-		searchEditing: false
+		searchEditing: false,
+		nftChecked: false
 	};
 
 	popupInfos = {};
@@ -262,9 +269,7 @@ class Wallet extends PureComponent {
 		await util.safelyExecuteWithTimeout(async () => await Promise.all(actions), false, 6000);
 		this.setState({ refreshing: false });
 
-		const { identities, selectedAddress } = this.props;
-		const nftChecked = identities[selectedAddress]?.currentTokenType === TokenType.NFT;
-		if (nftChecked) {
+		if (this.state.nftChecked) {
 			DeviceEventEmitter.emit('onParentScroll', 100);
 		}
 	};
@@ -284,8 +289,17 @@ class Wallet extends PureComponent {
 		});
 	};
 
+	openSettings = async () => {
+		this.closeTokenSwipeRow();
+		this.props.navigation.navigate('SettingsView');
+	};
+
 	hideAssetAmount = opt => {
 		this.setState({ isAmountHide: opt.isAmountHide });
+	};
+
+	updateNftChecked = () => {
+		this.setState({ nftChecked: !this.state.nftChecked });
 	};
 
 	swipeChange = (address, chainType) => {
@@ -370,7 +384,7 @@ class Wallet extends PureComponent {
 	renderContent = () => {
 		const { identities, selectedAddress, assets, wealths, navigation, ensEntries, famousAccounts } = this.props;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
-		const { isAmountHide, chainEditing, searchEditing } = this.state;
+		const { isAmountHide, chainEditing, searchEditing, nftChecked } = this.state;
 		let currentIndexAsset = ChainType.All;
 		if (identities[selectedAddress]?.currentChain) {
 			currentIndexAsset = identities[selectedAddress]?.currentChain;
@@ -419,7 +433,6 @@ class Wallet extends PureComponent {
 			}
 		});
 
-		const nftChecked = identities[selectedAddress]?.currentTokenType === TokenType.NFT;
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
 
 		let currentContactEntry = contactEntrys[this.firstItem];
@@ -427,6 +440,7 @@ class Wallet extends PureComponent {
 			this.firstItem = 0;
 			currentContactEntry = contactEntrys[0];
 		}
+
 		return (
 			<View style={styles.wrapper}>
 				<View>
@@ -437,6 +451,7 @@ class Wallet extends PureComponent {
 						renderItem={({ item, index }) => (
 							<View style={styles.sliderItem} key={'slider-element-' + item.address}>
 								<CardSwiper
+									navigation={navigation}
 									ensEntry={ensEntries[item.address]}
 									wealth={wealths[item.address]}
 									hideAssetAmount={this.hideAssetAmount}
@@ -448,6 +463,7 @@ class Wallet extends PureComponent {
 									amountSymbol={amountSymbol}
 									toggleChainEditing={this.toggleChainEditing}
 									touchAvatar={this.showEnsSettingModal}
+									nftChecked={nftChecked}
 								/>
 							</View>
 						)}
@@ -475,26 +491,27 @@ class Wallet extends PureComponent {
 				<View style={{ paddingBottom: 6, zIndex: 1000 }}>
 					{!chainEditing && (
 						<View>
-							{nftChecked ? (
+							<Tokens
+								ref={this.tokenRef}
+								navigation={navigation}
+								tabLabel={strings('wallet.tokens')}
+								tokens={current_assets}
+								currentAddress={this.currentAddress}
+								isAmountHide={isAmountHide}
+								isFirstAccount={contactEntrys[0]?.address === selectedAddress}
+								pushToSecurity={this.pushToSecurity.bind(this, currentContactEntry)}
+								toggleSearchEditing={this.toggleSearchEditing}
+								contactEntry={currentContactEntry}
+								currentChain={currentContactEntry.currentChain}
+								currentChainType={currentIndexAsset}
+								nftChecked={nftChecked}
+								updateNftChecked={this.updateNftChecked}
+							/>
+							{nftChecked && (
 								<Nft
 									navigation={navigation}
 									currentChainType={currentIndexAsset}
 									currentAddress={this.currentAddress}
-								/>
-							) : (
-								<Tokens
-									ref={this.tokenRef}
-									navigation={navigation}
-									tabLabel={strings('wallet.tokens')}
-									tokens={current_assets}
-									currentAddress={this.currentAddress}
-									isAmountHide={isAmountHide}
-									isFirstAccount={contactEntrys[0]?.address === selectedAddress}
-									pushToSecurity={this.pushToSecurity.bind(this, currentContactEntry)}
-									toggleSearchEditing={this.toggleSearchEditing}
-									contactEntry={currentContactEntry}
-									currentChain={currentContactEntry.currentChain}
-									currentChainType={currentIndexAsset}
 								/>
 							)}
 						</View>
@@ -670,9 +687,12 @@ class Wallet extends PureComponent {
 			onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
 		>
 			<MStatusBar navigation={this.props.navigation} />
-			<View style={[styles.header, !this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-				<View style={styles.title}>
-					<Image source={require('../../../images/header_logo.png')} />
+			<View style={styles.header}>
+				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+					<Icon name="settings" width="24" height="24" />
+				</TouchableOpacity>
+				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
+					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
 				</View>
 				{this.props.walletConnectIconVisible && (
 					<TouchableOpacity

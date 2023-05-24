@@ -46,11 +46,11 @@ android {
 	}
 
 	defaultConfig {
-		applicationId "io.gopocket"
+		applicationId "io.paliwallet"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 156
-		versionName "1.5.6"
+		versionCode 1
+		versionName "0.2.1"
 		multiDexEnabled true
 		missingDimensionStrategy "minReactNative", "minReactNative46"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -106,7 +106,8 @@ dependencies {
 	implementation project(':lottie-react-native')
 
 	implementation project(':react-native-gesture-handler')
-
+	implementation project(path: ":@react-native-firebase_analytics")
+	
 	implementation 'androidx.multidex:multidex:2.0.1'
 	implementation 'androidx.annotation:annotation:1.1.0'
 	implementation 'androidx.appcompat:appcompat:1.2.0'

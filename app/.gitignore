@@ -21,6 +21,7 @@ DerivedData
 project.xcworkspace
 ios/debug.xcconfig
 ios/release.xcconfig
+ios/GoogleService-Info.plist
 
 # android / intellij
 build/
@@ -34,6 +35,7 @@ android/app/.project
 android/app/bin/
 android/app/gradle*
 android/app/_build*
+
 
 # node.js
 node_modules/

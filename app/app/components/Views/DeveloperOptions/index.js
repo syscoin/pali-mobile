@@ -12,9 +12,10 @@ import { startNetworkChange, toggleTestnetVisible } from '../../../actions/setti
 import MStatusBar from '../../UI/MStatusBar';
 import { NetworkConfig } from 'gopocket-core';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllProvider } from '../../../util/ControllerUtils';
 import { getDeveloperTitle } from '../../../util/ChainTypeImages';
+import { ChainType } from 'gopocket-core';
 
 const styles = {
 	wrapper: {
@@ -119,7 +120,18 @@ class DeveloperOptions extends PureComponent {
 	renderNetworks = () => {
 		const { allProvider, allNetworkChanging } = this.props;
 		const elementMap = [];
-		for (const type in NetworkConfig) {
+
+		const chainOrder = [
+			ChainType.Syscoin,
+			ChainType.Ethereum,
+			ChainType.Arbitrum,
+			ChainType.Bsc,
+			ChainType.Polygon,
+			ChainType.Optimism,
+			ChainType.Avax
+		];
+
+		for (const type of chainOrder) {
 			const chainType = Number(type);
 			if (NetworkConfig[type].Disabled) {
 				continue;
@@ -137,7 +149,7 @@ class DeveloperOptions extends PureComponent {
 				if (allNetworkChanging[chainType]) {
 					selected =
 						allNetworkChanging[chainType] === name ? (
-							<ActivityIndicator size="small" color={colors.$FE6E91} />
+							<ActivityIndicator size="small" color={colors.brandPink300} />
 						) : null;
 				} else {
 					selected =
@@ -181,7 +193,7 @@ class DeveloperOptions extends PureComponent {
 	render() {
 		return (
 			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
+				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.developer_options')}
 					onBack={() => {

@@ -14,7 +14,7 @@ import { launchAppInGooglePlay, supportGooglePlay, jumpIosApp } from '../../../u
 import Device from '../../../util/Device';
 import { appendLanguage } from '../../../util/browser';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = {
 	wrapper: {
@@ -48,7 +48,7 @@ const styles = {
 		width: '100%',
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
@@ -105,6 +105,7 @@ class UpdateCheck extends PureComponent {
 			}
 		}
 		if (!detailUrl) {
+			//TODO: update api url to Pali ones
 			detailUrl = 'https://gopocket.finance/release-notes-plain';
 		}
 		detailUrl = appendLanguage(detailUrl);
@@ -128,7 +129,7 @@ class UpdateCheck extends PureComponent {
 	render() {
 		return (
 			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} />
+				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.update_check')}
 					onBack={() => {

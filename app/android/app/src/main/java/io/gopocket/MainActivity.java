@@ -1,4 +1,4 @@
-package io.gopocket;
+package io.paliwallet;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactFragmentActivity;

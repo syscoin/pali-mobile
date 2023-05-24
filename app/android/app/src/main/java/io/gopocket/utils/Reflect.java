@@ -1,4 +1,4 @@
-package io.gopocket.utils;
+package io.paliwallet.utils;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;

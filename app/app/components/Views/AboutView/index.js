@@ -7,7 +7,8 @@ import { getVersion } from 'react-native-device-info';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
 import TitleBar from '../../UI/TitleBar';
-import { SafeAreaView } from 'react-navigation';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = {
 	flex: {
@@ -76,37 +77,25 @@ export default class AboutView extends PureComponent {
 	};
 
 	goWebsite = () => {
-		Linking.openURL('https://gopocket.finance');
+		Linking.openURL('https://paliwallet.com/');
 	};
 
 	goDiscord = () => {
-		Linking.openURL('https://discord.gg/EHTVmPkMcP');
+		Linking.openURL('https://discord.gg/syscoin');
 	};
 
 	goTwitter = () => {
-		Linking.openURL('https://twitter.com/GoPocketWallet');
-	};
-
-	goMedium = () => {
-		Linking.openURL('https://gopocket.medium.com');
+		Linking.openURL('https://twitter.com/PaliWallet');
 	};
 
 	goTelegram = () => {
-		const language =
-			Platform.OS === 'ios'
-				? NativeModules.SettingsManager.settings.AppleLocale
-				: NativeModules.I18nManager.localeIdentifier;
-		if (language === 'zh_CN') {
-			Linking.openURL('https://t.me/joinchat/HVYgzVN_cpxkMGFl');
-		} else {
-			Linking.openURL('https://t.me/joinchat/JdFpLIODMmg3NGU1');
-		}
+		Linking.openURL('https://t.me/Syscoin_Official');
 	};
 
 	render() {
 		return (
 			<SafeAreaView style={styles.wrapper}>
-				<MStatusBar navigation={this.props.navigation} />
+				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.about')}
 					onBack={() => {
@@ -153,15 +142,7 @@ export default class AboutView extends PureComponent {
 				<View style={styles.line} />
 
 				<View style={styles.line} />
-				<View style={styles.itemLayout}>
-					<TouchableOpacity style={styles.touch} onPress={this.goMedium}>
-						<Image style={styles.logo} source={require('../../../images/ic_medium.png')} />
-						<Text style={styles.itemTitle}>Medium</Text>
-						<View style={styles.flex} />
-						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
-					</TouchableOpacity>
-				</View>
-				<View style={styles.line} />
+
 				<View style={styles.itemLayout}>
 					<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
 						<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />

@@ -81,10 +81,10 @@ export class PersonalMessageManager extends AbstractMessageManager<
           case 'signed':
             return resolve(data.rawSig as string);
           case 'rejected':
-            return reject(new Error('Go Pocket Personal Message Signature: User denied message signature.'));
+            return reject(new Error('Pali Wallet Personal Message Signature: User denied message signature.'));
           default:
             return reject(
-              new Error(`Go Pocket Personal Message Signature: Unknown problem: ${JSON.stringify(messageParams)}`),
+              new Error(`Pali Wallet Personal Message Signature: Unknown problem: ${JSON.stringify(messageParams)}`),
             );
         }
       });

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { util } from 'gopocket-core';
 import { toggleShowHint } from '../../../actions/hint';
-import { SafeAreaView } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 		marginBottom: 30
 	},
 	createButtonWrapper: {
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		height: 44,
 		borderRadius: 10,
 		justifyContent: 'center',

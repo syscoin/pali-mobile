@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 	applyCheckTouch: {
 		height: 44,
 		borderRadius: 10,
-		backgroundColor: colors.$FE6E91,
+		backgroundColor: colors.brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: 20,
@@ -404,12 +404,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	circleContent: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 18,
 		...fontStyles.semibold
 	},
 	circleDesc: {
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		fontSize: 10,
 		marginTop: 2
 	},
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
 	},
 	shareText: {
 		fontSize: 16,
-		color: colors.$FE6E91,
+		color: colors.brandPink300,
 		marginLeft: 10
 	}
 });
@@ -1027,7 +1027,7 @@ class FoldSecurityView extends PureComponent {
 								borderWidth={25}
 								innerColor={colors.$F9F9F9}
 								bgcolor={colors.$E9ECF1}
-								color={colors.$FE6E91}
+								color={colors.brandPink300}
 							>
 								<View style={styles.contentCenter}>
 									<Text style={styles.circleContent} allowFontScaling={false}>

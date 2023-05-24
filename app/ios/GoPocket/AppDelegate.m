@@ -18,6 +18,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 #import <UMPush/UMessage.h>
+#import <Firebase.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -33,6 +34,9 @@ static void InitializeFlipper(UIApplication *application) {
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
 
   #if DEBUG
   #ifdef FB_SONARKIT_ENABLED
@@ -52,14 +56,24 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
+ 
   LOTAnimationView *animation = [LOTAnimationView animationNamed:@"splash_screen" inBundle:[NSBundle mainBundle]];
-  animation.frame = CGRectMake(self.window.bounds.size.width/2-160, self.window.bounds.size.height/5, 320, 487);
-  animation.loopAnimation = NO;
-  [animation playWithCompletion:^(BOOL animationFinished) {
-    // Do Something
+   CGFloat newWidth = 320 * 1.3; 
+   CGFloat newHeight = 487 * 1.8; 
+
+    // Calculate the new x and y positions
+   CGFloat newX = self.window.bounds.size.width / 2 - newWidth / 2;
+   CGFloat newY = self.window.bounds.size.height / 2 - newHeight / 2;
+
+   // Set the new frame for the animation
+   animation.frame = CGRectMake(newX, newY, newWidth, newHeight);
+   animation.loopAnimation = NO;
+   [animation playWithCompletion:^(BOOL animationFinished) {
+     // Do Something
   }];
+
   [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
-  [rootView.subviews[rootView.subviews.count - 1] addSubview:animation];
+  [rootView.subviews[rootView.subviews.count - 1] addSubview:animation];  
 
   [UMConfigure initWithAppkey:@"60af0efb6c421a3d97cec8e8" channel:@"App Store"];
   
