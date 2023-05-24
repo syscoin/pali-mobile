@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
 	},
 	otcBannerImgClose: {
 		position: 'absolute',
-		right: 10,
+		right: 15,
 		top: 0
 	},
 	headerSearch: {

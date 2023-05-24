@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors, fontStyles } from '../../../styles/common';
 import AssetOverview from '../../UI/AssetOverview';
 import iconBackWhite from '../../../images/ic_back_white.png';
@@ -280,11 +281,12 @@ class Asset extends PureComponent {
 
 	renderBg = nativeCurrency => {
 		const { asset, isSecurityViewShowed } = this.state;
-		let bgColor = '#ACBAC4';
+		let bgColor = ['#ACBAC4'];
 		let bgImg = require('../../../images/img_coin_bg_unknow.png');
+
 		if (nativeCurrency) {
-			bgColor = '#91D752';
-			bgImg = require('../../../images/img_coin_bg_safe.png');
+			bgColor = ['#0E223A', '#284F94', '#FE0077'];
+			bgImg = require('../../../images/img_coin_bg_pali.png');
 		} else {
 			const securityData = getSecurityData(asset);
 			const { notice, risk, normal, isTrust } = securityData;
@@ -292,21 +294,26 @@ class Asset extends PureComponent {
 			const riskNum = risk && risk.length ? risk.length : 0;
 			const normalNum = normal && normal.length ? normal.length : 0;
 			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0 && normalNum !== 0)) {
-				bgColor = '#91D752';
-				bgImg = require('../../../images/img_coin_bg_safe.png');
+				bgColor = ['#0E223A', '#284F94', '#FE0077'];
+				bgImg = require('../../../images/img_coin_bg_pali.png');
 			} else if (riskNum > 0) {
-				bgColor = '#FF6E6E';
+				bgColor = ['#FF6E6E'];
 				bgImg = require('../../../images/img_coin_bg_danger.png');
 			} else if (noticeNum > 0) {
-				bgColor = '#FE9A5C';
+				bgColor = ['#FE9A5C'];
 				bgImg = require('../../../images/img_coin_bg_warning.png');
 			}
 		}
 		return (
-			<View style={[styles.bgWrapper, { backgroundColor: bgColor }]}>
+			<LinearGradient
+				start={{ x: -0.2, y: 0 }}
+				end={{ x: 1.3, y: 0.3 }}
+				colors={bgColor}
+				style={styles.bgWrapper}
+			>
 				<Image source={bgImg} style={styles.widthFull} />
 				{!isSecurityViewShowed && <View style={styles.bottomSecurityBg} />}
-			</View>
+			</LinearGradient>
 		);
 	};
 
