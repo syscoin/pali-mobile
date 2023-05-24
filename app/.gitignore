@@ -35,7 +35,7 @@ android/app/.project
 android/app/bin/
 android/app/gradle*
 android/app/_build*
-android/app/google-services.json
+
 
 # node.js
 node_modules/

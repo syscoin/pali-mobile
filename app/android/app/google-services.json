@@ -1,0 +1,18 @@
+{
+	"project_info": {
+		"project_number": "Put your own firebase configuration data here"
+	},
+	"client": [
+		{
+			"client_info": {},
+			"oauth_client": [{}, {}],
+			"api_key": [{}],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": []
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
+}
