@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="io.gopocket"
+	package="io.paliwallet"
 	xmlns:tools="http://schemas.android.com/tools"
 >
 
@@ -77,7 +77,7 @@
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="io.gopocket.provider"
+			android:authorities="io.paliwallet.provider"
 			android:grantUriPermissions="true"
 			android:exported="false"
 		>

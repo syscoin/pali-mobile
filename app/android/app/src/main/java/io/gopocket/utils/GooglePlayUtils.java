@@ -1,4 +1,4 @@
-package io.gopocket.utils;
+package io.paliwallet.utils;
 
 import android.content.Context;
 import android.content.Intent;

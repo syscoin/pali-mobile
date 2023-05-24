@@ -1,4 +1,4 @@
-package io.gopocket.nativeModules;
+package io.paliwallet.nativeModules;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -23,11 +23,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.gopocket.utils.CryptUtil;
-import io.gopocket.utils.DataConnectionManager;
-import io.gopocket.utils.DeviceInfoUtils;
-import io.gopocket.utils.GooglePlayUtils;
-import io.gopocket.utils.NotificationUtils;
+import io.paliwallet.utils.CryptUtil;
+import io.paliwallet.utils.DataConnectionManager;
+import io.paliwallet.utils.DeviceInfoUtils;
+import io.paliwallet.utils.GooglePlayUtils;
+import io.paliwallet.utils.NotificationUtils;
 
 public class RNToolsManager extends ReactContextBaseJavaModule {
 	private Context mContext;

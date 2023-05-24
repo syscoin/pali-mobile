@@ -18,6 +18,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 #import <UMPush/UMessage.h>
+#import <Firebase.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -33,6 +34,9 @@ static void InitializeFlipper(UIApplication *application) {
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
 
   #if DEBUG
   #ifdef FB_SONARKIT_ENABLED

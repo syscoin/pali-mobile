@@ -19,7 +19,11 @@ Pali Wallet is a new generation multi-chain wallet that provides security safegu
 - `mv ./app/.env.template ./app/apikeys/.env`
 - set infura_id/etherscan/polygonscan/bscscan/opensea and etc. in `./app/apikeys/.env`
 
-2. Build
+2. Firebase Information
+
+- You will need to add your own google-service.json(android) and GoogleService-info.plist(ios). You are able to get this on firebase console.
+
+3. Build
 
 ```
 cd app && yarn clean
