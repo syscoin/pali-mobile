@@ -39,3 +39,7 @@ For release version:
 `yarn build:android`
 or
 `yarn build:ios`
+
+Source code initially forked from our partners Go Pocket Wallet under GNU General Public License v3.0.
+
+---
