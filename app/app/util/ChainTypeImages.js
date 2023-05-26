@@ -14,6 +14,7 @@ export const ChainTypes = [
 	ChainType.Optimism,
 	ChainType.Avax,
 	ChainType.Syscoin,
+	ChainType.Rollux,
 	ChainType.RPCBase
 ];
 export const ChainTypeNames = [
@@ -26,6 +27,7 @@ export const ChainTypeNames = [
 	strings('wallet.optimism_network'),
 	strings('wallet.avalanche_network'),
 	strings('wallet.syscoin_network'),
+	strings('wallet.rollux_network'),
 	RPC
 ];
 export const ChainTypeIcons = [
@@ -38,6 +40,7 @@ export const ChainTypeIcons = [
 	require('../images/ic_card_op.png'),
 	require('../images/ic_card_avax.png'),
 	require('../images/ic_card_syscoin.png'),
+	require('../images/ic_card_rollux.png'),
 	require('../images/ic_card_other.png')
 ];
 export const ChainTypeMoreIcons = [
@@ -50,6 +53,7 @@ export const ChainTypeMoreIcons = [
 	require('../images/ic_card_more_op.png'),
 	require('../images/ic_card_more_avax.png'),
 	require('../images/ic_card_more_syscoin.png'),
+	require('../images/ic_card_more_rollux.png'),
 	require('../images/ic_card_more_other.png')
 ];
 export const ChainTypeBg = [
@@ -62,6 +66,7 @@ export const ChainTypeBg = [
 	require('../images/pali-bg.png'),
 	require('../images/avalanche-bg.png'),
 	require('../images/syscoin-bg.png'),
+	require('../images/rollux-bg.png'),
 	require('../images/pali-bg.png')
 ];
 
@@ -75,6 +80,7 @@ export const ChainTypeBgWithoutShadows = [
 	require('../images/pali-bg.png'),
 	require('../images/avalanche-bg.png'),
 	require('../images/syscoin-bg.png'),
+	require('../images/rollux-bg.png'),
 	require('../images/pali-bg.png')
 ];
 export const ChainTypeCheckColorStyle = [
@@ -99,6 +105,7 @@ export const ChainTypeBgOngoing = [
 	require('../images/img_ongoing_op.png'),
 	require('../images/img_ongoing_avax.png'),
 	require('../images/img_ongoing_syscoin.png'),
+	require('../images/img_ongoing_rollux.png'),
 	require('../images/img_ongoing_other.png')
 ];
 export const ChainTypeBgDefi = [
@@ -111,6 +118,7 @@ export const ChainTypeBgDefi = [
 	require('../images/ic_defi_op.png'),
 	require('../images/ic_defi_avax.png'),
 	require('../images/ic_defi_syscoin.png'),
+	require('../images/ic_defi_rollux.png'),
 	require('../images/letter/ic_defi_other.png')
 ];
 export function getAssetNetworkBarColor(type) {
@@ -128,6 +136,8 @@ export function getAssetNetworkBarColor(type) {
 		? '#000000'
 		: type === ChainType.Syscoin
 		? '#1F5EFF'
+		: type === ChainType.Rollux
+		? '#000000'
 		: util.isRpcChainType(type)
 		? getTagColor(type)
 		: '#627EEA';
@@ -147,6 +157,8 @@ export function getShareImage(type) {
 		return require('../images/ic_share_avax.png');
 	} else if (type === ChainType.Syscoin) {
 		return require('../images/ic_share_syscoin.png');
+	} else if (type === ChainType.Rollux) {
+		return require('../images/ic_share_rollux.png');
 	}
 	return require('../images/ic_share_eth.png');
 }
@@ -165,6 +177,8 @@ export function getIcTagByChainType(type) {
 		? require('../images/ic_avax_tag.png')
 		: type === ChainType.Syscoin
 		? require('../images/ic_syscoin_tag.png')
+		: type === ChainType.Rollux
+		? require('../images/ic_rollux_tag.png')
 		: util.isRpcChainType(type)
 		? getIcTagResource(type)
 		: require('../images/ic_eth_tag.png');
@@ -184,7 +198,10 @@ export function getTabIcon(type) {
 		return require('../images/ic_tab_avax.png');
 	} else if (type === ChainType.Syscoin) {
 		return require('../images/ic_tab_syscoin.png');
+	} else if (type === ChainType.Rollux) {
+		return require('../images/ic_tab_rollux.png');
 	}
+
 	return require('../images/ic_tab_eth.png');
 }
 export const getChainTypeName = type => {
@@ -204,6 +221,8 @@ export const getChainTypeName = type => {
 		return strings('other.avalanche');
 	} else if (type === ChainType.Syscoin) {
 		return strings('other.syscoin');
+	} else if (type === ChainType.Rollux) {
+		return strings('other.rollux');
 	} else if (util.isRpcChainType(type)) {
 		return getRpcNickname(type) || RPC;
 	}
@@ -226,6 +245,8 @@ export const getDeveloperTitle = type => {
 		return strings('developer_options.avax_network');
 	} else if (type === ChainType.Syscoin) {
 		return strings('developer_options.syscoin_network');
+	} else if (type === ChainType.Rollux) {
+		return strings('developer_options.rollux_network');
 	}
 	return strings('developer_options.ethereum_network');
 };
@@ -269,6 +290,11 @@ export const ChainTypeSettingsItems = [
 		text: strings('wallet.syscoin_network'),
 		icon: require('../images/img_asset_syscoin.png'),
 		chainType: ChainType.Syscoin
+	},
+	{
+		text: strings('wallet.rollux_network'),
+		icon: require('../images/img_asset_rollux.png'),
+		chainType: ChainType.Rollux
 	}
 ];
 export const chainToChainType = chain => {
@@ -295,6 +321,9 @@ export const chainToChainType = chain => {
 	}
 	if (chain === 9) {
 		return ChainType.Syscoin;
+	}
+	if (chain === 10) {
+		return ChainType.Rollux;
 	}
 	return chain;
 };
@@ -324,5 +353,9 @@ export const chainTypeTochain = chainType => {
 	if (chainType === ChainType.Syscoin) {
 		return 9;
 	}
+	if (chainType === ChainType.Rollux) {
+		return 10;
+	}
+
 	return chainType;
 };
