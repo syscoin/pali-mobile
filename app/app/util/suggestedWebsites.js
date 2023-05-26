@@ -1,6 +1,157 @@
 const suggestedWebsites = {
 	networks: [
 		{
+			chain: 10,
+			content: [
+				{
+					items: [
+						{
+							desc: 'Blockchain explorer for Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyscoinLogo.png',
+							name: 'Syscoin Explorer',
+							url: 'https://explorer.syscoin.org'
+						},
+						{
+							desc: 'RPC info for Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ChainListLogo.png',
+							name: 'Syscoin RPC Info',
+							url: 'https://chainlist.org/chain/57'
+						}
+					],
+					name: 'Tools'
+				},
+				{
+					items: [
+						{
+							desc: 'Decentralized exchange on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/PegasysLogo.png',
+							name: 'Pegasys',
+							url: 'https://app.pegasys.finance/#/swap'
+						},
+						{
+							desc: 'Decentralized exchange on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ApeSwapLogo.png',
+							name: 'Apeswap',
+							url: 'https://apeswap.finance/swap'
+						}
+					],
+					name: 'Exchange'
+				},
+				{
+					items: [
+						{
+							desc: 'Lending and borrowing platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/PegasysLogo.png',
+							name: 'Pegasys',
+							url: 'https://app.pegasys.finance/#/swap'
+						},
+						{
+							desc: 'Staking and yield farming protocol',
+							logo: 'https://pali-images.s3.amazonaws.com/files/QiDaoLogo.png',
+							name: 'QiDAO',
+							url: 'https://app.mai.finance'
+						},
+						{
+							desc: 'Yield farming optimization platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BeefyLogo.png',
+							name: 'Beefy',
+							url: 'https://app.beefy.com'
+						},
+						{
+							desc: 'Decentralized cloud infrastructure provider on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/AnkrLogo.png',
+							name: 'Ankr',
+							url: 'https://www.ankr.com'
+						},
+						{
+							desc: 'Protocol for token vesting and unlocking on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/RevestLogo.png',
+							name: 'Revest',
+							url: 'https://app.revest.finance'
+						},
+						{
+							desc: 'Oracle service provider on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SuperOraclesLogo.png',
+							name: 'SupraOracles',
+							url: 'https://supraoracles.com/'
+						},
+						{
+							desc: 'Launchpad for blockchain projects on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyspadLogo.png',
+							name: 'Syspad',
+							url: 'https://twitter.com/syspad_official'
+						}
+					],
+					name: 'Lending/DeFi'
+				},
+				{
+					items: [
+						{
+							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ChaingeLogo.png',
+							name: 'Chainge',
+							url: 'https://www.chainge.finance/info/trading'
+						},
+						{
+							//TODO: update api url to Pali ones
+							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
+							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							name: 'Multichain',
+							url: 'https://app.multichain.org/#/router'
+						},
+						{
+							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/CelerBridgeLogo.png',
+							name: 'Celer cBridge',
+							url: 'https://cbridge.celer.network'
+						}
+					],
+					name: 'Bridges'
+				},
+				{
+					items: [
+						{
+							desc: 'NFT marketplace for buying, selling, and trading digital assets on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/LuxyLogo.png',
+							name: 'Luxy',
+							url: 'https://luxy.io'
+						},
+						{
+							desc: 'NFT marketplace for buying, selling, and trading digital assets on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/TribeOneLogo.png',
+							name: 'TribeOne',
+							url: 'https://www.tribeone.io/'
+						}
+					],
+					name: 'NFT'
+				},
+				{
+					items: [
+						{
+							desc: 'Digital asset management platform on Syscoin',
+							logo: 'https://pali-images.s3.amazonaws.com/files/CoinifyLogo.png',
+							name: 'Coinify',
+							url: 'https://www.coinify.com'
+						},
+						{
+							desc: 'Blockchain Academy',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BlockdemyLogo.png',
+							name: 'Blockdemy',
+							url: 'https://blockdemy.com'
+						},
+						{
+							desc: 'Overview of the Syscoin ecosystem',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SyscoinLogo.png',
+							name: 'Syscoin Ecosystem',
+							url: 'https://syscoin.org/ecosystem'
+						}
+					],
+					name: 'Misc'
+				}
+			],
+			name: 'Rollux'
+		},
+		{
 			chain: 9,
 			content: [
 				{

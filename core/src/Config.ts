@@ -9,11 +9,13 @@ export enum ChainType {
   Optimism = 0x40,
   Avax = 0x80,
   Syscoin = 0x100,
+  Rollux = 0x200,
   RPCBase = 0x10000000000000,
 }
 
 export const defaultEnabledChains = [
   ChainType.Ethereum,
+  ChainType.Rollux,
   ChainType.Syscoin,
   ChainType.Polygon,
   ChainType.Arbitrum,
@@ -317,17 +319,6 @@ export const NetworkConfig: { [type: number]: any } = {
         ExplorerUrl: 'https://explorer.syscoin.org',
         ExplorerApiUrl: 'https://explorer.syscoin.org',
       },
-      'Rollux Testnet': {
-        provider: {
-          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
-          type: 'Rollux Testnet',
-          chainId: '57000',
-          ticker: 'TSYS',
-          nickname: 'Syscoin',
-        },
-        ExplorerUrl: 'https://rollux.tanenbaum.io',
-        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
-      },
       'Syscoin Tanenbaum Testnet': {
         provider: {
           rpcTarget: 'https://rpc.tanenbaum.io',
@@ -338,6 +329,44 @@ export const NetworkConfig: { [type: number]: any } = {
         },
         ExplorerUrl: 'https://tanenbaum.io',
         ExplorerApiUrl: 'https://tanenbaum.io',
+      },
+    },
+  },
+  [ChainType.Rollux]: {
+    Name: 'Rollux',
+    MainChainId: '570000',
+    UseInfura: false,
+    Disabled: false,
+    DefiTokenChain: ['sys', 'rollux'],
+    CoingeckoId: 'rollux',
+    SwapUrl: 'https://app.pegasys.finance/#/swap',
+    SwapTokenUrl: 'https://app.pegasys.finance/#/swap?inputCurrency=',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/rollux_logo.png',
+    NeedAvailableUrl: false,
+    OtherCoinInfoUrl: '',
+    SushiswapGraphUrl: '',
+    Networks: {
+      'Rollux Mainnet': {
+        provider: {
+          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          type: 'Rollux Mainnet',
+          chainId: '570000',
+          ticker: 'SYS',
+          nickname: 'Rollux',
+        },
+        ExplorerUrl: 'https://rollux.tanenbaum.io',
+        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
+      },
+      'Rollux Testnet': {
+        provider: {
+          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          type: 'Rollux Testnet',
+          chainId: '57000',
+          ticker: 'TSYS',
+          nickname: 'Rollux Testnet',
+        },
+        ExplorerUrl: 'https://rollux.tanenbaum.io',
+        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
       },
     },
   },
@@ -527,6 +556,10 @@ export const OnEventTag = {
     EventValueName: 'syscoin',
     EventActiveUsers: 'SyscoinActiveUsers',
   },
+  [ChainType.Rollux]: {
+    EventValueName: 'rollux',
+    EventActiveUsers: 'RolluxActiveUsers',
+  },
 };
 
 export const BaseChainConfig = {
@@ -625,8 +658,14 @@ export const BaseChainConfig = {
     tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
+  '570000': {
+    coingecko_path: 'rollux',
+    balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
+    tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
+    nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
+  },
   '57000': {
-    coingecko_path: 'syscoin',
+    coingecko_path: 'rollux',
     balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
     tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',

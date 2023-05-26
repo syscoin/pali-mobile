@@ -90,6 +90,7 @@
 		"optimism_network": "Optimism",
 		"avalanche_network": "Avalanche",
 		"syscoin_network": "Syscoin",
+		"rollux_network": "Rollux",
 		"bsc_network": "BSC",
 		"heco_network": "HECO",
 		"enter_link": "搜索dApp或输入网址"
@@ -350,6 +351,7 @@
 		"optimism": "Optimism",
 		"avalanche": "Avalanche",
 		"syscoin": "Syscoin",
+		"rollux": "Rollux",
 		"no_token_found": "啊哦，没找到代币",
 		"cancel": "取消",
 		"copy": "复制",
@@ -516,7 +518,8 @@
 		"polygon_network": "Polygon Network",
 		"tron_network": "Tron Network",
 		"avax_network": "Avalanche Network",
-		"syscoin_network": "Syscoin Network"
+		"syscoin_network": "Syscoin Network",
+		"rollux_network": "Rollux Network"
 	},
 	"security": {
 		"security_title": "安全中心",
