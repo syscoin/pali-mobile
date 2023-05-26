@@ -145,7 +145,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 4,
 		marginTop: 5,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		minWidth: 35
 	},
 	chainName: {
 		fontSize: 9,
@@ -692,7 +693,7 @@ class CardSwiper extends PureComponent {
 																currentChainType === chainType && colors.blackAlpha300
 														}
 													]}
-													key={currentChainType}
+													key={currentIndex + translateIndex + 'chain-label-name'}
 												>
 													<Text
 														style={styles.chainName}
@@ -740,7 +741,7 @@ class CardSwiper extends PureComponent {
 													backgroundColor: hasInMore && colors.blackAlpha300
 												}
 											]}
-											key={currentChainType}
+											key={currentIndex + moreChains.length + 'chain-label-name-more'}
 										>
 											<Text
 												style={styles.chainName}

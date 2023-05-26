@@ -114,7 +114,7 @@ export default class ShareImageView extends PureComponent {
 						<Text style={styles.tipsText}>
 							{strings('other.all_tokens', { network: getChainTypeName(this.props.chainType) })}
 						</Text>
-						<Image style={styles.bottomLogo} source={shareLogo} />
+						<Image resizeMode="contain" style={styles.bottomLogo} source={shareLogo} />
 					</View>
 				</ImageBackground>
 			</View>
