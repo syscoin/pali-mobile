@@ -660,14 +660,14 @@ export const BaseChainConfig = {
   },
   '570000': {
     coingecko_path: 'rollux',
-    balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
-    tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
+    balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
+    tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
   '57000': {
     coingecko_path: 'rollux',
-    balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
-    tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
+    balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
+    tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
   '5700': {
