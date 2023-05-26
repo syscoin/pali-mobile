@@ -2,7 +2,7 @@
 
 Immerse yourself in the Web3 revolution with Pali Mobile, the official Syscoin & Rollux wallet, powered by the talented minds at Pollum. Our mission? To deliver an unbeatable user experience in the realm of cryptocurrencies and decentralized applications (dapps), across all EVM-compatible chains.
 
-![logo](img/banner.png)
+![banner](img/banner.png)
 
 ## Features
 
@@ -10,9 +10,9 @@ Immerse yourself in the Web3 revolution with Pali Mobile, the official Syscoin &
 
 • FULLY AUDITED & OPEN-SOURCE: With a commitment to absolute transparency, our codebase is entirely open-source and audited, meaning you can not only trust Pali with the security of your assets, but also verify it. What's safer than that?
 
-•  FREE FOREVER: At Pali, we believe in the open ethos of the blockchain world. That's why we've ensured that our app is not just easy to use but free to use, always. Pali takes ZERO fees on services, ensuring that your transactions are as straightforward and cost-effective as possible. It's our way of fostering a truly decentralized and accessible environment.
+• FREE FOREVER: At Pali, we believe in the open ethos of the blockchain world. That's why we've ensured that our app is not just easy to use but free to use, always. Pali takes ZERO fees on services, ensuring that your transactions are as straightforward and cost-effective as possible. It's our way of fostering a truly decentralized and accessible environment.
 
-•  STATE-OF-THE-ART SECURITY: Your security is our top priority. Pali is equipped with robust security features including Face ID login, screenshot protection, and the ability to revoke token approvals. Moreover, our token security analysis is powered by the Go Plus Security API, offering real-time insights for informed transactions.
+• STATE-OF-THE-ART SECURITY: Your security is our top priority. Pali is equipped with robust security features including Face ID login, screenshot protection, and the ability to revoke token approvals. Moreover, our token security analysis is powered by the [Go Plus Security API](https://gopluslabs.io/), offering real-time insights for informed transactions.
 
 • BUILT-IN ON/OFF RAMP: Pali seamlessly integrates with Coinify, enabling users to convert crypto into fiat currencies like USD, EUR, BRL, and more. This feature opens up a wealth of real-world possibilities, empowering you to use your digital assets in everyday transactions, from purchasing coffee to online shopping.
 
