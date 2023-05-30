@@ -163,7 +163,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'wbnb',
     SwapUrl: 'https://exchange.pancakeswap.finance/#/swap',
     SwapTokenUrl: 'https://exchange.pancakeswap.finance/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/bnb.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/bnblogo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange',
