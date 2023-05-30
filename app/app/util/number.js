@@ -1023,8 +1023,8 @@ export function calcAddressSinglePrices(nativeCurrencyAsset, tokens, type, opt) 
 	}
 	return { totalUsdAmount, totalCurrencyAmount, totalBalance };
 }
-//TODO: update api url to Pali ones
-const rpcLogo = 'https://cdn.gopocket.finance/files/rpc.png';
+
+const rpcLogo = 'https://pali-images.s3.amazonaws.com/files/rpc.png';
 
 export async function getAssetLogo(asset) {
 	const type = asset.type ? asset.type : ChainType.Ethereum;
