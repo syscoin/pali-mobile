@@ -145,7 +145,7 @@ export default createStackNavigator(
 								</Text>
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
-							tabBarOnPress: ({ navigation, defaultHandler }) => {
+							tabBarOnPress: ({ defaultHandler }) => {
 								defaultHandler();
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -180,11 +180,9 @@ export default createStackNavigator(
 								</Text>
 							),
 							tabBarIcon: ({ focused }) => <GlobeIcon focused={focused} />,
-							tabBarOnPress: ({ navigation }) => {
-								if (navigation) {
-									navigation.navigate('BrowserTabHome');
-									DeviceEventEmitter.emit('onBrowserTabFocused');
-								}
+							tabBarOnPress: ({ defaultHandler }) => {
+								defaultHandler();
+								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}
 						}
 					}
