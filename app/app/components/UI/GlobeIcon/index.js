@@ -40,9 +40,6 @@ const GlobeIcon = ({ focused }) => {
 		};
 
 		DeviceEventEmitter.addListener('onBrowserTabFocused', onBrowserTabFocused);
-		return () => {
-			DeviceEventEmitter.removeAllListeners('onBrowserTabFocused', onBrowserTabFocused);
-		};
 	}, [animating, startAnimation]);
 
 	const startAnimation = useCallback(() => {
