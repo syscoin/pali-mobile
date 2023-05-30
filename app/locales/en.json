@@ -524,7 +524,7 @@
 	"security": {
 		"security_title": "Security",
 		"trading_safety": "Trading Safety",
-		"safety_check": "Security Detect",
+		"safety_check": "Run Scan",
 		"auto_detected_at": "Auto Detected at {{time}}",
 		"faq_title": "Disclaimer",
 		"faq_desc": "Due to ever changing market and technical info, safety check can only cover a part of security in a period time, as a reference but not financial advice.",
@@ -775,7 +775,7 @@
 		"start_random_drawing": "Start Random Drawing"
 	},
 	"fold_security": {
-		"apply_check": "Security Detect",
+		"apply_check": "Run Scan",
 		"tap_to_check": "Tap to check security status"
 	},
 	"otc": {

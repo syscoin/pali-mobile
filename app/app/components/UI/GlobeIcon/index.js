@@ -1,4 +1,4 @@
-import { Animated, DeviceEventEmitter, StyleSheet, View } from 'react-native';
+import { Animated, DeviceEventEmitter, StyleSheet, View, Easing } from 'react-native';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Icon from '../Icon';
 import { colors } from '../../../styles/common';
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-const GlobeIcon = ({ focused, onPress }) => {
+const GlobeIcon = ({ focused }) => {
 	const scale = useRef(new Animated.Value(1)).current;
 	const rotate = useRef(new Animated.Value(0)).current;
 	const [animating, setAnimating] = useState(false);
@@ -27,7 +27,6 @@ const GlobeIcon = ({ focused, onPress }) => {
 		};
 
 		DeviceEventEmitter.addListener('onWalletTabFocused', onWalletTabFocused);
-
 		return () => {
 			DeviceEventEmitter.removeAllListeners('onWalletTabFocused', onWalletTabFocused);
 		};
@@ -67,18 +66,11 @@ const GlobeIcon = ({ focused, onPress }) => {
 		outputRange: ['0deg', '360deg']
 	});
 
-	const handlePress = useCallback(() => {
-		if (focused) {
-			DeviceEventEmitter.emit('onBrowserTabFocused');
-		}
-		onPress();
-	}, [onPress, focused]);
-
 	return (
-		<View onPress={handlePress} style={styles.globeContainer}>
+		<View style={styles.globeContainer}>
 			<Animated.View
 				style={{
-					transform: [{ scale }, { rotate: spin }]
+					transform: [{ rotate: spin }, { scale }]
 				}}
 			>
 				<Icon width="22" height="22" color={color} name="globe" />
