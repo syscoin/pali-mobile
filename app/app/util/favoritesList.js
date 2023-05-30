@@ -40,7 +40,7 @@ const favoritesDapps = [
 		url: 'https://defillama.com'
 	},
 	{
-		logo: 'https://cdn.gopocket.finance/files/CoinGeckologo.png',
+		logo: 'https://pali-images.s3.amazonaws.com/files/CoinGeckologo.png',
 		name: 'Coingecko',
 		url: 'https://www.coingecko.com'
 	}

@@ -95,7 +95,7 @@ const suggestedWebsites = {
 						{
 							//TODO: update api url to Pali ones
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -246,7 +246,7 @@ const suggestedWebsites = {
 						{
 							//TODO: update api url to Pali ones
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -334,7 +334,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/UniswapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/UniswapArbitrumlogo.png',
 							name: 'Uniswap',
 							url: 'https://app.uniswap.org/#/swap'
 						},
@@ -346,13 +346,13 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Automated portfolio manager and trading platform',
-							logo: 'https://cdn.gopocket.finance/files/BalancerArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BalancerArbitrumlogo.png',
 							name: 'Balancer',
 							url: 'https://app.balancer.fi'
 						},
 						{
 							desc: 'Automated market maker (AMM) decentralized exchange',
-							logo: 'https://cdn.gopocket.finance/files/curvelogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/curvelogo.png',
 							name: 'Curve',
 							url: 'https://curve.fi/'
 						}
@@ -382,7 +382,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Automated yield aggregator and optimizer on Ethereum',
-							logo: 'https://cdn.gopocket.finance/files/abracadabralogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/abracadabralogo.jpg',
 							name: 'Abracadabra',
 							url: 'https://abracadabra.money/'
 						}
@@ -424,7 +424,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -448,7 +448,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for trading and exchanging non-fungible tokens (NFTs)',
-							logo: 'https://cdn.gopocket.finance/files/OpenSealogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/OpenSealogo.jpg',
 							name: 'OpenSea',
 							url: 'https://opensea.io/'
 						},
@@ -467,13 +467,13 @@ const suggestedWebsites = {
 						{
 							desc:
 								'NFT marketplace that enables users to buy, sell, and discover rare and unique digital assets',
-							logo: 'https://cdn.gopocket.finance/files/LooksRarelogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/LooksRarelogo.jpg',
 							name: 'LooksRare',
 							url: 'https://looksrare.org/collections'
 						},
 						{
 							desc: 'Search engine for NFTs on the Ethereum blockchain',
-							logo: 'https://cdn.gopocket.finance/files/NFTSCANlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/NFTSCANlogo.png',
 							name: 'NFTSCAN',
 							url: 'https://nftscan.com/'
 						}
@@ -509,7 +509,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Domain Name Service (DNS) for the Ethereum blockchain',
-							logo: 'https://cdn.gopocket.finance/files/ENSlogo1.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ENSlogo1.png',
 							name: 'ENS',
 							url: 'https://ens.domains'
 						},
@@ -540,7 +540,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Blockchain explorer and analytics platform for Polygon',
-							logo: 'https://cdn.gopocket.finance/files/PolygonScanLogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/PolygonScanLogo.jpg',
 							name: 'PolygonScan',
 							url: 'https://polygonscan.com/'
 						}
@@ -557,7 +557,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized trading platform on Polygon',
-							logo: 'https://cdn.gopocket.finance/files/UniswapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/UniswapArbitrumlogo.png',
 							name: 'Uniswap',
 							url: 'https://app.uniswap.org/#/swap'
 						},
@@ -569,19 +569,19 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized exchange on Polygon',
-							logo: 'https://cdn.gopocket.finance/files/SushiSwapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SushiSwapArbitrumlogo.png',
 							name: 'SushiSwap',
 							url: 'https://app.sushi.com/swap'
 						},
 						{
 							desc: 'Decentralized exchange on Polygon',
-							logo: 'https://cdn.gopocket.finance/files/curvelogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/curvelogo.png',
 							name: 'Curve',
 							url: 'https://polygon.curve.fi'
 						},
 						{
 							desc: 'Automated portfolio manager and trading platform on Polygon',
-							logo: 'https://cdn.gopocket.finance/files/BalancerArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BalancerArbitrumlogo.png',
 							name: 'Balancer',
 							url: 'https://polygon.balancer.fi/'
 						}
@@ -644,7 +644,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -661,7 +661,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'NFT marketplace for buying, selling, and trading digital assets on Polygon',
-							logo: 'https://cdn.gopocket.finance/files/OpenSealogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/OpenSealogo.jpg',
 							name: 'OpenSea',
 							url: 'https://opensea.io/'
 						},
@@ -696,7 +696,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Blockchain explorer and analytics platform for Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/ArbSacnlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/ArbSacnlogo.png',
 							name: 'ArbitrumScan',
 							url: 'https://arbiscan.io/'
 						}
@@ -713,7 +713,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized trading platform on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/UniswapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/UniswapArbitrumlogo.png',
 							name: 'Uniswap',
 							url: 'https://app.uniswap.org/#/swap'
 						},
@@ -725,7 +725,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized exchange on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/SushiSwapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SushiSwapArbitrumlogo.png',
 							name: 'SushiSwap',
 							url: 'https://app.sushi.com/swap'
 						},
@@ -737,7 +737,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Automated portfolio manager and trading platform on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/BalancerArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BalancerArbitrumlogo.png',
 							name: 'Balancer',
 							url: 'https://app.balancer.fi/'
 						},
@@ -773,7 +773,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Protocol that enables investors to earn yield on a range of assets by providing liquidity to DeFi platforms on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/abracadabralogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/abracadabralogo.jpg',
 							name: 'Abracadabra',
 							url: 'https://abracadabra.money/'
 						}
@@ -813,7 +813,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -830,7 +830,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'NFT marketplace for buying, selling, and trading digital assets on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/OpenSealogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/OpenSealogo.jpg',
 							name: 'OpenSea',
 							url: 'https://opensea.io/'
 						},
@@ -861,7 +861,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Decentralized platform for creating, deploying, and managing smart contracts on Arbitrum',
-							logo: 'https://cdn.gopocket.finance/files/arbilogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/arbilogo.png',
 							name: 'Arbiproject',
 							url: 'https://www.arbiproject.io'
 						},
@@ -907,13 +907,13 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/UniswapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/UniswapArbitrumlogo.png',
 							name: 'Uniswap',
 							url: 'https://app.uniswap.org/#/swap'
 						},
 						{
 							desc: 'Automated market maker (AMM) decentralized exchange',
-							logo: 'https://cdn.gopocket.finance/files/Biswaplogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/Biswaplogo.png',
 							name: 'Biswap',
 							url: 'https://biswap.org/swap'
 						},
@@ -961,7 +961,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'Protocol that enables investors to earn yield on a range of assets by providing liquidity to DeFi platforms on Binance Smart Chain',
-							logo: 'https://cdn.gopocket.finance/files/abracadabralogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/abracadabralogo.jpg',
 							name: 'Abracadabra',
 							url: 'https://abracadabra.money/'
 						}
@@ -1001,7 +1001,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
-							logo: 'https://cdn.gopocket.finance/files/multichain.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
 							url: 'https://app.multichain.org/#/router'
 						},
@@ -1025,7 +1025,7 @@ const suggestedWebsites = {
 						{
 							desc:
 								'NFT marketplace for buying, selling, and trading digital assets on the Binance Smart Chain',
-							logo: 'https://cdn.gopocket.finance/files/OpenSealogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/OpenSealogo.jpg',
 							name: 'OpenSea',
 							url: 'https://opensea.io/'
 						},
@@ -1068,25 +1068,25 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/TraderJoelogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/TraderJoelogo.png',
 							name: 'Trader Joe',
 							url: 'https://traderjoexyz.com/#/trade'
 						},
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/SushiSwapArbitrumlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SushiSwapArbitrumlogo.png',
 							name: 'SushiSwap',
 							url: 'https://app.sushi.com/swap'
 						},
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/Pangolinlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/Pangolinlogo.png',
 							name: 'Pangolin',
 							url: 'https://ipfs.io/ipns/app.pangolin.exchange/#/swap'
 						},
 						{
 							desc: 'Automatic market-making protocol for stablecoins',
-							logo: 'https://cdn.gopocket.finance/files/curvelogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/curvelogo.png',
 							name: 'Curve',
 							url: 'https://avax.curve.fi'
 						}
@@ -1103,7 +1103,7 @@ const suggestedWebsites = {
 						},
 						{
 							desc: 'Decentralized non-custodial liquidity market protocol',
-							logo: 'https://cdn.gopocket.finance/files/BENQilogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/BENQilogo.png',
 							name: 'BENQi',
 							url: 'https://app.benqi.fi'
 						}
@@ -1114,13 +1114,13 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'bringing yield-farming, staking and more functionalities to the Avalanche Network.',
-							logo: 'https://cdn.gopocket.finance/files/Penguinlogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/Penguinlogo.png',
 							name: 'Penguin',
 							url: 'https://www.penguinfinance.io'
 						},
 						{
 							desc: 'Auto-compounder and stable-asset exchange',
-							logo: 'https://cdn.gopocket.finance/files/Snowballlogo.jpg',
+							logo: 'https://pali-images.s3.amazonaws.com/files/Snowballlogo.jpg',
 							name: 'Snowball',
 							url: 'https://app.snowball.network'
 						}
@@ -1131,7 +1131,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Decentralized trading platform',
-							logo: 'https://cdn.gopocket.finance/files/YetiSwaplogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/YetiSwaplogo.png',
 							name: 'Yeti Swap',
 							url: 'https://exchange.yetiswap.app/#/nft-marketplace'
 						}
@@ -1142,7 +1142,7 @@ const suggestedWebsites = {
 					items: [
 						{
 							desc: 'Avalanche C-Chain Explorer',
-							logo: 'https://cdn.gopocket.finance/files/SnowTracelogo.png',
+							logo: 'https://pali-images.s3.amazonaws.com/files/SnowTracelogo.png',
 							name: 'SnowTrace',
 							url: 'https://snowtrace.io'
 						}
