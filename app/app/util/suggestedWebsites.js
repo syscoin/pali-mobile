@@ -93,7 +93,6 @@ const suggestedWebsites = {
 							url: 'https://www.chainge.finance/info/trading'
 						},
 						{
-							//TODO: update api url to Pali ones
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
 							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',
@@ -244,7 +243,6 @@ const suggestedWebsites = {
 							url: 'https://www.chainge.finance/info/trading'
 						},
 						{
-							//TODO: update api url to Pali ones
 							desc: 'Decentralized platform for cross-chain asset transfer on Syscoin',
 							logo: 'https://pali-images.s3.amazonaws.com/files/multichain.png',
 							name: 'Multichain',

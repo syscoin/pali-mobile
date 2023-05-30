@@ -45,5 +45,5 @@ const favoritesDapps = [
 		url: 'https://www.coingecko.com'
 	}
 ];
-//TODO: update api url to Pali ones
+
 export default favoritesDapps;
