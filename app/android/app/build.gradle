@@ -10,6 +10,8 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */

@@ -50,6 +50,8 @@ import org.pgsqlite.SQLitePluginPackage;
 import com.peel.react.TcpSocketsModule;
 // rn-fetch-blob
 import com.RNFetchBlob.RNFetchBlobPackage;
+// react-native-code-push
+import com.microsoft.codepush.react.CodePush;
 
 public class MainApplication extends MultiDexApplication implements ShareApplication, ReactApplication {
 	private String mChannel;
@@ -60,6 +62,12 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			return BuildConfig.DEBUG;
 		}
 
+		// bundle location from on each app start
+        @Override
+        protected String getJSBundleFile() {
+        	return CodePush.getJSBundleFile();
+        }
+    
 		@Override
 		protected List<ReactPackage> getPackages() {
 			@SuppressWarnings("UnnecessaryLocalVariable")

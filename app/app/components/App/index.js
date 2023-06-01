@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { createAppContainer, createSwitchNavigator, NavigationActions } from 'react-navigation';
+import codePush from 'react-native-code-push';
 
 import { createStackNavigator } from 'react-navigation-stack';
 import Login from '../Views/Login';
@@ -172,4 +173,4 @@ class App extends PureComponent {
 		);
 	}
 }
-export default App;
+export default codePush(App);
