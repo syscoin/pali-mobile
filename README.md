@@ -54,7 +54,8 @@ yarn build:thread
 
 4. Over-the-Air Deployment.
 
-If you want to use over-the-air deployment, make sure to insert the API keys for both Android and iOS platforms (appcenter.ms).
+If you want to use over-the-air deployment, make sure to insert the API keys for Android (You can get them on appcenter.ms).
+ps: We are missing the over-the-air implementation on IOS for now. Hope that they fix some library problems so we can add in the future.
 
 For debug version:
 `yarn start:android`
