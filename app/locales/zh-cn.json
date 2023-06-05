@@ -90,6 +90,7 @@
 		"optimism_network": "Optimism",
 		"avalanche_network": "Avalanche",
 		"syscoin_network": "Syscoin",
+		"rollux_network": "Rollux",
 		"bsc_network": "BSC",
 		"heco_network": "HECO",
 		"enter_link": "搜索dApp或输入网址"
@@ -350,6 +351,7 @@
 		"optimism": "Optimism",
 		"avalanche": "Avalanche",
 		"syscoin": "Syscoin",
+		"rollux": "Rollux",
 		"no_token_found": "啊哦，没找到代币",
 		"cancel": "取消",
 		"copy": "复制",
@@ -516,12 +518,13 @@
 		"polygon_network": "Polygon Network",
 		"tron_network": "Tron Network",
 		"avax_network": "Avalanche Network",
-		"syscoin_network": "Syscoin Network"
+		"syscoin_network": "Syscoin Network",
+		"rollux_network": "Rollux Network"
 	},
 	"security": {
 		"security_title": "安全中心",
 		"trading_safety": "交易安全",
-		"safety_check": "安全检测",
+		"safety_check": "运行扫描",
 		"auto_detected_at": "已在 {{time}} 自动检测",
 		"faq_title": "免责声明",
 		"faq_desc": "由于不断变化的市场和技术情况，安全检测功能只能保障部分时间内的部分安全性，只能作为资产安全的参考而不构成投资建议。",
@@ -772,7 +775,7 @@
 		"start_random_drawing": "开始随机涂鸦"
 	},
 	"fold_security": {
-		"apply_check": "申请检测",
+		"apply_check": "运行扫描",
 		"tap_to_check": "查看安全报告"
 	},
 	"otc": {

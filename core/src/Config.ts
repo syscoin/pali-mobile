@@ -9,11 +9,13 @@ export enum ChainType {
   Optimism = 0x40,
   Avax = 0x80,
   Syscoin = 0x100,
+  Rollux = 0x200,
   RPCBase = 0x10000000000000,
 }
 
 export const defaultEnabledChains = [
   ChainType.Ethereum,
+  ChainType.Rollux,
   ChainType.Syscoin,
   ChainType.Polygon,
   ChainType.Arbitrum,
@@ -40,7 +42,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'ethereum',
     SwapUrl: 'https://app.uniswap.org/#/swap',
     SwapTokenUrl: 'https://app.uniswap.org/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/eth_logo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswapv2',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/exchange',
@@ -88,7 +90,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'matic-network',
     SwapUrl: 'https://quickswap.exchange/#/swap',
     SwapTokenUrl: 'https://quickswap.exchange/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/matic_network_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/matic_network_logo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: 'https://api.thegraph.com/subgraphs/name/sameepsi/quickswap06',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange',
@@ -161,7 +163,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'wbnb',
     SwapUrl: 'https://exchange.pancakeswap.finance/#/swap',
     SwapTokenUrl: 'https://exchange.pancakeswap.finance/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/bnb.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/bnblogo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange',
@@ -219,7 +221,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'avalanche-2',
     SwapUrl: 'https://traderjoexyz.com/#/trade',
     SwapTokenUrl: 'https://traderjoexyz.com/#/trade?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/avax_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/avax_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange',
@@ -258,7 +260,7 @@ export const NetworkConfig: { [type: number]: any } = {
     SwapUrl: 'https://bafybeicals7ohbyykungbndrzk3qf6pydcbe2w3a3pftwrfbjjirkpxqbq.ipfs.cf-ipfs.com/#/swap',
     SwapTokenUrl:
       'https://bafybeicals7ohbyykungbndrzk3qf6pydcbe2w3a3pftwrfbjjirkpxqbq.ipfs.cf-ipfs.com/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/eth_logo.png',
     NeedAvailableUrl: true,
     OtherCoinInfoUrl: '',
     SushiswapGraphUrl: '',
@@ -301,7 +303,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'syscoin',
     SwapUrl: 'https://app.pegasys.finance/#/swap',
     SwapTokenUrl: 'https://app.pegasys.finance/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/syscoin_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/syscoin_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',
     SushiswapGraphUrl: '',
@@ -317,17 +319,6 @@ export const NetworkConfig: { [type: number]: any } = {
         ExplorerUrl: 'https://explorer.syscoin.org',
         ExplorerApiUrl: 'https://explorer.syscoin.org',
       },
-      'Rollux Testnet': {
-        provider: {
-          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
-          type: 'Rollux Testnet',
-          chainId: '57000',
-          ticker: 'TSYS',
-          nickname: 'Syscoin',
-        },
-        ExplorerUrl: 'https://rollux.tanenbaum.io',
-        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
-      },
       'Syscoin Tanenbaum Testnet': {
         provider: {
           rpcTarget: 'https://rpc.tanenbaum.io',
@@ -341,6 +332,44 @@ export const NetworkConfig: { [type: number]: any } = {
       },
     },
   },
+  [ChainType.Rollux]: {
+    Name: 'Rollux',
+    MainChainId: '570000',
+    UseInfura: false,
+    Disabled: false,
+    DefiTokenChain: ['sys', 'rollux'],
+    CoingeckoId: 'rollux',
+    SwapUrl: 'https://app.pegasys.finance/#/swap',
+    SwapTokenUrl: 'https://app.pegasys.finance/#/swap?inputCurrency=',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/rollux_logo.png',
+    NeedAvailableUrl: false,
+    OtherCoinInfoUrl: '',
+    SushiswapGraphUrl: '',
+    Networks: {
+      'Rollux Mainnet': {
+        provider: {
+          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          type: 'Rollux Mainnet',
+          chainId: '570000',
+          ticker: 'SYS',
+          nickname: 'Rollux',
+        },
+        ExplorerUrl: 'https://rollux.tanenbaum.io',
+        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
+      },
+      'Rollux Testnet': {
+        provider: {
+          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          type: 'Rollux Testnet',
+          chainId: '57000',
+          ticker: 'TSYS',
+          nickname: 'Rollux Testnet',
+        },
+        ExplorerUrl: 'https://rollux.tanenbaum.io',
+        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
+      },
+    },
+  },
   [ChainType.Arbitrum]: {
     Name: 'Arb',
     MainChainId: '42161',
@@ -350,8 +379,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'ethereum',
     SwapUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap',
     SwapTokenUrl: 'https://sushiswap-interface-teamsushi.vercel.app/swap?inputCurrency=',
-    //TODO: update api url to Pali ones
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/eth_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/eth_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',
     SushiswapGraphUrl: 'https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange',
@@ -419,7 +447,7 @@ export const NetworkConfig: { [type: number]: any } = {
     CoingeckoId: 'huobi-token',
     SwapUrl: 'https://ht.mdex.com/#/swap',
     SwapTokenUrl: 'https://ht.mdex.com/#/swap?inputCurrency=',
-    CurrencyLogo: 'https://cdn.gopocket.finance/files/ht_logo.png',
+    CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/ht_logo.png',
     NeedAvailableUrl: false,
     OtherCoinInfoUrl: '',
     SushiswapGraphUrl: '',
@@ -527,6 +555,10 @@ export const OnEventTag = {
     EventValueName: 'syscoin',
     EventActiveUsers: 'SyscoinActiveUsers',
   },
+  [ChainType.Rollux]: {
+    EventValueName: 'rollux',
+    EventActiveUsers: 'RolluxActiveUsers',
+  },
 };
 
 export const BaseChainConfig = {
@@ -625,10 +657,16 @@ export const BaseChainConfig = {
     tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
+  '570000': {
+    coingecko_path: 'rollux',
+    balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
+    tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
+    nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
+  },
   '57000': {
-    coingecko_path: 'syscoin',
-    balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
-    tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
+    coingecko_path: 'rollux',
+    balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
+    tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
   '5700': {

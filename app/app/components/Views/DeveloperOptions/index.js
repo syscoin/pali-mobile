@@ -122,6 +122,7 @@ class DeveloperOptions extends PureComponent {
 		const elementMap = [];
 
 		const chainOrder = [
+			ChainType.Rollux,
 			ChainType.Syscoin,
 			ChainType.Ethereum,
 			ChainType.Arbitrum,

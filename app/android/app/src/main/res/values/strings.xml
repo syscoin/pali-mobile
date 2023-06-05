@@ -1,3 +1,4 @@
 <resources>
 	<string name="app_name">Pali Wallet</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">Insert your Key Here</string>
 </resources>
