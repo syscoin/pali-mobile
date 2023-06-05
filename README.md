@@ -26,7 +26,6 @@ Be a part of the future, be a part of Pali 🕉️
 
 ## Links
 
-
 🔗[Official Website](https://paliwallet.com/)
 
 🎙[Discord](https://discord.gg/syscoin)
@@ -53,6 +52,11 @@ cd app && yarn clean
 yarn build:thread
 ```
 
+4. Over-the-Air Deployment.
+
+If you want to use over-the-air deployment, make sure to insert the API keys for Android (You can get them on appcenter.ms).
+ps: We are missing the over-the-air implementation on IOS for now. Hope that they fix some library problems so we can add in the future.
+
 For debug version:
 `yarn start:android`
 or
@@ -64,7 +68,9 @@ or
 `yarn build:ios`
 
 ## Addresses
+
 ### Rollux
+
 - [TokenInfos.sol](0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a)
 - [BalanceChecker.sol](0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4)
 
