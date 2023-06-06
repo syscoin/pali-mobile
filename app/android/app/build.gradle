@@ -76,10 +76,10 @@ android {
 
 	signingConfigs {
 		release {
-			storeFile file('paliwallet.keystore')
-			storePassword "paligangue"
-			keyAlias 'my-alias'
-			keyPassword "paligangue"
+			storeFile file('../GoPocket')
+			storePassword System.getenv("KEYSTORE_PASSWD")
+			keyAlias 'GoPocket'
+			keyPassword System.getenv("KEYSTORE_PASSWD")
 		}
 		debug {
             storeFile file('debug.keystore')
