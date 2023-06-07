@@ -281,7 +281,7 @@ class Asset extends PureComponent {
 
 	renderBg = nativeCurrency => {
 		const { asset, isSecurityViewShowed } = this.state;
-		let bgColor = ['#ACBAC4'];
+		let bgColor = ['#ACBAC4', '#ACBAC4'];
 		let bgImg = require('../../../images/img_coin_bg_unknow.png');
 
 		if (nativeCurrency) {
@@ -297,10 +297,10 @@ class Asset extends PureComponent {
 				bgColor = ['#0E223A', '#284F94', '#FE0077'];
 				bgImg = require('../../../images/img_coin_bg_pali.png');
 			} else if (riskNum > 0) {
-				bgColor = ['#FF6E6E'];
+				bgColor = ['#FF6E6E', '#FF6E6E'];
 				bgImg = require('../../../images/img_coin_bg_danger.png');
 			} else if (noticeNum > 0) {
-				bgColor = ['#FE9A5C'];
+				bgColor = ['#FE9A5C', '#FE9A5C'];
 				bgImg = require('../../../images/img_coin_bg_warning.png');
 			}
 		}
