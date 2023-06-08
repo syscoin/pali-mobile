@@ -1,7 +1,7 @@
-import { strings } from '../../locales/i18n';
-import { util, URL } from 'gopocket-core';
-import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import { URL, util } from 'gopocket-core';
+import React from 'react';
+import { strings } from '../../locales/i18n';
 
 /**
  * Return host from url string
@@ -63,7 +63,7 @@ export async function fetchHomepage() {
 }
 
 export function getLanguageDapp(dappPageAll) {
-	return strings('other.accept_language') === 'zh' ? dappPageAll.zh : dappPageAll.en;
+	return dappPageAll.en;
 }
 
 export function getDapp(dappPageAll) {
