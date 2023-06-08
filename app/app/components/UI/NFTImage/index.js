@@ -1,17 +1,17 @@
-import React, { PureComponent } from 'react';
-import { isImageFile, isMp3File, isSvgFile, isVideoFile } from '../../../util/general';
-import FastImage from 'react-native-fast-image';
-import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
-import { colors } from '../../../styles/common';
 import { util } from 'gopocket-core';
-import Engine from '../../../core/Engine';
-import RNFetchBlob from 'rn-fetch-blob';
-import Video from 'react-native-video';
-import { addAudioUrl, addImageUrl, addOutOfMemoryUrl, addVideoUrl } from '../../../actions/nft';
-import { connect } from 'react-redux';
-import convertToProxyURL from 'react-native-video-cache';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { SvgCssUri } from 'react-native-svg';
+import Video from 'react-native-video';
+import convertToProxyURL from 'react-native-video-cache';
+import { connect } from 'react-redux';
+import RNFetchBlob from 'rn-fetch-blob';
+import { addAudioUrl, addImageUrl, addOutOfMemoryUrl, addVideoUrl } from '../../../actions/nft';
+import Engine from '../../../core/Engine';
+import { colors } from '../../../styles/common';
+import { isImageFile, isMp3File, isSvgFile, isVideoFile } from '../../../util/general';
 import SvgImage from '../SvgImage';
 
 export const convertImageUrl = imageUrl => {
@@ -19,15 +19,15 @@ export const convertImageUrl = imageUrl => {
 		imageUrl = util.makeIPFSUrl(imageUrl, Engine.context.CollectiblesController.state.ipfsGateway);
 	}
 	//TODO: update api url to Pali ones
-	if (imageUrl && imageUrl.startsWith('https://api.gopocket.finance/proxy-png?url=')) {
+	if (imageUrl && imageUrl.startsWith('https://pali.pollum.cloud/proxy-png?url=')) {
 		return imageUrl;
 	}
 	if (!util.isEtherscanAvailable() && !!imageUrl && !isVideoFile(imageUrl)) {
 		//TODO: update api url to Pali ones
-		imageUrl = 'https://api.gopocket.finance/proxy-png?url=' + imageUrl;
+		imageUrl = 'https://pali.pollum.cloud/proxy-png?url=' + imageUrl;
 	} else if (!!imageUrl && imageUrl.startsWith('http://')) {
 		//TODO: update api url to Pali ones
-		imageUrl = 'https://api.gopocket.finance/proxy-png?url=' + imageUrl;
+		imageUrl = 'https://pali.pollum.cloud/proxy-png?url=' + imageUrl;
 	}
 	return imageUrl;
 };
