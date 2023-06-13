@@ -70,7 +70,7 @@ const fetchConfig = async () => {
 				if (Device.isIos()) {
 					const appstoreBaseVersion = Number(store.getState().settings.appstoreBaseVersion);
 					global.shouldHideSthForAppStoreReviewer =
-						!appstoreBaseVersion || Number(getAppVersionCode()) >= appstoreBaseVersion;
+						!appstoreBaseVersion || Number(getAppVersionCode()) > appstoreBaseVersion;
 				}
 				global.useOffchainEndPoint = !!useOffchainEndPoint;
 			} finally {
@@ -110,7 +110,7 @@ export async function initApiClient() {
 		global.testFlight = await isTestFlight();
 		const appstoreBaseVersion = Number(store.getState().settings.appstoreBaseVersion);
 		global.shouldHideSthForAppStoreReviewer =
-			!appstoreBaseVersion || Number(getAppVersionCode()) >= appstoreBaseVersion;
+			!appstoreBaseVersion || Number(getAppVersionCode()) > appstoreBaseVersion;
 	}
 
 	global.useOffchainEndPoint = false;
