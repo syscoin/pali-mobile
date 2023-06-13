@@ -741,7 +741,7 @@ class CardSwiper extends PureComponent {
 													backgroundColor: hasInMore && colors.blackAlpha300
 												}
 											]}
-											key={currentIndex + moreChains.length + 'chain-label-name-more'}
+											key={currentIndex + moreChains + 'chain-label-name-more'}
 										>
 											<Text
 												style={styles.chainName}
