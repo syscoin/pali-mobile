@@ -579,13 +579,14 @@ class Nft extends PureComponent {
 					>
 						{this.lottieAnim ? (
 							<LottieView
-								style={{ width: itemWidth * 0.39, height: itemWidth * 0.39 }}
+								style={{ width: itemWidth * 0.7, height: itemWidth * 0.7 }}
 								autoPlay
 								loop
 								source={require('../../../animations/nft_loading_img.json')}
 							/>
 						) : (
 							<Image
+								resizeMode="contain"
 								style={{ width: itemWidth * 0.39, height: itemWidth * 0.39 }}
 								source={require('../../../images/defaul_loading_icon.png')}
 							/>

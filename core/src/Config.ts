@@ -520,7 +520,13 @@ export const NetworkConfig: { [type: number]: any } = {
 /**
  * support nft list
  */
-export const SupportCollectibles = [ChainType.Ethereum, ChainType.Polygon, ChainType.Bsc, ChainType.Avax];
+export const SupportCollectibles = [
+  ChainType.Ethereum,
+  ChainType.Polygon,
+  ChainType.Bsc,
+  ChainType.Avax,
+  ChainType.Syscoin,
+];
 
 export const OnEventTag = {
   [ChainType.Ethereum]: {

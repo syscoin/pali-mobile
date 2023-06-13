@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
+import isSupportLuxy from '../../../util/luxy';
 import MStatusBar from '../../UI/MStatusBar';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
@@ -836,7 +837,10 @@ class NftView extends PureComponent {
 												<TouchableOpacity
 													activeOpacity={0.8}
 													onPress={() => {
-														const url = 'https://opensea.io/' + nftToken.creator.address;
+														let url = 'https://opensea.io/' + nftToken.creator.address;
+														if (isSupportLuxy(nftToken.chainId)) {
+															url = 'https://luxy.io/user/' + nftToken.creator.address;
+														}
 														this.handleBrowserUrl(url);
 													}}
 												>
@@ -865,8 +869,13 @@ class NftView extends PureComponent {
 											<Text style={styles.itemTitle}>{strings('nft.collection_intro')}</Text>
 											<TouchableOpacity
 												onPress={() => {
-													const url =
+													let url =
 														'https://opensea.io/collection/' + nftToken.collection.slug;
+													if (isSupportLuxy(nftToken.chainId)) {
+														url =
+															'https://luxy.io/collections/' +
+															nftToken.collection.name.toLowerCase().replace(/\s+/g, '-');
+													}
 													this.handleBrowserUrl(url);
 												}}
 											>

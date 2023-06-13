@@ -1,55 +1,70 @@
-// SPDX-License-Identifier: MIT
+
+// SPDX-License-Identifier: MIT @GoPocketStudio
 pragma solidity ^0.7.5;
+pragma abicoder v2;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+interface IERC1155 {
+    function balanceOf(address account, uint256 id) external view returns (uint256);
+}
 
-/// @title A simple contract for balance checking and ownership
-/// @notice This contract allows to check balances and ownership of tokens
-/// @dev This contract was decompiled and translated from bytecode
+interface IERC721 {
+    function ownerOf(uint256 tokenId) external view returns (address owner);
+}
+
 contract NFTBalanceChecker {
-    
-    /// @notice Check if an address is a contract
-    /// @param token The address to check
-    /// @return true if the address is a contract, false otherwise
-    function isContract(address token) public view returns (bool) {
-        uint32 size;
-        assembly {
-            size := extcodesize(token)
-        }
-        return (size > 0);
-    }
 
-    /// @notice Get the owners of tokens
-    /// @param users The addresses of the users
-    /// @param tokens The addresses of the tokens
-    /// @param ids The ids of the tokens
-    /// @return The addresses of the owners
-    function owners(address[] memory users, address[] memory tokens, uint256[] memory ids) public view returns (address[] memory) {
-        require(users.length == tokens.length && tokens.length == ids.length, "Input arrays must have the same length");
-        address[] memory result = new address[](users.length);
-        for (uint i = 0; i < users.length; i++) {
-            result[i] = IERC721(tokens[i]).ownerOf(ids[i]);
-        }
-        return result;
-    }
-
-    /// @notice Fallback function
-    /// @dev This function will revert any incoming transaction
+    /* Fallback function, don't accept any ETH */
     receive() external payable {
-        revert("NFTBalanceChecker does not accept payments");
+        // revert();
+        revert("BalanceChecker does not accept payments");
     }
 
-    /// @notice Get the balances of tokens
-    /// @param users The addresses of the users
-    /// @param tokens The addresses of the tokens
-    /// @param ids The ids of the tokens
-    /// @return The balances of the tokens
-    function balances(address[] memory users, address[] memory tokens, uint256[] memory ids) public view returns (uint256[] memory) {
-        require(users.length == tokens.length && tokens.length == ids.length, "Input arrays must have the same length");
-        uint256[] memory result = new uint256[](users.length);
+    function isContract(address token) public view returns(bool){
+        // check if token is actually a contract
+        uint256 tokenCode;
+        assembly { tokenCode := extcodesize(token) } // contract code size
+        return tokenCode > 0;
+    }
+
+    function balances(address[] memory users, address[] memory tokens, uint256[] memory ids) external view returns (uint[] memory) {
+        uint[] memory addrBalances = new uint[](tokens.length * users.length);
         for (uint i = 0; i < users.length; i++) {
-            result[i] = IERC721(tokens[i]).balanceOf(users[i]);
+            for (uint j = 0; j < tokens.length; j++) {
+                uint addrIdx = j + tokens.length * i;
+                if (isContract(tokens[j])) {
+                    IERC1155 t = IERC1155(tokens[j]);
+                    try t.balanceOf(users[i], ids[j]) returns (uint256 v) {
+                        addrBalances[addrIdx] = v;
+                    } catch {
+                        addrBalances[addrIdx] = 0;
+                    }
+                } else {
+                    addrBalances[addrIdx] = 0;
+                }
+
+            }
         }
-        return result;
+        return addrBalances;
+    }
+
+    function owners(address[] memory users, address[] memory tokens, uint256[] memory ids) external view returns (address[] memory) {
+        address[] memory addrBalances = new address[](tokens.length * users.length);
+        for (uint i = 0; i < users.length; i++) {
+            for (uint j = 0; j < tokens.length; j++) {
+                uint addrIdx = j + tokens.length * i;
+                if (isContract(tokens[j])) {
+                    IERC721 t = IERC721(tokens[j]);
+                    try t.ownerOf(ids[j]) returns (address v) {
+                      addrBalances[addrIdx] = v;
+                    } catch {
+                      addrBalances[addrIdx] = address(0x0);
+                    }
+                } else {
+                    addrBalances[addrIdx] = address(0x0);
+                }
+
+            }
+        }
+        return addrBalances;
     }
 }
