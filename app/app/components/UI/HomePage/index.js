@@ -363,12 +363,13 @@ class HomePage extends PureComponent {
 
 	renderTabs(dappPage) {
 		const tabs = [];
-		tabs.push(
-			<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
-				{this.renderFavourites()}
-			</View>
-		);
 		if (!this.state.shouldHideSth) {
+			tabs.push(
+				<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
+					{this.renderFavourites()}
+				</View>
+			);
+
 			const otherTabs = dappPage?.networks?.map((tab, index) => (
 				<View style={styles.content} tabLabel={tab.name + ':' + tab.chain} key={`network_${index}`}>
 					{this.renderContent(tab.content, tab.chain)}

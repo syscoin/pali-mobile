@@ -1042,7 +1042,7 @@ export async function getAssetLogo(asset) {
 
 	const token = await callSqlite('getStaticToken', type, asset.address, asset.l1Address);
 	const result = token?.image;
-	//TODO: update api url to Pali ones
+
 	if (!util.isEtherscanAvailable() && result && result.includes('coingecko.com')) {
 		return `https://pali.pollum.cloud/proxy-png?url=${result}`;
 	}

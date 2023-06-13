@@ -18,15 +18,13 @@ export const convertImageUrl = imageUrl => {
 	if (util.isIPFSUrl(imageUrl)) {
 		imageUrl = util.makeIPFSUrl(imageUrl, Engine.context.CollectiblesController.state.ipfsGateway);
 	}
-	//TODO: update api url to Pali ones
+
 	if (imageUrl && imageUrl.startsWith('https://pali.pollum.cloud/proxy-png?url=')) {
 		return imageUrl;
 	}
 	if (!util.isEtherscanAvailable() && !!imageUrl && !isVideoFile(imageUrl)) {
-		//TODO: update api url to Pali ones
 		imageUrl = 'https://pali.pollum.cloud/proxy-png?url=' + imageUrl;
 	} else if (!!imageUrl && imageUrl.startsWith('http://')) {
-		//TODO: update api url to Pali ones
 		imageUrl = 'https://pali.pollum.cloud/proxy-png?url=' + imageUrl;
 	}
 	return imageUrl;

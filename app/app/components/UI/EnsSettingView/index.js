@@ -370,10 +370,8 @@ class EnsSettingView extends PureComponent {
 					urlValue = util.makeIPFSUrl(urlValue, Engine.context.CollectiblesController.state.ipfsGateway);
 				}
 				if (!util.isEtherscanAvailable() && !!urlValue) {
-					//TODO: update api url to Pali ones
 					urlValue = 'https://pali.pollum.cloud/proxy-png?url=' + urlValue;
 				} else if (!!urlValue && urlValue.startsWith('http://')) {
-					//TODO: update api url to Pali ones
 					urlValue = 'https://pali.pollum.cloud/proxy-png?url=' + urlValue;
 				}
 				if ((urlValue && urlValue.startsWith('http://')) || urlValue.startsWith('https://')) {

@@ -72,10 +72,9 @@ export default class WebsiteIcon extends PureComponent {
 		// if (host && host.startsWith('app.')) {
 		// 	host = host.substr(4);
 		// }
-		//TODO: update api url to Pali ones
+
 		let iconUrl = `https://api.faviconkit.com/${host}/64`;
 		if (!util.isEtherscanAvailable()) {
-			//TODO: update api url to Pali ones
 			iconUrl = `https://pali.pollum.cloud/faviconkit/${host}/64`;
 		}
 		return iconUrl;
