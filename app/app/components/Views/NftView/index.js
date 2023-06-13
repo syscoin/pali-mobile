@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
-import isSupportLuxy from '../../../util/luxy';
+import { isSupportLuxy } from '../../../util/luxy';
 import MStatusBar from '../../UI/MStatusBar';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
