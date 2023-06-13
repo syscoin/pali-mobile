@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react';
+import { util } from 'gopocket-core';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import React, { PureComponent } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import FadeIn from 'react-native-fade-in-image';
 import { colors, fontStyles } from '../../../styles/common';
 import { getHost } from '../../../util/browser';
-import { util } from 'gopocket-core';
 
 const styles = StyleSheet.create({
 	fallback: {
@@ -72,11 +72,10 @@ export default class WebsiteIcon extends PureComponent {
 		// if (host && host.startsWith('app.')) {
 		// 	host = host.substr(4);
 		// }
-		//TODO: update api url to Pali ones
+
 		let iconUrl = `https://api.faviconkit.com/${host}/64`;
 		if (!util.isEtherscanAvailable()) {
-			//TODO: update api url to Pali ones
-			iconUrl = `https://api.gopocket.finance/faviconkit/${host}/64`;
+			iconUrl = `https://pali.pollum.cloud/faviconkit/${host}/64`;
 		}
 		return iconUrl;
 	};

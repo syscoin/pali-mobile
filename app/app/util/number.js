@@ -2,31 +2,31 @@
  * Collection of utility functions for consistent formatting and conversion
  */
 import {
-	ChainType,
-	LockType,
-	util,
-	BignumberJs as BigNumber,
 	BN,
+	BignumberJs as BigNumber,
+	ChainType,
 	EthersUtils,
+	LockType,
+	NetworkConfig,
 	EthjsUnit as convert,
-	NetworkConfig
+	util
 } from 'gopocket-core';
 import numberToBN from 'number-to-bn';
-import { safeToChecksumAddress } from './address';
 import Engine from '../core/Engine';
-import { CURRENCIES } from './currencies';
+import { getChainTypeName } from './ChainTypeImages';
 import {
-	callSqlite,
 	EngineContext,
 	EngineContracts,
 	EngineNetworks,
+	callSqlite,
 	getRpcChainTypeByChainId,
 	getRpcNickname,
 	getRpcProviderChainId,
 	getRpcProviderTicker,
 	isRpcChainId
 } from './ControllerUtils';
-import { getChainTypeName } from './ChainTypeImages';
+import { safeToChecksumAddress } from './address';
+import { CURRENCIES } from './currencies';
 
 /**
  * Converts a BN object to a hex string with a '0x' prefix
@@ -1042,9 +1042,9 @@ export async function getAssetLogo(asset) {
 
 	const token = await callSqlite('getStaticToken', type, asset.address, asset.l1Address);
 	const result = token?.image;
-	//TODO: update api url to Pali ones
+
 	if (!util.isEtherscanAvailable() && result && result.includes('coingecko.com')) {
-		return `https://api.gopocket.finance/proxy-png?url=${result}`;
+		return `https://pali.pollum.cloud/proxy-png?url=${result}`;
 	}
 	return result;
 }

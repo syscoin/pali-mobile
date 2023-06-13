@@ -666,8 +666,8 @@ export async function getAvailableUrl(url: string): Promise<{ url: string; optio
     const formData = new FormData();
     formData.append('url', url);
     options = { method: 'POST', body: formData, headers: getBaseHeaders() };
-    //TODO: update api url to Pali ones
-    url = 'https://api.gopocket.finance/proxy-json';
+
+    url = 'https://pali.pollum.cloud/proxy-json';
   }
   return { url, options };
 }

@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
-import { colors, fontStyles } from '../../../styles/common';
+import AsyncStorage from '@react-native-community/async-storage';
 import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import {
 	ActivityIndicator,
 	Animated,
@@ -16,22 +16,22 @@ import {
 	View
 } from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
-import NetworkTabBar from './NetworkTabBar';
 import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
-import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import { AutoCompleteType_HOMEPAGE } from '../../../core/AutoCompleteController';
+import { colors, fontStyles } from '../../../styles/common';
+import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import NFTImage from '../NFTImage';
-import AsyncStorage from '@react-native-community/async-storage';
+import NetworkTabBar from './NetworkTabBar';
 
+import { addFavouriteDapp, removeFavouriteDapp, updateFavouriteDapps } from '../../../actions/browser';
+import { toggleShowHint } from '../../../actions/hint';
 import notFavourites from '../../../images/ic_favourites_gray.png';
 import favourites from '../../../images/ic_favourites_y.png';
-import { toggleShowHint } from '../../../actions/hint';
-import Device from '../../../util/Device';
-import { addFavouriteDapp, removeFavouriteDapp, updateFavouriteDapps } from '../../../actions/browser';
-import DraggableGrid from '../DraggableGrid';
 import { chainToChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
+import Device from '../../../util/Device';
+import DraggableGrid from '../DraggableGrid';
 
 const screenWidth = Dimensions.get('window').width;
 const dragParentWidth = screenWidth - (20 + 20);
@@ -239,7 +239,7 @@ class HomePage extends PureComponent {
 			this.setItemDragging(false);
 		});
 		const { dappPageAll } = this.props;
-		const dappPage = strings('other.accept_language') === 'zh' ? dappPageAll.zh : dappPageAll.en;
+		const dappPage = dappPageAll.en;
 		const shouldHideSth = shouldHideSthForAppStoreReviewer();
 
 		let initialPage = 0;
@@ -363,12 +363,13 @@ class HomePage extends PureComponent {
 
 	renderTabs(dappPage) {
 		const tabs = [];
-		tabs.push(
-			<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
-				{this.renderFavourites()}
-			</View>
-		);
 		if (!this.state.shouldHideSth) {
+			tabs.push(
+				<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
+					{this.renderFavourites()}
+				</View>
+			);
+
 			const otherTabs = dappPage?.networks?.map((tab, index) => (
 				<View style={styles.content} tabLabel={tab.name + ':' + tab.chain} key={`network_${index}`}>
 					{this.renderContent(tab.content, tab.chain)}
@@ -614,7 +615,7 @@ class HomePage extends PureComponent {
 						ref={this.scrollViewRef}
 					>
 						{/* TODO: TODO We should add this updates banner for Pali wallet. */}
-						{/* 
+						{/*
 						{!shouldHideSth && dappPage.showBanner && this.renderBanner(dappPage)} */}
 						{dappPage.showContent && (
 							<ScrollableTabView

@@ -1,27 +1,27 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { ChainType, util } from 'gopocket-core';
+import LottieView from 'lottie-react-native';
 import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import {
+	FlatList,
+	Image,
+	Keyboard,
 	StyleSheet,
 	Text,
-	View,
-	TouchableOpacity,
-	Image,
-	TouchableWithoutFeedback,
-	FlatList,
 	TextInput,
-	Keyboard
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View
 } from 'react-native';
-import { strings } from '../../../../locales/i18n';
-import { colors, fontStyles } from '../../../styles/common';
-import Device from '../../../util/Device';
-import Engine from '../../../core/Engine';
-import { getChainIdByType, getEip155Url } from '../../../util/number';
-import { ChainType, util } from 'gopocket-core';
-import NFTImage from '../NFTImage';
-import LottieView from 'lottie-react-native';
 import FastImage from 'react-native-fast-image';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { connect } from 'react-redux';
+import { strings } from '../../../../locales/i18n';
+import Engine from '../../../core/Engine';
+import { colors, fontStyles } from '../../../styles/common';
+import Device from '../../../util/Device';
+import { getChainIdByType, getEip155Url } from '../../../util/number';
+import NFTImage from '../NFTImage';
 
 const styles = StyleSheet.create({
 	hitSlop: {
@@ -370,11 +370,9 @@ class EnsSettingView extends PureComponent {
 					urlValue = util.makeIPFSUrl(urlValue, Engine.context.CollectiblesController.state.ipfsGateway);
 				}
 				if (!util.isEtherscanAvailable() && !!urlValue) {
-					//TODO: update api url to Pali ones
-					urlValue = 'https://api.gopocket.finance/proxy-png?url=' + urlValue;
+					urlValue = 'https://pali.pollum.cloud/proxy-png?url=' + urlValue;
 				} else if (!!urlValue && urlValue.startsWith('http://')) {
-					//TODO: update api url to Pali ones
-					urlValue = 'https://api.gopocket.finance/proxy-png?url=' + urlValue;
+					urlValue = 'https://pali.pollum.cloud/proxy-png?url=' + urlValue;
 				}
 				if ((urlValue && urlValue.startsWith('http://')) || urlValue.startsWith('https://')) {
 					if (urlValue.trim() !== this.state.requestUrl) {
