@@ -41,13 +41,14 @@ class DeeplinkManager {
 		}
 
 		const handled = () => onHandled?.();
+
 		switch (urlObj.protocol.replace(':', '')) {
 			case 'https':
 				// eslint-disable-next-line no-case-declarations
 				let newUrl = unescape(url);
-				//TODO: update api url to Pali ones
-				if (newUrl.startsWith('https://gopocket.security/wc?uri=')) {
-					newUrl = newUrl.replace('https://gopocket.security/wc?uri=', '');
+
+				if (newUrl.startsWith('https://pali.pollum.cloud/wc?uri=')) {
+					newUrl = newUrl.replace('https://pali.pollum.cloud/wc?uri=', '');
 					handled();
 					if (!WalletConnect.isValidUri(newUrl)) return;
 					// eslint-disable-next-line no-case-declarations
@@ -68,10 +69,10 @@ class DeeplinkManager {
 				// eslint-disable-next-line no-case-declarations
 				WalletConnect.newSession(url, redirect, autosign);
 				break;
-			case 'gopocket':
+			case 'paliwallet':
 				newUrl = unescape(url);
-				//TODO: update api url to Pali ones
-				newUrl = newUrl.replace('gopocket://wc?uri=', '');
+
+				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
 				handled();
 				if (!WalletConnect.isValidUri(newUrl)) return;
 				// eslint-disable-next-line no-case-declarations

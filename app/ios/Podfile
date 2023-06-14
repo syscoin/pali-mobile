@@ -24,7 +24,7 @@ def react_native_post_install(installer)
     end
   end
 
-target 'GoPocket' do
+target 'PaliWallet' do
   config = use_native_modules!
   # Comment the next line if you don't want to use dynamic frameworks
   # use_frameworks!

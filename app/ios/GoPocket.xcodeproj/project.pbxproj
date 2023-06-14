@@ -25,8 +25,8 @@
 		1DC4A6B726B3A4D5007514B3 /* RNToolsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DC4A6B626B3A4D5007514B3 /* RNToolsManager.swift */; };
 		1DC4A6BA26B3A678007514B3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DC4A6B926B3A678007514B3 /* Constants.swift */; };
 		654378B0243E2ADC00571B9C /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654378AF243E2ADC00571B9C /* File.swift */; };
-		925F4DF0EDEF69D6BC5E1AA1 /* libPods-GoPocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B9CE607127A67800F283F7 /* libPods-GoPocket.a */; };
 		B579CECA27145E9700D045FB /* advanced.html in Resources */ = {isa = PBXBuildFile; fileRef = B579CEC527145E9700D045FB /* advanced.html */; };
+		C1AD4CA9B26CA485141CC318 /* libPods-PaliWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 268712BC72BD3AEF00000DF9 /* libPods-PaliWallet.a */; };
 		FFF38F0D2A1D5E68009E6B8F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FFF38F092A1D5E68009E6B8F /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -111,13 +111,16 @@
 		1DC4A6B626B3A4D5007514B3 /* RNToolsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNToolsManager.swift; sourceTree = "<group>"; };
 		1DC4A6B926B3A678007514B3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1F06D56A2D2F41FB9345D16F /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = System/Library/Frameworks/Lottie.framework; sourceTree = SDKROOT; };
+		268712BC72BD3AEF00000DF9 /* libPods-PaliWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PaliWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		278065D027394AD9B2906E38 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		31DD96F4BE527C0392B36E6F /* Pods-PaliWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.release.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.release.xcconfig"; sourceTree = "<group>"; };
 		327DD2DF6994E9948B4D7E0F /* Pods-GoPocket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.release.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.release.xcconfig"; sourceTree = "<group>"; };
 		42C239E9FAA64BD9A34B8D8A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		42C6DDE3B80F47AFA9C9D4F5 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		4379F36F969347758D1A9F96 /* Lottie.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
 		4444176409EB42CB93AB03C5 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		49E4C4CCDD2B9AE6251B4321 /* Pods-PaliWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.debug.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		4A2D27104599412CA00C35EF /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		57C103F40F394637B5A886FC /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		5E32A09A7BDC431FA403BA73 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -132,7 +135,6 @@
 		B579CEC527145E9700D045FB /* advanced.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = advanced.html; path = ../app/components/UI/TradingViewKline/advanced.html; sourceTree = "<group>"; };
 		BF485CDA047B4D52852B87F5 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		BF8DE2E5A176599FCD8A7CFD /* Pods-GoPocket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.debug.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.debug.xcconfig"; sourceTree = "<group>"; };
-		D0B9CE607127A67800F283F7 /* libPods-GoPocket.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GoPocket.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0CBAE789660472DB719C765 /* libLottie.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLottie.a; sourceTree = "<group>"; };
 		E9629905BA1940ADA4189921 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		EBC2B6371CD846D28B9FAADF /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -148,7 +150,7 @@
 			files = (
 				153C1ABB2217BCDC0088EFE0 /* JavaScriptCore.framework in Frameworks */,
 				15ACC9FC22655C3A0063978B /* Lottie.framework in Frameworks */,
-				925F4DF0EDEF69D6BC5E1AA1 /* libPods-GoPocket.a in Frameworks */,
+				C1AD4CA9B26CA485141CC318 /* libPods-PaliWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +208,7 @@
 			children = (
 				153C1A742217BCDC0088EFE0 /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				D0B9CE607127A67800F283F7 /* libPods-GoPocket.a */,
+				268712BC72BD3AEF00000DF9 /* libPods-PaliWallet.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -282,6 +284,8 @@
 				327DD2DF6994E9948B4D7E0F /* Pods-GoPocket.release.xcconfig */,
 				05ED435BC1B685AAFF1770AD /* Pods-GoPocket.debug.xcconfig */,
 				81259AFA367ECB9987C83DD6 /* Pods-GoPocket.release.xcconfig */,
+				49E4C4CCDD2B9AE6251B4321 /* Pods-PaliWallet.debug.xcconfig */,
+				31DD96F4BE527C0392B36E6F /* Pods-PaliWallet.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -289,9 +293,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* GoPocket */ = {
+		13B07F861A680F5B00A75B9A /* PaliWallet */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GoPocket" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PaliWallet" */;
 			buildPhases = (
 				72868E350C2B4E37DD67D4DA /* [CP] Check Pods Manifest.lock */,
 				65E00B0A247EA25400E5AC88 /* Start Packager */,
@@ -309,7 +313,7 @@
 			dependencies = (
 				15ACC9FF22655C3A0063978B /* PBXTargetDependency */,
 			);
-			name = GoPocket;
+			name = PaliWallet;
 			productName = "Hello World";
 			productReference = 13B07F961A680F5B00A75B9A /* GoPocket.app */;
 			productType = "com.apple.product-type.application";
@@ -359,7 +363,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* GoPocket */,
+				13B07F861A680F5B00A75B9A /* PaliWallet */,
 			);
 		};
 /* End PBXProject section */
@@ -437,7 +441,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-GoPocket/Pods-GoPocket-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-PaliWallet/Pods-PaliWallet-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework/OpenSSL",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -446,7 +450,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GoPocket/Pods-GoPocket-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PaliWallet/Pods-PaliWallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		65E00B0A247EA25400E5AC88 /* Start Packager */ = {
@@ -483,7 +487,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-GoPocket-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-PaliWallet-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -496,7 +500,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-GoPocket/Pods-GoPocket-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-PaliWallet/Pods-PaliWallet-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -537,7 +541,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GoPocket/Pods-GoPocket-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PaliWallet/Pods-PaliWallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		ECB42F9D3E0DBD2104802FBB /* [CP-User] [RNFB] Core Configuration */ = {
@@ -595,7 +599,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 05ED435BC1B685AAFF1770AD /* Pods-GoPocket.debug.xcconfig */;
+			baseConfigurationReference = 49E4C4CCDD2B9AE6251B4321 /* Pods-PaliWallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
@@ -662,7 +666,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 81259AFA367ECB9987C83DD6 /* Pods-GoPocket.release.xcconfig */;
+			baseConfigurationReference = 31DD96F4BE527C0392B36E6F /* Pods-PaliWallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
@@ -807,7 +811,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GoPocket" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PaliWallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,

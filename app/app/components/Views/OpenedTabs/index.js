@@ -133,7 +133,7 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 
 	useEffect(() => {
 		const getFavicon = async () => {
-			if (tab.url === 'gopocket://homepage') {
+			if (tab.url === 'paliwallet://homepage') {
 				return setFavicon(require('../../../images/ic_dapp_home.png'));
 			}
 
