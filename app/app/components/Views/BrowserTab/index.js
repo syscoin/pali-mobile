@@ -70,6 +70,7 @@ const API_WHITE_LIST = [
 	'pocket.sardin.cn',
 	'gopocket.finance',
 	'gopocket.security',
+	'pali.pollum.cloud',
 	'community.gopocket.xyz'
 ];
 
@@ -848,7 +849,7 @@ const BrowserTab = props => {
 	const onShouldStartLoadWithRequest = nativeEvent => {
 		const { url } = nativeEvent;
 		try {
-			if (url.startsWith('wc:') || url.startsWith('gopocket://wc')) {
+			if (url.startsWith('wc:') || url.startsWith('paliwallet://wc')) {
 				SharedDeeplinkManager.parse(url, {
 					origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK
 				});
@@ -1059,7 +1060,14 @@ const BrowserTab = props => {
 	const onLoadStart = async ({ nativeEvent }) => {
 		if (nativeEvent.injectForThisURL) {
 			const { current } = webviewRef;
-			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
+			const walletTypeInjectionScript = `
+				if (!window.ethereum) {
+					window.ethereum = {};
+				}
+				window.ethereum.wallet = "pali-mobile";
+			`; // Injecting the wallet type into window.ethereum
+
+			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener + walletTypeInjectionScript);
 		}
 
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
@@ -1848,7 +1856,7 @@ const BrowserTab = props => {
 							onMessage={onMessage}
 							onError={onError}
 							onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-							originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
+							originWhitelist={['http://*', 'https://*', 'wc:', 'paliwallet://']}
 							userAgent={USER_AGENT}
 							sendCookies
 							javascriptEnabled

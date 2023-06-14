@@ -289,9 +289,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* GoPocket */ = {
+		13B07F861A680F5B00A75B9A /* PaliWallet */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GoPocket" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PaliWallet" */;
 			buildPhases = (
 				72868E350C2B4E37DD67D4DA /* [CP] Check Pods Manifest.lock */,
 				65E00B0A247EA25400E5AC88 /* Start Packager */,
@@ -309,7 +309,7 @@
 			dependencies = (
 				15ACC9FF22655C3A0063978B /* PBXTargetDependency */,
 			);
-			name = GoPocket;
+			name = PaliWallet;
 			productName = "Hello World";
 			productReference = 13B07F961A680F5B00A75B9A /* GoPocket.app */;
 			productType = "com.apple.product-type.application";
@@ -359,7 +359,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* GoPocket */,
+				13B07F861A680F5B00A75B9A /* PaliWallet */,
 			);
 		};
 /* End PBXProject section */
@@ -807,7 +807,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GoPocket" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PaliWallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
