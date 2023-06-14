@@ -1060,14 +1060,8 @@ const BrowserTab = props => {
 	const onLoadStart = async ({ nativeEvent }) => {
 		if (nativeEvent.injectForThisURL) {
 			const { current } = webviewRef;
-			const walletTypeInjectionScript = `
-				if (!window.ethereum) {
-					window.ethereum = {};
-				}
-				window.ethereum.wallet = "pali-mobile";
-			`; // Injecting the wallet type into window.ethereum
 
-			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener + walletTypeInjectionScript);
+			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
 
 		props.addressBarRef.current && props.addressBarRef.current.setInputEditing(false);
