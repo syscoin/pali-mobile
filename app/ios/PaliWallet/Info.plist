@@ -26,7 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ethereum</string>
-				<string>PaliWallet</string>
+				<string>paliwallet</string>
 				<string>dapp</string>
 				<string>wc</string>
 			</array>
