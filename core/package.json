@@ -1,5 +1,5 @@
 {
-  "name": "gopocket-core",
+  "name": "paliwallet-core",
   "version": "1.0.0",
   "license": "MIT",
   "files": [
@@ -20,7 +20,8 @@
     "build": "rm -rf dist && patch-package && tsc"
   },
   "keywords": [
-    "GoPocket",
+    "Pali",
+    "PaliWallet",
     "Ethereum",
     "Web3",
     "Wallet"

@@ -1,4 +1,4 @@
-import { URL } from 'gopocket-core';
+import { URL } from 'paiwallet-core';
 
 export const RPC = 'rpc';
 

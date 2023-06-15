@@ -12,7 +12,7 @@ import iconBrowser from '../../../images/browser.png';
 import iconFire from '../../../images/ic_fire.png';
 import iconDefault from '../../../images/img_default.png';
 import { strings } from '../../../../locales/i18n';
-import { CrossChainType } from 'gopocket-core';
+import { CrossChainType } from 'paiwallet-core';
 import NFTImage from '../NFTImage';
 
 const defaultAmountColor = '#34C738';

@@ -16,7 +16,7 @@ import Device from '../../../util/Device';
 import { updateGridArray, updateImagesCache } from '../../../actions/nft';
 import LottieView from 'lottie-react-native';
 import { strings } from '../../../../locales/i18n';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paiwallet-core';
 import { isSvgFile, isVideoFile, toLowerCaseEquals } from '../../../util/general';
 import NFTImage from '../NFTImage';
 import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';

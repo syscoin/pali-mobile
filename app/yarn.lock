@@ -7865,7 +7865,7 @@ globals@^12.1.0:
   dependencies:
     type-fest "^0.8.1"
 
-"gopocket-core@file:../core":
+"paiwallet-core@file:../core":
   version "1.0.0"
   dependencies:
     "@ethereumjs/common" "^2.3.1"

@@ -1,5 +1,5 @@
 import { API_KEY } from '@env';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paiwallet-core';
 import { NativeModules, Platform } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 import { addFavouriteDapps, updateDappPage, updateDefaultTypes } from '../actions/browser';

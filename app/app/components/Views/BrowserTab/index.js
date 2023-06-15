@@ -35,7 +35,7 @@ import Device from '../../../util/Device';
 import AppConstants from '../../../core/AppConstants';
 import SharedDeeplinkManager from '../../../core/DeeplinkManager';
 import { SetUseTestServer } from '../../../actions/settings';
-import { ChainType, util, URL } from 'gopocket-core';
+import { ChainType, util, URL } from 'paiwallet-core';
 import { toggleShowHint } from '../../../actions/hint';
 import { checkPermissionAndSave } from '../../../util/ImageUtils.android';
 import { getAppVersion, getAppVersionCode, getChannel, getDeviceId, getDeviceInfo } from '../../../util/ApiClient';

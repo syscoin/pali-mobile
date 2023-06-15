@@ -4,7 +4,7 @@ import { colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { TransactionStatus, CrossChainType, util, URL, ChainType } from 'gopocket-core';
+import { TransactionStatus, CrossChainType, util, URL, ChainType } from 'paiwallet-core';
 import iconNotx from '../../../images/notx.png';
 import iconArrow from '../../../images/move_arrow.png';
 import TxItem from '../TxItem';

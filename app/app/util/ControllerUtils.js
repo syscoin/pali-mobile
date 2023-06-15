@@ -1,4 +1,4 @@
-import { ChainType, NetworkConfig, Sqlite } from 'gopocket-core';
+import { ChainType, NetworkConfig, Sqlite } from 'paiwallet-core';
 import Engine from '../core/Engine';
 import EngineImpl from '../core/EngineImpl';
 import NativeThreads from '../threads/NativeThreads';

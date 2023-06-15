@@ -3,7 +3,7 @@ import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import rootReducer from '../reducers';
-import { util } from 'gopocket-core';
+import { util } from 'paiwallet-core';
 import { migrations, version } from './migrations';
 
 const encryptName = (name: string) => {

@@ -1,6 +1,6 @@
 import { Platform, PermissionsAndroid, ToastAndroid } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-import { RNFS } from 'gopocket-core';
+import { RNFS } from 'paiwallet-core';
 import CameraRoll from '@react-native-community/cameraroll';
 import { strings } from '../../locales/i18n';
 

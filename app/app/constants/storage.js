@@ -1,5 +1,5 @@
-const gopocket = 'GoPocket';
-export const prefix = `@${gopocket}:`;
+const paliwallet = 'PaliWallet';
+export const prefix = `@${paliwallet}:`;
 
 export const EXISTING_USER = `${prefix}existingUser`;
 export const BIOMETRY_CHOICE = `${prefix}biometryChoice`;
@@ -23,7 +23,7 @@ export const AGREED = 'agreed';
 export const DENIED = 'denied';
 export const EXPLORED = 'explored';
 
-export const DEBUG = `[${gopocket} DEBUG]:`;
+export const DEBUG = `[${paliwallet} DEBUG]:`;
 
 export const STORAGE_NEW_VERSION_CODE = 'new_version_code';
 export const STORAGE_UPDATE_VERSION_SHOW_MODAL = 'update_version_show_modal';

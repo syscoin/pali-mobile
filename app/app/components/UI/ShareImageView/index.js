@@ -8,7 +8,7 @@ import QRCode from 'react-native-qrcode-svg';
 import shareBackground from '../../../images/img_share_bg.png';
 import shareLogo from '../../../images/img_share_logo.png';
 import { captureRef } from 'react-native-view-shot';
-import { util } from 'gopocket-core';
+import { util } from 'paiwallet-core';
 import { getChainTypeName, getShareImage } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({

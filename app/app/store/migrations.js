@@ -1,4 +1,4 @@
-import { ChainType } from 'gopocket-core';
+import { ChainType } from 'paiwallet-core';
 import { callSqlite } from '../util/ControllerUtils';
 
 export const migrations = {

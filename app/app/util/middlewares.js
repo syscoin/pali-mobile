@@ -1,4 +1,4 @@
-import { util } from 'gopocket-core';
+import { util } from 'paiwallet-core';
 
 const REJECTED_TRANSACTION_ERROR = 'User rejected the transaction';
 

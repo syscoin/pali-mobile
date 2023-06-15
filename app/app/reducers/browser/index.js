@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist';
-import { URL, util } from 'gopocket-core';
+import { URL, util } from 'paiwallet-core';
 import { getLanguageDapp, setActiveTab } from '../../util/browser';
 import AppConstants from '../../core/AppConstants';
 

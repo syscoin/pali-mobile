@@ -7,7 +7,7 @@ import SecureKeychain from '../../../core/SecureKeychain';
 import { connect } from 'react-redux';
 import { colors } from '../../../styles/common';
 import { BACKUP_VAULT, BIOMETRY_CHOICE, BIOMETRY_CHOICE_DISABLED, EXISTING_USER } from '../../../constants/storage';
-import { util } from 'gopocket-core';
+import { util } from 'paiwallet-core';
 import SplashScreen from 'react-native-splash-screen';
 import Device from '../../../util/Device';
 

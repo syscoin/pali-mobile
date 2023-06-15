@@ -8,7 +8,7 @@ import { strings } from '../../../../locales/i18n';
 import LottieView from 'lottie-react-native';
 import { randomTransactionId } from '../../../util/number';
 import Engine from '../../../core/Engine';
-import { ChainType, CrossChainType, TransactionStatus } from 'gopocket-core';
+import { ChainType, CrossChainType, TransactionStatus } from 'paiwallet-core';
 import { toggleOngoingTransactionsModal } from '../../../actions/modals';
 import PropTypes from 'prop-types';
 import { toggleShowHint } from '../../../actions/hint';

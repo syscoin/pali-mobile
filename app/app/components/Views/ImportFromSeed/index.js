@@ -25,7 +25,7 @@ import {
 } from '../../../util/validators';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import PromptView from '../../UI/PromptView';
-import { util, wordlists } from 'gopocket-core';
+import { util, wordlists } from 'paiwallet-core';
 import MStatusBar from '../../UI/MStatusBar';
 import TitleBar from '../../UI/TitleBar';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';

@@ -1,4 +1,4 @@
-import { ChainType, NetworkConfig, toChecksumAddress, util } from 'gopocket-core';
+import { ChainType, NetworkConfig, toChecksumAddress, util } from 'paiwallet-core';
 import Engine from '../core/Engine';
 import { callSqlite, isMainnetChain } from '../util/ControllerUtils';
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paiwallet-core';
 import { TokenImage } from '../TokenImage';
 import { getAssetLogo, getChainTypeByChainId } from '../../../util/number';
 import ApprovalEvent from '../ApprovalEvent';

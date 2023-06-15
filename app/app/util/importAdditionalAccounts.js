@@ -1,5 +1,5 @@
 import EthQuery from 'ethjs-query';
-import { ChainType, KeyringTypes, util } from 'gopocket-core';
+import { ChainType, KeyringTypes, util } from 'paiwallet-core';
 import EngineImpl from '../core/EngineImpl';
 
 const ZERO_BALANCE = '0x0';
