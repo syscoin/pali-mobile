@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import NFTImage, { convertImageUrl } from '../NFTImage';
-import { URL } from 'gopocket-core';
+import { URL } from 'paiwallet-core';
 import { callSqlite } from '../../../util/ControllerUtils';
 
 const styles = StyleSheet.create({

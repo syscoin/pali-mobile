@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
 import Icon from '../Icon';
-import { BignumberJs as BigNumber, ChainType, defaultEnabledChains, TokenType, util } from 'gopocket-core';
+import { BignumberJs as BigNumber, ChainType, defaultEnabledChains, TokenType, util } from 'paiwallet-core';
 import Engine from '../../../core/Engine';
 import Modal from 'react-native-modal';
 import Popover from '../Popover';
