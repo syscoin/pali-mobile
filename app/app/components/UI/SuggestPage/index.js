@@ -329,7 +329,7 @@ class SuggestPage extends PureComponent {
 				<View>
 					{this.renderSearch(search)}
 					{!this.shouldHideSth && this.renderSuggest(dapp)}
-					{this.renderFavorite()}
+					{!this.shouldHideSth && this.renderFavorite()}
 					{this.renderRecent(recent)}
 				</View>
 			</KeyboardAwareScrollView>
