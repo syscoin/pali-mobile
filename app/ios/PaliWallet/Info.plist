@@ -7,13 +7,13 @@
 	<key>CFBundleDisplayName</key>
 	<string>Pali Wallet</string>
 	<key>CFBundleExecutable</key>
-	<string>GoPocket</string>
+	<string>PaliWallet</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>1</string>
 	<key>CFBundleName</key>
-	<string>GoPocket</string>
+	<string>PaliWallet</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -26,7 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ethereum</string>
-				<string>gopocket</string>
+				<string>PaliWallet</string>
 				<string>dapp</string>
 				<string>wc</string>
 			</array>
