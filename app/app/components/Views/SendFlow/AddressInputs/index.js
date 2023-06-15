@@ -4,7 +4,7 @@ import { colors, fontStyles } from '../../../../styles/common';
 import PropTypes from 'prop-types';
 import { renderShortAddress } from '../../../../util/address';
 import { strings } from '../../../../../locales/i18n';
-import { isValidAddress } from 'gopocket-core';
+import { isValidAddress } from 'paiwallet-core';
 import NFTImage from '../../../UI/NFTImage';
 
 const holderGrey = '#8F92A1';
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
 	}
 });
 
-// eslint-disable-next-line import/prefer-default-export
 export const AddressTo = props => {
 	const {
 		addressToReady,

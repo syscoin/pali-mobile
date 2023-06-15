@@ -14,7 +14,7 @@ import { activeOpacity, baseStyles, colors, fontStyles } from '../../../../style
 import NFTImage from '../../../UI/NFTImage';
 import PropTypes from 'prop-types';
 import NetworkFee from '../../../UI/NetworkFee';
-import { ChainType, toChecksumAddress, util } from 'gopocket-core';
+import { ChainType, toChecksumAddress, util } from 'paiwallet-core';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 
 import iconEns from '../../../../images/ic_set_ens_avatar.png';

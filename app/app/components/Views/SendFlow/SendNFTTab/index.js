@@ -38,7 +38,7 @@ import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
 import iconSendActive from '../../../../images/send_hl.png';
 import Device from '../../../../util/Device';
-import { ChainType, util, isValidAddress, BignumberJs as BigNumber, TransactionStatus } from 'gopocket-core';
+import { ChainType, util, isValidAddress, BignumberJs as BigNumber, TransactionStatus } from 'paiwallet-core';
 import Clipboard from '@react-native-community/clipboard';
 import { toLowerCaseEquals } from '../../../../util/general';
 import Modal from 'react-native-modal';

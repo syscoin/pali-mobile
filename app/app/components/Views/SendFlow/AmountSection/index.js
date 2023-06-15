@@ -33,7 +33,7 @@ import {
 	calcAssetPrices
 } from '../../../../util/number';
 import { strings } from '../../../../../locales/i18n';
-import { BN, util } from 'gopocket-core';
+import { BN, util } from 'paiwallet-core';
 import { CURRENCIES } from '../../../../util/currencies';
 import { getEstimatedTotalGas, validateAmount } from '../../../../util/Amount';
 

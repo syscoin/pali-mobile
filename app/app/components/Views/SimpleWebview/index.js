@@ -5,7 +5,7 @@ import { WebView } from 'react-native-webview';
 import Share from 'react-native-share';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import MStatusBar from '../../UI/MStatusBar';
-import { util } from 'gopocket-core';
+import { util } from 'paiwallet-core';
 import Device from '../../../util/Device';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
