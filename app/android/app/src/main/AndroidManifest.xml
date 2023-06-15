@@ -70,7 +70,7 @@
 				<category
 					android:name="android.intent.category.DEFAULT" />
 				<data
-					android:scheme="gopocket" />
+					android:scheme="paliwallet" />
 			</intent-filter>
 		</activity>
 		<activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true"/>

@@ -10,7 +10,7 @@ import {
 } from '../util/number';
 import AsyncStorage from '@react-native-community/async-storage';
 import { LAST_NOTIFICATION_INFO } from '../constants/storage';
-import { ChainType, TxNoChange, TokenTxChanged } from 'gopocket-core';
+import { ChainType, TxNoChange, TokenTxChanged } from 'paiwallet-core';
 import { getTicker } from '../util/transactions';
 import { callSqlite } from '../util/ControllerUtils';
 

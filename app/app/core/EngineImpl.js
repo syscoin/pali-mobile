@@ -30,7 +30,7 @@ import {
 	DefiProtocolController,
 	StaticTokenController,
 	NetworkConfig
-} from 'gopocket-core';
+} from 'paiwallet-core';
 
 import Encryptor from './Encryptor';
 import AppConstants from './AppConstants';

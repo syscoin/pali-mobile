@@ -2,7 +2,7 @@
 
 import qs from 'qs';
 import WalletConnect from '../core/WalletConnect';
-import { util, URL } from 'gopocket-core';
+import { util, URL } from 'paiwallet-core';
 
 class DeeplinkManager {
 	constructor(_navigation) {

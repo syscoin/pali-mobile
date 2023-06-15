@@ -14,7 +14,7 @@ import { toggleApproveModalInModal } from '../../../actions/modals';
 import { hideScanner } from '../../../actions/scanner';
 import QrScanner from '../../Views/QRScanner';
 import ReceiveTab from '../ReceiveTab';
-import { ChainType, NetworkConfig, util } from 'gopocket-core';
+import { ChainType, NetworkConfig, util } from 'paiwallet-core';
 import Engine from '../../../core/Engine';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/Device';

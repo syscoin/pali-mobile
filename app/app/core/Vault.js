@@ -1,5 +1,5 @@
 import Engine from './Engine';
-import { KeyringTypes } from 'gopocket-core';
+import { KeyringTypes } from 'paiwallet-core';
 
 /**
  * Returns current vault seed phrase

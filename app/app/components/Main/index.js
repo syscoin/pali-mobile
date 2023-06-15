@@ -37,7 +37,7 @@ import PersonalSign from '../UI/PersonalSign';
 import TypedSign from '../UI/TypedSign';
 import Modal from 'react-native-modal';
 import WalletConnect from '../../core/WalletConnect';
-import { util, CrossChainType, BN, ChainType, OnEventTag } from 'gopocket-core';
+import { util, CrossChainType, BN, ChainType, OnEventTag } from 'paiwallet-core';
 import { strings } from '../../../locales/i18n';
 
 import {
@@ -87,7 +87,7 @@ import { updateLockScreen } from '../../actions/settings';
 import WalletConnectList from '../UI/WalletConnectList';
 import { hideWalletConnectList, showWalletConnectIcon, hideWalletConnectIcon } from '../../actions/walletconnect';
 import { toggleShowHint } from '../../actions/hint';
-import { logDebug } from 'gopocket-core/dist/util';
+import { logDebug } from 'paiwallet-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
 import { EngineContracts, EngineNetworks, isMainnetChain } from '../../util/ControllerUtils';
 
