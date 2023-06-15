@@ -1,4 +1,4 @@
-import { ChainType } from 'paiwallet-core';
+import { ChainType } from 'paliwallet-core';
 
 //node: lowercase address
 export const CBRIDGE_SUPPORT_TOKENS = {

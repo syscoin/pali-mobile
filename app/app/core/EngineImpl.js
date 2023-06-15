@@ -30,7 +30,7 @@ import {
 	DefiProtocolController,
 	StaticTokenController,
 	NetworkConfig
-} from 'paiwallet-core';
+} from 'paliwallet-core';
 
 import Encryptor from './Encryptor';
 import AppConstants from './AppConstants';

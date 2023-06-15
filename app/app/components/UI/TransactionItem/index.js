@@ -6,7 +6,7 @@ import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/c
 import TxItem from '../TxItem';
 import { getTickerByType } from '../../../util/number';
 import PropTypes from 'prop-types';
-import { URL, util } from 'paiwallet-core';
+import { URL, util } from 'paliwallet-core';
 import { getEtherscanBaseUrl, getEtherscanTransactionUrl } from '../../../util/etherscan';
 import { toDateFormatSimple } from '../../../util/date';
 

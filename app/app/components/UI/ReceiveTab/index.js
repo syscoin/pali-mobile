@@ -20,7 +20,7 @@ import { showAlert } from '../../../actions/alert';
 import iconCopy from '../../../images/copy.png';
 import iconShar from '../../../images/share.png';
 import iconReceiveActive from '../../../images/receive_hl.png';
-import { ChainType, util } from 'paiwallet-core';
+import { ChainType, util } from 'paliwallet-core';
 import GlobalAlert from '../GlobalAlert';
 import { getTokenName } from '../../../util/number';
 import { getChainTypeName } from '../../../util/ChainTypeImages';

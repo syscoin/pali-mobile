@@ -1,4 +1,4 @@
-import { util } from 'paiwallet-core';
+import { util } from 'paliwallet-core';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { StyleSheet, View } from 'react-native';

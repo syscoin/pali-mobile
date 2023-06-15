@@ -29,7 +29,7 @@ import {
 	renderGwei,
 	toGwei
 } from '../../../util/number';
-import { ChainType, BN, util } from 'paiwallet-core';
+import { ChainType, BN, util } from 'paliwallet-core';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import customIcon from '../../../images/ic_custom.png';
 import customIcon2 from '../../../images/ic_custom2.png';

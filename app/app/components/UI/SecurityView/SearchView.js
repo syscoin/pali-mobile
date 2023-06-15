@@ -6,9 +6,9 @@ import { strings } from '../../../../locales/i18n';
 import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
-import { ChainType, isValidAddress, util } from 'paiwallet-core';
+import { ChainType, isValidAddress, util } from 'paliwallet-core';
 import { getAssetLogo } from '../../../util/number';
-import { logDebug } from 'paiwallet-core/dist/util';
+import { logDebug } from 'paliwallet-core/dist/util';
 import { getSecurityData } from '../../../util/security';
 
 const styles = StyleSheet.create({

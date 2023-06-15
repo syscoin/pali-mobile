@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import AsyncStorage from '@react-native-community/async-storage';
 import { CLIENT_OPTIONS, WALLET_CONNECT_ORIGIN } from '../util/walletconnect';
 import { WALLETCONNECT_SESSIONS } from '../constants/storage';
-import { ChainType, util } from 'paiwallet-core';
+import { ChainType, util } from 'paliwallet-core';
 import { isPrefixedFormattedHexString } from '../util/networks';
 import { getChainIdByType, getChainTypeByChainId } from '../util/number';
 import { ethErrors } from 'eth-json-rpc-errors';

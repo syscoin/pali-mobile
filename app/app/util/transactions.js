@@ -2,7 +2,7 @@ import { rawEncode, rawDecode } from 'ethereumjs-abi';
 import Engine from '../core/Engine';
 import { strings } from '../../locales/i18n';
 import { safeToChecksumAddress } from './address';
-import { ChainType, util, addHexPrefix, toChecksumAddress, BN } from 'paiwallet-core';
+import { ChainType, util, addHexPrefix, toChecksumAddress, BN } from 'paliwallet-core';
 import { getChainIdByType, getTickerByType, hexToBN } from './number';
 import { callSqlite } from './ControllerUtils';
 

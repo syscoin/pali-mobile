@@ -4,7 +4,7 @@ import { colors, fontStyles } from '../../../../styles/common';
 import PropTypes from 'prop-types';
 import { renderShortAddress } from '../../../../util/address';
 import { strings } from '../../../../../locales/i18n';
-import { isValidAddress } from 'paiwallet-core';
+import { isValidAddress } from 'paliwallet-core';
 import NFTImage from '../../../UI/NFTImage';
 
 const holderGrey = '#8F92A1';

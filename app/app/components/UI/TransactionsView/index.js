@@ -12,7 +12,7 @@ import MStatusBar from '../MStatusBar';
 
 import { connect } from 'react-redux';
 import TitleBar from '../TitleBar';
-import { ChainType } from 'paiwallet-core';
+import { ChainType } from 'paliwallet-core';
 
 const styles = StyleSheet.create({
 	txTitle: {

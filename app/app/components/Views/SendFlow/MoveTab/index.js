@@ -20,7 +20,7 @@ import NetworkFee from '../../../UI/NetworkFee';
 import imgShadow from '../../../../images/shadow.png';
 import Engine from '../../../../core/Engine';
 import TransactionTypes from '../../../../core/TransactionTypes';
-import { ChainType, CrossChainType, TransactionStatus, util, BN } from 'paiwallet-core';
+import { ChainType, CrossChainType, TransactionStatus, util, BN } from 'paliwallet-core';
 
 import {
 	addCurrencySymbol,

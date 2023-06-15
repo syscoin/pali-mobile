@@ -25,7 +25,7 @@ import { TRUE, BIOMETRY_CHOICE_DISABLED, BIOMETRY_CHOICE, BACKUP_VAULT } from '.
 import { passwordRequirementsMet } from '../../../util/password';
 import Device from '../../../util/Device';
 import BiometryButton from '../../UI/BiometryButton';
-import { util } from 'paiwallet-core';
+import { util } from 'paliwallet-core';
 import { updateLockScreen } from '../../../actions/settings';
 import { SafeAreaView } from 'react-native-safe-area-context';
 

@@ -1,4 +1,4 @@
-import { util } from 'paiwallet-core';
+import { util } from 'paliwallet-core';
 
 const REJECTED_TRANSACTION_ERROR = 'User rejected the transaction';
 

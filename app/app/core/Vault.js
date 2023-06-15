@@ -1,5 +1,5 @@
 import Engine from './Engine';
-import { KeyringTypes } from 'paiwallet-core';
+import { KeyringTypes } from 'paliwallet-core';
 
 /**
  * Returns current vault seed phrase

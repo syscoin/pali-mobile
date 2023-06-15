@@ -13,7 +13,7 @@ import {
 	TouchableOpacity,
 	View
 } from 'react-native';
-import { ChainType, defaultEnabledChains } from 'paiwallet-core';
+import { ChainType, defaultEnabledChains } from 'paliwallet-core';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import DragGridView from '../../Views/DragGridView';
 import Engine from '../../../core/Engine';

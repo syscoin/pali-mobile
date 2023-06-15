@@ -1,4 +1,4 @@
-import { ChainType, util } from 'paiwallet-core';
+import { ChainType, util } from 'paliwallet-core';
 import { strings } from '../../locales/i18n';
 import { RPC } from './networks';
 import { getIcTagResource, getTagColor } from './rpcUtil';

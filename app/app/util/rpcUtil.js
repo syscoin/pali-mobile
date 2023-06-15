@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, View, Text } from 'react-native';
 import { colors, fontStyles } from '../styles/common';
-import { util } from 'paiwallet-core';
+import { util } from 'paliwallet-core';
 import { getRpcNickname } from './ControllerUtils';
 
 const letters = [

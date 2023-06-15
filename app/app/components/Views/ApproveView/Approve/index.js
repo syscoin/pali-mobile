@@ -31,7 +31,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { colors } from '../../../../styles/common';
 import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
-import { TransactionStatus, util, BN } from 'paiwallet-core';
+import { TransactionStatus, util, BN } from 'paliwallet-core';
 import WebView from 'react-native-webview';
 import { onEvent } from '../../../../util/statistics';
 import CheckPassword from '../../../UI/CheckPassword';

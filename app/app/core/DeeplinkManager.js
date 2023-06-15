@@ -2,7 +2,7 @@
 
 import qs from 'qs';
 import WalletConnect from '../core/WalletConnect';
-import { util, URL } from 'paiwallet-core';
+import { util, URL } from 'paliwallet-core';
 
 class DeeplinkManager {
 	constructor(_navigation) {

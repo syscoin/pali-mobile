@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist';
-import { URL, util } from 'paiwallet-core';
+import { URL, util } from 'paliwallet-core';
 import { getLanguageDapp, setActiveTab } from '../../util/browser';
 import AppConstants from '../../core/AppConstants';
 

@@ -6,7 +6,7 @@ import { SvgUri } from 'react-native-svg';
 
 import { strings } from '../../../../locales/i18n';
 
-import { URL } from 'paiwallet-core';
+import { URL } from 'paliwallet-core';
 
 import { callSqlite } from '../../../util/ControllerUtils';
 

@@ -1,4 +1,4 @@
-import { ChainType } from 'paiwallet-core';
+import { ChainType } from 'paliwallet-core';
 import { callSqlite } from './ControllerUtils';
 import { chainToChainType } from './ChainTypeImages';
 

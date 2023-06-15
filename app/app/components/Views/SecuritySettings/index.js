@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { BIOMETRY_CHOICE, BIOMETRY_CHOICE_DISABLED, TRUE, VERIFICATION_DISABLED } from '../../../constants/storage';
 import SecureKeychain from '../../../core/SecureKeychain';
 import Engine from '../../../core/Engine';
-import { util } from 'paiwallet-core';
+import { util } from 'paliwallet-core';
 import CheckPassword from '../../UI/CheckPassword';
 import PromptView from '../../UI/PromptView';
 import TitleBar from '../../UI/TitleBar';
