@@ -677,7 +677,7 @@ class Browser extends PureComponent {
 			<SafeAreaView style={styles.wrapper} {...(Device.isAndroid() ? { collapsable: false } : {})}>
 				<MStatusBar navigation={this.props.navigation} />
 				<View style={styles.flexOne}>
-					{this.state.showSuggestPage && !this.shouldHideSth && (
+					{this.state.showSuggestPage && (
 						<SuggestPage
 							ref={this.suggestPageRef}
 							openUrl={this.openSuggestUrl}
