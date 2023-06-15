@@ -2,7 +2,7 @@ import { hexToBN, isEIP1559Compatibility, renderFromWei, toGwei, toWei, weiToFia
 import { strings } from '../../locales/i18n';
 import TransactionTypes from '../core/TransactionTypes';
 import Engine from '../core/Engine';
-import { BN, ChainType, util, providers, serialize } from 'gopocket-core';
+import { BN, ChainType, util, providers, serialize } from 'paliwallet-core';
 import { conversionUtil } from './conversion-util';
 import { isMainnetByChainType } from './ControllerUtils';
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';

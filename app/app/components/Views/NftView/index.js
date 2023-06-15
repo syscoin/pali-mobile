@@ -41,7 +41,7 @@ import { getDefiIcon } from '../../../util/rpcUtil';
 import { isSvgFile } from '../../../util/general';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
 import { ChainTypeBgDefi, ChainTypes } from '../../../util/ChainTypeImages';
-import { ChainType } from 'gopocket-core';
+import { ChainType } from 'paliwallet-core';
 
 const screenWidth = Device.getDeviceWidth();
 

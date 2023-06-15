@@ -1,4 +1,4 @@
-import { EthersUtils } from 'gopocket-core';
+import { EthersUtils } from 'paliwallet-core';
 
 export const failedSeedPhraseRequirements = seed => {
 	const wordCount = seed.split(/\s+/u).length;

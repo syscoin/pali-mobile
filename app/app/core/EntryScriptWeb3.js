@@ -1,5 +1,5 @@
 import Device from '../util/Device';
-import { RNFS } from 'gopocket-core';
+import { RNFS } from 'paliwallet-core';
 
 const EntryScriptWeb3 = {
 	entryScriptWeb3: null,

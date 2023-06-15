@@ -11,7 +11,7 @@ import Engine from '../../../core/Engine';
 import { importAccountFromPrivateKey, parsePrivateKey } from '../../../util/address';
 import AsyncStorage from '@react-native-community/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { toggleShowHint } from '../../../actions/hint';
 import { SafeAreaView } from 'react-native-safe-area-context';
 

@@ -9,7 +9,7 @@ import iconPolygon from '../../../images/ic_polygon.png';
 import iconEther from '../../../images/ic_ethereum.png';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
-import { ChainType } from 'gopocket-core';
+import { ChainType } from 'paliwallet-core';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
 
 const logoBorderColor = '#DCDCDC';

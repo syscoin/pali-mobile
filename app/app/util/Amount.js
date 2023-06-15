@@ -1,6 +1,6 @@
 import { getNativeCurrencyBalance, getTokenBalance, isDecimal, isZero, toTokenMinimalUnit, toWei } from './number';
 import { strings } from '../../locales/i18n';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paliwallet-core';
 import { estimateTransactionTotalGas } from './custom-gas';
 import { getRpcProviderChainId } from './ControllerUtils';
 import Engine from '../core/Engine';

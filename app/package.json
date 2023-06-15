@@ -1,5 +1,5 @@
 {
-	"name": "GoPocket",
+	"name": "PaliWallet",
 	"version": "1.4.4",
 	"private": true,
 	"scripts": {
@@ -83,7 +83,7 @@
 		"ethjs-contract": "0.2.3",
 		"ethjs-query": "0.3.8",
 		"events": "3.0.0",
-		"gopocket-core": "file:./../core/",
+		"paliwallet-core": "file:./../core/",
 		"https-browserify": "0.0.1",
 		"json-rpc-engine": "^6.1.0",
 		"json-rpc-middleware-stream": "3.0.0",

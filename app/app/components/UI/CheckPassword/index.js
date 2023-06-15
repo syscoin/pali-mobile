@@ -18,7 +18,7 @@ import Device from '../../../util/Device';
 import SecureKeychain from '../../../core/SecureKeychain';
 import AsyncStorage from '@react-native-community/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, TRUE } from '../../../constants/storage';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { connect } from 'react-redux';
 
 const styles = StyleSheet.create({

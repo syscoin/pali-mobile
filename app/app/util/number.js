@@ -10,7 +10,7 @@ import {
 	NetworkConfig,
 	EthjsUnit as convert,
 	util
-} from 'gopocket-core';
+} from 'paliwallet-core';
 import numberToBN from 'number-to-bn';
 import Engine from '../core/Engine';
 import { getChainTypeName } from './ChainTypeImages';

@@ -1,6 +1,6 @@
 import { strings } from '../../locales/i18n';
 import TopDomains from './TopDomains';
-import { util, URL } from 'gopocket-core';
+import { util, URL } from 'paliwallet-core';
 import NativeThreads from '../threads/NativeThreads';
 import { callSqlite } from '../util/ControllerUtils';
 

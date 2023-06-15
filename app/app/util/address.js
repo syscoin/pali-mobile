@@ -1,4 +1,4 @@
-import { toChecksumAddress } from 'gopocket-core';
+import { toChecksumAddress } from 'paliwallet-core';
 import Engine from '../core/Engine';
 import { strings } from '../../locales/i18n';
 

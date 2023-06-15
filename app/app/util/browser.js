@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { URL, util } from 'gopocket-core';
+import { URL, util } from 'paliwallet-core';
 import React from 'react';
 import { strings } from '../../locales/i18n';
 

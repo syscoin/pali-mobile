@@ -21,7 +21,7 @@ import { passwordRequirementsMet } from '../../../util/password';
 import { toggleShowHint } from '../../../actions/hint';
 import PromptView from '../../UI/PromptView';
 import MStatusBar from '../../UI/MStatusBar';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { tryVerifyPassword } from '../../../core/Vault';
 import Engine from '../../../core/Engine';
 import TitleBar from '../../UI/TitleBar';

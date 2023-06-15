@@ -30,7 +30,7 @@ import AssetElement from '../AssetElement';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import AddAsset from '../../Views/AddAsset';
-import { BignumberJs as BigNumber, util, TokenType, ChainType } from 'gopocket-core';
+import { BignumberJs as BigNumber, util, TokenType, ChainType } from 'paliwallet-core';
 import Popover from '../Popover';
 import AsyncStorage from '@react-native-community/async-storage';
 import LottieView from 'lottie-react-native';

@@ -16,7 +16,7 @@
 		15ACC9FB226555820063978B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		15ACC9FC22655C3A0063978B /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; };
 		15ACC9FD22655C3A0063978B /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1B0BF5032653AB9900AFC828 /* GoPocket.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */; };
+		1B0BF5032653AB9900AFC828 /* PaliWallet.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1B0BF5022653AB9900AFC828 /* PaliWallet.entitlements */; };
 		1B4628AC26DE27200096E17E /* splash_screen.json in Resources */ = {isa = PBXBuildFile; fileRef = 1B4628A726DE271F0096E17E /* splash_screen.json */; };
 		1BDE537E26E611790027269D /* InpageVConsole.js in Resources */ = {isa = PBXBuildFile; fileRef = 1BDE537926E611790027269D /* InpageVConsole.js */; };
 		1BF815B926B3F5FA0000DC6C /* InpageBridgeWeb3.js in Resources */ = {isa = PBXBuildFile; fileRef = 1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */; };
@@ -86,21 +86,21 @@
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		0417412027E9A32500C54857 /* tempdb.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = tempdb.db; sourceTree = "<group>"; };
 		04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NativeWorker.jsbundle; sourceTree = "<group>"; };
-		05ED435BC1B685AAFF1770AD /* Pods-GoPocket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.debug.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* GoPocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoPocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = GoPocket/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = GoPocket/AppDelegate.m; sourceTree = "<group>"; };
+		05ED435BC1B685AAFF1770AD /* Pods-PaliWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.debug.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* PaliWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaliWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = PaliWallet/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = PaliWallet/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = GoPocket/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = GoPocket/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GoPocket/main.m; sourceTree = "<group>"; };
-		15205D6221596AD90049EA93 /* GoPocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = GoPocket.entitlements; path = GoPocket/GoPocket.entitlements; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PaliWallet/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PaliWallet/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PaliWallet/main.m; sourceTree = "<group>"; };
+		15205D6221596AD90049EA93 /* PaliWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PaliWallet.entitlements; path = PaliWallet/PaliWallet.entitlements; sourceTree = "<group>"; };
 		153C1A742217BCDC0088EFE0 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		159878012231DF67001748EC /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		15FDD82721B7642B006B7C35 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		15FDD86021B76461006B7C35 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		178440FE3F1C4F4180D14622 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
-		1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = GoPocket.entitlements; path = GoPocket/GoPocket.entitlements; sourceTree = "<group>"; };
+		1B0BF5022653AB9900AFC828 /* PaliWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PaliWallet.entitlements; path = PaliWallet/PaliWallet.entitlements; sourceTree = "<group>"; };
 		1B4628A726DE271F0096E17E /* splash_screen.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = splash_screen.json; sourceTree = "<group>"; };
 		1BDE537926E611790027269D /* InpageVConsole.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageVConsole.js; path = ../app/core/InpageVConsole.js; sourceTree = "<group>"; };
 		1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = InpageBridgeWeb3.js; path = ../app/core/InpageBridgeWeb3.js; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		278065D027394AD9B2906E38 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		31DD96F4BE527C0392B36E6F /* Pods-PaliWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.release.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.release.xcconfig"; sourceTree = "<group>"; };
-		327DD2DF6994E9948B4D7E0F /* Pods-GoPocket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.release.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.release.xcconfig"; sourceTree = "<group>"; };
+		327DD2DF6994E9948B4D7E0F /* Pods-PaliWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.release.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.release.xcconfig"; sourceTree = "<group>"; };
 		42C239E9FAA64BD9A34B8D8A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		42C6DDE3B80F47AFA9C9D4F5 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		4379F36F969347758D1A9F96 /* Lottie.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
@@ -124,17 +124,17 @@
 		4A2D27104599412CA00C35EF /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		57C103F40F394637B5A886FC /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		5E32A09A7BDC431FA403BA73 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		654378AE243E2ADB00571B9C /* GoPocket-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GoPocket-Bridging-Header.h"; sourceTree = "<group>"; };
+		654378AE243E2ADB00571B9C /* PaliWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PaliWallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		654378AF243E2ADC00571B9C /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		7FF1597C0ACA4902B86140B2 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		81259AFA367ECB9987C83DD6 /* Pods-GoPocket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.release.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.release.xcconfig"; sourceTree = "<group>"; };
+		81259AFA367ECB9987C83DD6 /* Pods-PaliWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.release.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.release.xcconfig"; sourceTree = "<group>"; };
 		8E369AC13A2049B6B21E5120 /* libRCTSearchApi.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTSearchApi.a; sourceTree = "<group>"; };
 		A498EA4CD2F8488DB666B94C /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		A98DB430A7DA47EFB97EDF8B /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
-		AA9EDF17249955C7005D89EE /* GoPocketDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = GoPocketDebug.entitlements; path = GoPocket/GoPocketDebug.entitlements; sourceTree = "<group>"; };
+		AA9EDF17249955C7005D89EE /* PaliWalletDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PaliWalletDebug.entitlements; path = PaliWallet/PaliWalletDebug.entitlements; sourceTree = "<group>"; };
 		B579CEC527145E9700D045FB /* advanced.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = advanced.html; path = ../app/components/UI/TradingViewKline/advanced.html; sourceTree = "<group>"; };
 		BF485CDA047B4D52852B87F5 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		BF8DE2E5A176599FCD8A7CFD /* Pods-GoPocket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoPocket.debug.xcconfig"; path = "Target Support Files/Pods-GoPocket/Pods-GoPocket.debug.xcconfig"; sourceTree = "<group>"; };
+		BF8DE2E5A176599FCD8A7CFD /* Pods-PaliWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaliWallet.debug.xcconfig"; path = "Target Support Files/Pods-PaliWallet/Pods-PaliWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		D0CBAE789660472DB719C765 /* libLottie.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLottie.a; sourceTree = "<group>"; };
 		E9629905BA1940ADA4189921 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		EBC2B6371CD846D28B9FAADF /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -157,14 +157,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* GoPocket */ = {
+		13B07FAE1A68108700A75B9A /* PaliWallet */ = {
 			isa = PBXGroup;
 			children = (
 				0417412027E9A32500C54857 /* tempdb.db */,
 				04D092D8277EA4F300DE4DCB /* NativeWorker.jsbundle */,
 				1B4628A726DE271F0096E17E /* splash_screen.json */,
-				AA9EDF17249955C7005D89EE /* GoPocketDebug.entitlements */,
-				15205D6221596AD90049EA93 /* GoPocket.entitlements */,
+				AA9EDF17249955C7005D89EE /* PaliWalletDebug.entitlements */,
+				15205D6221596AD90049EA93 /* PaliWallet.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -176,7 +176,7 @@
 				1DC4A6B626B3A4D5007514B3 /* RNToolsManager.swift */,
 				1DC4A6B926B3A678007514B3 /* Constants.swift */,
 			);
-			name = GoPocket;
+			name = PaliWallet;
 			sourceTree = "<group>";
 		};
 		15723E24225FD0B800A5B418 /* Products */ = {
@@ -251,18 +251,18 @@
 				B579CEC527145E9700D045FB /* advanced.html */,
 				1BDE537926E611790027269D /* InpageVConsole.js */,
 				1BF815B426B3F5FA0000DC6C /* InpageBridgeWeb3.js */,
-				1B0BF5022653AB9900AFC828 /* GoPocket.entitlements */,
+				1B0BF5022653AB9900AFC828 /* PaliWallet.entitlements */,
 				654378AF243E2ADC00571B9C /* File.swift */,
 				15FDD86021B76461006B7C35 /* release.xcconfig */,
 				15FDD82721B7642B006B7C35 /* debug.xcconfig */,
-				13B07FAE1A68108700A75B9A /* GoPocket */,
+				13B07FAE1A68108700A75B9A /* PaliWallet */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				4A27949D046C4516B9653BBB /* Resources */,
 				15A2E5EF2100077400A1F331 /* Recovered References */,
 				AA342D524556DBBE26F5997C /* Pods */,
-				654378AE243E2ADB00571B9C /* GoPocket-Bridging-Header.h */,
+				654378AE243E2ADB00571B9C /* PaliWallet-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -272,7 +272,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* GoPocket.app */,
+				13B07F961A680F5B00A75B9A /* PaliWallet.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -280,10 +280,10 @@
 		AA342D524556DBBE26F5997C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				BF8DE2E5A176599FCD8A7CFD /* Pods-GoPocket.debug.xcconfig */,
-				327DD2DF6994E9948B4D7E0F /* Pods-GoPocket.release.xcconfig */,
-				05ED435BC1B685AAFF1770AD /* Pods-GoPocket.debug.xcconfig */,
-				81259AFA367ECB9987C83DD6 /* Pods-GoPocket.release.xcconfig */,
+				BF8DE2E5A176599FCD8A7CFD /* Pods-PaliWallet.debug.xcconfig */,
+				327DD2DF6994E9948B4D7E0F /* Pods-PaliWallet.release.xcconfig */,
+				05ED435BC1B685AAFF1770AD /* Pods-PaliWallet.debug.xcconfig */,
+				81259AFA367ECB9987C83DD6 /* Pods-PaliWallet.release.xcconfig */,
 				49E4C4CCDD2B9AE6251B4321 /* Pods-PaliWallet.debug.xcconfig */,
 				31DD96F4BE527C0392B36E6F /* Pods-PaliWallet.release.xcconfig */,
 			);
@@ -315,7 +315,7 @@
 			);
 			name = PaliWallet;
 			productName = "Hello World";
-			productReference = 13B07F961A680F5B00A75B9A /* GoPocket.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* PaliWallet.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -325,7 +325,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1010;
-				ORGANIZATIONNAME = GoPocket;
+				ORGANIZATIONNAME = PaliWallet;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 6YCW295639;
@@ -342,7 +342,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "GoPocket" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "PaliWallet" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -408,7 +408,7 @@
 				1B4628AC26DE27200096E17E /* splash_screen.json in Resources */,
 				1BF815B926B3F5FA0000DC6C /* InpageBridgeWeb3.js in Resources */,
 				1DA5BF652704303F00D0AC41 /* img_0.png in Resources */,
-				1B0BF5032653AB9900AFC828 /* GoPocket.entitlements in Resources */,
+				1B0BF5032653AB9900AFC828 /* PaliWallet.entitlements in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				B579CECA27145E9700D045FB /* advanced.html in Resources */,
 				0417412427E9A32500C54857 /* tempdb.db in Resources */,
@@ -591,7 +591,7 @@
 				1D068314269FDA3800D0FB02 /* zh-Hans */,
 			);
 			name = LaunchScreen.xib;
-			path = GoPocket;
+			path = PaliWallet;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -604,7 +604,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GoPocket/GoPocketDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWalletDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -632,14 +632,14 @@
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 				);
-				INFOPLIST_FILE = GoPocket/Info.plist;
+				INFOPLIST_FILE = PaliWallet/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Pali Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/GoPocket/System/Library/Frameworks\"",
+					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
 				);
 				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.0.0;
@@ -654,10 +654,10 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.pollum.paliwallet;
-				PRODUCT_MODULE_NAME = GoPocket;
-				PRODUCT_NAME = GoPocket;
+				PRODUCT_MODULE_NAME = PaliWallet;
+				PRODUCT_NAME = PaliWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "GoPocket-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PaliWallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -671,7 +671,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = GoPocket/GoPocket.entitlements;
+				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -699,14 +699,14 @@
 					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 				);
-				INFOPLIST_FILE = GoPocket/Info.plist;
+				INFOPLIST_FILE = PaliWallet/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Pali Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/GoPocket/System/Library/Frameworks\"",
+					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
 				);
 				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.0.0;
@@ -721,10 +721,10 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.pollum.paliwallet;
-				PRODUCT_MODULE_NAME = GoPocket;
-				PRODUCT_NAME = GoPocket;
+				PRODUCT_MODULE_NAME = PaliWallet;
+				PRODUCT_NAME = PaliWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "GoPocket-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PaliWallet-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -820,7 +820,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "GoPocket" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "PaliWallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
