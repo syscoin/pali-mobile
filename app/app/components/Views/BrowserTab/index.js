@@ -35,7 +35,7 @@ import Device from '../../../util/Device';
 import AppConstants from '../../../core/AppConstants';
 import SharedDeeplinkManager from '../../../core/DeeplinkManager';
 import { SetUseTestServer } from '../../../actions/settings';
-import { ChainType, util, URL } from 'gopocket-core';
+import { ChainType, util, URL } from 'paliwallet-core';
 import { toggleShowHint } from '../../../actions/hint';
 import { checkPermissionAndSave } from '../../../util/ImageUtils.android';
 import { getAppVersion, getAppVersionCode, getChannel, getDeviceId, getDeviceInfo } from '../../../util/ApiClient';
@@ -70,6 +70,7 @@ const API_WHITE_LIST = [
 	'pocket.sardin.cn',
 	'gopocket.finance',
 	'gopocket.security',
+	'pali.pollum.cloud',
 	'community.gopocket.xyz'
 ];
 
@@ -848,7 +849,7 @@ const BrowserTab = props => {
 	const onShouldStartLoadWithRequest = nativeEvent => {
 		const { url } = nativeEvent;
 		try {
-			if (url.startsWith('wc:') || url.startsWith('gopocket://wc')) {
+			if (url.startsWith('wc:') || url.startsWith('paliwallet://wc')) {
 				SharedDeeplinkManager.parse(url, {
 					origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK
 				});
@@ -1059,6 +1060,7 @@ const BrowserTab = props => {
 	const onLoadStart = async ({ nativeEvent }) => {
 		if (nativeEvent.injectForThisURL) {
 			const { current } = webviewRef;
+
 			current && current.injectJavaScript(entryScriptWeb3 + SPA_urlChangeListener);
 		}
 
@@ -1848,7 +1850,7 @@ const BrowserTab = props => {
 							onMessage={onMessage}
 							onError={onError}
 							onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-							originWhitelist={['http://*', 'https://*', 'wc:', 'gopocket://']}
+							originWhitelist={['http://*', 'https://*', 'wc:', 'paliwallet://']}
 							userAgent={USER_AGENT}
 							sendCookies
 							javascriptEnabled

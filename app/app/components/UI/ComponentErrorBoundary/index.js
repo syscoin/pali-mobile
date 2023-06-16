@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 
 class ComponentErrorBoundary extends React.Component {
 	state = { error: null };

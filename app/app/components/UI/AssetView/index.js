@@ -23,7 +23,7 @@ import { CandleStickChart } from 'react-native-charts-wrapper';
 import Device from '../../../util/Device';
 import syscoinIntro from '../../../util/syscoinIntro.js';
 import Engine from '../../../core/Engine';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { getQueryId } from '../../../data/ContractData';
 import ApprovalEvent from '../ApprovalEvent';
 import EntryScriptWeb3 from '../../../core/EntryScriptWeb3';

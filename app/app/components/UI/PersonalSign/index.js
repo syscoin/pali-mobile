@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import SignatureRequest from '../SignatureRequest';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';

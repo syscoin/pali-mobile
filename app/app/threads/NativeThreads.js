@@ -3,7 +3,7 @@ import { randomTransactionId } from '../util/number';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as ApiClient from '../util/ApiClient';
 import { getExportFunctions } from '../util/threadUtils';
-import { util as TsUtils } from 'gopocket-core';
+import { util as TsUtils } from 'paliwallet-core';
 
 class NativeThreads {
 	listeners = {};

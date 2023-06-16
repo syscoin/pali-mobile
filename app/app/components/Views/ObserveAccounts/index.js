@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
-import { KeyringTypes, ChainType, isValidAddress, defaultEnabledChains, isZeroAddress, util } from 'gopocket-core';
+import { KeyringTypes, ChainType, isValidAddress, defaultEnabledChains, isZeroAddress, util } from 'paliwallet-core';
 import Engine from '../../../core/Engine';
 import LottieView from 'lottie-react-native';
 import { toggleShowHint } from '../../../actions/hint';

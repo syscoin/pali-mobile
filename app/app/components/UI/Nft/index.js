@@ -16,7 +16,7 @@ import Device from '../../../util/Device';
 import { updateGridArray, updateImagesCache } from '../../../actions/nft';
 import LottieView from 'lottie-react-native';
 import { strings } from '../../../../locales/i18n';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paliwallet-core';
 import { isSvgFile, isVideoFile, toLowerCaseEquals } from '../../../util/general';
 import NFTImage from '../NFTImage';
 import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';
@@ -378,6 +378,7 @@ class Nft extends PureComponent {
 		}
 		const listLength = allCollectiblesList.length;
 		const dataCollectibles = [...allCollectiblesList];
+		const allCollectibles = [...allCollectiblesList];
 		const dataContracts = [...allContracts];
 		let loadEnd = true;
 		const nextCount = startIndex + LOAD_COUNT;
@@ -400,7 +401,15 @@ class Nft extends PureComponent {
 		}
 		if (startIndex === 0 || focusUpdate) {
 			this.setState(
-				{ allContracts, allCollectiblesList, dataCollectibles, dataContracts, loadEnd, isLoading: false },
+				{
+					allContracts,
+					allCollectiblesList,
+					allCollectibles,
+					dataCollectibles,
+					dataContracts,
+					loadEnd,
+					isLoading: false
+				},
 				() => {
 					this.isEndReached = false;
 				}
@@ -416,13 +425,15 @@ class Nft extends PureComponent {
 		const { selectedAddress, gridArray, updateGridArray } = this.props;
 
 		const collectibles = this.state.dataCollectibles;
+		const allCollectibles = this.state.allCollectibles;
 
 		const isFavorite = item.favoriteAddr === favoriteAddr;
 
 		let items = [];
+
 		if (isFavorite) {
 			item.favorites.forEach(favorite => {
-				const tempItem = collectibles.filter(
+				const tempItem = allCollectibles.filter(
 					asset =>
 						asset.chainId === favorite.chainId &&
 						asset.token_id === favorite.token_id &&
@@ -568,13 +579,14 @@ class Nft extends PureComponent {
 					>
 						{this.lottieAnim ? (
 							<LottieView
-								style={{ width: itemWidth * 0.39, height: itemWidth * 0.39 }}
+								style={{ width: itemWidth * 0.7, height: itemWidth * 0.7 }}
 								autoPlay
 								loop
 								source={require('../../../animations/nft_loading_img.json')}
 							/>
 						) : (
 							<Image
+								resizeMode="contain"
 								style={{ width: itemWidth * 0.39, height: itemWidth * 0.39 }}
 								source={require('../../../images/defaul_loading_icon.png')}
 							/>

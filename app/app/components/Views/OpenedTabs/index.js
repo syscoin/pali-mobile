@@ -6,7 +6,7 @@ import { SvgUri } from 'react-native-svg';
 
 import { strings } from '../../../../locales/i18n';
 
-import { URL } from 'gopocket-core';
+import { URL } from 'paliwallet-core';
 
 import { callSqlite } from '../../../util/ControllerUtils';
 
@@ -133,7 +133,7 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 
 	useEffect(() => {
 		const getFavicon = async () => {
-			if (tab.url === 'gopocket://homepage') {
+			if (tab.url === 'paliwallet://homepage') {
 				return setFavicon(require('../../../images/ic_dapp_home.png'));
 			}
 

@@ -1,20 +1,18 @@
-import { ChainType, util } from 'gopocket-core';
+import { API_KEY } from '@env';
+import { ChainType, util } from 'paliwallet-core';
 import { NativeModules, Platform } from 'react-native';
-import { getVersion, getBuildNumber } from 'react-native-device-info';
-import PreventScreenshot from '../core/PreventScreenshot';
-import Device, { getIosDeviceInfo } from './Device';
-import { isTestFlight } from './NativeUtils';
-import { decryptString } from './CryptUtils';
-import { getDapp, getLanguageDapp } from './browser';
-import { store } from '../store';
-import { addFavouriteDapps, updateDappPage, updateDefaultTypes } from '../actions/browser';
+import { getBuildNumber, getVersion } from 'react-native-device-info';
+import { addFavouriteDapps, updateBuyCryptoAffiliate, updateDappPage, updateDefaultTypes } from '../actions/browser';
 import { SetAppstoreBaseVersion, SetUpdateConfig, updateContractList, updateFamousAccounts } from '../actions/settings';
 import Engine from '../core/Engine';
+import PreventScreenshot from '../core/PreventScreenshot';
+import { store } from '../store';
 import NativeThreads from '../threads/NativeThreads';
-import { API_KEY } from '@env';
-import { callSqlite } from './ControllerUtils';
-import favoritesDapps from './favoritesList';
-import suggestedWebsites from './suggestedWebsites';
+import { getLanguageDapp } from '../util/browser';
+import { decryptString } from './CryptUtils';
+import Device, { getIosDeviceInfo } from './Device';
+import { isTestFlight } from './NativeUtils';
+import { getDapp } from './browser';
 
 const TEST_INVITE_URL = 'http://pocket.libsss.com';
 //TODO: update api url to Pali ones
@@ -26,8 +24,8 @@ let fetch_config_success = false;
 const fetchConfig = async () => {
 	//TODO: update api url to Pali ones
 	const configUrl = util.useTestServer()
-		? 'https://api.beta.gopocket.finance/app/config'
-		: 'https://api.gopocket.finance/app/config';
+		? 'https://pali.pollum.cloud/app/config?app_id=PaliDev'
+		: 'https://pali.pollum.cloud/app/config?app_id=Pali';
 
 	try {
 		const response = await fetch(configUrl);
@@ -44,6 +42,7 @@ const fetchConfig = async () => {
 				const useOffchainEndPoint = jsonContent.use_offchain_endpoint;
 				const ipfsGateway = jsonContent.ipfs_gateway;
 				const famousAccounts = jsonContent.famous_accounts;
+
 				if (updateConfig) {
 					const config = Device.isAndroid() ? updateConfig.android : updateConfig.iphone;
 					store.dispatch(SetUpdateConfig(config));
@@ -55,11 +54,12 @@ const fetchConfig = async () => {
 					store.dispatch(SetAppstoreBaseVersion(appstoreBaseVersion));
 				}
 				if (dappPage) {
-					dappPage.en = suggestedWebsites;
-					dappPage.zh = suggestedWebsites;
 					store.dispatch(updateDappPage(dappPage));
-					callSqlite('updateWhitelistDapps', getDapp(dappPage));
-					store.dispatch(addFavouriteDapps(favoritesDapps));
+					NativeThreads.get().callSqliteAsync('updateWhitelistDapps', getDapp(dappPage));
+					const lDapp = getLanguageDapp(dappPage);
+					lDapp?.buy_crypto_affiliate &&
+						store.dispatch(updateBuyCryptoAffiliate(lDapp?.buy_crypto_affiliate));
+					lDapp?.favourites && store.dispatch(addFavouriteDapps(lDapp?.favourites));
 				}
 				if (contractList) {
 					store.dispatch(updateContractList(contractList));
@@ -73,7 +73,7 @@ const fetchConfig = async () => {
 				if (Device.isIos()) {
 					const appstoreBaseVersion = Number(store.getState().settings.appstoreBaseVersion);
 					global.shouldHideSthForAppStoreReviewer =
-						!appstoreBaseVersion || Number(getAppVersionCode()) >= appstoreBaseVersion;
+						!appstoreBaseVersion || Number(getAppVersionCode()) > appstoreBaseVersion;
 				}
 				global.useOffchainEndPoint = !!useOffchainEndPoint;
 			} finally {
@@ -113,7 +113,7 @@ export async function initApiClient() {
 		global.testFlight = await isTestFlight();
 		const appstoreBaseVersion = Number(store.getState().settings.appstoreBaseVersion);
 		global.shouldHideSthForAppStoreReviewer =
-			!appstoreBaseVersion || Number(getAppVersionCode()) >= appstoreBaseVersion;
+			!appstoreBaseVersion || Number(getAppVersionCode()) > appstoreBaseVersion;
 	}
 
 	global.useOffchainEndPoint = false;

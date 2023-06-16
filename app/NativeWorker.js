@@ -1,7 +1,7 @@
 import './shim.js';
 import { self } from 'react-native-threads';
 import EngineImpl from './app/core/EngineImpl';
-import { ChainType, Sqlite, util } from 'gopocket-core';
+import { ChainType, Sqlite, util } from 'paliwallet-core';
 import { randomTransactionId } from './app/util/number';
 import NativeWorker from './NativeWorker';
 

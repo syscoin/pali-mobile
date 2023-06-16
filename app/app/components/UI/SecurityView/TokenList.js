@@ -26,7 +26,7 @@ import { key2Warn } from '../../../util/security';
 import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
 import { getIcTagByChainType } from '../../../util/ChainTypeImages';
-import { ChainType, util } from 'gopocket-core';
+import { ChainType, util } from 'paliwallet-core';
 
 const styles = StyleSheet.create({
 	emptyView: {

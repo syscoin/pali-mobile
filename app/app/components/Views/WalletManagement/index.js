@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import MStatusBar from '../../UI/MStatusBar';
 import Device from '../../../util/Device';
 import Modal from 'react-native-modal';
-import { KeyringTypes, util, ChainType, defaultEnabledChains } from 'gopocket-core';
+import { KeyringTypes, util, ChainType, defaultEnabledChains } from 'paliwallet-core';
 import Engine from '../../../core/Engine';
 import { passwordRequirementsMet } from '../../../util/password';
 import SecureKeychain from '../../../core/SecureKeychain';

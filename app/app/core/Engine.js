@@ -28,7 +28,7 @@ import {
 	ChainType,
 	ArbContractController,
 	PolygonContractController
-} from 'gopocket-core';
+} from 'paliwallet-core';
 
 import { store } from '../store';
 import NativeThreads from '../threads/NativeThreads';

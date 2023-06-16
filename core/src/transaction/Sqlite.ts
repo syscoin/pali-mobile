@@ -1,15 +1,15 @@
 import SQLiteStorage from 'react-native-sqlite-storage';
 import URL from 'url-parse';
-import { ChainType } from "../Config";
+import { ChainType } from '../Config';
 import { util } from '..';
 import { TokenTransactionInfo, TransactionInfo } from './TransactionController';
 import Fuse from 'fuse.js';
 
 SQLiteStorage.DEBUG(false);
 SQLiteStorage.enablePromise(false);
-const database_name = 'GoPocket.db';
+const database_name = 'PaliWallet.db';
 const database_version = '1.0';
-const database_displayname = 'GoPocketDatabase';
+const database_displayname = 'PaliWalletDatabase';
 
 export class Sqlite {
   private static instance: Sqlite;
@@ -35,7 +35,7 @@ export class Sqlite {
       },
       (err: any) => {
         this._errorLog('openDatabase', err);
-      }
+      },
     );
     return this.db;
   }
@@ -54,7 +54,7 @@ export class Sqlite {
           },
           (err: any) => {
             this._errorLog('deleteTable', err);
-          }
+          },
         );
       },
       (err: any) => {
@@ -62,7 +62,7 @@ export class Sqlite {
       },
       () => {
         this._successLog('deleteTable transaction');
-      }
+      },
     );
   }
 
@@ -74,111 +74,109 @@ export class Sqlite {
       (tx: any) => {
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS TRANSACTIONS(' +
-          'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-          'address VARCHAR,' +
-          'type INTEGER,' +
-          'txType VARCHAR,' +
-          'status VARCHAR,' +
-          'randomId VARCHAR,' +
-          'origin VARCHAR,' +
-          'rawTransaction VARCHAR,' +
-          'time INTEGER,' +
-          'gasUsed VARCHAR,' +
-          'toSmartContract VARCHAR,' +
-          'tx_chainId VARCHAR,' +
-          'tx_data VARCHAR,' +
-          'tx_from VARCHAR,' +
-          'tx_gas VARCHAR,' +
-          'tx_gasPrice VARCHAR,' +
-          'tx_nonce VARCHAR,' +
-          'tx_to VARCHAR,' +
-          'tx_value VARCHAR,' +
-          'tx_amount VARCHAR,' +
-          'tx_symbol VARCHAR,' +
-          'tx_contractAddress VARCHAR,' +
-          'tx_decimals INTEGER,' +
-          'transactionHash VARCHAR,' +
-          'blockNumber VARCHAR,' +
-          'error VARCHAR)',
+            'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+            'address VARCHAR,' +
+            'type INTEGER,' +
+            'txType VARCHAR,' +
+            'status VARCHAR,' +
+            'randomId VARCHAR,' +
+            'origin VARCHAR,' +
+            'rawTransaction VARCHAR,' +
+            'time INTEGER,' +
+            'gasUsed VARCHAR,' +
+            'toSmartContract VARCHAR,' +
+            'tx_chainId VARCHAR,' +
+            'tx_data VARCHAR,' +
+            'tx_from VARCHAR,' +
+            'tx_gas VARCHAR,' +
+            'tx_gasPrice VARCHAR,' +
+            'tx_nonce VARCHAR,' +
+            'tx_to VARCHAR,' +
+            'tx_value VARCHAR,' +
+            'tx_amount VARCHAR,' +
+            'tx_symbol VARCHAR,' +
+            'tx_contractAddress VARCHAR,' +
+            'tx_decimals INTEGER,' +
+            'transactionHash VARCHAR,' +
+            'blockNumber VARCHAR,' +
+            'error VARCHAR)',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table TRANSACTIONS', err);
-          }
+          },
         );
         // browser history
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS BROWSER_HISTORY(' +
-          'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-          'url VARCHAR,' +
-          'name VARCHAR,' +
-          'icon VARCHAR,' +
-          'time INTEGER)',
+            'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+            'url VARCHAR,' +
+            'name VARCHAR,' +
+            'icon VARCHAR,' +
+            'time INTEGER)',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table BROWSER_HISTORY', err);
-          }
+          },
         );
         // browser userSelectedChainTypes
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS USER_SELECTED_CHAIN_TYPES(' +
-          'url VARCHAR PRIMARY KEY,' +
-          'chainType INTEGER)',
+          'CREATE TABLE IF NOT EXISTS USER_SELECTED_CHAIN_TYPES(' + 'url VARCHAR PRIMARY KEY,' + 'chainType INTEGER)',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table USER_SELECTED_CHAIN_TYPES', err);
-          }
+          },
         );
         // browser whitelistDapps
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS WHITE_LIST_DAPPS(' +
-          'key VARCHAR PRIMARY KEY,' +
-          'url VARCHAR,' +
-          'title VARCHAR,' +
-          'desc VARCHAR,' +
-          'chain INTEGER,' +
-          'img VARCHAR,' +
-          'timestamp INTEGER)',
+            'key VARCHAR PRIMARY KEY,' +
+            'url VARCHAR,' +
+            'title VARCHAR,' +
+            'desc VARCHAR,' +
+            'chain INTEGER,' +
+            'img VARCHAR,' +
+            'timestamp INTEGER)',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table WHITE_LIST_DAPPS', err);
-          }
+          },
         );
         // browser blacklistDapps
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS BLACK_LIST_DAPPS(' +
-          'url VARCHAR PRIMARY KEY,' +
-          'level INTEGER,' +
-          'desc VARCHAR,' +
-          'timestamp INTEGER)',
+            'url VARCHAR PRIMARY KEY,' +
+            'level INTEGER,' +
+            'desc VARCHAR,' +
+            'timestamp INTEGER)',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table BLACK_LIST_DAPPS', err);
-          }
+          },
         );
         // static tokens
         tx.executeSql(
           'CREATE TABLE IF NOT EXISTS STATIC_TOKENS_PRO(' +
-          '_id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-          'id INTEGER NOT NULL,' +
-          'address VARCHAR NOT NULL,' +
-          'l1_address VARCHAR,' +
-          'coin_id VARCHAR,' +
-          'chain_type INTEGER NOT NULL,' +
-          'image TEXT,' +
-          'name VARCHAR,' +
-          'decimals INTEGER,' +
-          'symbol VARCHAR,' +
-          'UNIQUE(address, chain_type))',
+            '_id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+            'id INTEGER NOT NULL,' +
+            'address VARCHAR NOT NULL,' +
+            'l1_address VARCHAR,' +
+            'coin_id VARCHAR,' +
+            'chain_type INTEGER NOT NULL,' +
+            'image TEXT,' +
+            'name VARCHAR,' +
+            'decimals INTEGER,' +
+            'symbol VARCHAR,' +
+            'UNIQUE(address, chain_type))',
           [],
           undefined,
           (err: any) => {
             this._errorLog('create table STATIC_TOKENS_PRO', err);
-          }
+          },
         );
       },
       (err: any) => {
@@ -186,12 +184,12 @@ export class Sqlite {
       },
       () => {
         this._successLog('init');
-      }
+      },
     );
   }
 
   deleteOldStaticTokens() {
-    return new Promise((resolve => {
+    return new Promise((resolve) => {
       const sql = 'DROP TABLE IF EXISTS STATIC_TOKENS';
       this.db.executeSql(
         sql,
@@ -202,13 +200,13 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('deleteOldStaticTokens', error);
           resolve(false);
-        }
+        },
       );
-    }));
+    });
   }
 
   copyTempTokens(path: string) {
-    return new Promise((resolve => {
+    return new Promise((resolve) => {
       this.db.executeSql(
         `ATTACH DATABASE '${path}' AS tempDB`,
         [],
@@ -226,25 +224,25 @@ export class Sqlite {
                 (error: any) => {
                   this._errorLog('detach tempDB', error);
                   resolve(false);
-                }
+                },
               );
             },
             (error: any) => {
               this._errorLog('copy tempDB', error);
               resolve(false);
-            }
+            },
           );
         },
         (error: any) => {
           this._errorLog('attach tempDB', error);
           resolve(false);
-        }
+        },
       );
-    }));
+    });
   }
 
   clearStaticTokens() {
-    return new Promise((resolve => {
+    return new Promise((resolve) => {
       const sql = 'DELETE FROM STATIC_TOKENS_PRO';
       this.db.executeSql(
         sql,
@@ -255,9 +253,9 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('clearStaticTokens', error);
           resolve(false);
-        }
+        },
       );
-    }));
+    });
   }
 
   getStaticTokensMaxId() {
@@ -276,7 +274,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getStaticTokenCount', error);
           resolve(0);
-        }
+        },
       );
     });
   }
@@ -318,11 +316,11 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findStaticToken address', error);
           resolve([]);
-        }
+        },
       );
     });
     if (!needFuse && queryAddress?.length) {
-      validTypes = types.filter(type => {
+      validTypes = types.filter((type) => {
         return !queryAddress.includes((token: any) => token.chain_type == type);
       });
       if (!validTypes?.length) {
@@ -360,13 +358,13 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findStaticToken symbol', error);
           resolve([]);
-        }
+        },
       );
     });
     if (querySymbol.length) {
       const tempSymbols: any[] = [];
-      validTypes.forEach(type => {
-        let typeSymbols = querySymbol.filter(token => token.chain_type == type);
+      validTypes.forEach((type) => {
+        let typeSymbols = querySymbol.filter((token) => token.chain_type == type);
         if (typeSymbols.length) {
           const fuse = new Fuse(typeSymbols, {
             shouldSort: true,
@@ -375,7 +373,7 @@ export class Sqlite {
             distance: 100,
             maxPatternLength: 32,
             minMatchCharLength: 1,
-            keys: [{ name: 'symbol', weight: 0.8 }]
+            keys: [{ name: 'symbol', weight: 0.8 }],
           });
           typeSymbols = fuse.search(query, { limit: fuseCount });
           tempSymbols.push(...typeSymbols);
@@ -391,7 +389,7 @@ export class Sqlite {
         distance: 100,
         maxPatternLength: 32,
         minMatchCharLength: 1,
-        keys: [{ name: 'symbol', weight: 0.8 }]
+        keys: [{ name: 'symbol', weight: 0.8 }],
       });
       querySymbol = fuse.search(query);
     }
@@ -414,7 +412,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getStaticTokenCount', error);
           resolve(undefined);
-        }
+        },
       );
     });
   }
@@ -447,7 +445,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getStaticToken', error);
           resolve(undefined);
-        }
+        },
       );
     });
   }
@@ -456,29 +454,37 @@ export class Sqlite {
     if (!tokens || tokens.length <= 0) {
       return;
     }
-    const baseSql = 'INSERT OR REPLACE INTO STATIC_TOKENS_PRO(id, address, l1_address, coin_id, chain_type, image, name, decimals, symbol) VALUES';
+    const baseSql =
+      'INSERT OR REPLACE INTO STATIC_TOKENS_PRO(id, address, l1_address, coin_id, chain_type, image, name, decimals, symbol) VALUES';
     const valuesSql = '(?,?,?,?,?,?,?,?,?)';
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, tokens, (item) => [
-          item.id, item.address, item.l1_address, item.coin_id, item.chain_type, item.image, item.name, item.decimals, item.symbol
+          item.id,
+          item.address,
+          item.l1_address,
+          item.coin_id,
+          item.chain_type,
+          item.image,
+          item.name,
+          item.decimals,
+          item.symbol,
         ]);
       },
       (error: any) => {
         this._errorLog('insetStaticTokens', error);
-      });
+      },
+    );
   }
 
   addBrowserHistory(url: string, name: string, icon: string) {
     const sql = 'INSERT INTO BROWSER_HISTORY(url, name, icon, time) values (?,?,?,?)';
     const values = [url, name, icon, Date.now()];
-    this.db.transaction(
-      (cursor: any) => {
-        cursor.executeSql(sql, values, null, (err: any) => {
-          this._errorLog('replaceBrowserHistory err:', err);
-        });
-      }
-    );
+    this.db.transaction((cursor: any) => {
+      cursor.executeSql(sql, values, null, (err: any) => {
+        this._errorLog('replaceBrowserHistory err:', err);
+      });
+    });
   }
 
   getBrowserHistory() {
@@ -504,12 +510,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getBrowserHistory', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  insertBrowserHistory(history: [{url: string; name: string; icon: string}]) {
+  insertBrowserHistory(history: [{ url: string; name: string; icon: string }]) {
     if (!history || history.length <= 0) {
       return;
     }
@@ -519,44 +525,51 @@ export class Sqlite {
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, history, (item, pos) => [
-          item.url, item.name, item.icon, time + pos,
+          item.url,
+          item.name,
+          item.icon,
+          time + pos,
         ]);
       },
-    (error: any) => {
-      this._errorLog('insertBrowserHistory', error);
-    });
+      (error: any) => {
+        this._errorLog('insertBrowserHistory', error);
+      },
+    );
   }
 
   getUserSelectedChainType(hostname: string) {
     return new Promise<any>((resolve) => {
       const sql = `SELECT * FROM USER_SELECTED_CHAIN_TYPES WHERE url LIKE '%${hostname}'`;
-      this.db.executeSql(sql, null, (results: any) => {
-        if (results?.rows?.length > 0) {
-          const { item } = results.rows;
-          resolve(item(0).chainType);
-        } else {
+      this.db.executeSql(
+        sql,
+        null,
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item } = results.rows;
+            resolve(item(0).chainType);
+          } else {
+            resolve(null);
+          }
+        },
+        (err: any) => {
           resolve(null);
-        }
-      }, (err: any) => {
-        resolve(null);
-        this._errorLog('getUserSelectedChainType err:', err);
-      });
+          this._errorLog('getUserSelectedChainType err:', err);
+        },
+      );
     });
   }
 
   updateUserSelectedChainTypes(url: string, chainType: number) {
     const sql = 'REPLACE INTO USER_SELECTED_CHAIN_TYPES(url, chainType) values (?,?)';
     const values = [url, chainType];
-    this.db.transaction(
-      (cursor: any) => {
-        cursor.executeSql(sql, values, null, (err: any) => {
-          this._errorLog('updateUserSelectedChainTypes err:', err);
-        });
-      }
-    );
+    this.db.transaction((cursor: any) => {
+      cursor.executeSql(sql, values, null, (err: any) => {
+        this._errorLog('updateUserSelectedChainTypes err:', err);
+      });
+    });
   }
 
-  insertUserSelectedChainTypes(userSelectedChainTypes: [{url: string; chainType: number}]) {
+  insertUserSelectedChainTypes(userSelectedChainTypes: [{ url: string; chainType: number }]) {
     if (!userSelectedChainTypes || userSelectedChainTypes.length <= 0) {
       return;
     }
@@ -564,13 +577,12 @@ export class Sqlite {
     const valuesSql = '(?,?)';
     this.db.transaction(
       (cursor: any) => {
-        this.execBatchInsert(cursor, baseSql, valuesSql, userSelectedChainTypes, (item) => [
-          item.url, item.chainType,
-        ]);
+        this.execBatchInsert(cursor, baseSql, valuesSql, userSelectedChainTypes, (item) => [item.url, item.chainType]);
       },
       (error: any) => {
         this._errorLog('insertUserSelectedChainTypes', error);
-      });
+      },
+    );
   }
 
   getWhitelistDapp(key: string, key2?: string) {
@@ -581,17 +593,22 @@ export class Sqlite {
       } else {
         sql = `SELECT * FROM WHITE_LIST_DAPPS WHERE key=?`;
       }
-      this.db.executeSql(sql, key2 ? [key, key2] : [key], (results: any) => {
-        if (results?.rows?.length > 0) {
-          const { item } = results.rows;
-          resolve({ ...item(0) });
-        } else {
+      this.db.executeSql(
+        sql,
+        key2 ? [key, key2] : [key],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item } = results.rows;
+            resolve({ ...item(0) });
+          } else {
+            resolve(null);
+          }
+        },
+        (err: any) => {
           resolve(null);
-        }
-      }, (err: any) => {
-        resolve(null);
-        this._errorLog('getWhitelistDapp err:', err);
-      });
+          this._errorLog('getWhitelistDapp err:', err);
+        },
+      );
     });
   }
 
@@ -606,13 +623,11 @@ export class Sqlite {
   replaceDapps(key: string, url: string, title: string, desc: string, chain: number, img: string, timestamp: number) {
     const sql = `REPLACE INTO WHITE_LIST_DAPPS(key, url, title, desc, chain, img, timestamp) values (?,?,?,?,?,?,?)`;
     const values = [key, url, title, desc, chain, img, timestamp];
-    this.db.transaction(
-      (cursor: any) => {
-        cursor.executeSql(sql, values, null, (err: any) => {
-          this._errorLog('replaceDapps err:', err);
-        });
-      }
-    );
+    this.db.transaction((cursor: any) => {
+      cursor.executeSql(sql, values, null, (err: any) => {
+        this._errorLog('replaceDapps err:', err);
+      });
+    });
   }
 
   updateWhitelistDapps(whitelistDapps: []) {
@@ -624,12 +639,19 @@ export class Sqlite {
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, whitelistDapps, (item) => [
-          item.key ? item.key : item.url, item.url, item.title, item.desc, item.chain, item.img, item.timestamp,
+          item.key ? item.key : item.url,
+          item.url,
+          item.title,
+          item.desc,
+          item.chain,
+          item.img,
+          item.timestamp,
         ]);
       },
       (error: any) => {
         this._errorLog('updateWhitelistDapps', error);
-      });
+      },
+    );
   }
 
   insertWhitelistDapps(whitelistDapps: []) {
@@ -641,62 +663,77 @@ export class Sqlite {
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, whitelistDapps, (item) => [
-          item.key ? item.key : item.url, item.url, item.title, item.desc, item.chain, item.img, item.timestamp,
+          item.key ? item.key : item.url,
+          item.url,
+          item.title,
+          item.desc,
+          item.chain,
+          item.img,
+          item.timestamp,
         ]);
       },
       (error: any) => {
         this._errorLog('insertWhitelistDapps', error);
-      });
+      },
+    );
   }
 
   getBlacklistDapps() {
     return new Promise<any>((resolve) => {
       const sql = `SELECT * FROM BLACK_LIST_DAPPS`;
-      this.db.executeSql(sql, [], (results: any) => {
-        if (results?.rows?.length > 0) {
-          const { item, length } = results.rows;
-          const blacklistDapps: {[url: string]: any} = {};
-          for (let index = 0; index < length; ++index) {
-            blacklistDapps[item(index).url] = { ...item(index) };
+      this.db.executeSql(
+        sql,
+        [],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item, length } = results.rows;
+            const blacklistDapps: { [url: string]: any } = {};
+            for (let index = 0; index < length; ++index) {
+              blacklistDapps[item(index).url] = { ...item(index) };
+            }
+            resolve(blacklistDapps);
+          } else {
+            resolve({});
           }
-          resolve(blacklistDapps);
-        } else {
+        },
+        (err: any) => {
           resolve({});
-        }
-      }, (err: any) => {
-        resolve({});
-        this._errorLog('getBlacklistDapps err:', err);
-      });
+          this._errorLog('getBlacklistDapps err:', err);
+        },
+      );
     });
   }
 
   getBlacklistDappByUrl(url: string) {
     return new Promise<any>((resolve) => {
       const sql = `SELECT * FROM BLACK_LIST_DAPPS WHERE url=?`;
-      this.db.executeSql(sql, [url], (results: any) => {
-        if (results?.rows?.length > 0) {
-          const { item } = results.rows;
-          resolve({ ...item(0) });
-        } else {
+      this.db.executeSql(
+        sql,
+        [url],
+        (results: any) => {
+          if (results?.rows?.length > 0) {
+            const { item } = results.rows;
+            resolve({ ...item(0) });
+          } else {
+            resolve(null);
+          }
+        },
+        (err: any) => {
           resolve(null);
-        }
-      }, (err: any) => {
-        resolve(null);
-        this._errorLog('getBlacklistDapps err:', err);
-      });
+          this._errorLog('getBlacklistDapps err:', err);
+        },
+      );
     });
   }
 
   updateBlacklistDapps(url: string, level: number, desc: string) {
     const sql = `REPLACE INTO BLACK_LIST_DAPPS(url, level, desc, timestamp) values (?,?,?,?)`;
     const values = [url, level, desc, Date.now()];
-    this.db.transaction(
-      (cursor: any) => {
-        cursor.executeSql(sql, values, null, (err: any) => {
-          this._errorLog('updateBlacklistDapps err:', err);
-        });
-      }
-    );
+    this.db.transaction((cursor: any) => {
+      cursor.executeSql(sql, values, null, (err: any) => {
+        this._errorLog('updateBlacklistDapps err:', err);
+      });
+    });
   }
 
   insertBlacklistDapps(blacklistDapps: []) {
@@ -708,19 +745,24 @@ export class Sqlite {
     this.db.transaction(
       (cursor: any) => {
         this.execBatchInsert(cursor, baseSql, valuesSql, blacklistDapps, (item) => [
-          item.url, item.level, item.desc, item.timestamp,
+          item.url,
+          item.level,
+          item.desc,
+          item.timestamp,
         ]);
       },
       (error: any) => {
         this._errorLog('insertBlacklistDapps', error);
-      });
+      },
+    );
   }
 
   insertTransactions(address: string, type: ChainType, txs: TransactionInfo[], txInternal = false) {
     if (!txs || txs.length <= 0) {
       return;
     }
-    const baseSql = 'INSERT INTO TRANSACTIONS(address,type,txType,status,randomId,origin,rawTransaction,time,gasUsed,toSmartContract,tx_chainId,tx_data,tx_from,tx_gas,tx_gasPrice,tx_nonce,tx_to,tx_value,transactionHash,blockNumber,error) values';
+    const baseSql =
+      'INSERT INTO TRANSACTIONS(address,type,txType,status,randomId,origin,rawTransaction,time,gasUsed,toSmartContract,tx_chainId,tx_data,tx_from,tx_gas,tx_gasPrice,tx_nonce,tx_to,tx_value,transactionHash,blockNumber,error) values';
     const valuesSql = '(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
     this.db.transaction(
       (cursor: any) => {
@@ -768,7 +810,7 @@ export class Sqlite {
       (error: any) => {
         this._errorLog('insertTransaction', error);
       },
-      null
+      null,
     );
   }
 
@@ -776,51 +818,52 @@ export class Sqlite {
     if (!txs || txs.length <= 0) {
       return;
     }
-    const baseSql = 'INSERT INTO TRANSACTIONS(address,type,txType,status,randomId,time,tx_chainId,tx_from,tx_to,tx_amount,tx_symbol,tx_contractAddress,tx_decimals,transactionHash,blockNumber,error) values';
+    const baseSql =
+      'INSERT INTO TRANSACTIONS(address,type,txType,status,randomId,time,tx_chainId,tx_from,tx_to,tx_amount,tx_symbol,tx_contractAddress,tx_decimals,transactionHash,blockNumber,error) values';
     const valuesSql = '(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
-      this.db.transaction(
-        (cursor: any) => {
-          let index = 0;
-          let values: any[] = [];
-          let sql = baseSql;
-          txs.forEach((tx, pos) => {
-            sql += valuesSql;
-            values.push(
-              address,
-              type,
-              'tokentx',
-              tx.status,
-              tx.id,
-              tx.time,
-              tx.chainId,
-              tx.from,
-              tx.to,
-              tx.amount,
-              tx.transferInformation?.symbol,
-              tx.transferInformation?.contractAddress,
-              tx.transferInformation?.decimals,
-              tx.transactionHash || '',
-              tx.blockNumber || '',
-              tx.error?.message || '',
-            );
-            index += 1;
-            if (index >= 50 || pos === txs.length - 1) {
-              cursor.executeSql(sql, values, null, (err: any) => {
-                this._errorLog('insertTokenTransactions', err);
-              });
-              index = 0;
-              sql = baseSql;
-              values = [];
-            } else {
-              sql += ',';
-            }
-          });
-        },
-        (error: any) => {
-          this._errorLog('insertTokenTransactions', error);
-        },
-        null
-      );
+    this.db.transaction(
+      (cursor: any) => {
+        let index = 0;
+        let values: any[] = [];
+        let sql = baseSql;
+        txs.forEach((tx, pos) => {
+          sql += valuesSql;
+          values.push(
+            address,
+            type,
+            'tokentx',
+            tx.status,
+            tx.id,
+            tx.time,
+            tx.chainId,
+            tx.from,
+            tx.to,
+            tx.amount,
+            tx.transferInformation?.symbol,
+            tx.transferInformation?.contractAddress,
+            tx.transferInformation?.decimals,
+            tx.transactionHash || '',
+            tx.blockNumber || '',
+            tx.error?.message || '',
+          );
+          index += 1;
+          if (index >= 50 || pos === txs.length - 1) {
+            cursor.executeSql(sql, values, null, (err: any) => {
+              this._errorLog('insertTokenTransactions', err);
+            });
+            index = 0;
+            sql = baseSql;
+            values = [];
+          } else {
+            sql += ',';
+          }
+        });
+      },
+      (error: any) => {
+        this._errorLog('insertTokenTransactions', error);
+      },
+      null,
+    );
   }
 
   async getTransactionCount(address: string, type: ChainType, chainId: string, txType: string) {
@@ -840,17 +883,24 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionHash', error);
           resolve(0);
-        }
+        },
       );
     });
   }
 
-  async getTransactionHash(address: string, type: ChainType, chainId: string, transactionHash: string | undefined, txInternal = false): Promise<TransactionInfo | null> {
+  async getTransactionHash(
+    address: string,
+    type: ChainType,
+    chainId: string,
+    transactionHash: string | undefined,
+    txInternal = false,
+  ): Promise<TransactionInfo | null> {
     if (!transactionHash) {
       return null;
     }
     return new Promise<TransactionInfo | null>((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND transactionHash=?';
+      const sql =
+        'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND transactionHash=?';
       const values = [address, type, txInternal ? 'internaltx' : 'tx', chainId, transactionHash];
       this.db.executeSql(
         sql,
@@ -865,14 +915,22 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionHash', error);
           resolve(null);
-        }
+        },
       );
     });
   }
 
-  async getTokenTransactionHash(address: string, type: ChainType, chainId: string, transactionHash: any, contractAddress: any, amount: any): Promise<TokenTransactionInfo | null> {
+  async getTokenTransactionHash(
+    address: string,
+    type: ChainType,
+    chainId: string,
+    transactionHash: any,
+    contractAddress: any,
+    amount: any,
+  ): Promise<TokenTransactionInfo | null> {
     return new Promise<TokenTransactionInfo | null>((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND transactionHash=? AND tx_contractAddress=? AND tx_amount=?';
+      const sql =
+        'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND transactionHash=? AND tx_contractAddress=? AND tx_amount=?';
       const values = [address, type, 'tokentx', chainId, transactionHash, contractAddress, amount];
       this.db.executeSql(
         sql,
@@ -887,12 +945,19 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTokenTransactionHash', error);
           resolve(null);
-        }
+        },
       );
     });
   }
 
-  updateTransactionInfo(address: string, type: ChainType, chainId: string, transactionHash: string, tx: TransactionInfo, txInternal = false) {
+  updateTransactionInfo(
+    address: string,
+    type: ChainType,
+    chainId: string,
+    transactionHash: string,
+    tx: TransactionInfo,
+    txInternal = false,
+  ) {
     if (!tx || !transactionHash) {
       return;
     }
@@ -927,11 +992,10 @@ export class Sqlite {
             transactionHash,
           ],
           // eslint-disable-next-line no-empty-function,@typescript-eslint/no-empty-function
-          () => {
-          },
+          () => {},
           (err: any) => {
             this._errorLog('updateTransactionInfo', err);
-          }
+          },
         );
       },
       (/* error: any*/) => {
@@ -939,11 +1003,19 @@ export class Sqlite {
       },
       () => {
         // this._successLog('insertTransaction');
-      }
+      },
     );
   }
 
-  updateTokenTransactionInfo(address: string, type: ChainType, chainId: string, transactionHash: any, contractAddress: any, amount: any, tx: TokenTransactionInfo) {
+  updateTokenTransactionInfo(
+    address: string,
+    type: ChainType,
+    chainId: string,
+    transactionHash: any,
+    contractAddress: any,
+    amount: any,
+    tx: TokenTransactionInfo,
+  ) {
     if (!tx || !transactionHash) {
       return;
     }
@@ -976,11 +1048,10 @@ export class Sqlite {
             amount,
           ],
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          () => {
-          },
+          () => {},
           (err: any) => {
             this._errorLog('updateTokenTransactionInfo', err);
-          }
+          },
         );
       },
       (/* error: any*/) => {
@@ -988,7 +1059,7 @@ export class Sqlite {
       },
       () => {
         // this._successLog('insertTransaction');
-      }
+      },
     );
   }
 
@@ -1010,7 +1081,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getMaxBlockNumber', error);
           resolve(null);
-        }
+        },
       );
     });
   }
@@ -1036,7 +1107,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getAddresses', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1062,7 +1133,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getAllAddresses', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1085,7 +1156,7 @@ export class Sqlite {
       },
       () => {
         // this._successLog('deleteAddress');
-      }
+      },
     );
   }
 
@@ -1095,26 +1166,29 @@ export class Sqlite {
     chainId: string,
     includingTxInternal = false,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       let sql;
       let values;
       if (includingTxInternal) {
         if (index != undefined && count != undefined && index >= 0 && count > 0) {
-          sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
+          sql =
+            'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
           values = [address, type, 'tx', 'internaltx', chainId, count, index];
         } else {
-          sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC';
+          sql =
+            'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? ORDER BY time DESC';
           values = [address, type, 'tx', 'internaltx', chainId];
         }
       } else if (index != undefined && count != undefined && index >= 0 && count > 0) {
-          sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
-          values = [address, type, 'tx', chainId, count, index];
-        } else {
-          sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC';
-          values = [address, type, 'tx', chainId];
-        }
+        sql =
+          'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        values = [address, type, 'tx', chainId, count, index];
+      } else {
+        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC';
+        values = [address, type, 'tx', chainId];
+      }
       this.db.executeSql(
         sql,
         values,
@@ -1128,7 +1202,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactions', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1138,11 +1212,25 @@ export class Sqlite {
     type: ChainType,
     chainId: string,
     index: number,
-    count: number
+    count: number,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? AND (transactionHash IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) OR tx_value=?) ORDER BY time DESC LIMIT ? OFFSET ?`;
-      const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, '0x0', count, index];
+      const values = [
+        address,
+        type,
+        'tx',
+        'internaltx',
+        chainId,
+        address,
+        type,
+        'tx',
+        'internaltx',
+        chainId,
+        '0x0',
+        count,
+        index,
+      ];
       this.db.executeSql(
         sql,
         values,
@@ -1156,7 +1244,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getGasUsedHistory', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1168,7 +1256,7 @@ export class Sqlite {
     from: string,
     to: string,
     index: number,
-    count: number
+    count: number,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       let sql;
@@ -1196,7 +1284,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionsHistory', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1208,7 +1296,7 @@ export class Sqlite {
     from: string,
     to: string,
     index: number,
-    count: number
+    count: number,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       let subSql = '';
@@ -1218,7 +1306,20 @@ export class Sqlite {
         subSql = `AND lower(tx_to)='${to.toLowerCase()}'`;
       }
       const sql = `SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND transactionHash!='' AND transactionHash IS NOT NULL AND (txType=? OR txType=?) AND tx_chainId=? ${subSql} AND tx_value IS NOT NULL AND tx_value IS NOT '0x0' AND transactionHash NOT IN (SELECT transactionHash FROM TRANSACTIONS WHERE address=? AND type=? AND (txType=? OR txType=?) AND tx_chainId=? GROUP BY transactionHash HAVING count(transactionHash) > 1) ORDER BY time DESC LIMIT ? OFFSET ?`;
-      const values = [address, type, 'tx', 'internaltx', chainId, address, type, 'tx', 'internaltx', chainId, count, index];
+      const values = [
+        address,
+        type,
+        'tx',
+        'internaltx',
+        chainId,
+        address,
+        type,
+        'tx',
+        'internaltx',
+        chainId,
+        count,
+        index,
+      ];
       this.db.executeSql(
         sql,
         values,
@@ -1232,7 +1333,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getActionNativeCurrencyTx', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1244,7 +1345,7 @@ export class Sqlite {
     to: string,
     methodId: string,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       let subSql = '';
@@ -1277,7 +1378,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionsByMethodId', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1288,7 +1389,7 @@ export class Sqlite {
     from: string,
     to: string,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ): Promise<TransactionInfo[]> {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
@@ -1330,16 +1431,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionsByAddress', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getTransactionsByHash(
-    address: string,
-    chainId: string,
-    allHash: string[]
-  ): Promise<any[]> {
+  async getTransactionsByHash(address: string, chainId: string, allHash: string[]): Promise<any[]> {
     if (!allHash?.length) {
       return [];
     }
@@ -1374,17 +1471,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTransactionsByHash', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getAllTransactions(
-    address: string,
-    type: ChainType,
-    chainId: string,
-    txType: string,
-  ): Promise<any[]> {
+  async getAllTransactions(address: string, type: ChainType, chainId: string, txType: string): Promise<any[]> {
     return new Promise((resolve) => {
       const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=?';
       const values = [address, type, txType, chainId];
@@ -1406,18 +1498,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getAllTransactions', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getReceiveTx(
-    address: string,
-    chainIds: string[],
-    to: string,
-    index: number,
-    count: number
-  ) {
+  async getReceiveTx(address: string, chainIds: string[], to: string, index: number, count: number) {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
         resolve([]);
@@ -1449,7 +1535,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getReceiveTx', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1460,10 +1546,11 @@ export class Sqlite {
     type: ChainType,
     txType: string,
     status: string,
-    time: number
+    time: number,
   ): Promise<any[]> {
     return new Promise((resolve) => {
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND status=? AND time>? AND tx_chainId=?';
+      const sql =
+        'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND status=? AND time>? AND tx_chainId=?';
       const values = [address, type, txType, status, time, chainId];
 
       this.db.executeSql(
@@ -1483,7 +1570,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findEtherReceiveTransactions', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1494,11 +1581,12 @@ export class Sqlite {
     type: ChainType,
     txType: string,
     status: string,
-    time: number
+    time: number,
   ): Promise<any[]> {
     return new Promise((resolve) => {
       const lowAddress = address.toLowerCase();
-      const sql = 'SELECT * FROM TRANSACTIONS WHERE lower(address)=? AND type=? AND txType=? AND status=? AND time>? AND lower(tx_to)=? AND lower(tx_from)!=? AND tx_chainId=?';
+      const sql =
+        'SELECT * FROM TRANSACTIONS WHERE lower(address)=? AND type=? AND txType=? AND status=? AND time>? AND lower(tx_to)=? AND lower(tx_from)!=? AND tx_chainId=?';
       const values = [lowAddress, type, txType, status, time, lowAddress, lowAddress, chainId];
 
       this.db.executeSql(
@@ -1518,7 +1606,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findReceiveTransactions', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1527,7 +1615,7 @@ export class Sqlite {
     address: string,
     chainId: string,
     type: ChainType,
-    contracts: {addr: string; mid: string}[]
+    contracts: { addr: string; mid: string }[],
   ): Promise<TransactionInfo[]> {
     if (!contracts || contracts.length <= 0) {
       return [];
@@ -1558,15 +1646,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findMigrationTxs', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async findAllMigrationTxs(
-    address: string,
-    contracts: {addr: string; mid: string}[]
-  ): Promise<TransactionInfo[]> {
+  async findAllMigrationTxs(address: string, contracts: { addr: string; mid: string }[]): Promise<TransactionInfo[]> {
     if (!contracts || contracts.length <= 0) {
       return [];
     }
@@ -1596,7 +1681,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findMigrationTxs', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1607,7 +1692,7 @@ export class Sqlite {
     type: ChainType,
     status: string,
     time: number,
-    contracts: {addr: string; mid: string}[]
+    contracts: { addr: string; mid: string }[],
   ) {
     if (!contracts || contracts.length <= 0) {
       return [];
@@ -1638,7 +1723,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findReceiveMigrationTxs', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1651,7 +1736,7 @@ export class Sqlite {
     from: string,
     to: string,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ) {
     return new Promise((resolve) => {
       let sql;
@@ -1685,7 +1770,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTokenHistory', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1696,16 +1781,18 @@ export class Sqlite {
     type: ChainType,
     contractAddress: string,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ) {
     return new Promise((resolve) => {
       let sql;
       let values;
       if (index != undefined && count != undefined && index >= 0 && count > 0) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        sql =
+          'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC LIMIT ? OFFSET ?';
         values = [address, type, 'tokentx', chainId, contractAddress.toLowerCase(), count, index];
       } else {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC';
+        sql =
+          'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? AND lower(tx_contractAddress)=? ORDER BY time DESC';
         values = [address, type, 'tokentx', chainId, contractAddress.toLowerCase()];
       }
 
@@ -1722,16 +1809,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('findTokenHistory', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getTokenByHash(
-    address: string,
-    chainIds: string[],
-    allHash: string[]
-  ): Promise<any[]> {
+  async getTokenByHash(address: string, chainIds: string[], allHash: string[]): Promise<any[]> {
     if (!allHash?.length) {
       return [];
     }
@@ -1773,18 +1856,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTokenByHash', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getReceiveTokenTx(
-    address: string,
-    chainIds: string[],
-    to: string,
-    index: number,
-    count: number
-  ) {
+  async getReceiveTokenTx(address: string, chainIds: string[], to: string, index: number, count: number) {
     return new Promise((resolve) => {
       if (!chainIds?.length) {
         resolve([]);
@@ -1816,17 +1893,12 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getReceiveTokenTx', error);
           resolve([]);
-        }
+        },
       );
     });
   }
 
-  async getAllTokenTx(
-    address: string,
-    chainId: string | null,
-    from: string | null,
-    to: string | null
-  ) {
+  async getAllTokenTx(address: string, chainId: string | null, from: string | null, to: string | null) {
     return new Promise((resolve) => {
       let subSql = '';
       if (chainId) {
@@ -1853,7 +1925,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getAllTokenTx', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1863,13 +1935,14 @@ export class Sqlite {
     type: ChainType,
     chainId: string,
     index: number | undefined = undefined,
-    count: number | undefined = undefined
+    count: number | undefined = undefined,
   ): Promise<TokenTransactionInfo[]> {
     return new Promise((resolve) => {
       let sql;
       let values;
       if (index != undefined && count != undefined && index >= 0 && count > 0) {
-        sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
+        sql =
+          'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC LIMIT ? OFFSET ?';
         values = [address, type, 'tokentx', chainId, count, index];
       } else {
         sql = 'SELECT * FROM TRANSACTIONS WHERE address=? AND type=? AND txType=? AND tx_chainId=? ORDER BY time DESC';
@@ -1888,7 +1961,7 @@ export class Sqlite {
         (error: any) => {
           this._errorLog('getTokenTransactions', error);
           resolve([]);
-        }
+        },
       );
     });
   }
@@ -1948,7 +2021,14 @@ export class Sqlite {
     return transactions;
   }
 
-  execBatchInsert(cursor: any, baseSql: string, valuesSql: string, list: any[], callback: (item: any, pos: number) => any[], splitCount = 40) {
+  execBatchInsert(
+    cursor: any,
+    baseSql: string,
+    valuesSql: string,
+    list: any[],
+    callback: (item: any, pos: number) => any[],
+    splitCount = 40,
+  ) {
     let index = 0;
     let values: any[] = [];
     let sql = baseSql;

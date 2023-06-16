@@ -1,4 +1,4 @@
-import { NetworkConfig } from 'gopocket-core';
+import { NetworkConfig } from 'paliwallet-core';
 
 /**
  * Gets the etherscan link for an address in a specific network

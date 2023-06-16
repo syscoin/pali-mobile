@@ -6,7 +6,7 @@ import { strings } from '../../../../locales/i18n';
 import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
-import { ChainType, defaultEnabledChains, isValidAddress, util } from 'gopocket-core';
+import { ChainType, defaultEnabledChains, isValidAddress, util } from 'paliwallet-core';
 
 const styles = StyleSheet.create({
 	searchSection: {

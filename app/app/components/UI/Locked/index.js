@@ -11,7 +11,7 @@ import Engine from '../../../core/Engine';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { setSelectedAsset } from '../../../actions/transaction';
-import { ChainType, LockType, OutgoingMessageState, util, NetworkConfig } from 'gopocket-core';
+import { ChainType, LockType, OutgoingMessageState, util, NetworkConfig } from 'paliwallet-core';
 import { renderError } from '../../../util/error';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
 import { getNetworkConfig } from '../../../util/ControllerUtils';

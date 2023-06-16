@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { SORT_NETWORTH } from '../../constants/storage';
 import NativeThreads from '../../threads/NativeThreads';
 

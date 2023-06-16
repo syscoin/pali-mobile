@@ -10,7 +10,7 @@ import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
 import iconQuestion from '../../../images/ask.png';
 import iconCopy from '../../../images/copy.png';
-import { BignumberJs as BigNumber } from 'gopocket-core';
+import { BignumberJs as BigNumber } from 'paliwallet-core';
 import increaseIcon from '../../../images/ic_up.png';
 import dropIcon from '../../../images/ic_drop.png';
 import { CURRENCIES } from '../../../util/currencies';

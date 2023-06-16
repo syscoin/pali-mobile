@@ -13,7 +13,7 @@ import { safeToChecksumAddress } from '../../../util/address';
 import PromptView from '../../UI/PromptView';
 import TransactionTypes from '../../../core/TransactionTypes';
 import { renderError } from '../../../util/error';
-import { TransactionStatus, util } from 'gopocket-core';
+import { TransactionStatus, util } from 'paliwallet-core';
 
 const styles = StyleSheet.create({
 	bottomModal: {

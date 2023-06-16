@@ -19,6 +19,7 @@ import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/c
 import Device from '../../../util/Device';
 import MStatusBar from '../../UI/MStatusBar';
 import { onEvent } from '../../../util/statistics';
+import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import AddressBar from '../AddressBar';
 import Modal from 'react-native-modal';
 import Popover from '../../UI/Popover';
@@ -202,6 +203,7 @@ class Browser extends PureComponent {
 	addressBarRefs = {};
 	safeAreaBottom = -1;
 	tabCreating = false;
+	shouldHideSth = shouldHideSthForAppStoreReviewer();
 
 	pageBarRef = React.createRef();
 	pageTabRef = React.createRef();

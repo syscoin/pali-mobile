@@ -1,6 +1,6 @@
 import { strings } from '../../locales/i18n';
 import TopDomains from './TopDomains';
-import { util, URL } from 'gopocket-core';
+import { util, URL } from 'paliwallet-core';
 import NativeThreads from '../threads/NativeThreads';
 import { callSqlite } from '../util/ControllerUtils';
 
@@ -65,7 +65,7 @@ export class AutoCompleteController {
 			}
 			return;
 		}
-		if (this.text_.startsWith('gopocket://')) {
+		if (this.text_.startsWith('paliwallet://')) {
 			const url_item = {
 				type: AutoCompleteType_URL,
 				url: text,

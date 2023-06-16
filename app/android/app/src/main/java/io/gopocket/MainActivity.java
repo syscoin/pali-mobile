@@ -23,7 +23,7 @@ public class MainActivity extends ReactFragmentActivity {
 	*/
 	@Override
 	protected String getMainComponentName() {
-		return "GoPocket";
+		return "PaliWallet";
 	}
 
 	// Override onStart, onNewIntent:

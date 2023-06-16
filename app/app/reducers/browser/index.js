@@ -1,5 +1,5 @@
 import { REHYDRATE } from 'redux-persist';
-import { URL, util } from 'gopocket-core';
+import { URL, util } from 'paliwallet-core';
 import { getLanguageDapp, setActiveTab } from '../../util/browser';
 import AppConstants from '../../core/AppConstants';
 
@@ -164,6 +164,12 @@ const browserReducer = (state = initialState, action) => {
 			return {
 				...state,
 				favouriteDapps: [...action.dapps]
+			};
+		}
+		case 'UPDATE_BUY_CRYPTO_AFFILIATE': {
+			return {
+				...state,
+				buyCryptoAffiliate: action.url
 			};
 		}
 		case 'ADD_FAVOURITE_DAPPS': {

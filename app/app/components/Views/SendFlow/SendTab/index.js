@@ -43,7 +43,7 @@ import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
 import iconSendActive from '../../../../images/send_hl.png';
 import Device from '../../../../util/Device';
-import { ChainType, util, BN, isValidAddress } from 'gopocket-core';
+import { ChainType, util, BN, isValidAddress } from 'paliwallet-core';
 import Clipboard from '@react-native-community/clipboard';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import CheckPassword from '../../../UI/CheckPassword';

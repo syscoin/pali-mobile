@@ -9,7 +9,7 @@ import SecureKeychain from '../../../core/SecureKeychain';
 import PreventScreenshot from '../../../core/PreventScreenshot';
 import { BIOMETRY_CHOICE, TRUE } from '../../../constants/storage';
 import MStatusBar from '../../UI/MStatusBar';
-import { util } from 'gopocket-core';
+import { util } from 'paliwallet-core';
 import { isHDMainAddress, tryVerifyPassword } from '../../../core/Vault';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';

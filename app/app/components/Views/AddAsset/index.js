@@ -14,7 +14,7 @@ import Engine from '../../../core/Engine';
 import { connect } from 'react-redux';
 import TokenImage from '../../UI/TokenImage';
 import { strings } from '../../../../locales/i18n';
-import { ChainType, util, Fuse } from 'gopocket-core';
+import { ChainType, util, Fuse } from 'paliwallet-core';
 import LottieView from 'lottie-react-native';
 import ElevatedView from 'react-native-elevated-view';
 import Modal from 'react-native-modal';
