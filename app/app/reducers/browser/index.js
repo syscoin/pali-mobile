@@ -167,7 +167,6 @@ const browserReducer = (state = initialState, action) => {
 			};
 		}
 		case 'UPDATE_BUY_CRYPTO_AFFILIATE': {
-			console.log('UPDATE_BUY_CRYPTO_AFFILIATE', action.url);
 			return {
 				...state,
 				buyCryptoAffiliate: action.url
