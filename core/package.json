@@ -55,7 +55,7 @@
     "ethjs-util": "^0.1.6",
     "human-standard-collectible-abi": "^1.0.2",
     "human-standard-token-abi": "^2.0.0",
-    "immer": "^9.0.6",
+    "immer": "^8.0.1",
     "is-ipfs": "^6.0.2",
     "isomorphic-fetch": "^3.0.0",
     "jsonschema": "^1.2.4",
@@ -67,7 +67,7 @@
     "uuid": "^8.3.2",
     "web3": "^0.20.7",
     "web3-provider-engine": "16.0.3",
-    "url-parse": "1.5.9",
+    "url-parse": "1.4.4",
     "obs-store": "^4.0.3",
     "fuse.js": "3.4.4"
   },
