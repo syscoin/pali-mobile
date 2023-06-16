@@ -290,7 +290,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
       return await this.fixDataCollectibles(collectible, chainId, selectedAddress, contractController);
     } catch (e) {
-      logInfo('PPYang getOwnerCollectibles e:', e);
+      logInfo('PPYang fetchLuxyNFTs e:', e);
       return undefined;
     }
   }
