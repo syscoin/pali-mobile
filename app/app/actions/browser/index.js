@@ -99,6 +99,12 @@ export function addFavouriteDapp(dapp) {
 		dapp
 	};
 }
+export function updateBuyCryptoAffiliate(url) {
+	return {
+		type: 'UPDATE_BUY_CRYPTO_AFFILIATE',
+		url
+	};
+}
 
 export function addFavouriteDapps(dapps) {
 	return {
