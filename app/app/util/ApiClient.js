@@ -2,7 +2,7 @@ import { API_KEY } from '@env';
 import { ChainType, util } from 'paliwallet-core';
 import { NativeModules, Platform } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
-import { addFavouriteDapps, updateDappPage, updateDefaultTypes } from '../actions/browser';
+import { addFavouriteDapps, updateBuyCryptoAffiliate, updateDappPage, updateDefaultTypes } from '../actions/browser';
 import { SetAppstoreBaseVersion, SetUpdateConfig, updateContractList, updateFamousAccounts } from '../actions/settings';
 import Engine from '../core/Engine';
 import PreventScreenshot from '../core/PreventScreenshot';
@@ -42,6 +42,7 @@ const fetchConfig = async () => {
 				const useOffchainEndPoint = jsonContent.use_offchain_endpoint;
 				const ipfsGateway = jsonContent.ipfs_gateway;
 				const famousAccounts = jsonContent.famous_accounts;
+
 				if (updateConfig) {
 					const config = Device.isAndroid() ? updateConfig.android : updateConfig.iphone;
 					store.dispatch(SetUpdateConfig(config));
@@ -56,6 +57,8 @@ const fetchConfig = async () => {
 					store.dispatch(updateDappPage(dappPage));
 					NativeThreads.get().callSqliteAsync('updateWhitelistDapps', getDapp(dappPage));
 					const lDapp = getLanguageDapp(dappPage);
+					lDapp?.buy_crypto_affiliate &&
+						store.dispatch(updateBuyCryptoAffiliate(lDapp?.buy_crypto_affiliate));
 					lDapp?.favourites && store.dispatch(addFavouriteDapps(lDapp?.favourites));
 				}
 				if (contractList) {

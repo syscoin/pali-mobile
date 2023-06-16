@@ -609,7 +609,8 @@ class Tokens extends PureComponent {
 		hideNormalTokens: PropTypes.bool,
 		hideDefiPortfolio: PropTypes.bool,
 		nftChecked: PropTypes.bool,
-		updateNftChecked: PropTypes.func
+		updateNftChecked: PropTypes.func,
+		buyCryptoAffiliate: PropTypes.string
 	};
 
 	state = {
@@ -1543,7 +1544,7 @@ class Tokens extends PureComponent {
 						style={styles.buyBtn}
 						onPress={() => {
 							this.hideOtcModal();
-							this.goWeb('https://mycoinify.com');
+							this.goWeb(this.props.buyCryptoAffiliate);
 						}}
 					>
 						<Text style={styles.otcBuyLabel}>{strings('otc.buy_now')}</Text>
@@ -1733,6 +1734,7 @@ const mapStateToProps = state => ({
 	isLockScreen: state.settings.isLockScreen,
 	currentSortType: state.settings.currentSortType,
 	hideRiskTokens: state.settings.hideRiskTokens,
+	buyCryptoAffiliate: state.browser.buyCryptoAffiliate,
 	hideDefiPortfolio: state.engine.backgroundState.PreferencesController.hideDefiPortfolio,
 	hideNormalTokens: state.engine.backgroundState.PreferencesController.hideNormalTokens
 });

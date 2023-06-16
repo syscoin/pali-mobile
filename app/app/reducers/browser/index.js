@@ -166,6 +166,13 @@ const browserReducer = (state = initialState, action) => {
 				favouriteDapps: [...action.dapps]
 			};
 		}
+		case 'UPDATE_BUY_CRYPTO_AFFILIATE': {
+			console.log('UPDATE_BUY_CRYPTO_AFFILIATE', action.url);
+			return {
+				...state,
+				buyCryptoAffiliate: action.url
+			};
+		}
 		case 'ADD_FAVOURITE_DAPPS': {
 			if (!action.dapps) {
 				return state;
