@@ -266,22 +266,33 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   }
 
   /**
-   * Fetch Luxy Assets objects and returns them formatted
+   * Fetches Luxy NFT assets from a specific wallet and returns them formatted.
    *
-   * @param selectedAddress - Wallet address to fetch the collectibles from.
+   * @param selectedAddress - The wallet address from which to fetch the NFTs.
+   * @param chainId - The ID of the blockchain network.
+   * @param contractController - An object that can interact with a blockchain contract, responsible for managing the NFT contract interactions.
+   *
+   * This function performs a network request to the backend API, retrieving NFTs owned by the given wallet address.
+   * It then formats the response data and returns it. If an error occurs during this process, it will be caught and logged,
+   * and the function will return `undefined`.
    */
   async fetchLuxyNFTs(selectedAddress: string, chainId: string, contractController: any) {
-    const response = await fetch(`https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["Syscoin"]
+    try {
+      const response = await fetch(`https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["Syscoin"]
     `);
-    const data = await response.json();
+      const data = await response.json();
 
-    const collectible = this.formatLuxyJSON(data);
+      const collectible = this.formatLuxyJSON(data);
 
-    if (!collectible) {
+      if (!collectible) {
+        return undefined;
+      }
+
+      return await this.fixDataCollectibles(collectible, chainId, selectedAddress, contractController);
+    } catch (e) {
+      logInfo('PPYang fetchLuxyNFTs e:', e);
       return undefined;
     }
-
-    return await this.fixDataCollectibles(collectible, chainId, selectedAddress, contractController);
   }
 
   async detectCollectibles(requestedSelectedAddress: string, chainType: ChainType) {
