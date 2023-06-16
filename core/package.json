@@ -38,7 +38,7 @@
     "@types/uuid": "^8.3.0",
     "arb-ts": "0.0.38",
     "async-mutex": "^0.2.6",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "babel-runtime": "^6.26.0",
     "bignumber.js": "8.1.1",
     "bip39": "^3.0.4",
