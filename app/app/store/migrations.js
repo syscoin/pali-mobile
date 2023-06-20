@@ -432,7 +432,30 @@ export const migrations = {
 			state.engine.backgroundState.ArbContractController.withdraws = [];
 		}
 		return state;
+	},
+	9: state => {
+		if (
+			state &&
+			state.engine &&
+			state.engine.backgroundState &&
+			state.engine.backgroundState.RolluxNetworkController
+		) {
+			state.engine.backgroundState.RolluxNetworkController.network = '570';
+
+			if (!state.engine.backgroundState.RolluxNetworkController.properties) {
+				state.engine.backgroundState.RolluxNetworkController.properties = {};
+			}
+			state.engine.backgroundState.RolluxNetworkController.properties['570'] = { isEIP1559Compatible: true };
+
+			if (!state.engine.backgroundState.RolluxNetworkController.provider) {
+				state.engine.backgroundState.RolluxNetworkController.provider = {};
+			}
+			state.engine.backgroundState.RolluxNetworkController.provider.chainId = '570';
+			state.engine.backgroundState.RolluxNetworkController.provider.rpcTarget = 'https://rpc.rollux.com';
+		}
+
+		return state;
 	}
 };
 
-export const version = 8;
+export const version = 9;

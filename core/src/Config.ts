@@ -338,7 +338,7 @@ export const NetworkConfig: { [type: number]: any } = {
     UseInfura: false,
     Disabled: false,
     DefiTokenChain: ['sys', 'rollux'],
-    CoingeckoId: 'syscoin',
+    CoingeckoId: 'rollux',
     SwapUrl: 'https://app.pegasys.finance/#/swap',
     SwapTokenUrl: 'https://app.pegasys.finance/#/swap?inputCurrency=',
     CurrencyLogo: 'https://pali-images.s3.amazonaws.com/files/rollux_logo.png',
