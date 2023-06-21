@@ -62,9 +62,10 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Bas
         //TODO: update api url to Pali ones
         const url = `https://pali.pollum.cloud/getTokens?startId=${maxTokenId + 1}&count=${maxLoadCount}`;
         const response: any = await handleFetch(url);
+
         if (
           !response ||
-          response.errmsg != 'ok' ||
+          response.message != 'ok' ||
           !response.data ||
           !Array.isArray(response.data) ||
           !response.data.length
