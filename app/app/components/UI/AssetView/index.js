@@ -43,6 +43,7 @@ import Clipboard from '@react-native-community/clipboard';
 import { toggleShowHint } from '../../../actions/hint';
 import HTMLView from 'react-native-htmlview';
 import ImageCapInset from '../ImageCapInset';
+import rolluxIntro from '../../../util/rolluxIntro';
 
 //const chart = createChart(document.getElementById("chart1"));
 
@@ -546,8 +547,19 @@ class AssetView extends PureComponent {
 		</Modal>
 	);
 
+	getCoinIntro = (assetType, defaultIntro) => {
+		switch (assetType) {
+			case 256:
+				return syscoinIntro;
+			case 512:
+				return rolluxIntro;
+			default:
+				return defaultIntro;
+		}
+	};
+
 	renderCoinInfo = () => {
-		const { coinInfo, coinGeckoId } = this.state;
+		const { coinInfo } = this.state;
 		const { asset, currencyCode, currencyCodeRate } = this.props;
 		const liquidity = coinInfo?.liquidity ? convertUsdValue(coinInfo.liquidity, currencyCodeRate) : undefined;
 		const totalVolume = coinInfo?.totalVolume ? convertUsdValue(coinInfo.totalVolume, currencyCodeRate) : undefined;
@@ -555,8 +567,7 @@ class AssetView extends PureComponent {
 		const marketCap = coinInfo?.marketCap ? convertUsdValue(coinInfo.marketCap, currencyCodeRate) : undefined;
 		const fdv = coinInfo?.fdv ? convertUsdValue(coinInfo.fdv, currencyCodeRate) : undefined;
 
-		//Set an introduction to Syscoin hard-coded to protect integrity
-		const coinIntro = coinGeckoId === 'syscoin' ? syscoinIntro : coinInfo?.intro;
+		const coinIntro = asset.nativeCurrency ? this.getCoinIntro(asset.type, coinInfo?.intro || '') : '';
 
 		return (
 			<ImageCapInset
@@ -625,7 +636,7 @@ class AssetView extends PureComponent {
 							</Text>
 						</TouchableOpacity>
 					)}
-					{!!coinInfo?.intro && (
+					{!!coinIntro && (
 						<>
 							<Text style={styles.introText}>{strings('other.coin_intro')}</Text>
 							<HTMLView

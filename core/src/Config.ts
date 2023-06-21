@@ -334,7 +334,7 @@ export const NetworkConfig: { [type: number]: any } = {
   },
   [ChainType.Rollux]: {
     Name: 'Rollux',
-    MainChainId: '570000',
+    MainChainId: '570',
     UseInfura: false,
     Disabled: false,
     DefiTokenChain: ['sys', 'rollux'],
@@ -348,14 +348,14 @@ export const NetworkConfig: { [type: number]: any } = {
     Networks: {
       'Rollux Mainnet': {
         provider: {
-          rpcTarget: 'https://rpc-tanenbaum.rollux.com',
+          rpcTarget: 'https://rpc.rollux.com',
           type: 'Rollux Mainnet',
-          chainId: '570000',
+          chainId: '570',
           ticker: 'SYS',
           nickname: 'Rollux',
         },
-        ExplorerUrl: 'https://rollux.tanenbaum.io',
-        ExplorerApiUrl: 'https://rollux.tanenbaum.io',
+        ExplorerUrl: 'https://explorer.rollux.com/',
+        ExplorerApiUrl: 'https://explorer.rollux.com/',
       },
       'Rollux Testnet': {
         provider: {

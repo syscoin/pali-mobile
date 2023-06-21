@@ -31,10 +31,10 @@ export function TokenImage({ asset, containerStyle, iconStyle, logoDefined, fade
 					/>
 				)
 			) : (
-				<Identicon
-					address={asset.l1Address ? asset.l1Address : asset.address} // 保证arb上的资产跟主链图标一致
-					customStyle={iconStyle}
-					noFadeIn={!fadeIn}
+				<NFTImage
+					style={iconStyle}
+					imageUrl={`https://pali-images.s3.amazonaws.com/files/coin-icons/${asset.symbol.toLowerCase()}.png`}
+					defaultImg={require('../../../images/img_default.png')}
 				/>
 			)}
 		</View>
