@@ -663,17 +663,17 @@ export const BaseChainConfig = {
     tokeninfos_address: '0x4a5eE16E6885C7C351d02A6034c49061EA07AFE7',
     nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
   },
-  '570000': {
+  '570': {
     coingecko_path: 'rollux',
-    balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
-    tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
-    nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
+    balances_address: '0xa66b2E50c2b805F31712beA422D0D9e7D0Fd0F35',
+    tokeninfos_address: '0x4DFc340487bbec780bA8458e614b732d7226AE8f',
+    nftbalances_address: '0xdBB59E294A93487822d1d7e164609Cd59d396fb5',
   },
   '57000': {
     coingecko_path: 'rollux',
     balances_address: '0x1ACD0B3bCC084D02Fa4E9017997BaF2F4aa256F4',
     tokeninfos_address: '0xAbD231AA41B691585F029Ecfd43B4B93b15b1D3a',
-    nftbalances_address: '0x667AD1C77181FA247a1220d9a95b054802e52777',
+    nftbalances_address: '0x78eE491E6339421592e0043db9618F4d36B2aBAB',
   },
   '5700': {
     balances_address: '0xBFD340EB52D77ADeDA7622367877072E72E5bfDb',
