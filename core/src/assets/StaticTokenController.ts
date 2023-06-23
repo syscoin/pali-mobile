@@ -60,11 +60,12 @@ export class StaticTokenController extends BaseController<StaticTokenConfig, Bas
         const maxTokenId = await Sqlite.getInstance().getStaticTokensMaxId();
         logInfo('PPYang start load static token, id:', maxTokenId);
         //TODO: update api url to Pali ones
-        const url = `https://relayer.gopocket.finance/api/v1/getTokens?startId=${maxTokenId + 1}&count=${maxLoadCount}`;
+        const url = `https://pali.pollum.cloud/getTokens?startId=${maxTokenId + 1}&count=${maxLoadCount}`;
         const response: any = await handleFetch(url);
+
         if (
           !response ||
-          response.errmsg != 'ok' ||
+          response.message != 'ok' ||
           !response.data ||
           !Array.isArray(response.data) ||
           !response.data.length
