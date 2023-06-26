@@ -139,7 +139,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   }
 
   private isSupportLuxy(chainId: string) {
-    return chainId === '57';
+    return chainId === '57' || chainId === '570';
   }
 
   private getOwnerCollectiblesApi(chainId: string, address: string, offset: number) {
@@ -278,8 +278,10 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
    */
   async fetchLuxyNFTs(selectedAddress: string, chainId: string, contractController: any) {
     try {
-      const response = await fetch(`https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["Syscoin"]
+      const network = chainId === '57' ? 'Syscoin' : 'Rollux';
+      const response = await fetch(`https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["${network}"]
     `);
+
       const data = await response.json();
 
       const collectible = this.formatLuxyJSON(data);
