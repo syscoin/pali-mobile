@@ -526,6 +526,7 @@ export const SupportCollectibles = [
   ChainType.Bsc,
   ChainType.Avax,
   ChainType.Syscoin,
+  ChainType.Rollux,
 ];
 
 export const OnEventTag = {

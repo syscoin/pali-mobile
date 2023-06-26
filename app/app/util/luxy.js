@@ -1,3 +1,3 @@
 export const isSupportLuxy = chainId => {
-	return chainId === '57';
+	return chainId === '57' || chainId === '570';
 };
