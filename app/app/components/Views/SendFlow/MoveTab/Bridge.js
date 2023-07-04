@@ -217,10 +217,7 @@ export function getSupportMigration(asset) {
 	if (cBridge?.length) {
 		supports.push(...cBridge);
 	}
-	const multichain = getSupportMigrationMultichain(asset);
-	if (multichain?.length) {
-		supports.push(...multichain);
-	}
+
 	return supports;
 }
 
