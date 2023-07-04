@@ -64,14 +64,14 @@ import LottieView from 'lottie-react-native';
 
 import cBridgeImage from '../../../../images/img_bridge_cbridge.png';
 import lifiBridgeImage from '../../../../images/img_bridge_lifi.png';
-import multichainImage from '../../../../images/img_bridge_multichain.png';
+
 import arbBridgeImage from '../../../../images/img_bridge_arb.png';
 import arbBridgeCnImage from '../../../../images/img_bridge_arb_cn.png';
 import approveImage from '../../../../images/img_approve_bridge.png';
 import { addApproveInfo, removeApproveInfo } from '../../../../actions/settings';
 import { store } from '../../../../store';
 import CheckPassword from '../../../UI/CheckPassword';
-import { getSupportMigration, isSupportCBridge, isSupportMultichain } from './Bridge';
+import { getSupportMigration, isSupportCBridge } from './Bridge';
 import { getEstimatedTotalGas } from '../../../../util/Amount';
 import { getChainTypeName } from '../../../../util/ChainTypeImages';
 
@@ -1447,18 +1447,6 @@ class MoveTab extends PureComponent {
 		this.onClose();
 	};
 
-	todoMultichain = () => {
-		const newTabUrl = 'https://app.multichain.org/#/router';
-		const chainType = this.props.asset.type;
-		this.props.navigation.navigate('BrowserTabHome');
-		this.props.navigation.navigate('BrowserView', {
-			newTabUrl,
-			chainType,
-			reloadOnce: true
-		});
-		this.onClose();
-	};
-
 	todoLifi = () => {
 		const { type, address, symbol } = this.props.asset;
 		const fromChain = this.getLifiChain(type);
@@ -1515,19 +1503,16 @@ class MoveTab extends PureComponent {
 		const width = Device.getDeviceWidth() - 76;
 		const height = (width * 80) / 299;
 		const isCBridge = isSupportCBridge(asset, networkSelectType);
-		const isMultichain = isSupportMultichain(asset, networkSelectType);
+
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={styles.bridgeWrapper}>
-					{(isMultichain || isCBridge) && (
+					{isCBridge && (
 						<>
-							<TouchableOpacity
-								onPress={isCBridge ? this.todoCBridge : this.todoMultichain}
-								activeOpacity={activeOpacity}
-							>
+							<TouchableOpacity onPress={this.todoCBridge} activeOpacity={activeOpacity}>
 								<Image
 									style={[styles.bridgeImage, { width, height }]}
-									source={isCBridge ? cBridgeImage : multichainImage}
+									source={cBridgeImage}
 									resizeMode={'stretch'}
 								/>
 							</TouchableOpacity>
