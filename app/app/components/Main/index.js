@@ -318,6 +318,8 @@ const Main = props => {
 			wcLoadingTimeout();
 		});
 		WalletConnect.hub.on('walletconnectDataChange', async callback => {
+			//TODO: Preciso atualizar tudo aqui desses hubs para o wallet connect WalletConnectV2
+			//TODO: porque ai eu consigo atualizar essas infos para o modal das sessions
 			setAllSession(await WalletConnect.getSessions());
 		});
 		WalletConnect.hub.on('walletconnectSwitchChainSuccess', async callback => {

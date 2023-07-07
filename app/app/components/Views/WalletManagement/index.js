@@ -35,7 +35,7 @@ import { CURRENCIES } from '../../../util/currencies';
 import { ChainTypeBgWithoutShadows, ChainTypeIcons, ChainTypeNames, ChainTypes } from '../../../util/ChainTypeImages';
 import { tryVerifyPassword } from '../../../core/Vault';
 import ImageCapInset from '../../UI/ImageCapInset';
-import WalletConnect from '../../../core/WalletConnect';
+import WalletConnectV2 from '../../../core/WalletConnect/WalletConnectV2';
 import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
 import Icon from '../../UI/Icon';

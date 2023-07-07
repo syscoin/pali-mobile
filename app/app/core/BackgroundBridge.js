@@ -39,14 +39,14 @@ class Port extends EventEmitter {
 }
 
 export class BackgroundBridge extends EventEmitter {
-	constructor({ webview, url, chain_type, getRpcMethodMiddleware, isMainFrame }) {
+	constructor({ webview, url, chain_type, getRpcMethodMiddleware, isMainFrame, isWalletConnect }) {
 		super();
 		this.url = url;
 		this.chain_type = chain_type;
 		this.hostname = new URL(url).hostname;
 		this.isMainFrame = isMainFrame;
 		this._webviewRef = webview && webview.current;
-
+		this.isWalletConnect = isWalletConnect;
 		this.createMiddleware = getRpcMethodMiddleware;
 		this.chain_type = chain_type;
 		this.chain_id = getChainIdByType(chain_type);
@@ -74,7 +74,9 @@ export class BackgroundBridge extends EventEmitter {
 		// setup multiplexing
 		const mux = setupMultiplex(portStream);
 		// connect features
-		this.setupProviderConnection(mux.createStream('metamask-provider'));
+		this.setupProviderConnection(
+			mux.createStream(isWalletConnect ? 'walletconnect-provider' : 'metamask-provider')
+		);
 
 		Engine.context.PreferencesController.subscribe(this.sendStateUpdate);
 		Engine.context.KeyringController.onLock(this.onLock.bind(this));
