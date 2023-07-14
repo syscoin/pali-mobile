@@ -1,23 +1,26 @@
-import RNWalletConnect from '@walletconnect/client';
 import parseWalletConnectUri from './wc-utils';
 import Engine from '../Engine';
 import Minimizer from 'react-native-minimizer';
+import { recoverPersonalSignature } from 'eth-sig-util';
 import { createAsyncMiddleware } from 'json-rpc-engine';
 import { resemblesAddress } from '../../util/address';
 import { EventEmitter } from 'events';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CLIENT_OPTIONS, WALLET_CONNECT_ORIGIN } from '../../util/walletconnect';
 import { WALLETCONNECT_SESSIONS } from '../../constants/storage';
 import { ChainType, util } from 'paliwallet-core';
 import { isPrefixedFormattedHexString } from '../../util/networks';
-import { getChainIdByType, getChainTypeByChainId } from '../../util/number';
+import { getChainIdByType, getNetworkController, getChainTypeByChainId } from '../../util/number';
+import { strings } from '../../../locales/i18n';
 import { ethErrors } from 'eth-json-rpc-errors';
 import { Platform } from 'react-native';
 import BackgroundBridge from '../BackgroundBridge';
 import Client, { SingleEthereum, SingleEthereumTypes } from '@walletconnect/se-sdk';
 import { Core } from '@walletconnect/core';
 import METHODS_TO_REDIRECT from './wc-config';
-import { request } from 'http';
+import { getSdkError } from '@walletconnect/utils';
+import AppConstants from '../../core/AppConstants';
+import SharedDeeplinkManager from '../../core/DeeplinkManager';
 
 const hub = new EventEmitter();
 
@@ -41,93 +44,104 @@ export const getAllUrlParams = url => {
 	}
 	return obj;
 };
+const PROJECT_ID_WALLET_CONNECT = AppConstants.PROJECT_ID_WALLET_CONNECT;
 
-const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
+export const isWC2Enabled = typeof PROJECT_ID_WALLET_CONNECT === 'string' && PROJECT_ID_WALLET_CONNECT?.length > 0;
+
+const getRpcMethodMiddleware = ({ hostname, getProviderState, updateSession, approveRequest }) =>
 	// all user facing RPC calls not implemented by the provider
+
 	createAsyncMiddleware(async (req, res, next) => {
 		const getAccounts = async (_url, _hostname) => {
-			const { selectedAddress } = props;
+			const preferencesController = Engine.context.PreferencesController;
+			const selectedAddress = preferencesController.state.selectedAddress;
 			const isEnabled = true;
 			return isEnabled && selectedAddress ? [selectedAddress] : [];
 		};
 
 		const rpcMethods = {
 			eth_chainId: async () => {
-				const chainId = getChainIdByType(chain_type.current);
+				const networkController = Engine.context.NetworkController;
+
+				let chainId = networkController.state.network;
 				if (chainId && !chainId.startsWith('0x')) {
 					// Convert to hex
 					res.result = `0x${parseInt(chainId, 10).toString(16)}`;
 				}
 			},
 			net_version: async () => {
-				const chainId = getChainIdByType(chain_type.current);
-				res.result = chainId;
+				const networkController = Engine.context.NetworkController;
+
+				let selectedChainId = networkController.state.network;
+
+				res.result = selectedChainId;
 			},
 			eth_requestAccounts: async () => {
-				const { selectedAddress } = props;
+				const preferencesController = Engine.context.PreferencesController;
+				const selectedAddress = preferencesController.state.selectedAddress;
 				res.result = [selectedAddress];
 			},
 			eth_accounts: async () => {
+				const url = req.meta.url;
 				res.result = await getAccounts(url, hostname);
 			},
+			personal_ecRecover: async () => {
+				const message = req.params[0];
+				const signature = req.params[1];
+				const recovered = recoverPersonalSignature({ data: message, sig: signature });
+				res.result = recovered;
+			},
 			eth_coinbase: async () => {
+				const url = req.meta.url;
 				const accounts = await getAccounts(url, hostname);
 				res.result = accounts.length > 0 ? accounts[0] : null;
 			},
 			eth_sign: async () => {
 				const { MessageManager } = Engine.context;
-				const pageMeta = {
-					meta: {
-						url,
-						title,
-						icon: icon.current
-					}
-				};
+				const pageMeta = req.meta;
 				const rawSig = await MessageManager.addUnapprovedMessageAsync({
 					data: req.params[1],
 					from: req.params[0],
-					...pageMeta
+					meta: pageMeta,
+					origin: WALLET_CONNECT_ORIGIN
 				});
 
 				res.result = rawSig;
 			},
 			personal_sign: async () => {
 				const { PersonalMessageManager } = Engine.context;
+				console.log(req.params, 'gangueee');
 				const firstParam = req.params[0];
 				const secondParam = req.params[1];
 				const params = {
 					data: firstParam,
 					from: secondParam
 				};
-
+				console.log('1');
 				if (resemblesAddress(firstParam) && !resemblesAddress(secondParam)) {
 					params.data = secondParam;
 					params.from = firstParam;
 				}
-
-				const pageMeta = {
-					meta: {
-						url,
-						title,
-						icon: icon.current
-					}
-				};
+				console.log('2');
+				const pageMeta = req.meta;
+				console.log('333333', req.params[0], pageMeta);
 				const rawSig = await PersonalMessageManager.addUnapprovedMessageAsync({
-					...params,
-					...pageMeta
+					data: req.params[0],
+					from: req.params[1],
+					meta: pageMeta,
+					origin: WALLET_CONNECT_ORIGIN
 				});
-
+				console.log(rawSig, req.meta, 'rawSig', req.id, approveRequest);
+				await approveRequest({
+					id: req.id,
+					result: rawSig
+				});
 				res.result = rawSig;
 			},
+
 			eth_signTypedData: async () => {
 				const { TypedMessageManager } = Engine.context;
-				const pageMeta = {
-					meta: {
-						url,
-						title,
-						icon: icon.current
-					}
-				};
+				const pageMeta = req.meta;
 				const rawSig = await TypedMessageManager.addUnapprovedMessageAsync(
 					{
 						data: req.params[0],
@@ -148,13 +162,7 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 					throw ethErrors.rpc.invalidRequest(`Provided chainId (${chainId}) must match the active chainId`);
 				}
 
-				const pageMeta = {
-					meta: {
-						url,
-						title,
-						icon: icon.current
-					}
-				};
+				const pageMeta = req.meta;
 
 				const rawSig = await TypedMessageManager.addUnapprovedMessageAsync(
 					{
@@ -169,29 +177,29 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 			},
 			eth_signTypedData_v4: async () => {
 				const { TypedMessageManager } = Engine.context;
+				console.log('v4 1');
 				const data = JSON.parse(req.params[1]);
 				const chainId = data.domain.chainId;
-
+				console.log('v4 3');
 				if (!getNetworkController(chainId)) {
 					throw ethErrors.rpc.invalidRequest(`Provided chainId (${chainId}) must match the active chainId`);
 				}
-
-				const pageMeta = {
-					meta: {
-						url,
-						title,
-						icon: icon.current
-					}
-				};
+				console.log('v4 2');
+				const pageMeta = req.meta;
 				const rawSig = await TypedMessageManager.addUnapprovedMessageAsync(
 					{
 						data: req.params[1],
 						from: req.params[0],
-						...pageMeta
+						meta: pageMeta,
+						origin: WALLET_CONNECT_ORIGIN
 					},
 					'V4'
 				);
-
+				console.log(approveRequest, 'adsadasdas');
+				await approveRequest({
+					id: req.id,
+					result: rawSig
+				});
 				res.result = rawSig;
 			},
 			web3_clientVersion: async () => {
@@ -200,7 +208,7 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 			},
 			wallet_scanQRCode: () =>
 				new Promise((resolve, reject) => {
-					this.props.navigation.navigate('QRScanner', {
+					SharedDeeplinkManager.handleQRCode('QRScanner', {
 						onScanSuccess: data => {
 							const regex = new RegExp(req.params[0]);
 							if (regex && !regex.exec(data)) {
@@ -222,6 +230,7 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 						}
 					});
 				}),
+
 			wallet_watchAsset: async () => {
 				const {
 					params: {
@@ -236,11 +245,17 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 					default:
 						throw new Error(`Asset of type ${type} not supported`);
 				}
-				await Engine.context.AssetsController.addToken(address, symbol, decimals, chain_type.current);
+				const networkController = Engine.context.NetworkController;
+
+				let selectedChainId = networkController.state.network;
+
+				await Engine.context.AssetsController.addToken(address, symbol, decimals, selectedChainId);
 				res.result = address;
-				setTimeout(() => props.toggleShowHint(strings('browser.add_asset_tip', { symbol })), 1000);
+				//TODO: not sure if it's worth our time to show this
+				// setTimeout(() => props.toggleShowHint(strings('browser.add_asset_tip', { symbol })), 1000);
 			},
 			metamask_getProviderState: async () => {
+				const url = req.meta.url;
 				res.result = {
 					...getProviderState(),
 					accounts: await getAccounts(url, hostname)
@@ -272,22 +287,35 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 				const chainIdDecimal = parseInt(_chainId, 16).toString(10);
 				const type = getChainTypeByChainId(chainIdDecimal);
 				// 如下逻辑成立，表示不存在当前chainId
+
 				if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
-					add_chain_request.current = {
-						url,
-						chainId: String(chainIdDecimal),
-						nickname: chainName,
-						rpcTarget: rpcUrls[0],
-						ticker: symbol,
-						explorerUrl: blockExplorerUrls[0]
-					};
-					setAddChainModalVisible(true);
+					// TODO: add logic to add new chain.
+					//const url = req.meta.url;
+					// add_chain_request.current = {
+					// 	url,
+					// 	chainId: String(chainIdDecimal),
+					// 	nickname: chainName,
+					// 	rpcTarget: rpcUrls[0],
+					// 	ticker: symbol,
+					// 	explorerUrl: blockExplorerUrls[0]
+					// };
+					// setAddChainModalVisible(true);
 					res.result = null;
 					return;
 				}
-				if (type !== chain_type.current) {
-					setTimeout(() => setChainType(type), 100);
-				}
+				const preferencesController = Engine.context.PreferencesController;
+
+				const selectedAddress = preferencesController.state.selectedAddress;
+
+				setTimeout(
+					() =>
+						updateSession({
+							chainId: chainIdDecimal,
+							accounts: [selectedAddress]
+						}),
+					100
+				);
+
 				res.result = null;
 			},
 			wallet_switchEthereumChain: () => {
@@ -298,6 +326,7 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 					});
 				}
 				const params = req.params[0];
+				console.log(params, 'vamos ver need');
 				const { chainId } = params;
 				const _chainId = typeof chainId === 'string' && chainId.toLowerCase();
 				if (!isPrefixedFormattedHexString(_chainId)) {
@@ -320,29 +349,45 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState }) =>
 							rpc.nativeCurrency?.symbol &&
 							rpc.infoURL
 					);
+
 					if (rpcItem) {
-						add_chain_request.current = {
-							url,
-							chainId: String(chainIdDecimal),
-							nickname: rpcItem.name,
-							rpcTarget: rpcItem.rpc[0],
-							ticker: rpcItem.nativeCurrency.symbol,
-							explorerUrl: rpcItem.infoURL
-						};
-						setAddChainModalVisible(true);
+						// TODO: add logic to add new chain.
+						// const url = req.meta.url;
+						// add_chain_request.current = {
+						// 	url,
+						// 	chainId: String(chainIdDecimal),
+						// 	nickname: rpcItem.name,
+						// 	rpcTarget: rpcItem.rpc[0],
+						// 	ticker: rpcItem.nativeCurrency.symbol,
+						// 	explorerUrl: rpcItem.infoURL
+						// };
+						// setAddChainModalVisible(true);
 					}
 					res.result = null;
 					return;
 				}
-				if (type !== chain_type.current) {
-					setTimeout(() => setChainType(type), 100);
-				}
+				const preferencesController = Engine.context.PreferencesController;
+				const selectedAddress = preferencesController.state.selectedAddress;
+
+				console.log(chainIdDecimal, 'wowwww');
+				setTimeout(
+					() =>
+						updateSession({
+							chainId: chainIdDecimal,
+							accounts: [selectedAddress]
+						}),
+					100
+				);
+
 				res.result = null;
 			}
 		};
 
 		if (!rpcMethods[req.method]) {
-			return next();
+			console.log(req.method, 'aquiii');
+
+			res.jsonrpc = '2.0';
+			return;
 		}
 		await rpcMethods[req.method]();
 	});
@@ -389,17 +434,14 @@ class WalletConnectV2Session {
 				updateSession: this.updateSession.bind(this)
 			},
 			getRpcMethodMiddleware: ({ hostname, getProviderState }) =>
+				// que porra esse providerState
 				getRpcMethodMiddleware({
 					hostname: url,
 					getProviderState,
-					setApprovedHosts: () => false,
-					getApprovedHosts: () => false,
+					updateSession: this.updateSession.bind(this),
+					approveRequest: this.approveRequest.bind(this),
 					analytics: {},
-					isMMSDK: false,
 					isHomepage: () => false,
-					fromHomepage: { current: false },
-					approveHost: () => false,
-					injectHomePageScripts: () => false,
 					navigation: null, //props.navigation,
 					// Website info
 					url: {
@@ -411,17 +453,10 @@ class WalletConnectV2Session {
 					icon: {
 						current: icons?.[0]
 					},
-					toggleUrlModal: () => null,
-					wizardScrollAdjusted: { current: false },
 					tabId: '',
 					isWalletConnect: true
 				}),
-			isMMSDK: false,
-			isMainFrame: true,
-			getApprovedHosts: undefined,
-			isRemoteConn: false,
-			sendMessage: undefined,
-			remoteConnHost: undefined
+			isMainFrame: true
 		});
 	}
 
@@ -450,11 +485,26 @@ class WalletConnectV2Session {
 	rejectRequest = async (id, error) => {
 		const topic = this.topicByRequestId[id];
 
+		let errorMsg = '';
+		if (error instanceof Error) {
+			errorMsg = error.message;
+		} else if (typeof error === 'string') {
+			errorMsg = error;
+		} else {
+			errorMsg = JSON.stringify(error);
+		}
+
+		// Convert error to correct format
+		const errorResponse = {
+			code: 5000,
+			message: errorMsg
+		};
+
 		try {
 			await this.web3Wallet.rejectRequest({
 				id: parseInt(id),
 				topic,
-				error
+				errorResponse
 			});
 		} catch (err) {
 			console.warn(`WC2::rejectRequest error while rejecting request id=${id} topic=${topic}`, err);
@@ -472,11 +522,12 @@ class WalletConnectV2Session {
 
 	redirect = () => {
 		if (!this.deeplink) return;
-
+		console.log(this.deeplink, 'wow');
 		setTimeout(() => {
 			// Reset the status of deeplink after each redirect
 			this.deeplink = false;
-			// Minimizer.goBack();
+			console.log('goBack');
+			Minimizer.goBack();
 		}, 300);
 	};
 
@@ -497,26 +548,29 @@ class WalletConnectV2Session {
 		try {
 			this.topicByRequestId[requestEvent.id] = requestEvent.topic;
 
-			const verified = requestEvent.verifyContext.verified;
+			const verified = requestEvent.verifyContext?.verified;
 			const hostname = verified?.origin;
 
 			let method = requestEvent.params.request.method;
-			const chainId = requestEvent.params.chainId;
+			requestEvent.params.request.meta.url;
+			const chainId = parseInt(requestEvent.params.chainId);
+			console.log(chainId, 'wow', requestEvent);
+
 			const methodParams = requestEvent.params.request.params;
 			util.logDebug(`WalletConnect2Session::handleRequest chainId=${chainId} method=${method}`, methodParams);
-			// TODO: check chainId
-			// const networkController = Engine.context.NetworkController
-			// const selectedChainId = networkController.state.network;
+
 			const networkController = Engine.context.NetworkController;
 
-			let selectedChainId = networkController.state.network;
+			let selectedChainId = parseInt(networkController.state.network);
 			if (selectedChainId !== chainId) {
 				console.log('crashou aqui');
-				await this.web3Wallet.rejectRequest({
-					id: parseInt(chainId),
-					topic: this.session.topic,
-					error: { code: 1, message: ERROR_MESSAGES.INVALID_CHAIN }
-				});
+				try {
+					// await this.web3Wallet.rejectRequest({
+					// 	id: chainId,
+					// 	topic: this.session.topic,
+					// 	error: { code: 1, message: ERROR_MESSAGES.INVALID_CHAIN }
+					// });
+				} catch (err) {}
 				console.log('crashou aqui2');
 			}
 
@@ -525,86 +579,62 @@ class WalletConnectV2Session {
 				this.requestsToRedirect[requestEvent.id] = true;
 			}
 			console.log('chegamos aqui', method);
+
+			// if (method === 'wallet_switchEthereumChain') {
+			// 	this.updateSession({
+			// 		chainId: methodParams[0].chainId,
+			// 		accounts: [selectedAddress]
+			// 	});
+			// 	hub.emit('walletconnectSwitchChainSuccess', '');
+			// }
 			if (method === 'eth_sendTransaction') {
 				try {
 					const { TransactionController } = Engine.context;
 					// ver se esse addTransaction está certo
-					console.log(requestEvent.params, 'gangue porra');
+					console.log(requestEvent, 'gangue porra', requestEvent.params);
 					const txParams = {};
-					txParams.to = requestEvent.params[0].to;
-					txParams.from = requestEvent.params[0].from;
-					txParams.value = requestEvent.params[0].value;
-					txParams.gas = requestEvent.params[0].gas;
-					txParams.gasPrice = requestEvent.params[0].gasPrice;
-					txParams.data = requestEvent.params[0].data;
+					console.log('1', requestEvent.params.request.params[0]);
+					txParams.to = requestEvent.params.request.params[0].to;
+					txParams.from = requestEvent.params.request.params[0].from;
+					console.log('2');
+					txParams.value = requestEvent.params.request.params[0].value;
+					txParams.gas = requestEvent.params.request.params[0].gas;
+					console.log('3');
+					txParams.gasPrice = requestEvent.params.request.params[0].gasPrice;
+					txParams.data = requestEvent.params.request.params[0].data;
+					console.log('4');
 					txParams.chainId = String(requestEvent.params.chainId);
+					console.log('parou aqui');
 					const trx = await TransactionController.addTransaction(txParams, hostname);
 					const hash = await trx.result;
-
-					await this.approveRequest({ id: requestEvent.id + '', result: hash });
+					console.log('passou ate aqui', requestEvent.id + '', hash);
+					await this.approveRequest({ id: requestEvent.id, result: hash });
 				} catch (error) {
-					await this.rejectRequest({ id: requestEvent.id + '', error });
+					// await this.rejectRequest({ id: requestEvent.id, error });
 				}
 
 				return;
-			} else if (method === 'personal_sign') {
-				const { PersonalMessageManager } = Engine.context;
-				let rawSig = null;
-				try {
-					console.log(requestEvent.params.request.params, 'vamos la');
-					if (methodParams[2]) {
-						throw new Error('Autosign is not currently supported');
-						// Leaving this in case we want to enable it in the future
-						// once WCIP-4 is defined: https://github.com/WalletConnect/WCIPs/issues/4
-						// rawSig = await KeyringController.signPersonalMessage({
-						// 	data: payload.params[1],
-						// 	from: payload.params[0]
-						// });
-					} else {
-						console.log('etapa73');
-						const data = methodParams[0];
-						const from = methodParams[1];
-
-						const meta = this.session.self.metadata;
-
-						rawSig = await PersonalMessageManager.addUnapprovedMessageAsync({
-							data,
-							from,
-							meta: {
-								title: meta && meta.name,
-								url: meta && meta.url,
-								icon: meta && meta.icons && meta.icons[0]
-							},
-							origin: WALLET_CONNECT_ORIGIN
-						});
-					}
-					console.log(requestEvent.id, rawSig, 'salve gangue', this.web3Wallet.approveRequest);
-
-					await this.approveRequest({
-						id: requestEvent.id,
-						result: rawSig
-					});
-					console.log('etapa3');
-				} catch (error) {
-					console.log('etapa4', error);
-					await this.web3Wallet.rejectRequest({
-						id: requestEvent.id,
-						error
-					});
-				}
 			} else if (method === 'eth_signTypedData') {
 				console.log('etapa7');
 				// Overwrite 'eth_signTypedData' because otherwise metamask use incorrect param order to parse the request.
 				method = 'eth_signTypedData_v3';
 			}
 
+			console.log(requestEvent.id, requestEvent.topic, method, methodParams, 'ahhhhhhhh');
+			const meta = this.session.self.metadata;
 			// TODO: this does not work
+
 			this.backgroundBridge.onMessage({
 				name: 'walletconnect-provider',
 				data: {
 					id: requestEvent.id,
 					topic: requestEvent.topic,
 					method,
+					meta: {
+						title: meta && meta.name,
+						url: meta && meta.url,
+						icon: meta && meta.icons && meta.icons[0]
+					},
 					params: methodParams
 				},
 				origin: hostname
@@ -648,7 +678,7 @@ export class WC2Manager {
 
 		// const chainId = networkController.state.network;
 		let chainId = networkController.state.network;
-
+		console.log(chainId, 'youtube');
 		Object.keys(sessions).forEach(async sessionKey => {
 			try {
 				const session = sessions[sessionKey];
@@ -683,39 +713,38 @@ export class WC2Manager {
 		util.logDebug(`WalletConnectV2::init()`);
 
 		let core;
+
 		try {
-			core = new Core({
-				projectId: '6166082a19efffd141f1ce9ae338ac6c'
-				// logger: 'debug',
-			});
+			if (typeof PROJECT_ID_WALLET_CONNECT === 'string') {
+				core = new Core({
+					projectId: PROJECT_ID_WALLET_CONNECT,
+					logger: 'fatal'
+				});
+			} else {
+				throw new Error('WC2::init Init Missing projectId');
+			}
 		} catch (err) {
-			console.warn(`WC2::init Init failed due to missing key: ${err}`);
+			console.warn(`WC2::init Init failed due to ${err}`);
+			throw err;
 		}
 
 		let web3Wallet;
+		const options = {
+			core: core,
+			metadata: {
+				name: 'Pali Wallet',
+				description: 'Pali Wallet Integration',
+				url: 'http://paliwallet.com/',
+				icons: []
+			}
+		};
 		try {
 			console.log('salve1');
-			web3Wallet = await SingleEthereum.init({
-				core: core,
-				metadata: {
-					name: 'Pali Wallet',
-					description: 'Pali Wallet Integration',
-					url: 'http://paliwallet.com/',
-					icons: []
-				}
-			});
+			if (core) web3Wallet = await SingleEthereum.init(options);
 			console.log('salve2');
 		} catch (err) {
 			// TODO Sometime needs to init twice --- not sure why...
-			web3Wallet = await SingleEthereum.init({
-				core: core,
-				metadata: {
-					name: 'Pali Wallet',
-					description: 'Pali Wallet Integration',
-					url: 'http://paliwallet.com/',
-					icons: []
-				}
-			});
+			if (core) web3Wallet = await SingleEthereum.init(options);
 		}
 
 		let deeplinkSessions = {};
@@ -832,32 +861,28 @@ export class WC2Manager {
 		} = params;
 
 		util.logDebug(`WC2::session_proposal id=${id}`, params);
-		const url = proposer.metadata.url ?? '';
-		const name = proposer.metadata.description ?? '';
-		const icons = proposer.metadata.icons;
 
-		//Não temos approval controler ver o motivo disso
-		const { TransactionController } = Engine.context;
-
-		console.log('1111');
+		console.log('1111', proposer);
 
 		try {
+			//TODO: this is for send the information to main so it updates
+			// The wallet connect list of sessions so it shows on the UI
 			// Permissions approved.
-			new Promise((resolve, reject) => {
-				connecting = false;
-				hub.emit('walletconnectSessionRequest', { id: id, walletConnectRequestInfo: proposer.metadata });
+			// new Promise((resolve, reject) => {
+			// 	connecting = false;
+			// 	hub.emit('walletconnectSessionRequest', { id: id, walletConnectRequestInfo: proposer.metadata });
 
-				hub.on('walletconnectSessionRequest::approved', id => {
-					if (peerInfo.id === id) {
-						resolve(true);
-					}
-				});
-				hub.on('walletconnectSessionRequest::rejected', id => {
-					if (peerInfo.id === id) {
-						reject(new Error('walletconnectSessionRequest::rejected'));
-					}
-				});
-			});
+			// 	hub.on('walletconnectSessionRequest::approved', id => {
+			// 		if (peerInfo.id === id) {
+			// 			resolve(true);
+			// 		}
+			// 	});
+			// 	hub.on('walletconnectSessionRequest::rejected', id => {
+			// 		if (peerInfo.id === id) {
+			// 			reject(new Error('walletconnectSessionRequest::rejected'));
+			// 		}
+			// 	});
+			// });
 			console.log('22222');
 		} catch (err) {
 			// Failed permissions request - reject session
@@ -889,6 +914,7 @@ export class WC2Manager {
 			console.log('teste7');
 			this.sessions[activeSession.topic] = session;
 			if (deeplink) {
+				console.log('redirectdeeplink ', deeplink);
 				session.redirect();
 			}
 			console.log('crashou aqui22');
@@ -920,7 +946,7 @@ export class WC2Manager {
 			await session.handleRequest(requestEvent);
 			console.log('teste4');
 		} catch (err) {
-			console.error(`Error while handling request`, err);
+			console.error(`WC2::onSessionRequest() Error while handling request`, err);
 		}
 	}
 
