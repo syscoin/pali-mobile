@@ -35,7 +35,7 @@ import { CURRENCIES } from '../../../util/currencies';
 import Nft from '../../UI/Nft';
 import ChainSettingView from '../../UI/ChainSettingView';
 import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showWalletConnectList } from '../../../actions/walletconnect';
 import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';

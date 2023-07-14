@@ -71,7 +71,7 @@ import LottieView from 'lottie-react-native';
 import OngoingTransactions from '../UI/OngoingTransactions';
 import ShareImageView from '../UI/ShareImageView';
 import { onEvent, onEventWithMap } from '../../util/statistics';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAppVersionCode } from '../../util/ApiClient';
 import Device from '../../util/Device';
 import {

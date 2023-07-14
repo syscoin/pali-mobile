@@ -19,7 +19,7 @@ import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
 import BytesPanel from './bytes_panel';
 import Progress from './progress';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import { Mutex, util } from 'paliwallet-core';

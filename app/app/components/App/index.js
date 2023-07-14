@@ -20,7 +20,7 @@ import ManualBackupStep2 from '../Views/ManualBackupStep2';
 import DrawingBoard from '../Views/DrawingBoard';
 import DrawingGuide from '../Views/DrawingGuide';
 import NativeThreads from '../../threads/NativeThreads';
-import WC2Manager from '../../../app/core/WalletConnect/WalletConnectV2';
+import WC2Manager, { isWC2Enabled } from '../../../app/core/WalletConnect/WalletConnectV2';
 
 const OnboardingView = createSwitchNavigator(
 	{
@@ -141,9 +141,11 @@ class App extends PureComponent {
 				this.navigator.dispatch(NavigationActions.navigate({ routeName, params: opts }));
 			}
 		});
-		WC2Manager.init().catch(err => {
-			console.error(`Cannot initialize WalletConnect Manager.`, err);
-		});
+		if (isWC2Enabled) {
+			WC2Manager.init().catch(err => {
+				console.error(`Cannot initialize WalletConnect Manager.`, err);
+			});
+		}
 		initApiClient();
 
 		Linking.addEventListener('url', this.handleDeepLinkEvent);

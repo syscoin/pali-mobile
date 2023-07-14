@@ -22,7 +22,7 @@ import Engine from '../../../../core/Engine';
 import { generateEnsSetAvatarData } from '../../../../util/transactions';
 import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import CheckPassword from '../../../UI/CheckPassword';
 import TransactionTypes from '../../../../core/TransactionTypes';

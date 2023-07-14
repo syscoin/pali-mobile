@@ -46,7 +46,7 @@ import QrScanner from '../../QRScanner';
 import NFTImage from '../../../UI/NFTImage';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import CheckPassword from '../../../UI/CheckPassword';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 

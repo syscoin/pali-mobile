@@ -24,7 +24,7 @@ import { KeyringTypes, util, ChainType, defaultEnabledChains } from 'paliwallet-
 import Engine from '../../../core/Engine';
 import { passwordRequirementsMet } from '../../../util/password';
 import SecureKeychain from '../../../core/SecureKeychain';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
@@ -550,7 +550,7 @@ class WalletManagement extends PureComponent {
 		this.setState({ deleteAddressLoading: this.currentModalAccount.address });
 		await KeyringController.removeAccount(this.currentModalAccount.address);
 		this.setState({ deleteAddressLoading: '' });
-		WalletConnect.removeAccounts([this.currentModalAccount.address]);
+		// WalletConnect.removeAccounts([this.currentModalAccount.address]);
 	};
 
 	onDeleteOk = async () => {
@@ -786,7 +786,7 @@ class WalletManagement extends PureComponent {
 			const deleteAccounts = this.props.keyrings[walletSelectedIndex]?.accounts;
 			await KeyringController.removeKeyring(walletSelectedIndex);
 			this.props.toggleShowHint(strings('wallet_management.wallet_deleted'));
-			WalletConnect.removeAccounts(deleteAccounts);
+			// WalletConnect.removeAccounts(deleteAccounts);
 		}
 	};
 

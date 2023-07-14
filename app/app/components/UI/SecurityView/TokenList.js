@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, fontStyles } from '../../../styles/common';
 import { getChainIdByType, renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';

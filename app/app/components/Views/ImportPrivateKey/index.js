@@ -9,7 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import { importAccountFromPrivateKey, parsePrivateKey } from '../../../util/address';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { util } from 'paliwallet-core';
 import { toggleShowHint } from '../../../actions/hint';
