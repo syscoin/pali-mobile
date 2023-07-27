@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,8 +14,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		153C1ABB2217BCDC0088EFE0 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 153C1A742217BCDC0088EFE0 /* JavaScriptCore.framework */; };
 		15ACC9FB226555820063978B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
-		15ACC9FC22655C3A0063978B /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; platformFilter = ios; };
-		15ACC9FD22655C3A0063978B /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		15ACC9FC22655C3A0063978B /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; };
+		15ACC9FD22655C3A0063978B /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15723E2D225FD0B800A5B418 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B0BF5032653AB9900AFC828 /* PaliWallet.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1B0BF5022653AB9900AFC828 /* PaliWallet.entitlements */; };
 		1B4628AC26DE27200096E17E /* splash_screen.json in Resources */ = {isa = PBXBuildFile; fileRef = 1B4628A726DE271F0096E17E /* splash_screen.json */; };
 		1BDE537E26E611790027269D /* InpageVConsole.js in Resources */ = {isa = PBXBuildFile; fileRef = 1BDE537926E611790027269D /* InpageVConsole.js */; };
@@ -579,7 +579,6 @@
 		15ACC9FF22655C3A0063978B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Lottie_iOS;
-			platformFilter = ios;
 			targetProxy = 15ACC9FE22655C3A0063978B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -637,10 +636,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Pali Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
@@ -661,13 +657,9 @@
 				PRODUCT_MODULE_NAME = PaliWallet;
 				PRODUCT_NAME = PaliWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PaliWallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -711,10 +703,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Pali Wallet";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
@@ -735,12 +724,8 @@
 				PRODUCT_MODULE_NAME = PaliWallet;
 				PRODUCT_NAME = PaliWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PaliWallet-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

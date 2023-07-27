@@ -850,7 +850,6 @@ const BrowserTab = props => {
 		const { url } = nativeEvent;
 		try {
 			if (url.startsWith('wc:') || url.startsWith('paliwallet://wc')) {
-				console.log('salve', url);
 				SharedDeeplinkManager.parse(url, {
 					origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK
 				});

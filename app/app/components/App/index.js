@@ -164,7 +164,6 @@ class App extends PureComponent {
 	};
 
 	handleDeepLinkEvent = event => {
-		console.log('porra', event.url);
 		SharedDeeplinkManager.parse(event.url, {
 			origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK
 		});
