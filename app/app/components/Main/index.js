@@ -23,6 +23,7 @@ import NotificationManager from '../../core/NotificationManager';
 import Engine from '../../core/Engine';
 import AppConstants from '../../core/AppConstants';
 import { colors, fontStyles } from '../../styles/common';
+import WC2Manager from '../../../app/core/WalletConnect/WalletConnectV2';
 import FadeOutOverlay from '../UI/FadeOutOverlay';
 import {
 	hexToBN,
@@ -36,7 +37,6 @@ import { setEtherTransaction, setTransactionObject } from '../../actions/transac
 import PersonalSign from '../UI/PersonalSign';
 import TypedSign from '../UI/TypedSign';
 import Modal from 'react-native-modal';
-import WalletConnect from '../../core/WalletConnect';
 import { util, CrossChainType, BN, ChainType, OnEventTag } from 'paliwallet-core';
 import { strings } from '../../../locales/i18n';
 
@@ -65,9 +65,8 @@ import AccountApproval from '../UI/AccountApproval';
 import MainNavigator from './MainNavigator';
 import QrScanner from '../Views/QRScanner';
 import HintView from '../UI/HintView';
+import NFTImage from '../UI/NFTImage';
 import { hideScanner } from '../../actions/scanner';
-import ElevatedView from 'react-native-elevated-view';
-import LottieView from 'lottie-react-native';
 import OngoingTransactions from '../UI/OngoingTransactions';
 import ShareImageView from '../UI/ShareImageView';
 import { onEvent, onEventWithMap } from '../../util/statistics';
@@ -89,7 +88,7 @@ import { hideWalletConnectList, showWalletConnectIcon, hideWalletConnectIcon } f
 import { toggleShowHint } from '../../actions/hint';
 import { logDebug } from 'paliwallet-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
-import { EngineContracts, EngineNetworks, isMainnetChain } from '../../util/ControllerUtils';
+import { isMainnetChain } from '../../util/ControllerUtils';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -98,29 +97,6 @@ const styles = StyleSheet.create({
 	bottomModal: {
 		justifyContent: 'flex-end',
 		margin: 0
-	},
-	wcLoadingModal: {
-		margin: 0,
-		width: '100%'
-	},
-	wcLoading: {
-		width: 220,
-		minHeight: 100,
-		backgroundColor: colors.darkAlert,
-		paddingBottom: 14,
-		paddingTop: 14,
-		alignSelf: 'center',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: 8
-	},
-	wcLoadingText: {
-		textAlign: 'center',
-		color: colors.white,
-		fontSize: 14,
-		marginHorizontal: 15,
-		lineHeight: 20,
-		...fontStyles.normal
 	},
 	animation: {
 		width: 52,
@@ -218,6 +194,86 @@ const styles = StyleSheet.create({
 	},
 	modalMarginTop: {
 		marginTop: 120
+	},
+	addChainModalWrapper: {
+		minHeight: 406,
+		backgroundColor: colors.$F6F6F6,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		paddingHorizontal: 30,
+		paddingVertical: 30
+	},
+	addChainModalTitle: {
+		color: colors.$030319,
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold
+	},
+	addChainModalSubTitleWrapper: {
+		flexDirection: 'row',
+		marginBottom: 21,
+		marginTop: 6
+	},
+	addChainModalSubIcon: {
+		width: 16,
+		height: 16,
+		borderRadius: 3
+	},
+	addChainModalSubTitle: {
+		color: colors.$8F92A1,
+		lineHeight: 14,
+		fontSize: 12,
+		marginLeft: 5
+	},
+	addChainModalLine: {
+		borderBottomWidth: 1,
+		borderBottomColor: colors.$F0F0F0
+	},
+	addChainModalItemWrapper: {
+		flexDirection: 'row',
+		paddingTop: 20
+	},
+	addChainModalItemTitle: {
+		width: 125,
+		lineHeight: 19,
+		color: colors.$60657D,
+		fontSize: 14
+	},
+	addChainModalItemContent: {
+		color: colors.$030319,
+		fontSize: 14,
+		lineHeight: 19
+	},
+	addChainModalActionWrapper: {
+		marginTop: 30,
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
+	addChainModalCancel: {
+		flex: 1,
+		height: 44,
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: colors.brandPink300,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	addChainModalCancelText: {
+		fontSize: 14,
+		color: colors.brandPink300
+	},
+	addChainModalConfirm: {
+		flex: 1.4,
+		height: 44,
+		marginLeft: 19,
+		borderRadius: 10,
+		backgroundColor: colors.brandPink300,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	addChainModalConfirmText: {
+		fontSize: 14,
+		color: colors.white
 	}
 });
 
@@ -230,7 +286,9 @@ const Main = props => {
 	const [walletConnectRequestInfo, setWalletConnectRequestInfo] = useState({});
 	const [currentPageTitle, setCurrentPageTitle] = useState('');
 	const [currentPageUrl, setCurrentPageUrl] = useState('');
-	const [allSession, setAllSession] = useState([]);
+	const [allSession, setAllSession] = useState({});
+	const [isAddChainModalVisible, setIsAddChainModalVisible] = useState(false);
+	const [addChainInfo, setAddChainInfo] = useState('');
 
 	const backgroundMode = useRef(false);
 	const removeConnectionStatusListener = useRef();
@@ -244,7 +302,6 @@ const Main = props => {
 	const setEtherTransaction = props.setEtherTransaction;
 	const toggleOngoingTransactionsModal = props.toggleOngoingTransactionsModal;
 
-	const [wcLoading, setWcLoading] = useState(0);
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 	const [showShareViewType, setShowShareViewType] = useState(null);
@@ -253,8 +310,6 @@ const Main = props => {
 	const [notificationTitle, setNotificationTitle] = useState('');
 	const [notificationMessage, setNotificationMessage] = useState('');
 	const [notificationUrl, setNotificationUrl] = useState('');
-
-	let wcLoadingHandler = null;
 
 	const pollForIncomingTransactions = useCallback(async () => {
 		await Engine.refreshTransactionHistory();
@@ -293,43 +348,25 @@ const Main = props => {
 		[connected, setConnected]
 	);
 
-	const wcLoadingTimeout = () => {
-		if (wcLoadingHandler) {
-			clearTimeout(wcLoadingHandler);
-		}
-		wcLoadingHandler = setTimeout(() => {
-			setWcLoading(2);
-			WalletConnect.finishConnect();
-			setTimeout(() => {
-				setWcLoading(0);
-			}, 1000 * 3);
-		}, 1000 * 15);
-	};
-
 	const initializeWalletConnect = () => {
-		WalletConnect.hub.on('walletconnectSessionRequest', peerInfo => {
-			setWcLoading(0);
-			clearTimeout(wcLoadingHandler);
+		WC2Manager.hub.on('walletconnectSessionRequest', data => {
+			console.log('fez uma request para logar aquiii', data);
+
 			setWalletConnectRequest(true);
-			setWalletConnectRequestInfo(peerInfo);
+			setWalletConnectRequestInfo(data);
 		});
-		WalletConnect.hub.on('walletconnectSessionLoading', callback => {
-			setWcLoading(1);
-			wcLoadingTimeout();
+		WC2Manager.hub.on('walletconnectAddChain', async data => {
+			setIsAddChainModalVisible(true);
+			console.log(data, 'porque ta dizendo que ta undefined');
+			setAddChainInfo(data);
+			loadSessions();
 		});
-		WalletConnect.hub.on('walletconnectDataChange', async callback => {
-			//TODO: Preciso atualizar tudo aqui desses hubs para o wallet connect WalletConnectV2
-			//TODO: porque ai eu consigo atualizar essas infos para o modal das sessions
-			setAllSession(await WalletConnect.getSessions());
+		WC2Manager.hub.on('walletconnectAddChain:approved', async () => {
+			setIsAddChainModalVisible(false);
+			props.toggleShowHint(strings('chainSetting.custom_network_added'));
+			loadSessions();
 		});
-		WalletConnect.hub.on('walletconnectSwitchChainSuccess', async callback => {
-			props.toggleShowHint(strings('accountApproval.network_switched'));
-			setAllSession(await WalletConnect.getSessions());
-		});
-		WalletConnect.hub.on('walletconnectSwitchChainFail', async callback => {
-			props.toggleShowHint(strings('accountApproval.network_not_supported'));
-		});
-		WalletConnect.init();
+		WC2Manager.hub.on('walletconnect::updateSessions', () => loadSessions());
 	};
 
 	const getAssetByType = useCallback((chainId, form, to) => {
@@ -609,29 +646,35 @@ const Main = props => {
 		</Modal>
 	);
 
-	const loadSessions = useCallback(async () => {
-		setAllSession(await WalletConnect.getSessions());
-	}, [setAllSession]);
-
 	const onWalletConnectSessionApproval = () => {
-		const { peerId } = walletConnectRequestInfo;
 		setWalletConnectRequest(false);
-		setWalletConnectRequestInfo({});
-		WalletConnect.hub.emit('walletconnectSessionRequest::approved', peerId);
+		console.log(walletConnectRequestInfo, 'foi approvado');
+		WC2Manager.hub.emit('walletconnectSessionRequest::approved', walletConnectRequestInfo);
+		setTimeout(() => setWalletConnectRequestInfo({}), 500);
+		console.log(walletConnectRequestInfo, 'foi approvado222');
 		setTimeout(() => {
 			loadSessions();
 		}, 1000);
 	};
 
+	const loadSessions = useCallback(async () => {
+		const sessions = await WC2Manager.getWCSessions();
+		console.log('loadSessions', sessions);
+		setAllSession(sessions);
+	}, [setAllSession]);
+
+	useEffect(() => {
+		loadSessions();
+	}, [loadSessions]);
+
 	const onWalletConnectSessionRejected = () => {
-		const peerId = walletConnectRequestInfo.peerId;
 		setWalletConnectRequest(false);
+		WC2Manager.hub.emit('walletconnectSessionRequest::rejected', walletConnectRequestInfo);
 		setWalletConnectRequestInfo({});
-		WalletConnect.hub.emit('walletconnectSessionRequest::rejected', peerId);
 	};
 
 	const renderWalletConnectSessionRequestModal = () =>
-		walletConnectRequestInfo.peerMeta && (
+		walletConnectRequestInfo && (
 			<Modal
 				isVisible={walletConnectRequest && !props.isLockScreen}
 				animationIn="slideInUp"
@@ -984,59 +1027,20 @@ const Main = props => {
 			Engine.context.PersonalMessageManager.hub.removeAllListeners();
 			Engine.context.TypedMessageManager.hub.removeAllListeners();
 			Engine.context.TransactionController.hub.removeListener('unapprovedTransaction', onUnapprovedTransaction);
-			WalletConnect.hub.removeAllListeners();
+			// WalletConnect.hub.removeAllListeners();
 			removeConnectionStatusListener.current && removeConnectionStatusListener.current();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		loadSessions();
-	}, [loadSessions]);
-
-	useEffect(() => {
-		if (allSession && allSession.length > 0) {
+		if (allSession && Object.keys(allSession).length > 0) {
 			props.showWalletConnectIcon();
 		} else {
 			props.hideWalletConnectIcon();
 			props.hideWalletConnectList();
 		}
 	}, [allSession, props]);
-
-	const renderWcLoadingModal = () => {
-		if (wcLoading !== 0) {
-			return (
-				<Modal
-					transparent
-					isVisible={!props.isLockScreen}
-					style={styles.wcLoadingModal}
-					backdropOpacity={0}
-					animationIn={'fadeIn'}
-					animationOut={'fadeOut'}
-					useNativeDriver
-				>
-					<ElevatedView style={styles.wcLoading} elevation={0}>
-						{wcLoading === 1 ? (
-							<LottieView
-								style={styles.animation}
-								autoPlay
-								loop
-								source={require('../../animations/connect_loading.json')}
-							/>
-						) : (
-							<Image source={require('../../images/ic_loading_wrong.png')} />
-						)}
-
-						<Text style={styles.wcLoadingText}>
-							{strings(
-								wcLoading === 1 ? 'other.wallet_connect_loading' : 'other.wallet_connect_load_fail'
-							)}
-						</Text>
-					</ElevatedView>
-				</Modal>
-			);
-		}
-	};
 
 	const ongoingTransactionsModalVisible = () => (
 		<Modal
@@ -1112,6 +1116,109 @@ const Main = props => {
 			);
 		}
 	};
+	const onAddChainModalCancel = async () => {
+		setIsAddChainModalVisible(false);
+		setAddChainInfo('');
+	};
+	const onAddChainModalConfirm = async () => {
+		console.log('onAddChainModalConfirm');
+
+		try {
+			const { nickname, rpcTarget, chainId, ticker, explorerUrl } = addChainInfo.rpcInfo;
+			console.log(nickname, rpcTarget, chainId, ticker, explorerUrl, 'arou aqui ja');
+			const type = await Engine.networks[ChainType.RPCBase].addNetwork(
+				nickname,
+				rpcTarget,
+				chainId,
+				ticker,
+				explorerUrl
+			);
+			console.log(
+				type,
+				'wowwwwww joga muito',
+				addChainInfo,
+				addChainInfo.selectedAddress,
+				addChainInfo.requestInfo
+			);
+			await Engine.context.PreferencesController.addRpcChain(addChainInfo.selectedAddress, type);
+
+			console.log('passou por aqui');
+			setTimeout(() => WC2Manager.hub.emit('walletconnectAddChain:approved', addChainInfo.requestInfo), 500);
+		} catch (e) {
+			//TODO tenho que mostrar modal de Erro com a mensagem. ps: da para testar com tentar adicionar aurora/gnosis.
+			util.logDebug('leon.w@ add chain error: ', e, addChainInfo.rpcInfo);
+		}
+		setIsAddChainModalVisible(false);
+		setAddChainInfo('');
+	};
+	const renderAddChainModal = () => {
+		if (isAddChainModalVisible && addChainInfo && addChainInfo.rpcInfo) {
+			return (
+				<Modal
+					isVisible={!props.isLockScreen}
+					statusBarTranslucent
+					style={styles.bottomModal}
+					animationType="fade"
+					useNativeDriver
+				>
+					<View style={styles.addChainModalWrapper}>
+						<Text style={styles.addChainModalTitle}>
+							{strings('app_settings.add_custom_network_label')}
+						</Text>
+						<View style={styles.addChainModalSubTitleWrapper}>
+							<NFTImage
+								style={styles.addChainModalSubIcon}
+								imageUrl={addChainInfo?.rpcInfo?.icon}
+								defaultImg={require('../../images/browser.png')}
+							/>
+							<Text style={styles.addChainModalSubTitle}>{addChainInfo.rpcInfo.url}</Text>
+						</View>
+						<View style={styles.addChainModalLine} />
+						<View style={styles.addChainModalItemWrapper}>
+							<Text style={styles.addChainModalItemTitle}>
+								{strings('app_settings.network_name_label')}
+							</Text>
+							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.nickname}</Text>
+						</View>
+						<View style={styles.addChainModalItemWrapper}>
+							<Text style={styles.addChainModalItemTitle}>
+								{strings('app_settings.network_rpc_url_label')}
+							</Text>
+							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.rpcTarget}</Text>
+						</View>
+						<View style={styles.addChainModalItemWrapper}>
+							<Text style={styles.addChainModalItemTitle}>
+								{strings('app_settings.network_chain_id_label')}
+							</Text>
+							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.chainId}</Text>
+						</View>
+						<View style={styles.addChainModalItemWrapper}>
+							<Text style={styles.addChainModalItemTitle}>
+								{strings('app_settings.network_symbol_label')}
+							</Text>
+							<Text style={styles.addChainModalItemContent}>{addChainInfo.ticker}</Text>
+						</View>
+						<View style={styles.addChainModalItemWrapper}>
+							<Text style={styles.addChainModalItemTitle}>
+								{strings('app_settings.network_explorer_label')}
+							</Text>
+							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.explorerUrl}</Text>
+						</View>
+						<View style={styles.addChainModalActionWrapper}>
+							<TouchableOpacity style={styles.addChainModalCancel} onPress={onAddChainModalCancel}>
+								<Text style={styles.addChainModalCancelText}>{strings('transaction.reject')}</Text>
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.addChainModalConfirm} onPress={onAddChainModalConfirm}>
+								<Text style={styles.addChainModalConfirmText}>{strings('transaction.confirm')}</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</Modal>
+			);
+		} else {
+			return null;
+		}
+	};
 
 	const renderNotificationsModal = () => (
 		<Modal statusBarTranslucent isVisible={showNotificationModal && !props.isLockScreen}>
@@ -1134,7 +1241,6 @@ const Main = props => {
 			</View>
 		</Modal>
 	);
-
 	return (
 		<React.Fragment>
 			<View style={styles.flex}>
@@ -1157,13 +1263,14 @@ const Main = props => {
 					</View>
 				)}
 			</View>
+			{renderAddChainModal()}
 			{renderQRScannerModal()}
 			{renderSigningModal()}
 			{renderWalletConnectSessionRequestModal()}
 			{renderDappTransactionModal()}
 			{renderApproveModal()}
 			{renderHintView()}
-			{renderWcLoadingModal()}
+
 			{ongoingTransactionsModalVisible()}
 			{/* TODO: updates the renderUpdateModal to Pali wallet logic and information */}
 			{/* {renderUpdateModal()} */}

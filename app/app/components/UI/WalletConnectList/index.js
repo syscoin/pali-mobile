@@ -8,10 +8,10 @@ import Device from '../../../util/Device';
 import AccountNetworkView from '../../Views/AccountNetworkView';
 import WebsiteIcon from '../WebsiteIcon';
 import { getHost } from '../../../util/browser';
-import WalletConnect from '../../../core/WalletConnect';
 import Engine from '../../../core/Engine';
 import DashSecondLine from '../../Views/DashSecondLine';
-import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';
+import { getChainTypeByChainId } from '../../../util/number';
+import WC2Manager from '../../../core/WalletConnect/WalletConnectV2';
 
 const styles = StyleSheet.create({
 	root: {
@@ -125,9 +125,8 @@ class WalletConnectList extends PureComponent {
 		/**
 		 * Callback triggered on account access rejection
 		 */
-		onCancel: PropTypes.func,
 
-		allSession: PropTypes.array
+		allSession: PropTypes.object
 	};
 
 	state = {
@@ -135,31 +134,13 @@ class WalletConnectList extends PureComponent {
 		selectedChainType: getChainTypeByChainId(this.props.currentPageInformation?.chainId)
 	};
 
-	/**
-	 * Calls onConfirm callback and analytics to track connect confirmed event
-	 */
-	onConfirm = () => {
-		if (this.state.selectedAddress !== Engine.context.PreferencesController.state.selectedAddress) {
-			WalletConnect.setSelectedAddress(this.props.currentPageInformation?.peerId, this.state.selectedAddress);
-		}
-		if (this.state.selectedChainType !== getChainTypeByChainId(this.props.currentPageInformation?.chainId)) {
-			WalletConnect.setSelectedNetwork(this.props.currentPageInformation?.peerId, this.state.selectedChainType);
-		}
-		this.props.onConfirm();
-	};
-
-	/**
-	 * Calls onConfirm callback and analytics to track connect canceled event
-	 */
-	onCancel = () => {
-		this.props.onCancel();
-	};
-
 	render = () => {
 		const { allSession } = this.props;
 		if (!allSession || allSession.length === 0) {
 			return <View />;
 		}
+
+		const AllWCSessions = Object.values(allSession);
 		return (
 			<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 				<View style={styles.root}>
@@ -172,13 +153,18 @@ class WalletConnectList extends PureComponent {
 					</View>
 					<View style={styles.lineView} />
 
-					{allSession.map((item, index) => {
-						// console.log('====item = ', item);
-						const selectedAddress = item.accounts && item.accounts.length > 0 && item.accounts[0];
-						const selectedChainType = getChainTypeByChainId(item.chainId);
-						//{"autosign": false, "chainId": null, "peerId": "ea7bcad3-d0af-483b-a588-840ea258200c",
-						// "peerMeta": {"description": "", "icons": ["https://example.walletconnect.org/favicon.ico"], "name": "WalletConnect Example", "url": "https://example.walletconnect.org"}}
-						const meta = item.peerMeta || null;
+					{AllWCSessions.map((item, index) => {
+						const selectedAddress =
+							item.namespaces &&
+							item.namespaces.eip155 &&
+							item.namespaces.eip155.accounts.length > 0 &&
+							item.namespaces.eip155.accounts[0].split(':')[2];
+
+						const selectedChainsType = item.namespaces.eip155.accounts.map(account => {
+							return getChainTypeByChainId(account.split(':')[1]);
+						});
+
+						const meta = item.peer.metadata || null;
 						const url = meta && meta.url;
 						const title = url && getHost(url);
 						const icon = meta && meta.icons && meta.icons.length > 0 && meta.icons[0];
@@ -199,7 +185,7 @@ class WalletConnectList extends PureComponent {
 												style={styles.disconnectBtn}
 												hitSlop={styles.hitSlop}
 												onPress={() => {
-													WalletConnect.killSessionAndUpdate(item.peerId);
+													WC2Manager.hub.emit('walletconnect::delete', item.topic);
 												}}
 											>
 												<Text style={styles.disconnectLabel} allowFontScaling={false}>
@@ -208,19 +194,9 @@ class WalletConnectList extends PureComponent {
 											</TouchableOpacity>
 										</View>
 									</View>
-
 									<AccountNetworkView
 										selectedAddress={selectedAddress}
-										selectedChainType={selectedChainType}
-										setSelectedAddress={address => {
-											WalletConnect.setSingleAccountChange(item.peerId, address);
-										}}
-										setSelectedChainType={chainType => {
-											WalletConnect.setSingleNetworkChange(
-												item.peerId,
-												getChainIdByType(chainType)
-											);
-										}}
+										selectedChainsType={selectedChainsType}
 									/>
 
 									<View style={styles.bottomHeight} />
