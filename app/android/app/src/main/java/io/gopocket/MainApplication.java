@@ -79,7 +79,6 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			packages.add(new ReactVideoPackage());
 			packages.add(new RNThreadPackage(
 				mReactNativeHost,
-				new AsyncStoragePackage(),
 				new RCTAesPackage(),
 				new RNFSPackage(),
 				new RNI18nPackage(),
