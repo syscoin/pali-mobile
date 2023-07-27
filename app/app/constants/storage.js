@@ -7,6 +7,7 @@ export const BIOMETRY_CHOICE_DISABLED = `${prefix}biometryChoiceDisabled`;
 export const VERIFICATION_DISABLED = `${prefix}verificationDisabled`;
 
 export const WALLETCONNECT_SESSIONS = `${prefix}walletconnectSessions`;
+export const WALLETCONNECTV2_SESSIONS = `${prefix}walletconnectV2Sessions`;
 
 export const LAST_NOTIFICATION_INFO = `${prefix}lastNotificationInfo`;
 export const ETHERSCAN_KEY = `${prefix}etherscanKey`;

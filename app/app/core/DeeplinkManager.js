@@ -1,7 +1,7 @@
 'use strict';
 
 import qs from 'qs';
-import WC2Manager from '../core/WalletConnect/WalletConnectV2';
+import WC2Manager, { isWC2Enabled } from '../core/WalletConnect/WalletConnectV2';
 import { util, URL } from 'paliwallet-core';
 
 class DeeplinkManager {
@@ -26,6 +26,10 @@ class DeeplinkManager {
 			});
 		}
 	}
+
+	handleQRCode = (routeName, params) => {
+		this.navigation.navigate(routeName, params);
+	};
 
 	parse(url, { browserCallBack, origin, onHandled }) {
 		//https://gopocket.security/wc?uri=wc%3A5f56ad2a-d7c4-4777-a496-2eae559b3315%401%3Fbridge%3Dhttps%253A%252F%252Fe.bridge.walletconnect.org%26key%3Dd1684b33be43d39f37552b5720fc68ef5e0edd457f3212d61a27abe34267e452
@@ -71,24 +75,22 @@ class DeeplinkManager {
 				// eslint-disable-next-line no-case-declarations
 
 				const wcURL = params?.uri || urlObj.href;
-				console.log(params, 'salve gangue', wcURL);
-				WC2Manager.getInstance()
-					.then(instance => {
-						console.log(wcURL, params, 'nada faz sentido');
-						return instance.connect({
-							wcUri: wcURL,
 
-							redirectUrl: params,
-							origin: 'deeplink'
+				if (isWC2Enabled) {
+					WC2Manager.getInstance()
+						.then(instance => {
+							return instance.connect({
+								wcUri: wcURL,
+								redirectUrl: params,
+								origin: 'deeplink'
+							});
+						})
+						.catch(err => {
+							console.warn(`DeepLinkManager failed to connect`, err);
 						});
-					})
-					.catch(err => {
-						console.warn(`DeepLinkManager failed to connect`, err);
-					});
-
+				}
 				break;
 			case 'paliwallet':
-				console.log('terror');
 				newUrl = unescape(url);
 
 				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
@@ -126,6 +128,7 @@ const SharedDeeplinkManager = {
 	init: navigation => {
 		instance = new DeeplinkManager(navigation);
 	},
+	handleQRCode: (routeName, params) => instance.handleQRCode(routeName, params),
 	parse: (url, args) => instance.parse(url, args),
 	setDeeplink: url => instance.setDeeplink(url),
 	getPendingDeeplink: () => instance.getPendingDeeplink(),

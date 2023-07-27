@@ -34,7 +34,6 @@ import { store } from '../store';
 import NativeThreads from '../threads/NativeThreads';
 import { EventEmitter } from 'events';
 import { endNetworkChange } from '../actions/settings';
-import WalletConnect from './WalletConnect';
 import NotificationManager from './NotificationManager';
 import { getInternalFunctions } from '../util/threadUtils';
 import { reportError } from '../util/statistics';
@@ -303,9 +302,6 @@ class Engine {
 			});
 			NativeThreads.get().addListener('notification', result => {
 				NotificationManager.gotIncomingTransaction(result.type, result.needUpdate);
-			});
-			NativeThreads.get().addListener('network_changed', result => {
-				WalletConnect.onNetworkChanged(result.type, result.chainId);
 			});
 			NativeThreads.get().addListener('end_network_change', result => {
 				store.dispatch(endNetworkChange(result.type, result.providerType));
