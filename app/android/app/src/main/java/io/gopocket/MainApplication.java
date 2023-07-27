@@ -30,8 +30,6 @@ import com.brentvatne.react.ReactVideoPackage;
 
 import com.reactlibrary.RNThreadPackage;
 
-// @react-native-community/async-storage
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // react-native-aes-crypto
 import com.tectiv3.aes.RCTAesPackage;
 // react-native-fs
