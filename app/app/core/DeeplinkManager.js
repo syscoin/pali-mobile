@@ -45,7 +45,7 @@ class DeeplinkManager {
 		}
 
 		const handled = () => onHandled?.();
-		console.log('aqui', urlObj);
+
 		switch (urlObj.protocol.replace(':', '')) {
 			case 'https':
 				// eslint-disable-next-line no-case-declarations
@@ -54,20 +54,16 @@ class DeeplinkManager {
 				if (newUrl.startsWith('https://pali.pollum.cloud/wc?uri=')) {
 					newUrl = newUrl.replace('https://pali.pollum.cloud/wc?uri=', '');
 					handled();
-					// if (!WalletConnect.isValidUri(newUrl)) return;
+
 					// eslint-disable-next-line no-case-declarations
 					const redirect = params && params.redirect;
 					// eslint-disable-next-line no-case-declarations
 					const autosign = params && params.autosign;
-					// eslint-disable-next-line no-case-declarations
-					// WC2Manager.init().catch(err => {
-					// 	console.error(`Cannot initialize WalletConnect Manager.`, err);
-					// });
 				}
 				break;
 			case 'wc':
 				handled();
-				// if (!WalletConnect.isValidUri(url)) return;
+
 				// eslint-disable-next-line no-case-declarations
 				let redirect = params && params.redirect;
 				// eslint-disable-next-line no-case-declarations
@@ -95,15 +91,13 @@ class DeeplinkManager {
 
 				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
 				handled();
-				// if (!WalletConnect.isValidUri(newUrl)) return;
+
 				// eslint-disable-next-line no-case-declarations
 				redirect = params && params.redirect;
 				// eslint-disable-next-line no-case-declarations
 				autosign = params && params.autosign;
 				// eslint-disable-next-line no-case-declarations
-				// WC2Manager.init().catch(err => {
-				// 	console.error(`Cannot initialize WalletConnect Manager.`, err);
-				// });
+
 				break;
 
 			// Specific to the browser screen

@@ -109,7 +109,7 @@ class QrScanner extends PureComponent {
 			this.props.onScanSuccess(data, content);
 			return;
 		}
-		// TODO: Update to support wallet connect v2 qrcodes
+
 		// Checking if it can be handled like deeplinks
 		const handledByDeeplink = SharedDeeplinkManager.parse(content, {
 			origin: AppConstants.DEEPLINKS.ORIGIN_QR_CODE,

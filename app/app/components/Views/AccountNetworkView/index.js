@@ -117,8 +117,8 @@ class AccountNetworkView extends PureComponent {
 		Object.values(identities).forEach((value, index) => {
 			if (value.address.toLowerCase() === selectedAddress?.toLowerCase()) {
 				firstItem = index;
+				contactEntrys.push(value);
 			}
-			contactEntrys.push(value);
 		});
 
 		return (
@@ -149,9 +149,6 @@ class AccountNetworkView extends PureComponent {
 											styles.itemSpace,
 											index === firstItem && styles.dappAccountTouchItemSeleted
 										]}
-										onPress={() => {
-											setSelectedAddress && setSelectedAddress(item.address);
-										}}
 									>
 										<Text
 											style={[

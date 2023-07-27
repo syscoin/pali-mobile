@@ -1131,7 +1131,6 @@ const Main = props => {
 
 			setTimeout(() => WC2Manager.hub.emit('walletconnectAddChain:approved', addChainInfo.requestInfo), 500);
 		} catch (e) {
-			//TODO tenho que mostrar modal de Erro com a mensagem. ps: da para testar com tentar adicionar aurora/gnosis.
 			util.logDebug('leon.w@ add chain error: ', e, addChainInfo.rpcInfo);
 		}
 		setIsAddChainModalVisible(false);
