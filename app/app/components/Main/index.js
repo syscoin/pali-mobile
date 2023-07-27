@@ -350,14 +350,11 @@ const Main = props => {
 
 	const initializeWalletConnect = () => {
 		WC2Manager.hub.on('walletconnectSessionRequest', data => {
-			console.log('fez uma request para logar aquiii', data);
-
 			setWalletConnectRequest(true);
 			setWalletConnectRequestInfo(data);
 		});
 		WC2Manager.hub.on('walletconnectAddChain', async data => {
 			setIsAddChainModalVisible(true);
-			console.log(data, 'porque ta dizendo que ta undefined');
 			setAddChainInfo(data);
 			loadSessions();
 		});
@@ -648,10 +645,10 @@ const Main = props => {
 
 	const onWalletConnectSessionApproval = () => {
 		setWalletConnectRequest(false);
-		console.log(walletConnectRequestInfo, 'foi approvado');
+
 		WC2Manager.hub.emit('walletconnectSessionRequest::approved', walletConnectRequestInfo);
 		setTimeout(() => setWalletConnectRequestInfo({}), 500);
-		console.log(walletConnectRequestInfo, 'foi approvado222');
+
 		setTimeout(() => {
 			loadSessions();
 		}, 1000);
@@ -659,7 +656,7 @@ const Main = props => {
 
 	const loadSessions = useCallback(async () => {
 		const sessions = await WC2Manager.getWCSessions();
-		console.log('loadSessions', sessions);
+
 		setAllSession(sessions);
 	}, [setAllSession]);
 
@@ -803,10 +800,8 @@ const Main = props => {
 		PushNotification.configure({
 			onRegister(token) {
 				if (Platform.OS === 'android') {
-					console.log('===firebase android deviceToken: ', token);
 					util.logDebug('===firebase android deviceToken: ', token);
 				} else {
-					console.log('===ios deviceToken: ', token);
 					util.logDebug('===ios deviceToken: ', token);
 				}
 			},
@@ -1121,11 +1116,9 @@ const Main = props => {
 		setAddChainInfo('');
 	};
 	const onAddChainModalConfirm = async () => {
-		console.log('onAddChainModalConfirm');
-
 		try {
 			const { nickname, rpcTarget, chainId, ticker, explorerUrl } = addChainInfo.rpcInfo;
-			console.log(nickname, rpcTarget, chainId, ticker, explorerUrl, 'arou aqui ja');
+
 			const type = await Engine.networks[ChainType.RPCBase].addNetwork(
 				nickname,
 				rpcTarget,
@@ -1133,16 +1126,9 @@ const Main = props => {
 				ticker,
 				explorerUrl
 			);
-			console.log(
-				type,
-				'wowwwwww joga muito',
-				addChainInfo,
-				addChainInfo.selectedAddress,
-				addChainInfo.requestInfo
-			);
+
 			await Engine.context.PreferencesController.addRpcChain(addChainInfo.selectedAddress, type);
 
-			console.log('passou por aqui');
 			setTimeout(() => WC2Manager.hub.emit('walletconnectAddChain:approved', addChainInfo.requestInfo), 500);
 		} catch (e) {
 			//TODO tenho que mostrar modal de Erro com a mensagem. ps: da para testar com tentar adicionar aurora/gnosis.

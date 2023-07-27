@@ -91,14 +91,13 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					getChainTypeByChainId(req.currentChainId),
 					req.params[0]
 				);
-				console.log(code, 'o codeeee');
 				res.result = code;
 			},
 			personal_ecRecover: async () => {
 				const message = req.params[0];
 				const signature = req.params[1];
 				const recovered = recoverPersonalSignature({ data: message, sig: signature });
-				console.log(recovered, 'recovereeddddd');
+
 				res.result = recovered;
 			},
 			eth_coinbase: async () => {
@@ -120,28 +119,27 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 			},
 			personal_sign: async () => {
 				const { PersonalMessageManager } = Engine.context;
-				console.log(req.params, 'gangueee');
+
 				const firstParam = req.params[0];
 				const secondParam = req.params[1];
 				const params = {
 					data: firstParam,
 					from: secondParam
 				};
-				console.log('1');
+
 				if (resemblesAddress(firstParam) && !resemblesAddress(secondParam)) {
 					params.data = secondParam;
 					params.from = firstParam;
 				}
-				console.log('2');
+
 				const pageMeta = req.meta;
-				console.log('333333', req.params[0], pageMeta);
+
 				const rawSig = await PersonalMessageManager.addUnapprovedMessageAsync({
 					data: req.params[0],
 					from: req.params[1],
 					meta: pageMeta,
 					origin: WALLET_CONNECT_ORIGIN
 				});
-				console.log(rawSig, req.meta, 'rawSig', req.id, approveRequest);
 
 				res.result = rawSig;
 			},
@@ -185,14 +183,14 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 			},
 			eth_signTypedData_v4: async () => {
 				const { TypedMessageManager } = Engine.context;
-				console.log('v4 1');
+
 				const data = JSON.parse(req.params[1]);
 				const chainId = data.domain.chainId;
-				console.log('v4 3');
+
 				if (!getNetworkController(chainId)) {
 					throw ethErrors.rpc.invalidRequest(`Provided chainId (${chainId}) must match the active chainId`);
 				}
-				console.log('v4 2');
+
 				const pageMeta = req.meta;
 				const rawSig = await TypedMessageManager.addUnapprovedMessageAsync(
 					{
@@ -203,7 +201,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					},
 					'V4'
 				);
-				console.log(approveRequest, 'adsadasdas');
 
 				res.result = rawSig;
 			},
@@ -279,21 +276,17 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 
 				const { chainId } = params;
 				const _chainId = typeof chainId === 'string' && chainId.toLowerCase();
-				console.log(params, 'vamos ver need', _chainId);
+
 				if (!isPrefixedFormattedHexString(_chainId)) {
 					throw ethErrors.rpc.invalidParams(
 						`Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received:\n${chainId}`
 					);
 				}
 
-				console.log('assou para aqui');
 				const chainIdDecimal = parseInt(_chainId, 16).toString(10);
 				const type = getChainTypeByChainId(chainIdDecimal);
-				// 如下逻辑成立，表示不存在当前chainId
-				console.log('assou para aqui2', chainIdDecimal);
 
 				if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
-					console.log('não entrou aqui ctz');
 					let data = {};
 					const rpcList = require('../../data/rpc-chains.json');
 					const rpcItem = rpcList.find(
@@ -318,7 +311,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 							ticker: rpcItem.nativeCurrency.symbol,
 							explorerUrl: rpcItem.infoURL
 						};
-						console.log(req.meta, 'banido', req);
 
 						data = {
 							rpcInfo,
@@ -326,7 +318,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 
 							selectedAddress: req.selectedAddress
 						};
-						console.log(data, '888888');
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
 						res.result = null;
@@ -335,9 +326,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					res.result = 'rejected';
 					return;
 				}
-
-				console.log(chainIdDecimal, 'wowwww');
-				//TODO: Colocar erro dizendo que rede está disabled
 
 				res.result = null;
 			},
@@ -353,21 +341,17 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 
 				const { chainId } = params;
 				const _chainId = typeof chainId === 'string' && chainId.toLowerCase();
-				console.log(params, 'vamos ver need', _chainId);
+
 				if (!isPrefixedFormattedHexString(_chainId)) {
 					throw ethErrors.rpc.invalidParams(
 						`Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received:\n${chainId}`
 					);
 				}
 
-				console.log('assou para aqui');
 				const chainIdDecimal = parseInt(_chainId, 16).toString(10);
 				const type = getChainTypeByChainId(chainIdDecimal);
-				// 如下逻辑成立，表示不存在当前chainId
-				console.log('assou para aqui2', chainIdDecimal);
 
 				if (type === ChainType.Ethereum && chainIdDecimal !== '1') {
-					console.log('não entrou aqui ctz');
 					let data = {};
 					const rpcList = require('../../data/rpc-chains.json');
 					const rpcItem = rpcList.find(
@@ -392,7 +376,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 							ticker: rpcItem.nativeCurrency.symbol,
 							explorerUrl: rpcItem.infoURL
 						};
-						console.log(req.meta, 'banido', req);
 
 						data = {
 							rpcInfo,
@@ -400,7 +383,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 
 							selectedAddress: req.selectedAddress
 						};
-						console.log(data, '888888');
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
 						res.result = null;
@@ -410,19 +392,12 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					return;
 				}
 
-				console.log(chainIdDecimal, 'wowwww');
-				//TODO: Colocar erro dizendo que rede está disabled
-
 				res.result = null;
 			}
 		};
 
 		if (!rpcMethods[req.method]) {
-			console.log(req, 'aquiii');
-			//TODO: tenho que fazer uma verificação caso a rede que ele esteja mandando a request
-			// seja diferetente do chainType da bridge eu só retrono res.result=null
 			if (firstChainType !== getChainTypeByChainId(req.currentChainId)) {
-				console.log('retornou o null já que é diferente');
 				return (res.result = null);
 			}
 			return next();
@@ -470,9 +445,7 @@ class WalletConnectV2Session {
 		const url = options.session.self.metadata.url;
 		const name = options.session.self.metadata.name;
 		const icons = options.session.self.metadata.icons;
-		//TODO: coloco o firstCHainType como o requiredNamespace e gg
-		console.log(this.firstChainType, 'requiredNamespaces');
-		//TODO: o chaintype que está faltando ):
+
 		this.backgroundBridge = new BackgroundBridge({
 			webview: null,
 			url,
@@ -510,14 +483,12 @@ class WalletConnectV2Session {
 		});
 
 		WC2Manager.hub.on('walletconnectAddChain:approved', async data => {
-			console.log(data, '7777');
 			await this.updateSession({
 				requestEvent: data
 			});
 		});
 		WC2Manager.hub.on('walletconnect::delete', data => {
 			if (data) {
-				console.log(data, 'data do approved');
 				this.removeSession(data);
 			}
 		});
@@ -556,19 +527,13 @@ class WalletConnectV2Session {
 
 	approveRequest = async ({ id, result }) => {
 		const topic = this.topicByRequestId[id];
-		console.log(result, 'amaury', topic);
+
 		const response = formatJsonRpcResult(id, result);
 		try {
 			await this.web3Wallet.respondSessionRequest({
 				topic: topic,
 				response: response
 			});
-			// await this.web3Wallet.approveRequest({
-			// 	id: parseInt(id),
-			// 	topic,
-			// 	result
-			// });
-			console.log('gangue do crash');
 		} catch (err) {
 			console.warn(`WC2::approveRequest error while approving request id=${id} topic=${topic}`, err);
 		}
@@ -585,12 +550,13 @@ class WalletConnectV2Session {
 
 	redirect = () => {
 		if (!this.deeplink) return;
-		console.log(this.deeplink, 'wow');
 		setTimeout(() => {
 			// Reset the status of deeplink after each redirect
 			this.deeplink = false;
-			console.log('goBack');
-			Minimizer.goBack();
+
+			if (Platform.OS !== 'android') {
+				Minimizer.goBack();
+			}
 		}, 300);
 	};
 
@@ -606,15 +572,10 @@ class WalletConnectV2Session {
 
 	updateSession = async ({ requestEvent }) => {
 		try {
-			console.log('chegou aqui pelo menos', requestEvent);
-			console.log(requestEvent.params.request);
-			console.log(this.session, 'aquiii');
-			//TODO: Modal de adicionar rede e depois de confirmar
-			// Ele chama as outras funcoes.
 			const activeSession = this.getSessions().find(
 				session => session.topic === requestEvent.topic || session.pairingTopic === requestEvent.topic
 			);
-			console.log(activeSession, 'activeSession team');
+
 			if (activeSession) {
 				activeSession.namespaces.eip155.accounts.push(
 					'eip155:' +
@@ -632,7 +593,7 @@ class WalletConnectV2Session {
 				const sessions = this.web3Wallet.getActiveSessions() || {};
 				await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
 				WC2Manager.hub.emit('walletconnect::updateSessions');
-				console.log('aquiii ', this.sessions);
+
 				setTimeout(() => {
 					this.web3Wallet.emitSessionEvent({
 						topic: requestEvent.topic,
@@ -663,7 +624,7 @@ class WalletConnectV2Session {
 			let method = requestEvent.params.request.method;
 
 			const methodParams = requestEvent.params.request.params;
-			console.log(methodParams, 'wow', requestEvent.params.chainId.split(':')[1]);
+
 			util.logDebug(`WalletConnect2Session::handleRequest  method=${method}`, methodParams);
 
 			// Manage redirects
@@ -674,25 +635,20 @@ class WalletConnectV2Session {
 			if (method === 'eth_sendTransaction') {
 				try {
 					const { TransactionController } = Engine.context;
-					// ver se esse addTransaction está certo
-					console.log(requestEvent, 'gangue porra', requestEvent.params);
-					console.log(requestEvent.params.request.params, 'gangue porra2');
+
 					const txParams = {};
-					console.log('1', requestEvent.params.request.params[0]);
+
 					txParams.to = requestEvent.params.request.params[0].to;
 					txParams.from = requestEvent.params.request.params[0].from;
-					console.log('2');
 					txParams.value = requestEvent.params.request.params[0].value;
 					txParams.gas = requestEvent.params.request.params[0].gas;
-					console.log('3');
 					txParams.gasPrice = requestEvent.params.request.params[0].gasPrice;
 					txParams.data = requestEvent.params.request.params[0].data;
-					console.log('4', txParams);
 					txParams.chainId = String(requestEvent.params.chainId.split(':')[1]);
-					console.log('parou aqui', txParams);
+
 					const trx = await TransactionController.addTransaction(txParams, hostname);
 					const hash = await trx.result;
-					console.log('passou ate aqui', requestEvent.id + '', hash);
+
 					await this.approveRequest({ id: requestEvent.id, result: hash });
 				} catch (error) {
 					console.warn('thales.b@eth_send_transaction', error);
@@ -700,14 +656,11 @@ class WalletConnectV2Session {
 
 				return;
 			} else if (method === 'eth_signTypedData') {
-				console.log('etapa7');
 				// Overwrite 'eth_signTypedData' because otherwise metamask use incorrect param order to parse the request.
 				method = 'eth_signTypedData_v3';
 			}
 
-			console.log(requestEvent.id, requestEvent.topic, method, methodParams, 'ahhhhhhhh');
 			const meta = this.session.peer.metadata;
-			console.log(meta.name, 'oxiii');
 
 			const preferencesController = Engine.context.PreferencesController;
 
@@ -731,9 +684,8 @@ class WalletConnectV2Session {
 
 				origin: hostname
 			});
-			console.log('etapa72');
 		} catch (error) {
-			console.warn('porque sera', error);
+			console.warn('thales.b@wc::handleRequest', error);
 		}
 	};
 }
@@ -755,16 +707,12 @@ export class WC2Manager {
 
 		AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
 
-		//TODO: Colocar evento aqui para lançar as primeiras sessions para o wcManger
-		//TODO: Eu vou precisar colocar eventos onde ele aceita  uma nova sessão tbm.
-		// E tenho que verificar se toda vez que ele abre o app ele entra aqui para poder sempre
-		// renovar as sessões.
 		web3Wallet.on('session_proposal', this.onSessionProposal.bind(this));
 		web3Wallet.on('session_request', this.onSessionRequest.bind(this));
 		web3Wallet.on('session_delete', async event => {
 			//TODO: fazer isso aqui funcionar para testar é só deslogar na uniswap
 			const session = this.sessions[event.topic];
-			console.log(event.topic, 'topic888', this.deeplinkSessions[event.topic], '999', this.sessions[event.topic]);
+
 			if (session && this.sessions[event.topic]) {
 				delete this.sessions[event.topic];
 				const wcSessions = this.web3Wallet.getActiveSessions() || {};
@@ -778,31 +726,15 @@ export class WC2Manager {
 			}
 		});
 
-		const preferencesController = Engine.context.PreferencesController;
-
-		const networkController = Engine.context.NetworkController;
-		const selectedAddress = preferencesController.state.selectedAddress;
-
-		// const chainId = networkController.state.network;
-		let chainId = networkController.state.network;
-		console.log(chainId, 'youtube');
-		// setTimeout(() => WC2Manager.hub.emit('walletconnect::init', sessions), 3000);
 		Object.keys(sessions).forEach(async sessionKey => {
 			try {
-				console.log('ta crashando aqui??', sessionKey);
 				const session = sessions[sessionKey];
-				console.log(deeplinkSessions[session.pairingTopic], 'pairing teste');
+
 				this.sessions[sessionKey] = new WalletConnectV2Session({
 					web3Wallet,
 					deeplink: typeof deeplinkSessions[session.pairingTopic] !== 'undefined',
 					session
 				});
-				console.log('porra esse crash de corno puta merda', chainId, selectedAddress);
-				// await this.sessions[sessionKey].updateSession({
-				// 	chainId: chainId,
-				// 	accounts: [selectedAddress]
-				// });
-				console.log('não crashou???', this.sessions);
 			} catch (err) {
 				console.warn(`WC2::init can't update session ${sessionKey}`);
 			}
@@ -810,7 +742,6 @@ export class WC2Manager {
 	}
 
 	static async init() {
-		console.log('salve');
 		if (this.instance) {
 			// already initialized
 			return this.instance;
@@ -849,9 +780,7 @@ export class WC2Manager {
 			}
 		};
 		try {
-			console.log('salve1');
 			if (core) web3Wallet = await Web3Wallet.init(options);
-			console.log('salve2');
 		} catch (err) {
 			// TODO Sometime needs to init twice --- not sure why...
 			console.warn(`WC2::init Web3Wallet.init() failed due to ${err}`);
@@ -875,7 +804,6 @@ export class WC2Manager {
 
 	static hub = new EventEmitter();
 	static getWCSessions = async () => {
-		console.log('chamou no loadSession');
 		let sessions = [];
 		const sessionData = await AsyncStorage.getItem(WALLETCONNECTV2_SESSIONS);
 		if (sessionData) {
@@ -912,7 +840,7 @@ export class WC2Manager {
 	async removeAll() {
 		this.deeplinkSessions = {};
 		const actives = this.web3Wallet.getActiveSessions() || {};
-		console.log('crashou aqui5');
+
 		Object.values(actives).forEach(async session => {
 			this.web3Wallet
 				.disconnectSession({
@@ -923,13 +851,13 @@ export class WC2Manager {
 					console.warn(`Can't remove active session ${session.topic}`, err);
 				});
 		});
-		console.log('crashou aqui6');
+
 		await AsyncStorage.setItem('wc2sessions_deeplink', JSON.stringify(this.deeplinkSessions));
 	}
 
 	async removePendings() {
 		const pending = this.web3Wallet.getPendingSessionProposals() || {};
-		console.log('crashou aqui7');
+
 		Object.values(pending).forEach(async session => {
 			this.web3Wallet
 				.rejectSession({
@@ -952,7 +880,6 @@ export class WC2Manager {
 				console.warn(`Can't remove request ${request.id}`, err);
 			}
 		});
-		console.log('crashou aqui8');
 	}
 
 	async onSessionProposal(proposal) {
@@ -968,8 +895,6 @@ export class WC2Manager {
 
 		util.logDebug(`WC2::session_proposal id=${id}`, params);
 
-		console.log(optionalNamespaces, '1111', proposer);
-
 		try {
 			const preferencesController = Engine.context.PreferencesController;
 
@@ -979,14 +904,14 @@ export class WC2Manager {
 			const namespaces = {};
 			const allType = preferencesController.state.allChains;
 			let chainsEnabled = [];
-			console.log(allType, 'allType');
+
 			if (allType) {
 				for (const chainType of allType) {
 					const chainIdByType = getChainIdByType(chainType);
 					chainsEnabled.push(chainIdByType);
 				}
 			}
-			console.log(chainsEnabled, 'enabled chains');
+
 			Object.keys(requiredNamespaces).forEach(key => {
 				const accounts = [];
 				// let test = ['eip155:1', 'eip155:137', 'eip155:10', 'eip155:56'];
@@ -1008,15 +933,8 @@ export class WC2Manager {
 
 			Object.keys(optionalNamespaces).forEach(key => {
 				const accounts = [];
-				// let test = ['eip155:1', 'eip155:137', 'eip155:10', 'eip155:56'];
-				// test.map(chain => {
-				// 	requiredNamespaces[key].chains.map(x => {
-				// 		[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
-				// 	});
-				// });
 
 				optionalNamespaces[key].chains.map(chain => {
-					console.log(chain.split(':')[1], 'wowwwww');
 					if (chainsEnabled.includes(chain.split(':')[1]))
 						[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
 				});
@@ -1036,18 +954,6 @@ export class WC2Manager {
 				}
 			});
 
-			//TODO: tenho que ver como pegar o chainId correto para logar.
-			//TODO: ver porque eu tenho que passar o namespace aqui.
-			console.log(
-				chainId,
-				namespaces,
-				'namespaes',
-				requiredNamespaces,
-				'wow bros',
-				optionalNamespaces,
-				'wowwwww bruuu',
-				proposal.params.requiredNamespaces.eip155
-			);
 			try {
 				new Promise((resolve, reject) => {
 					WC2Manager.hub.emit('walletconnectSessionRequest', {
@@ -1059,13 +965,11 @@ export class WC2Manager {
 
 					WC2Manager.hub.on('walletconnectSessionRequest::approved', data => {
 						if (data) {
-							console.log(data, 'data do approved');
 							this.connectSession(data);
 							resolve(true);
 						}
 					});
 					WC2Manager.hub.on('walletconnectSessionRequest::rejected', data => {
-						console.log('chegou aqui???', data);
 						this.web3Wallet.rejectSession({
 							id: data.proposal.id,
 							reason: getSdkError('USER_REJECTED_METHODS')
@@ -1074,7 +978,6 @@ export class WC2Manager {
 					});
 				});
 			} catch (err) {
-				console.log('será que foi para aqui?');
 				await this.web3Wallet.rejectSession({
 					id: proposal.id,
 					reason: getSdkError('USER_REJECTED_METHODS')
@@ -1083,7 +986,6 @@ export class WC2Manager {
 		} catch (err) {
 			console.error(`invalid wallet status`, err);
 		}
-		console.log('acabouuuuuu');
 	}
 
 	async onSessionRequest(requestEvent) {
@@ -1099,9 +1001,8 @@ export class WC2Manager {
 
 				return;
 			}
-			console.log('teste3', requestEvent.params.request.params);
+
 			await session.handleRequest(requestEvent);
-			console.log('teste4');
 		} catch (err) {
 			console.error(`WC2::onSessionRequest() Error while handling request`, err);
 		}
@@ -1115,40 +1016,35 @@ export class WC2Manager {
 			const isDeepLink = true;
 
 			const rawParams = getAllUrlParams(wcUri);
-			console.log(redirectUrl, 'origin', params, 'salve');
+
 			// First check if the url continas sessionTopic, meaning it is only here from an existing connection (so we don't need to create pairing)
 			if (rawParams.sessionTopic) {
 				const { sessionTopic } = rawParams;
-				console.log('não tem então?', sessionTopic);
+
 				this.sessions[sessionTopic]?.setDeeplink(true);
 				return;
 			}
-			// TODO: parei aqui
-			console.log('não tem session topic', params);
+
 			if (params.version === 1) {
-				console.log('versao 1');
+				console.warn('WalletConnect Version 1 not supported');
 			} else if (params.version === 2) {
 				// check if already connected
-				console.log('teste');
+
 				const activeSession = this.getSessions().find(
 					session => session.topic === params.topic || session.pairingTopic === params.topic
 				);
-				console.log('teste2');
+
 				if (activeSession) {
 					this.sessions[activeSession.topic]?.setDeeplink(isDeepLink);
 					return;
 				}
-				console.log('crashou aqui88');
-				//TODO: modal de approve para login.
 
 				// cleanup uri before pairing.
 				if (isDeepLink) {
-					console.log(wcUri, redirectUrl, origin, 'da tira');
 					const cleanUri = wcUri.startsWith('wc://') ? wcUri.replace('wc://', 'wc:') : wcUri;
 					const paired = await this.web3Wallet.core.pairing.pair({
 						uri: cleanUri
 					});
-					console.log('ué que foi isso vei');
 
 					this.deeplinkSessions[paired.topic] = {
 						redirectUrl,
@@ -1163,7 +1059,6 @@ export class WC2Manager {
 		} catch (err) {
 			console.error(`Failed to connect uri=${wcUri}`, err);
 		}
-		console.log('terminou');
 	}
 
 	async connectSession({ proposal, relays, namespaces }) {
@@ -1175,24 +1070,22 @@ export class WC2Manager {
 			// chainId: chainId,
 			// accounts: [selectedAddress]
 		});
-		console.log('33333');
+
 		const deeplink = typeof this.deeplinkSessions[activeSession.pairingTopic] !== 'undefined';
 		const session = new WalletConnectV2Session({
 			session: activeSession,
 			deeplink,
 			web3Wallet: this.web3Wallet
 		});
-		console.log('teste7');
+
 		this.sessions[activeSession.topic] = session;
 		if (deeplink) {
-			console.log('redirectdeeplink ', deeplink);
 			session.redirect();
 		}
-		console.log(this.sessions, 'strange why dog');
+
 		const sessions = this.web3Wallet.getActiveSessions() || {};
 		await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
 		WC2Manager.hub.emit('walletconnect::updateSessions');
-		console.log('crashou aqui22');
 	}
 }
 
