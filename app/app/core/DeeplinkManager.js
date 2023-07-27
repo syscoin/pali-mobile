@@ -72,6 +72,9 @@ class DeeplinkManager {
 
 				const wcURL = params?.uri || urlObj.href;
 
+				//Just to check if the request is correct
+				if (!params || !wcURL) return;
+
 				if (isWC2Enabled) {
 					WC2Manager.getInstance()
 						.then(instance => {
@@ -91,6 +94,23 @@ class DeeplinkManager {
 
 				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
 				handled();
+
+				//Just to check if the request is correct
+				if (!params || !newUrl) return;
+
+				if (isWC2Enabled) {
+					WC2Manager.getInstance()
+						.then(instance => {
+							return instance.connect({
+								wcUri: newUrl,
+								redirectUrl: params,
+								origin: 'deeplink'
+							});
+						})
+						.catch(err => {
+							console.warn(`DeepLinkManager failed to connect`, err);
+						});
+				}
 
 				// eslint-disable-next-line no-case-declarations
 				redirect = params && params.redirect;
