@@ -30,6 +30,9 @@ import com.brentvatne.react.ReactVideoPackage;
 
 import com.reactlibrary.RNThreadPackage;
 
+
+// @react-native-community/async-storage
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // react-native-aes-crypto
 import com.tectiv3.aes.RCTAesPackage;
 // react-native-fs
@@ -79,6 +82,7 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			packages.add(new ReactVideoPackage());
 			packages.add(new RNThreadPackage(
 				mReactNativeHost,
+				new AsyncStoragePackage(),
 				new RCTAesPackage(),
 				new RNFSPackage(),
 				new RNI18nPackage(),
