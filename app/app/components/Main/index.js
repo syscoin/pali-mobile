@@ -1022,7 +1022,7 @@ const Main = props => {
 			Engine.context.PersonalMessageManager.hub.removeAllListeners();
 			Engine.context.TypedMessageManager.hub.removeAllListeners();
 			Engine.context.TransactionController.hub.removeListener('unapprovedTransaction', onUnapprovedTransaction);
-			// WalletConnect.hub.removeAllListeners();
+			WC2Manager.hub.removeAllListeners();
 			removeConnectionStatusListener.current && removeConnectionStatusListener.current();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
