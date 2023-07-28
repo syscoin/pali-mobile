@@ -8,7 +8,7 @@ import {
 	getChainIdByType,
 	getClaimContracts
 } from '../util/number';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LAST_NOTIFICATION_INFO } from '../constants/storage';
 import { ChainType, TxNoChange, TokenTxChanged } from 'paliwallet-core';
 import { getTicker } from '../util/transactions';

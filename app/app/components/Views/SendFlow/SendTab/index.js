@@ -47,7 +47,7 @@ import { ChainType, util, BN, isValidAddress } from 'paliwallet-core';
 import Clipboard from '@react-native-community/clipboard';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import CheckPassword from '../../../UI/CheckPassword';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { getEstimatedTotalGas, validateAmount } from '../../../../util/Amount';
 import LottieView from 'lottie-react-native';

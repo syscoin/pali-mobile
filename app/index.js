@@ -1,5 +1,5 @@
 import './shim.js';
-
+import '@walletconnect/react-native-compat';
 import 'react-native-gesture-handler';
 
 import crypto from 'crypto'; // eslint-disable-line import/no-nodejs-modules, no-unused-vars

@@ -16,7 +16,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Engine from '../../../core/Engine';
 import Device from '../../../util/Device';
 import SecureKeychain from '../../../core/SecureKeychain';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, TRUE } from '../../../constants/storage';
 import { util } from 'paliwallet-core';
 import { connect } from 'react-redux';

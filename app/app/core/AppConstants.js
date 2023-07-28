@@ -1,3 +1,5 @@
+import { WALLETCONNECT_PROJECTID } from '@env';
+
 export default {
 	TX_CHECK_MAX_FREQUENCY: 10000,
 	TX_CHECK_NORMAL_FREQUENCY: 30000,
@@ -16,6 +18,7 @@ export default {
 		unlockStateChanged: 'metamask_unlockStateChanged',
 		chainChanged: 'metamask_chainChanged'
 	},
+	PROJECT_ID_WALLET_CONNECT: WALLETCONNECT_PROJECTID,
 	DEEPLINKS: {
 		ORIGIN_DEEPLINK: 'deeplink',
 		ORIGIN_QR_CODE: 'qr-code'
