@@ -185,7 +185,13 @@ class WalletConnectList extends PureComponent {
 												style={styles.disconnectBtn}
 												hitSlop={styles.hitSlop}
 												onPress={() => {
-													WC2Manager.hub.emit('walletconnect::delete', item.topic);
+													WC2Manager.getInstance()
+														.then(instance => {
+															return instance.removeSession(item.topic);
+														})
+														.catch(err => {
+															console.warn(`Remove wallet session Failed`, err);
+														});
 												}}
 											>
 												<Text style={styles.disconnectLabel} allowFontScaling={false}>

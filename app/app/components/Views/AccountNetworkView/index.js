@@ -110,7 +110,7 @@ class AccountNetworkView extends PureComponent {
 	networkScrollRef = React.createRef();
 
 	render = () => {
-		const { selectedAddress, identities, setSelectedAddress, selectedChainsType } = this.props;
+		const { selectedAddress, identities, selectedChainsType } = this.props;
 
 		let firstItem = 0;
 		const contactEntrys = [];
@@ -147,24 +147,18 @@ class AccountNetworkView extends PureComponent {
 										style={[
 											styles.dappAccountTouchItem,
 											styles.itemSpace,
-											index === firstItem && styles.dappAccountTouchItemSeleted
+											styles.dappAccountTouchItemSeleted
 										]}
 									>
 										<Text
-											style={[
-												styles.dappAccountName,
-												index === firstItem && styles.dappAccountNameSeleted
-											]}
+											style={[styles.dappAccountName, styles.dappAccountNameSeleted]}
 											allowFontScaling={false}
 											numberOfLines={1}
 										>
 											{item.name}
 										</Text>
 										<Text
-											style={[
-												styles.dappAccountAddress,
-												index === firstItem && styles.dappAccountAddressSeleted
-											]}
+											style={[styles.dappAccountAddress, styles.dappAccountAddressSeleted]}
 											allowFontScaling={false}
 											numberOfLines={1}
 											ellipsizeMode={'middle'}

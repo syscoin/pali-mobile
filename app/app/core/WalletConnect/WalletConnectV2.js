@@ -320,11 +320,10 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 						};
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
-						res.result = null;
+					} else {
+						res.result = 'rejected';
 						return;
 					}
-					res.result = 'rejected';
-					return;
 				}
 
 				res.result = null;
@@ -385,11 +384,10 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 						};
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
-						res.result = null;
+					} else {
+						res.result = 'rejected';
 						return;
 					}
-					res.result = 'rejected';
-					return;
 				}
 
 				res.result = null;
@@ -487,38 +485,6 @@ class WalletConnectV2Session {
 				requestEvent: data
 			});
 		});
-		WC2Manager.hub.on('walletconnect::delete', data => {
-			if (data) {
-				this.removeSession(data);
-			}
-		});
-	}
-
-	async removeSession(topic) {
-		try {
-			await new Promise((resolve, reject) => {
-				this.web3Wallet
-					.disconnectSession({
-						topic,
-						reason: {
-							code: 6000,
-							message: 'User disconnected.'
-						}
-					})
-					.then(resolve)
-					.catch(e => {
-						console.log(e, 'thales.b@removeSession');
-						reject();
-					});
-			});
-		} catch (err) {
-			console.log(err, 'thales.b@removeSession');
-		}
-		const sessions = this.web3Wallet.getActiveSessions() || {};
-		delete sessions[topic];
-
-		await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
-		WC2Manager.hub.emit('walletconnect::updateSessions');
 	}
 
 	setDeeplink = deeplink => {
@@ -554,9 +520,9 @@ class WalletConnectV2Session {
 			// Reset the status of deeplink after each redirect
 			this.deeplink = false;
 
-			if (Platform.OS !== 'android') {
-				Minimizer.goBack();
-			}
+			// if (Platform.OS !== 'android') {
+			// 	Minimizer.goBack();
+			// }
 		}, 300);
 	};
 
@@ -662,9 +628,6 @@ class WalletConnectV2Session {
 
 			const meta = this.session.peer.metadata;
 
-			const preferencesController = Engine.context.PreferencesController;
-
-			const selectedAddress = preferencesController.state.selectedAddress;
 			this.backgroundBridge.onMessage({
 				name: 'walletconnect-provider',
 				data: {
@@ -677,7 +640,7 @@ class WalletConnectV2Session {
 						url: meta && meta.url,
 						icon: meta && meta.icons && meta.icons[0]
 					},
-					selectedAddress: selectedAddress,
+					selectedAddress: this.session.namespaces.eip155.accounts[0].split(':')[2],
 					requestEvent: requestEvent,
 					params: methodParams
 				},
@@ -837,22 +800,57 @@ export class WC2Manager {
 		return sessions;
 	}
 
-	async removeAll() {
+	async removeAccounts(data) {
 		this.deeplinkSessions = {};
 		const actives = this.web3Wallet.getActiveSessions() || {};
+		try {
+			try {
+				await Promise.all(
+					Object.values(actives).map(async session => {
+						for (const account of data) {
+							if (session.namespaces.eip155.accounts[0].split(':')[2] === account) {
+								await this.web3Wallet.disconnectSession({
+									topic: session.topic,
+									reason: getSdkError('USER_DISCONNECTED')
+								});
+							}
+						}
+					})
+				);
+			} catch (e) {
+				console.log(e, 'thales.b@removeSession');
+			}
+		} catch (err) {
+			console.warn(err, 'thales.b@removeSession');
+		}
 
-		Object.values(actives).forEach(async session => {
-			this.web3Wallet
-				.disconnectSession({
-					topic: session.topic,
-					reason: { code: 1, message: ERROR_MESSAGES.MANUAL_DISCONNECT }
-				})
-				.catch(err => {
-					console.warn(`Can't remove active session ${session.topic}`, err);
-				});
-		});
+		const sessions = this.web3Wallet.getActiveSessions() || {};
 
-		await AsyncStorage.setItem('wc2sessions_deeplink', JSON.stringify(this.deeplinkSessions));
+		await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
+		WC2Manager.hub.emit('walletconnect::updateSessions');
+	}
+
+	async removeSession(topic) {
+		try {
+			await new Promise((resolve, reject) => {
+				this.web3Wallet
+					.disconnectSession({
+						topic,
+						reason: getSdkError('USER_DISCONNECTED')
+					})
+					.then(resolve)
+					.catch(e => {
+						console.log(e, 'thales.b@removeSession');
+						reject();
+					});
+			});
+		} catch (err) {
+			console.log(err, 'thales.b@removeSession');
+		}
+		const sessions = this.web3Wallet.getActiveSessions() || {};
+
+		await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
+		WC2Manager.hub.emit('walletconnect::updateSessions');
 	}
 
 	async removePendings() {
@@ -897,10 +895,8 @@ export class WC2Manager {
 
 		try {
 			const preferencesController = Engine.context.PreferencesController;
-
-			const networkController = Engine.context.NetworkController;
 			const selectedAddress = preferencesController.state.selectedAddress;
-			const chainId = networkController.state.network;
+
 			const namespaces = {};
 			const allType = preferencesController.state.allChains;
 			let chainsEnabled = [];
@@ -936,7 +932,11 @@ export class WC2Manager {
 
 				optionalNamespaces[key].chains.map(chain => {
 					if (chainsEnabled.includes(chain.split(':')[1]))
-						[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
+						[selectedAddress].map(acc => {
+							if (!namespaces.eip155.accounts.includes(`${chain}:${acc}`)) {
+								return accounts.push(`${chain}:${acc}`);
+							}
+						});
 				});
 
 				if (!namespaces[key]) {
