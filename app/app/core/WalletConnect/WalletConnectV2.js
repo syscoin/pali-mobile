@@ -253,8 +253,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 
 				await Engine.context.AssetsController.addToken(address, symbol, decimals, selectedChainId);
 				res.result = address;
-				//TODO: not sure if it's worth our time to show this
-				// setTimeout(() => props.toggleShowHint(strings('browser.add_asset_tip', { symbol })), 1000);
 			},
 			metamask_getProviderState: async () => {
 				const url = req.meta.url;
@@ -300,7 +298,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					);
 
 					if (rpcItem) {
-						// TODO: add logic to add new chain.
 						const url = req.meta.url;
 						let rpcInfo = {
 							url,
@@ -364,7 +361,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 					);
 
 					if (rpcItem) {
-						// TODO: add logic to add new chain.
 						const url = req.meta.url;
 						let rpcInfo = {
 							url,
@@ -454,7 +450,6 @@ class WalletConnectV2Session {
 				updateSession: this.updateSession.bind(this)
 			},
 			getRpcMethodMiddleware: ({ getProviderState }) =>
-				// que porra esse providerState
 				getRpcMethodMiddleware({
 					hostname: url,
 					getProviderState,
@@ -550,8 +545,6 @@ class WalletConnectV2Session {
 						activeSession.namespaces.eip155.accounts[0].split(':')[2]
 				);
 
-				//TODO: fazer verificação para ver se topic existe ou não, eu acho que já tem
-				// a lógica em algum lugar aqui disso ai se tiver eu copio e colo aqui só para melhorar isso.
 				await this.web3Wallet.updateSession({
 					topic: requestEvent.topic,
 					namespaces: activeSession.namespaces
@@ -571,11 +564,9 @@ class WalletConnectV2Session {
 					});
 				}, 100);
 			} else {
-				//TODO: coloco modal de erro aqui tbm e peço para usuário tentar logar de novo.
 				console.warn('WC2::updateSession Topic does not exist');
 			}
 		} catch (err) {
-			//TODO: coloco modal de erro aqui tbm e peço para usuário tentar logar de novo.
 			console.warn(`WC2::updateSession can't update session topic=${this.session.topic}`, err);
 		}
 	};
@@ -673,7 +664,6 @@ export class WC2Manager {
 		web3Wallet.on('session_proposal', this.onSessionProposal.bind(this));
 		web3Wallet.on('session_request', this.onSessionRequest.bind(this));
 		web3Wallet.on('session_delete', async event => {
-			//TODO: fazer isso aqui funcionar para testar é só deslogar na uniswap
 			const session = this.sessions[event.topic];
 
 			if (session && this.sessions[event.topic]) {
@@ -766,6 +756,7 @@ export class WC2Manager {
 	}
 
 	static hub = new EventEmitter();
+
 	static getWCSessions = async () => {
 		let sessions = [];
 		const sessionData = await AsyncStorage.getItem(WALLETCONNECTV2_SESSIONS);
@@ -790,6 +781,7 @@ export class WC2Manager {
 			}, 100);
 		});
 	}
+
 	getSessions() {
 		const actives = this.web3Wallet.getActiveSessions() || {};
 		const sessions = [];
@@ -910,12 +902,7 @@ export class WC2Manager {
 
 			Object.keys(requiredNamespaces).forEach(key => {
 				const accounts = [];
-				// let test = ['eip155:1', 'eip155:137', 'eip155:10', 'eip155:56'];
-				// test.map(chain => {
-				// 	requiredNamespaces[key].chains.map(x => {
-				// 		[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
-				// 	});
-				// });
+
 				requiredNamespaces[key].chains.map(chain => {
 					[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
 				});
@@ -990,7 +977,7 @@ export class WC2Manager {
 
 	async onSessionRequest(requestEvent) {
 		const { KeyringController } = Engine.context;
-		// waitfor n existe!
+
 		await waitForKeychainUnlocked({ KeyringController });
 
 		try {
@@ -1066,9 +1053,6 @@ export class WC2Manager {
 			id: proposal.id,
 			relayProtocol: relays[0].protocol,
 			namespaces
-
-			// chainId: chainId,
-			// accounts: [selectedAddress]
 		});
 
 		const deeplink = typeof this.deeplinkSessions[activeSession.pairingTopic] !== 'undefined';
