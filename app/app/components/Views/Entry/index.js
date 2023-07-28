@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Engine from '../../../core/Engine';
 import SecureKeychain from '../../../core/SecureKeychain';
 import { connect } from 'react-redux';

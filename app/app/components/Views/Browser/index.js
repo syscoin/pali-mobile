@@ -24,7 +24,7 @@ import AddressBar from '../AddressBar';
 import Modal from 'react-native-modal';
 import Popover from '../../UI/Popover';
 import { strings } from '../../../../locales/i18n';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getActiveTabId, getStorageActiveTabId, setActiveTab } from '../../../util/browser';
 import SuggestPage from '../../UI/SuggestPage';
 import { AutoCompleteType_DAPP } from '../../../core/AutoCompleteController';

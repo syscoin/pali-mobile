@@ -57,7 +57,7 @@ import iconMigrateActive from '../../../../images/ic_migrate_white.png';
 import Device from '../../../../util/Device';
 import { generateTransferData } from '../../../../util/transactions';
 import { CURRENCIES } from '../../../../util/currencies';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AVAILABLE_ARB, VERIFICATION_DISABLED } from '../../../../constants/storage';
 import dismissKeyboard from 'react-native/Libraries/Utilities/dismissKeyboard';
 import LottieView from 'lottie-react-native';

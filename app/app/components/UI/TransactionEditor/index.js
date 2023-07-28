@@ -21,7 +21,7 @@ import { colors } from '../../../styles/common';
 import PromptView from '../PromptView';
 import { ChainType, isValidAddress, BN, util } from 'paliwallet-core';
 import CheckPassword from '../CheckPassword';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../constants/storage';
 
 const styles = StyleSheet.create({

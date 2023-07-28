@@ -67,6 +67,10 @@ For release version:
 or
 `yarn build:ios`
 
+## Remember to
+
+Install [Node.js](https://nodejs.org) **version 16**
+
 ## Addresses
 
 ### Rollux
