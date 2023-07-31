@@ -146,7 +146,12 @@ class AccountApproval extends PureComponent {
 					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
 				</View>
 
-				<WebsiteIcon style={styles.domainLogo} viewStyle={styles.assetLogo} url={url} icon={icon} />
+				<WebsiteIcon
+					style={styles.domainLogo}
+					viewStyle={styles.assetLogo}
+					url={url}
+					icon={typeof icon === 'string' ? icon : ''}
+				/>
 				<Text style={styles.hostTitle}>{title}</Text>
 				<Text style={styles.hostDescription}>{description}</Text>
 

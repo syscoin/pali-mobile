@@ -160,9 +160,13 @@ class WalletConnectList extends PureComponent {
 							item.namespaces.eip155.accounts.length > 0 &&
 							item.namespaces.eip155.accounts[0].split(':')[2];
 
-						const selectedChainsType = item.namespaces.eip155.accounts.map(account => {
-							return getChainTypeByChainId(account.split(':')[1]);
-						});
+						const selectedChainsType =
+							item.namespaces &&
+							item.namespaces.eip155 &&
+							item.namespaces.eip155.accounts.length > 0 &&
+							item.namespaces.eip155.accounts.map(account => {
+								return getChainTypeByChainId(account.split(':')[1]);
+							});
 
 						const meta = item.peer.metadata || null;
 						const url = meta && meta.url;
@@ -177,7 +181,7 @@ class WalletConnectList extends PureComponent {
 											style={styles.domainLogo}
 											viewStyle={styles.assetLogo}
 											url={url}
-											icon={icon}
+											icon={typeof icon === 'string' ? icon : ''}
 										/>
 										<View style={styles.itemContent}>
 											<Text style={styles.itemTitleLabel}>{title}</Text>
