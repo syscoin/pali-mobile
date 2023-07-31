@@ -514,10 +514,8 @@ class WalletConnectV2Session {
 		setTimeout(() => {
 			// Reset the status of deeplink after each redirect
 			this.deeplink = false;
-
-			// if (Platform.OS !== 'android') {
-			// 	Minimizer.goBack();
-			// }
+			console.log('goBack()');
+			Minimizer.goBack();
 		}, 300);
 	};
 
@@ -679,6 +677,17 @@ export class WC2Manager {
 			}
 		});
 
+		//Listener for login modal events to Approve/Reject session
+		WC2Manager.hub.on('walletconnectSessionRequest::approved', async data => {
+			this.connectSession(data);
+		});
+		WC2Manager.hub.on('walletconnectSessionRequest::rejected', async data => {
+			this.web3Wallet.rejectSession({
+				id: data.proposal.id,
+				reason: getSdkError('USER_REJECTED_METHODS')
+			});
+		});
+
 		Object.keys(sessions).forEach(async sessionKey => {
 			try {
 				const session = sessions[sessionKey];
@@ -710,9 +719,7 @@ export class WC2Manager {
 		try {
 			if (typeof PROJECT_ID_WALLET_CONNECT === 'string') {
 				core = new Core({
-					projectId: PROJECT_ID_WALLET_CONNECT,
-					relayUrl: 'wss://relay.walletconnect.com',
-					logger: 'debug'
+					projectId: PROJECT_ID_WALLET_CONNECT
 				});
 			} else {
 				throw new Error('WC2::init Init Missing projectId');
@@ -883,7 +890,18 @@ export class WC2Manager {
 			relays
 		} = params;
 
-		util.logDebug(`WC2::session_proposal id=${id}`, params);
+		util.logDebug(`WC2::session_proposal id=${id}`, params, params.proposer.metadata);
+
+		// If our wallet does not support the chain, reject the session
+		if (!params.requiredNamespaces.eip155) {
+			await this.web3Wallet.rejectSession({
+				id: proposal.id,
+				reason: getSdkError('UNSUPPORTED_CHAINS')
+			});
+
+			util.logWarn(`Unsupported chain`);
+			return;
+		}
 
 		try {
 			const preferencesController = Engine.context.PreferencesController;
@@ -942,27 +960,11 @@ export class WC2Manager {
 			});
 
 			try {
-				new Promise((resolve, reject) => {
-					WC2Manager.hub.emit('walletconnectSessionRequest', {
-						proposal,
-						namespaces,
-						relays,
-						currentPageInformation: proposer
-					});
-
-					WC2Manager.hub.on('walletconnectSessionRequest::approved', data => {
-						if (data) {
-							this.connectSession(data);
-							resolve(true);
-						}
-					});
-					WC2Manager.hub.on('walletconnectSessionRequest::rejected', data => {
-						this.web3Wallet.rejectSession({
-							id: data.proposal.id,
-							reason: getSdkError('USER_REJECTED_METHODS')
-						});
-						reject(new Error('walletconnectSessionRequest::rejected'));
-					});
+				WC2Manager.hub.emit('walletconnectSessionRequest', {
+					proposal,
+					namespaces,
+					relays,
+					currentPageInformation: proposer
 				});
 			} catch (err) {
 				await this.web3Wallet.rejectSession({
@@ -1000,7 +1002,7 @@ export class WC2Manager {
 			util.logDebug(`WC2Manager::connect ${wcUri} origin=${origin} redirectUrl=${redirectUrl}`);
 			const params = parseWalletConnectUri(wcUri);
 
-			const isDeepLink = true;
+			const isDeepLink = origin === 'deeplink';
 
 			const rawParams = getAllUrlParams(wcUri);
 
@@ -1027,21 +1029,21 @@ export class WC2Manager {
 				}
 
 				// cleanup uri before pairing.
-				if (isDeepLink) {
-					const cleanUri = wcUri.startsWith('wc://') ? wcUri.replace('wc://', 'wc:') : wcUri;
-					const paired = await this.web3Wallet.core.pairing.pair({
-						uri: cleanUri
-					});
+				const cleanUri = wcUri.startsWith('wc://') ? wcUri.replace('wc://', 'wc:') : wcUri;
+				const paired = await this.web3Wallet.core.pairing.pair({
+					uri: cleanUri
+				});
 
+				if (isDeepLink) {
 					this.deeplinkSessions[paired.topic] = {
 						redirectUrl,
 						origin
 					};
 					// keep list of deeplinked origin
 					await AsyncStorage.setItem('deeplink', JSON.stringify(this.deeplinkSessions));
-				} else {
-					console.warn(`Invalid wallet connect uri`, wcUri);
 				}
+			} else {
+				console.warn(`Invalid wallet connect uri`, wcUri);
 			}
 		} catch (err) {
 			console.error(`Failed to connect uri=${wcUri}`, err);
