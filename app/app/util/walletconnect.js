@@ -7,7 +7,7 @@ export const CLIENT_OPTIONS = {
 		// Required
 		description: 'Pali Wallet Mobile app',
 		url: 'https://paliwallet.com',
-		icons: ['https://pali-images.s3.amazonaws.com/files/main_title.png'],
+		icons: [],
 		name: 'Pali Wallet',
 		ssl: true
 	}

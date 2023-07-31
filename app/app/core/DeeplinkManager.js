@@ -72,16 +72,13 @@ class DeeplinkManager {
 
 				const wcURL = params?.uri || urlObj.href;
 
-				//Just to check if the request is correct
-				if (!params || !wcURL) return;
-
 				if (isWC2Enabled) {
 					WC2Manager.getInstance()
 						.then(instance => {
 							return instance.connect({
 								wcUri: wcURL,
-								redirectUrl: params,
-								origin: 'deeplink'
+								redirectUrl: params?.redirect,
+								origin: origin
 							});
 						})
 						.catch(err => {
@@ -90,23 +87,32 @@ class DeeplinkManager {
 				}
 				break;
 			case 'paliwallet':
-				newUrl = unescape(url);
-
-				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
 				handled();
+				const urlDeeplink = params?.uri || urlObj.href;
+				let fixedUrl = urlDeeplink;
+
+				// To block deeplink that is not from Wallet Connect
+				if (!url.includes('paliwallet:///wc') && !url.includes('paliwallet://wc')) {
+					return;
+				}
+
+				if (url.startsWith(`paliwallet:///wc`)) {
+					fixedUrl = url.replace(`paliwallet:///wc`, `wc`);
+				} else {
+					fixedUrl = url.replace(`paliwallet://wc`, `wc`);
+				}
 
 				//Just to check if the request is correct
-				if (!params || !newUrl) return;
 
 				if (isWC2Enabled) {
 					WC2Manager.getInstance()
-						.then(instance => {
-							return instance.connect({
-								wcUri: newUrl,
-								redirectUrl: params,
-								origin: 'deeplink'
-							});
-						})
+						.then(instance =>
+							instance.connect({
+								wcUri: fixedUrl,
+								origin,
+								redirectUrl: params?.redirect
+							})
+						)
 						.catch(err => {
 							console.warn(`DeepLinkManager failed to connect`, err);
 						});
