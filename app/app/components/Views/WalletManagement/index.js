@@ -24,7 +24,7 @@ import { KeyringTypes, util, ChainType, defaultEnabledChains } from 'paliwallet-
 import Engine from '../../../core/Engine';
 import { passwordRequirementsMet } from '../../../util/password';
 import SecureKeychain from '../../../core/SecureKeychain';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
@@ -35,10 +35,10 @@ import { CURRENCIES } from '../../../util/currencies';
 import { ChainTypeBgWithoutShadows, ChainTypeIcons, ChainTypeNames, ChainTypes } from '../../../util/ChainTypeImages';
 import { tryVerifyPassword } from '../../../core/Vault';
 import ImageCapInset from '../../UI/ImageCapInset';
-import WalletConnect from '../../../core/WalletConnect';
 import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
 import Icon from '../../UI/Icon';
+import WC2Manager from '../../../../app/core/WalletConnect/WalletConnectV2';
 
 const cardMargin = 20;
 const cardPadding = 18;
@@ -550,7 +550,13 @@ class WalletManagement extends PureComponent {
 		this.setState({ deleteAddressLoading: this.currentModalAccount.address });
 		await KeyringController.removeAccount(this.currentModalAccount.address);
 		this.setState({ deleteAddressLoading: '' });
-		WalletConnect.removeAccounts([this.currentModalAccount.address]);
+		WC2Manager.getInstance()
+			.then(instance => {
+				return instance.removeAccounts([this.currentModalAccount.address]);
+			})
+			.catch(err => {
+				console.warn(`Remove wallet session Failed`, err);
+			});
 	};
 
 	onDeleteOk = async () => {
@@ -772,9 +778,18 @@ class WalletManagement extends PureComponent {
 	removeWallet = async () => {
 		const { walletSelectedIndex } = this.state;
 		const { KeyringController } = Engine.context;
+
 		if (this.props.keyrings.length <= 1) {
 			this.props.navigation.navigate('OnboardingRootNav');
 			try {
+				const deleteAccounts = this.props.keyrings[walletSelectedIndex]?.accounts;
+				WC2Manager.getInstance()
+					.then(instance => {
+						return instance.removeAccounts(deleteAccounts);
+					})
+					.catch(err => {
+						console.warn(`Remove wallet session Failed`, err);
+					});
 				await Engine.resetState();
 				await KeyringController.createNewVaultAndKeychain(`${Date.now()}`);
 
@@ -786,7 +801,13 @@ class WalletManagement extends PureComponent {
 			const deleteAccounts = this.props.keyrings[walletSelectedIndex]?.accounts;
 			await KeyringController.removeKeyring(walletSelectedIndex);
 			this.props.toggleShowHint(strings('wallet_management.wallet_deleted'));
-			WalletConnect.removeAccounts(deleteAccounts);
+			WC2Manager.getInstance()
+				.then(instance => {
+					return instance.removeAccounts(deleteAccounts);
+				})
+				.catch(err => {
+					console.warn(`Remove accounts session Failed`, err);
+				});
 		}
 	};
 

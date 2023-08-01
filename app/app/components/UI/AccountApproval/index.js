@@ -5,10 +5,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { strings } from '../../../../locales/i18n';
 import { colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
-import AccountNetworkView from '../../Views/AccountNetworkView';
 import WebsiteIcon from '../WebsiteIcon';
-import { getHost } from '../../../util/browser';
-import WalletConnect from '../../../core/WalletConnect';
 import Engine from '../../../core/Engine';
 import { getChainTypeByChainId } from '../../../util/number';
 const styles = StyleSheet.create({
@@ -72,6 +69,14 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		marginHorizontal: 20
 	},
+	hostDescription: {
+		marginTop: 15,
+		fontSize: 9,
+		...fontStyles.normal,
+		color: colors.$030319,
+		alignSelf: 'center',
+		marginHorizontal: 20
+	},
 	titleLeftIcon: {
 		width: 24,
 		height: 24
@@ -111,12 +116,6 @@ class AccountApproval extends PureComponent {
 	 * Calls onConfirm callback and analytics to track connect confirmed event
 	 */
 	onConfirm = () => {
-		if (this.state.selectedAddress !== Engine.context.PreferencesController.state.selectedAddress) {
-			WalletConnect.setSelectedAddress(this.props.currentPageInformation?.peerId, this.state.selectedAddress);
-		}
-		if (this.state.selectedChainType !== getChainTypeByChainId(this.props.currentPageInformation?.chainId)) {
-			WalletConnect.setSelectedNetwork(this.props.currentPageInformation?.peerId, this.state.selectedChainType);
-		}
 		this.props.onConfirm();
 	};
 
@@ -128,14 +127,18 @@ class AccountApproval extends PureComponent {
 	};
 
 	render = () => {
-		const { selectedAddress, selectedChainType } = this.state;
 		const { currentPageInformation } = this.props;
-		//{"autosign": false, "chainId": null, "peerId": "ea7bcad3-d0af-483b-a588-840ea258200c",
-		// "peerMeta": {"description": "", "icons": ["https://example.walletconnect.org/favicon.ico"], "name": "WalletConnect Example", "url": "https://example.walletconnect.org"}}
-		const meta = currentPageInformation.peerMeta || null;
+
+		const meta =
+			(currentPageInformation &&
+				currentPageInformation.currentPageInformation &&
+				currentPageInformation.currentPageInformation.metadata) ||
+			null;
 		const url = meta && meta.url;
-		const title = url && getHost(url);
+		const title = meta && meta.name;
 		const icon = meta && meta.icons && meta.icons.length > 0 && meta.icons[0];
+		const description = meta && meta.description;
+
 		return (
 			<View style={styles.root}>
 				<View style={styles.titleLayout}>
@@ -143,18 +146,15 @@ class AccountApproval extends PureComponent {
 					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
 				</View>
 
-				<WebsiteIcon style={styles.domainLogo} viewStyle={styles.assetLogo} url={url} icon={icon} />
-				<Text style={styles.hostTitle}>{title}</Text>
-				<AccountNetworkView
-					selectedAddress={selectedAddress}
-					selectedChainType={selectedChainType}
-					setSelectedAddress={address => {
-						this.setState({ selectedAddress: address });
-					}}
-					setSelectedChainType={chainType => {
-						this.setState({ selectedChainType: chainType });
-					}}
+				<WebsiteIcon
+					style={styles.domainLogo}
+					viewStyle={styles.assetLogo}
+					url={url}
+					icon={typeof icon === 'string' ? icon : ''}
 				/>
+				<Text style={styles.hostTitle}>{title}</Text>
+				<Text style={styles.hostDescription}>{description}</Text>
+
 				<View style={styles.actionContainer}>
 					<TouchableOpacity style={styles.cancel} onPress={this.onCancel}>
 						<Text style={styles.cancelText}>{strings('accountApproval.cancel')}</Text>

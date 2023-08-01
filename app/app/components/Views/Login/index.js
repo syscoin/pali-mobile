@@ -13,7 +13,7 @@ import {
 	DeviceEventEmitter,
 	BackHandler
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Engine from '../../../core/Engine';
 import { colors, fontStyles, baseStyles, activeOpacity } from '../../../styles/common';

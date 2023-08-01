@@ -35,7 +35,7 @@ import { TransactionStatus, util, BN } from 'paliwallet-core';
 import WebView from 'react-native-webview';
 import { onEvent } from '../../../../util/statistics';
 import CheckPassword from '../../../UI/CheckPassword';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import Device from '../../../../util/Device';
 

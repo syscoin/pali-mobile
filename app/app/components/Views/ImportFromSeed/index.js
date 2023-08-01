@@ -11,7 +11,7 @@ import {
 	Keyboard,
 	ScrollView
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
 import Engine from '../../../core/Engine';
 import { activeOpacity, colors, fontStyles } from '../../../styles/common';

@@ -95,10 +95,10 @@ const styles = StyleSheet.create({
 class AccountNetworkView extends PureComponent {
 	static propTypes = {
 		selectedAddress: PropTypes.string,
-		selectedChainType: PropTypes.number,
+
 		identities: PropTypes.object,
 		setSelectedAddress: PropTypes.func,
-		setSelectedChainType: PropTypes.func,
+
 		allChains: PropTypes.array
 	};
 
@@ -110,25 +110,16 @@ class AccountNetworkView extends PureComponent {
 	networkScrollRef = React.createRef();
 
 	render = () => {
-		const {
-			selectedAddress,
-			selectedChainType,
-			identities,
-			setSelectedAddress,
-			setSelectedChainType,
-			allChains
-		} = this.props;
+		const { selectedAddress, identities, selectedChainsType } = this.props;
 
 		let firstItem = 0;
 		const contactEntrys = [];
 		Object.values(identities).forEach((value, index) => {
 			if (value.address.toLowerCase() === selectedAddress?.toLowerCase()) {
 				firstItem = index;
+				contactEntrys.push(value);
 			}
-			contactEntrys.push(value);
 		});
-
-		const firstChainTypeItem = allChains.indexOf(selectedChainType);
 
 		return (
 			<View>
@@ -156,27 +147,18 @@ class AccountNetworkView extends PureComponent {
 										style={[
 											styles.dappAccountTouchItem,
 											styles.itemSpace,
-											index === firstItem && styles.dappAccountTouchItemSeleted
+											styles.dappAccountTouchItemSeleted
 										]}
-										onPress={() => {
-											setSelectedAddress && setSelectedAddress(item.address);
-										}}
 									>
 										<Text
-											style={[
-												styles.dappAccountName,
-												index === firstItem && styles.dappAccountNameSeleted
-											]}
+											style={[styles.dappAccountName, styles.dappAccountNameSeleted]}
 											allowFontScaling={false}
 											numberOfLines={1}
 										>
 											{item.name}
 										</Text>
 										<Text
-											style={[
-												styles.dappAccountAddress,
-												index === firstItem && styles.dappAccountAddressSeleted
-											]}
+											style={[styles.dappAccountAddress, styles.dappAccountAddressSeleted]}
 											allowFontScaling={false}
 											numberOfLines={1}
 											ellipsizeMode={'middle'}
@@ -198,16 +180,9 @@ class AccountNetworkView extends PureComponent {
 							horizontal
 							showsHorizontalScrollIndicator={false}
 							keyboardShouldPersistTaps="handled"
-							onContentSizeChange={(contentWidth, contentHeight) => {
-								const { current } = this.networkScrollRef;
-								if (current) {
-									const left = (contentWidth * firstChainTypeItem) / allChains.length;
-									current.scrollTo({ x: left, animated: false });
-								}
-							}}
 						>
 							<View style={styles.dappNetScroll}>
-								{allChains.map((item, index) => {
+								{selectedChainsType.map((item, index) => {
 									const isRpc = getIsRpc(item);
 									return (
 										<TouchableOpacity
@@ -216,11 +191,8 @@ class AccountNetworkView extends PureComponent {
 											style={[
 												styles.dappNetTouchItem,
 												styles.itemSpace,
-												selectedChainType === item && styles.dappNetTouchItemSeleted
+												styles.dappNetTouchItemSeleted
 											]}
-											onPress={() => {
-												setSelectedChainType && setSelectedChainType(item);
-											}}
 										>
 											{isRpc ? (
 												getDefiIcon(item)
@@ -230,10 +202,7 @@ class AccountNetworkView extends PureComponent {
 											<Text
 												allowFontScaling={false}
 												numberOfLines={1}
-												style={[
-													styles.dappNetName,
-													selectedChainType === item && styles.dappNetNameSeleted
-												]}
+												style={[styles.dappNetName, styles.dappNetNameSeleted]}
 											>
 												{isRpc ? getRpcName(item) : getChainTypeName(item)}
 											</Text>

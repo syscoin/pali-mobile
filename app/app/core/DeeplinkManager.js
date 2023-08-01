@@ -1,7 +1,7 @@
 'use strict';
 
 import qs from 'qs';
-import WalletConnect from '../core/WalletConnect';
+import WC2Manager, { isWC2Enabled } from '../core/WalletConnect/WalletConnectV2';
 import { util, URL } from 'paliwallet-core';
 
 class DeeplinkManager {
@@ -27,6 +27,10 @@ class DeeplinkManager {
 		}
 	}
 
+	handleQRCode = (routeName, params) => {
+		this.navigation.navigate(routeName, params);
+	};
+
 	parse(url, { browserCallBack, origin, onHandled }) {
 		//https://gopocket.security/wc?uri=wc%3A5f56ad2a-d7c4-4777-a496-2eae559b3315%401%3Fbridge%3Dhttps%253A%252F%252Fe.bridge.walletconnect.org%26key%3Dd1684b33be43d39f37552b5720fc68ef5e0edd457f3212d61a27abe34267e452
 		const urlObj = new URL(url);
@@ -50,37 +54,76 @@ class DeeplinkManager {
 				if (newUrl.startsWith('https://pali.pollum.cloud/wc?uri=')) {
 					newUrl = newUrl.replace('https://pali.pollum.cloud/wc?uri=', '');
 					handled();
-					if (!WalletConnect.isValidUri(newUrl)) return;
+
 					// eslint-disable-next-line no-case-declarations
 					const redirect = params && params.redirect;
 					// eslint-disable-next-line no-case-declarations
 					const autosign = params && params.autosign;
-					// eslint-disable-next-line no-case-declarations
-					WalletConnect.newSession(newUrl, redirect, autosign);
 				}
 				break;
 			case 'wc':
 				handled();
-				if (!WalletConnect.isValidUri(url)) return;
+
 				// eslint-disable-next-line no-case-declarations
 				let redirect = params && params.redirect;
 				// eslint-disable-next-line no-case-declarations
 				let autosign = params && params.autosign;
 				// eslint-disable-next-line no-case-declarations
-				WalletConnect.newSession(url, redirect, autosign);
+
+				const wcURL = params?.uri || urlObj.href;
+
+				if (isWC2Enabled) {
+					WC2Manager.getInstance()
+						.then(instance => {
+							return instance.connect({
+								wcUri: wcURL,
+								redirectUrl: params?.redirect,
+								origin: origin
+							});
+						})
+						.catch(err => {
+							console.warn(`DeepLinkManager failed to connect`, err);
+						});
+				}
 				break;
 			case 'paliwallet':
-				newUrl = unescape(url);
-
-				newUrl = newUrl.replace('paliwallet://wc?uri=', '');
 				handled();
-				if (!WalletConnect.isValidUri(newUrl)) return;
+				const urlDeeplink = params?.uri || urlObj.href;
+				let fixedUrl = urlDeeplink;
+
+				// To block deeplink that is not from Wallet Connect
+				if (!url.includes('paliwallet:///wc') && !url.includes('paliwallet://wc')) {
+					return;
+				}
+
+				if (url.startsWith(`paliwallet:///wc`)) {
+					fixedUrl = url.replace(`paliwallet:///wc`, `wc`);
+				} else {
+					fixedUrl = url.replace(`paliwallet://wc`, `wc`);
+				}
+
+				//Just to check if the request is correct
+
+				if (isWC2Enabled) {
+					WC2Manager.getInstance()
+						.then(instance =>
+							instance.connect({
+								wcUri: fixedUrl,
+								origin,
+								redirectUrl: params?.redirect
+							})
+						)
+						.catch(err => {
+							console.warn(`DeepLinkManager failed to connect`, err);
+						});
+				}
+
 				// eslint-disable-next-line no-case-declarations
 				redirect = params && params.redirect;
 				// eslint-disable-next-line no-case-declarations
 				autosign = params && params.autosign;
 				// eslint-disable-next-line no-case-declarations
-				WalletConnect.newSession(newUrl, redirect, autosign);
+
 				break;
 
 			// Specific to the browser screen
@@ -105,6 +148,7 @@ const SharedDeeplinkManager = {
 	init: navigation => {
 		instance = new DeeplinkManager(navigation);
 	},
+	handleQRCode: (routeName, params) => instance.handleQRCode(routeName, params),
 	parse: (url, args) => instance.parse(url, args),
 	setDeeplink: url => instance.setDeeplink(url),
 	getPendingDeeplink: () => instance.getPendingDeeplink(),

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import SettingsSwitch from '../../UI/SettingsSwitch';
 import Device from '../../../util/Device';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE, BIOMETRY_CHOICE_DISABLED, TRUE, VERIFICATION_DISABLED } from '../../../constants/storage';
 import SecureKeychain from '../../../core/SecureKeychain';
 import Engine from '../../../core/Engine';
