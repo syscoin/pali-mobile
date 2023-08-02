@@ -1,6 +1,7 @@
 import { Mutex } from 'async-mutex';
 import { BigNumber } from 'bignumber.js';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
+import { ChainType, SupportCollectibles } from '../Config';
 import PreferencesController from '../user/PreferencesController';
 import util, {
   CollectibleType,
@@ -10,7 +11,6 @@ import util, {
   timeoutFetch,
   toLowerCaseEquals,
 } from '../util';
-import { SupportCollectibles, ChainType } from '../Config';
 
 export interface ApiCollectibleCreator {
   user: { username: string };
@@ -218,54 +218,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   }
 
   /**
-   * Format Luxy Assets objects to match the Opensea object.
-   *
-   * @param collectibles - Luxy Assets object
-   */
-  formatLuxyJSON(collectibles: any) {
-    const transformedAssets = collectibles.assets.map((asset: any) => {
-      return {
-        chainId: asset.chainId,
-        token_id: asset.token_id,
-        balanceOf: asset.balanceOf,
-        address: asset.address,
-        name: asset.name,
-        background_color: asset.background_color ? asset.background_color : null,
-        image_url: asset.image_url ? asset.image_url : null,
-        image_preview_url: asset.image_preview_url ? asset.image_preview_url : null,
-        image_thumbnail_url: asset.image_thumbnail_url ? asset.image_thumbnail_url : null,
-        image_original_url: asset.image_original_url ? asset.image_original_url : null,
-        animation_url: asset.animation_url ? asset.animation_url : null,
-        animation_original_url: asset.animation_original_url ? asset.animation_original_url : null,
-        description: asset.description ? asset.description : null,
-        external_link: asset.external_link ? asset.external_link : null,
-        creator: {
-          user: {
-            username: asset.creator.user.username ? asset.creator.user.username : null,
-          },
-          profile_img_url: asset.creator.profile_img_url ? asset.creator.profile_img_url : null,
-          address: asset.creator.address ? asset.creator.address : null,
-          image_url: asset.image_url ? asset.image_url : null,
-        },
-        last_sale: asset.last_sale ? asset.last_sale : null,
-        asset_contract: {
-          schema_name: asset.asset_contract.schema_name ? asset.asset_contract.schema_name : null,
-          address: asset.address,
-          image_url: asset.collection.image_url ? asset.collection.image_url : null,
-        },
-        collection: {
-          name: asset.collection.name ? asset.collection.name : null,
-          slug: asset.collection.slug ? asset.collection.slug : null,
-          image_url: asset.collection.image_url ? asset.collection.image_url : null,
-          description: asset.collection.description ? asset.collection.description : null,
-        },
-      };
-    });
-
-    return transformedAssets;
-  }
-
-  /**
    * Fetches Luxy NFT assets from a specific wallet and returns them formatted.
    *
    * @param selectedAddress - The wallet address from which to fetch the NFTs.
@@ -279,18 +231,33 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   async fetchLuxyNFTs(selectedAddress: string, chainId: string, contractController: any) {
     try {
       const network = chainId === '57' ? 'Syscoin' : 'Rollux';
-      const response = await fetch(`https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["${network}"]
-    `);
+      const limit = 50;
+      let page = 0;
+      let pagingFinish = false;
+      let collectibles: any[] = [];
+      let url = `https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["${network}"]&page=${page}&limit=${limit}`;
 
-      const data = await response.json();
+      do {
+        const response = await fetch(url);
+        const { assets, more_pages } = await response.json();
 
-      const collectible = this.formatLuxyJSON(data);
+        if (assets?.length) {
+          collectibles = [...collectibles, ...assets];
+        }
 
-      if (!collectible) {
+        if (!more_pages || collectibles.length >= LOAD_NFT_MAX) {
+          pagingFinish = true;
+        }
+
+        url = `https://backend.luxy.io/nft/by-owner/${selectedAddress}?network=["${network}"]&page=${page}&limit=${limit}`;
+        page += 1;
+      } while (!pagingFinish);
+
+      if (!collectibles.length) {
         return undefined;
       }
 
-      return await this.fixDataCollectibles(collectible, chainId, selectedAddress, contractController);
+      return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController);
     } catch (e) {
       logInfo('PPYang fetchLuxyNFTs e:', e);
       return undefined;
