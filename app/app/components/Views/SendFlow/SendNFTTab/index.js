@@ -49,6 +49,12 @@ import CheckPassword from '../../../UI/CheckPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const titleColor = '#030319';
 const addrColor = '#60657D';
@@ -536,6 +542,7 @@ class SendNFTTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
+				ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			});
 		} else {
 			this.setLoading(false);

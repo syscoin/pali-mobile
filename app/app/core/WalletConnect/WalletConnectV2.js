@@ -614,6 +614,7 @@ class WalletConnectV2Session {
 
 					await this.approveRequest({ id: requestEvent.id, result: hash });
 				} catch (error) {
+					await this.rejectRequest({ id: requestEvent.id });
 					console.warn('thales.b@eth_send_transaction', error);
 				}
 

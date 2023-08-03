@@ -23,6 +23,12 @@ import { ChainType, isValidAddress, BN, util } from 'paliwallet-core';
 import CheckPassword from '../CheckPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../constants/storage';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	keyboardAwareWrapper: {
@@ -133,6 +139,7 @@ class TransactionEditor extends PureComponent {
 		} else {
 			this.setState({ checkPassword: true });
 		}
+		ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 	};
 
 	onInputPwdResult = async result => {
