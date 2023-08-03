@@ -33,6 +33,12 @@ import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
 import GlobeIcon from '../UI/GlobeIcon';
 import WalletIcon from '../UI/WalletIcon';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const SlideFromLeft = (index, position, width) => {
 	const inputRange = [index - 1, index, index + 1];
@@ -146,6 +152,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
+								ReactNativeHapticFeedback.trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -181,6 +188,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <GlobeIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
+								ReactNativeHapticFeedback.trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}

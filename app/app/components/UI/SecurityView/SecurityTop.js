@@ -9,6 +9,12 @@ import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import { getAllChainId, getAllChainIdArray, isRpcChainId } from '../../../util/ControllerUtils';
 import { toLowerCaseEquals } from '../../../util/general';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	topContainer: {
@@ -96,6 +102,7 @@ class SecurityTop extends Component {
 		if (this.state.checkLoading) {
 			return;
 		}
+		ReactNativeHapticFeedback.trigger('impactMedium', options);
 		this.setState({ checkLoading: true });
 		Engine.fetchAssetsSafety(true);
 		setTimeout(() => {

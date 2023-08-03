@@ -30,6 +30,7 @@ import com.brentvatne.react.ReactVideoPackage;
 
 import com.reactlibrary.RNThreadPackage;
 
+import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 
 // @react-native-community/async-storage
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -88,6 +89,7 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 				new RNI18nPackage(),
 				new KeychainPackage(),
 				new RNOSModule(),
+				new RNReactNativeHapticFeedbackPackage(),
 				new RandomBytesPackage(),
 				new SQLitePluginPackage(),
 				new TcpSocketsModule(),
