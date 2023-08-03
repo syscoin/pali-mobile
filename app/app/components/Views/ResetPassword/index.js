@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
 	KeyboardAvoidingView,
@@ -26,6 +26,7 @@ import { tryVerifyPassword } from '../../../core/Vault';
 import Engine from '../../../core/Engine';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from '../../UI/Icon';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -132,6 +133,30 @@ const styles = StyleSheet.create({
 		color: colors.white,
 		fontSize: 16,
 		...fontStyles.normal
+	},
+	inputFlex: {
+		alignSelf: 'stretch',
+		width: '100%',
+		padding: 0
+	},
+	container: {
+		flex: 1,
+		flexDirection: 'row',
+		flexWrap: 'nowrap',
+		marginTop: 10
+	},
+	visibilityBtn: {
+		position: 'absolute',
+		height: 22,
+		width: 22,
+		padding: 0,
+		marginTop: 21
+	},
+	hitSlopLeft: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 5
 	}
 });
 
@@ -162,7 +187,10 @@ class ResetPassword extends PureComponent {
 		errorTitle: null,
 		view: CONFIRM_PASSWORD,
 		originalPassword: null,
-		ready: true
+		ready: true,
+		confirmPasswordSecure: true,
+		newPasswordSecure: true,
+		confirmNewPasswordSecure: true
 	};
 
 	confirmPasswordInput = React.createRef();
@@ -283,6 +311,18 @@ class ResetPassword extends PureComponent {
 
 	setConfirmPassword = val => this.setState({ confirmPassword: val });
 
+	manageConfirmPasswordSecure = () => {
+		this.setState({ confirmPasswordSecure: !this.state.confirmPasswordSecure });
+	};
+
+	manageNewPasswordSecure = () => {
+		this.setState({ newPasswordSecure: !this.state.newPasswordSecure });
+	};
+
+	manageConfirmNewPasswordSecure = () => {
+		this.setState({ confirmNewPasswordSecure: !this.state.confirmNewPasswordSecure });
+	};
+
 	renderConfirmPassword() {
 		const { warningIncorrectPassword, password } = this.state;
 		return (
@@ -295,15 +335,29 @@ class ResetPassword extends PureComponent {
 					<View style={styles.confirmPasswordWrapper}>
 						<Text style={styles.confirm_title}>{strings('manual_backup_step_1.confirm_password')}</Text>
 						<Text style={styles.confirm_label}>{strings('manual_backup_step_1.before_continiuing')}</Text>
-						<TextInput
-							style={baseStyles.input}
-							placeholder={strings('manual_backup_step_1.password')}
-							placeholderTextColor={colors.grey100}
-							onChangeText={this.onPasswordChange}
-							secureTextEntry
-							onSubmitEditing={this.tryUnlock}
-							testID={'private-credential-password-text-input'}
-						/>
+
+						<View style={styles.container}>
+							<TextInput
+								style={[baseStyles.input, { width: '95%' }]}
+								placeholder={strings('manual_backup_step_1.password')}
+								placeholderTextColor={colors.grey100}
+								onChangeText={this.onPasswordChange}
+								secureTextEntry={this.state.confirmPasswordSecure}
+								onSubmitEditing={this.tryUnlock}
+								testID={'private-credential-password-text-input'}
+							/>
+							<TouchableOpacity
+								hitSlop={styles.hitSlopLeft}
+								style={[styles.inputFlex, { marginRight: 10 }]}
+								onPress={this.manageConfirmPasswordSecure}
+							>
+								<Icon
+									name={this.state.confirmPasswordSecure ? 'visibilityOff' : 'visibility'}
+									color={colors.greytransparent}
+									style={styles.visibilityBtn}
+								/>
+							</TouchableOpacity>
+						</View>
 
 						<View style={styles.wrongRow}>
 							<Text style={styles.warningMessageText}>{warningIncorrectPassword}</Text>
@@ -348,39 +402,68 @@ class ResetPassword extends PureComponent {
 							<Text style={[styles.hintLabel, styles.titlePadding]}>
 								{strings('reset_password.password')}
 							</Text>
-							<TextInput
-								style={baseStyles.input}
-								value={password}
-								onChangeText={this.onPasswordChange}
-								secureTextEntry
-								placeholder={strings('choose_password.enter_password')}
-								placeholderTextColor={colors.$8F92A1}
-								testID="input-password"
-								onSubmitEditing={this.jumpToConfirmPassword}
-								returnKeyType="next"
-								autoCapitalize="none"
-							/>
-							<Text style={styles.passwordStrengthLabel}>
-								{showMatchLength ? strings('choose_password.must_be_at_least') : ''}
-							</Text>
-							<View style={styles.field}>
-								<Text style={styles.hintLabel}>{strings('reset_password.confirm_password')}</Text>
+
+							<View style={styles.container}>
 								<TextInput
-									ref={this.confirmPasswordInput}
-									style={baseStyles.input}
-									value={confirmPassword}
-									onChangeText={this.setConfirmPassword}
-									secureTextEntry
+									style={[baseStyles.input, { width: '90%' }]}
+									value={password}
+									onChangeText={this.onPasswordChange}
+									secureTextEntry={this.state.newPasswordSecure}
 									placeholder={strings('choose_password.enter_password')}
 									placeholderTextColor={colors.$8F92A1}
-									testID={'input-password-confirm'}
-									onSubmitEditing={this.onPressCreate}
-									returnKeyType={'done'}
+									testID="input-password"
+									onSubmitEditing={this.jumpToConfirmPassword}
+									returnKeyType="next"
 									autoCapitalize="none"
 								/>
+								<TouchableOpacity
+									hitSlop={styles.hitSlopLeft}
+									style={[styles.inputFlex, { marginRight: 10 }]}
+									onPress={this.manageNewPasswordSecure}
+								>
+									<Icon
+										name={this.state.newPasswordSecure ? 'visibilityOff' : 'visibility'}
+										color={colors.greytransparent}
+										style={styles.visibilityBtn}
+									/>
+								</TouchableOpacity>
 								<Text style={styles.passwordStrengthLabel}>
-									{showMatchPwd ? strings('choose_password.password_not_match') : ''}
+									{showMatchLength ? strings('choose_password.must_be_at_least') : ''}
 								</Text>
+							</View>
+
+							<View style={styles.field}>
+								<Text style={styles.hintLabel}>{strings('reset_password.confirm_password')}</Text>
+
+								<View style={styles.container}>
+									<TextInput
+										ref={this.confirmPasswordInput}
+										style={[baseStyles.input, { width: '90%' }]}
+										value={confirmPassword}
+										onChangeText={this.setConfirmPassword}
+										secureTextEntry={this.state.confirmNewPasswordSecure}
+										placeholder={strings('choose_password.enter_password')}
+										placeholderTextColor={colors.$8F92A1}
+										testID={'input-password-confirm'}
+										onSubmitEditing={this.onPressCreate}
+										returnKeyType={'done'}
+										autoCapitalize="none"
+									/>
+									<TouchableOpacity
+										hitSlop={styles.hitSlopLeft}
+										style={[styles.inputFlex, { marginRight: 10 }]}
+										onPress={this.manageConfirmNewPasswordSecure}
+									>
+										<Icon
+											name={this.state.confirmNewPasswordSecure ? 'visibilityOff' : 'visibility'}
+											color={colors.greytransparent}
+											style={styles.visibilityBtn}
+										/>
+									</TouchableOpacity>
+									<Text style={styles.passwordStrengthLabel}>
+										{showMatchPwd ? strings('choose_password.password_not_match') : ''}
+									</Text>
+								</View>
 							</View>
 						</View>
 
