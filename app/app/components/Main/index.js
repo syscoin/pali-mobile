@@ -301,7 +301,7 @@ const Main = props => {
 	const toggleDappTransactionModal = props.toggleDappTransactionModal;
 	const setEtherTransaction = props.setEtherTransaction;
 	const toggleOngoingTransactionsModal = props.toggleOngoingTransactionsModal;
-
+	const { toggleShowHint } = props;
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 	const [showShareViewType, setShowShareViewType] = useState(null);
@@ -878,26 +878,29 @@ const Main = props => {
 			onUnapprovedTransaction(transactionMeta);
 		}, 20);
 	};
-	const handleSessionRequest = data => {
+	const handleSessionRequest = useCallback(data => {
 		setWalletConnectRequest(true);
 		setWalletConnectRequestInfo(data);
-	};
+	}, []);
 
-	const handleAddChain = async data => {
-		setIsAddChainModalVisible(true);
-		setAddChainInfo(data);
-		loadSessions();
-	};
+	const handleAddChain = useCallback(
+		async data => {
+			setIsAddChainModalVisible(true);
+			setAddChainInfo(data);
+			loadSessions();
+		},
+		[loadSessions]
+	);
 
-	const handleAddChainApproved = async () => {
+	const handleAddChainApproved = useCallback(async () => {
 		setIsAddChainModalVisible(false);
-		props.toggleShowHint(strings('chainSetting.custom_network_added'));
+		toggleShowHint(strings('chainSetting.custom_network_added'));
 		loadSessions();
-	};
+	}, [toggleShowHint, loadSessions]);
 
-	const handleUpdateSessions = () => {
+	const handleUpdateSessions = useCallback(() => {
 		loadSessions();
-	};
+	}, [loadSessions]);
 
 	useEffect(() => {
 		WC2Manager.hub.on('walletconnectSessionRequest', handleSessionRequest);
@@ -912,8 +915,7 @@ const Main = props => {
 			WC2Manager.hub.off('walletconnectAddChain:approved', handleAddChainApproved);
 			WC2Manager.hub.off('walletconnect::updateSessions', handleUpdateSessions);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [handleSessionRequest, handleAddChain, handleAddChainApproved, handleUpdateSessions]);
 
 	useEffect(() => {
 		AppState.addEventListener('change', handleAppStateChange);
