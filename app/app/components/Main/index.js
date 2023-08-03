@@ -1112,6 +1112,7 @@ const Main = props => {
 		}
 	};
 	const onAddChainModalCancel = async () => {
+		setTimeout(() => WC2Manager.hub.emit('walletconnectAddChain:rejected', addChainInfo.requestInfo), 500);
 		setIsAddChainModalVisible(false);
 		setAddChainInfo('');
 	};
