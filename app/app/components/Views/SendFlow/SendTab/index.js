@@ -54,6 +54,12 @@ import LottieView from 'lottie-react-native';
 import NFTImage from '../../../UI/NFTImage';
 import { getRpcNickname } from '../../../../util/ControllerUtils';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const titleColor = '#030319';
 const addrColor = '#60657D';
@@ -708,7 +714,7 @@ class SendTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
-				Vibration.vibrate(30);
+				ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			});
 		} else {
 			this.setLoading(false);
