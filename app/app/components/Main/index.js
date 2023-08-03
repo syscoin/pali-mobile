@@ -301,7 +301,7 @@ const Main = props => {
 	const toggleDappTransactionModal = props.toggleDappTransactionModal;
 	const setEtherTransaction = props.setEtherTransaction;
 	const toggleOngoingTransactionsModal = props.toggleOngoingTransactionsModal;
-
+	const { toggleShowHint } = props;
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 	const [showShareViewType, setShowShareViewType] = useState(null);
@@ -347,24 +347,6 @@ const Main = props => {
 		},
 		[connected, setConnected]
 	);
-
-	const initializeWalletConnect = () => {
-		WC2Manager.hub.on('walletconnectSessionRequest', data => {
-			setWalletConnectRequest(true);
-			setWalletConnectRequestInfo(data);
-		});
-		WC2Manager.hub.on('walletconnectAddChain', async data => {
-			setIsAddChainModalVisible(true);
-			setAddChainInfo(data);
-			loadSessions();
-		});
-		WC2Manager.hub.on('walletconnectAddChain:approved', async () => {
-			setIsAddChainModalVisible(false);
-			props.toggleShowHint(strings('chainSetting.custom_network_added'));
-			loadSessions();
-		});
-		WC2Manager.hub.on('walletconnect::updateSessions', () => loadSessions());
-	};
 
 	const getAssetByType = useCallback((chainId, form, to) => {
 		const { allTokens } = Engine.context.AssetsController.state;
@@ -896,9 +878,46 @@ const Main = props => {
 			onUnapprovedTransaction(transactionMeta);
 		}, 20);
 	};
+	const handleSessionRequest = useCallback(data => {
+		setWalletConnectRequest(true);
+		setWalletConnectRequestInfo(data);
+	}, []);
+
+	const handleAddChain = useCallback(
+		async data => {
+			setIsAddChainModalVisible(true);
+			setAddChainInfo(data);
+			loadSessions();
+		},
+		[loadSessions]
+	);
+
+	const handleAddChainApproved = useCallback(async () => {
+		setIsAddChainModalVisible(false);
+		toggleShowHint(strings('chainSetting.custom_network_added'));
+		loadSessions();
+	}, [toggleShowHint, loadSessions]);
+
+	const handleUpdateSessions = useCallback(() => {
+		loadSessions();
+	}, [loadSessions]);
 
 	useEffect(() => {
-		initializeWalletConnect();
+		WC2Manager.hub.on('walletconnectSessionRequest', handleSessionRequest);
+		WC2Manager.hub.on('walletconnectAddChain', handleAddChain);
+		WC2Manager.hub.on('walletconnectAddChain:approved', handleAddChainApproved);
+		WC2Manager.hub.on('walletconnect::updateSessions', handleUpdateSessions);
+
+		// Cleanup function to remove the event listeners when the component unmounts
+		return () => {
+			WC2Manager.hub.off('walletconnectSessionRequest', handleSessionRequest);
+			WC2Manager.hub.off('walletconnectAddChain', handleAddChain);
+			WC2Manager.hub.off('walletconnectAddChain:approved', handleAddChainApproved);
+			WC2Manager.hub.off('walletconnect::updateSessions', handleUpdateSessions);
+		};
+	}, [handleSessionRequest, handleAddChain, handleAddChainApproved, handleUpdateSessions]);
+
+	useEffect(() => {
 		AppState.addEventListener('change', handleAppStateChange);
 
 		if (Platform.OS === 'ios') {
