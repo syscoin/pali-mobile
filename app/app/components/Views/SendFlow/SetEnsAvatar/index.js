@@ -28,12 +28,6 @@ import CheckPassword from '../../../UI/CheckPassword';
 import TransactionTypes from '../../../../core/TransactionTypes';
 import { BNToHex } from '../../../../util/number';
 import Device from '../../../../util/Device';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-
-const options = {
-	enableVibrateFallback: true,
-	ignoreAndroidSystemSettings: false
-};
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -230,7 +224,6 @@ class SetEnsAvatar extends Component {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
-				ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			});
 		} else {
 			this.setLoading(false);
