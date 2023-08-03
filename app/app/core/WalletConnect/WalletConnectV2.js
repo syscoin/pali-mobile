@@ -537,8 +537,8 @@ class WalletConnectV2Session {
 	approveRequest = async ({ id, result }) => {
 		const topic = this.topicByRequestId[id];
 
-		const response = formatJsonRpcResult(id, result);
 		try {
+			const response = formatJsonRpcResult(id, result);
 			await this.web3Wallet.respondSessionRequest({
 				topic: topic,
 				response: response
@@ -734,8 +734,8 @@ export class WC2Manager {
 
 		WC2Manager.hub.on('walletconnectAddChain:approved', async data => {
 			try {
-				const response = formatJsonRpcResult(data.id, null);
 				try {
+					const response = formatJsonRpcResult(data.id, null);
 					await this.web3Wallet.respondSessionRequest({
 						topic: data.topic,
 						response: response
