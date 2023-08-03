@@ -11,7 +11,6 @@ import { getAllChainId, getAllChainIdArray, isRpcChainId } from '../../../util/C
 import { toLowerCaseEquals } from '../../../util/general';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false

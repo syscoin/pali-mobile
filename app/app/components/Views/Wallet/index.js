@@ -42,7 +42,6 @@ import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false

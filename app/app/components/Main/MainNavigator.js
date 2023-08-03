@@ -35,7 +35,6 @@ import GlobeIcon from '../UI/GlobeIcon';
 import WalletIcon from '../UI/WalletIcon';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false
@@ -153,7 +152,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
-								trigger('impactMedium', options);
+								trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -189,7 +188,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <GlobeIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
-								trigger('impactMedium', options);
+								trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}

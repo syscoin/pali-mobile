@@ -56,7 +56,6 @@ import { getRpcNickname } from '../../../../util/ControllerUtils';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false
@@ -715,7 +714,7 @@ class SendTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
-				trigger('impactHeavy', options);
+				trigger('notificationSuccess', options);
 			});
 		} else {
 			this.setLoading(false);

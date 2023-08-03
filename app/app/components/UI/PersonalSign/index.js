@@ -10,7 +10,6 @@ import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false
@@ -79,7 +78,7 @@ export default class PersonalSign extends PureComponent {
 
 	confirmSignature = async () => {
 		try {
-			trigger('impactHeavy', options);
+			trigger('notificationSuccess', options);
 			await this.signMessage();
 			this.props.onConfirm();
 		} catch (error) {

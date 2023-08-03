@@ -28,7 +28,6 @@ import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { trigger } from 'react-native-haptic-feedback';
 
-// optional
 const options = {
 	enableVibrateFallback: true,
 	ignoreAndroidSystemSettings: false
@@ -206,7 +205,7 @@ class ResetPassword extends PureComponent {
 				const biometryChoice = !(await AsyncStorage.getItem(BIOMETRY_CHOICE_DISABLED));
 				const biometryType = await SecureKeychain.getSupportedBiometryType();
 				const rememberMe = !biometryType && !biometryChoice && !!(await SecureKeychain.getGenericPassword());
-				trigger('impactHeavy', options);
+				trigger('notificationSuccess', options);
 
 				if (biometryType && biometryChoice) {
 					await SecureKeychain.setGenericPassword(password, SecureKeychain.TYPES.BIOMETRICS);
