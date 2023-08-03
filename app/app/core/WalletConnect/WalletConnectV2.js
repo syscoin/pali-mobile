@@ -317,7 +317,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 						};
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
-					} else {
 						res.result = 'rejected';
 						return;
 					}
@@ -380,7 +379,6 @@ const getRpcMethodMiddleware = ({ hostname, getProviderState, firstChainType, ap
 						};
 
 						WC2Manager.hub.emit('walletconnectAddChain', data);
-					} else {
 						res.result = 'rejected';
 						return;
 					}
@@ -447,14 +445,13 @@ class WalletConnectV2Session {
 			isWalletConnect: true,
 			wcRequestActions: {
 				approveRequest: this.approveRequest.bind(this),
-				updateSession: this.updateSession.bind(this)
+				rejectRequest: this.rejectRequest.bind(this)
 			},
 			getRpcMethodMiddleware: ({ getProviderState }) =>
 				getRpcMethodMiddleware({
 					hostname: url,
 					getProviderState,
 					firstChainType: this.firstChainType,
-					updateSession: this.updateSession.bind(this),
 					approveRequest: this.approveRequest.bind(this),
 					analytics: {},
 					isHomepage: () => false,
@@ -474,16 +471,33 @@ class WalletConnectV2Session {
 				}),
 			isMainFrame: true
 		});
-
-		WC2Manager.hub.on('walletconnectAddChain:approved', async data => {
-			await this.updateSession({
-				requestEvent: data
-			});
-		});
 	}
 
 	setDeeplink = deeplink => {
 		this.deeplink = deeplink;
+	};
+
+	rejectRequest = async ({ id }) => {
+		try {
+			const topic = this.topicByRequestId[id];
+			const response = {
+				id: id,
+				jsonrpc: '2.0',
+				error: {
+					code: 5000,
+					message: 'User rejected.'
+				}
+			};
+
+			await this.web3Wallet.respondSessionRequest({
+				topic: topic,
+				response: response
+			});
+		} catch (err) {
+			console.warn(`WC2::approveRequest error while approving request `, err);
+		}
+
+		this.needsRedirect(id);
 	};
 
 	approveRequest = async ({ id, result }) => {
@@ -528,46 +542,6 @@ class WalletConnectV2Session {
 		});
 		return sessions;
 	}
-
-	updateSession = async ({ requestEvent }) => {
-		try {
-			const activeSession = this.getSessions().find(
-				session => session.topic === requestEvent.topic || session.pairingTopic === requestEvent.topic
-			);
-
-			if (activeSession) {
-				activeSession.namespaces.eip155.accounts.push(
-					'eip155:' +
-						parseInt(requestEvent.params.request.params[0].chainId) +
-						':' +
-						activeSession.namespaces.eip155.accounts[0].split(':')[2]
-				);
-
-				await this.web3Wallet.updateSession({
-					topic: requestEvent.topic,
-					namespaces: activeSession.namespaces
-				});
-				const sessions = this.web3Wallet.getActiveSessions() || {};
-				await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
-				WC2Manager.hub.emit('walletconnect::updateSessions');
-
-				setTimeout(() => {
-					this.web3Wallet.emitSessionEvent({
-						topic: requestEvent.topic,
-						chainId: `eip155:${parseInt(requestEvent.params.request.params[0].chainId)}`,
-						event: {
-							name: 'chainChanged',
-							data: [activeSession.namespaces.eip155.accounts[0].split(':')[2]]
-						}
-					});
-				}, 100);
-			} else {
-				console.warn('WC2::updateSession Topic does not exist');
-			}
-		} catch (err) {
-			console.warn(`WC2::updateSession can't update session topic=${this.session.topic}`, err);
-		}
-	};
 
 	handleRequest = async requestEvent => {
 		try {
@@ -688,6 +662,47 @@ export class WC2Manager {
 			});
 		});
 
+		WC2Manager.hub.on('walletconnectAddChain:rejected', async data => {
+			const response = {
+				id: data.id,
+				jsonrpc: '2.0',
+				error: {
+					code: 5000,
+					message: 'User rejected.'
+				}
+			};
+
+			try {
+				await this.web3Wallet.respondSessionRequest({
+					topic: data.topic,
+					response: response
+				});
+			} catch (err) {
+				console.warn(`WC2::approveRequest error while approving request `, err);
+			}
+		});
+
+		WC2Manager.hub.on('walletconnectAddChain:approved', async data => {
+			try {
+				const response = formatJsonRpcResult(data.id, null);
+				try {
+					await this.web3Wallet.respondSessionRequest({
+						topic: data.topic,
+						response: response
+					});
+				} catch (err) {
+					console.warn(`WC2::approveRequest error while approving request `, err);
+				}
+				setTimeout(async () => {
+					await this.updateSession({
+						requestEvent: data
+					});
+				}, 1000);
+			} catch (e) {
+				console.warn(e);
+			}
+		});
+
 		Object.keys(sessions).forEach(async sessionKey => {
 			try {
 				const session = sessions[sessionKey];
@@ -702,6 +717,45 @@ export class WC2Manager {
 			}
 		});
 	}
+
+	updateSession = async ({ requestEvent }) => {
+		try {
+			const activeSession = this.getSessions().find(
+				session => session.topic === requestEvent.topic || session.pairingTopic === requestEvent.topic
+			);
+
+			if (activeSession) {
+				activeSession.namespaces.eip155.accounts.push(
+					'eip155:' +
+						parseInt(requestEvent.params.request.params[0].chainId) +
+						':' +
+						activeSession.namespaces.eip155.accounts[0].split(':')[2]
+				);
+				await this.web3Wallet.updateSession({
+					topic: requestEvent.topic,
+					namespaces: activeSession.namespaces
+				});
+				const sessions = (await this.web3Wallet.getActiveSessions()) || {};
+				await AsyncStorage.setItem(WALLETCONNECTV2_SESSIONS, JSON.stringify(sessions));
+				WC2Manager.hub.emit('walletconnect::updateSessions');
+
+				setTimeout(() => {
+					this.web3Wallet.emitSessionEvent({
+						topic: requestEvent.topic,
+						chainId: `eip155:${parseInt(requestEvent.params.request.params[0].chainId)}`,
+						event: {
+							name: 'chainChanged',
+							data: [activeSession.namespaces.eip155.accounts[0].split(':')[2]]
+						}
+					});
+				}, 500);
+			} else {
+				console.warn('WC2::updateSession Topic does not exist');
+			}
+		} catch (err) {
+			console.warn(`WC2::updateSession can't update session topic=${this.session.topic}`, err);
+		}
+	};
 
 	static async init() {
 		if (this.instance) {
