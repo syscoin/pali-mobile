@@ -19,7 +19,12 @@ import {
 } from '../../../util/transactions';
 import { store } from '../../../store';
 import { getAllChainIdArray, isRpcChainId } from '../../../util/ControllerUtils';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 const styles = StyleSheet.create({
 	wrapper: {
 		height: 44,
@@ -115,6 +120,7 @@ class TransactionTips extends PureComponent {
 			Engine.context.TransactionController.hub.once(`${transactionMeta.id}:confirmed`, this.transactionListener);
 			this.hideView = new Animated.Value(1);
 			this.setState({ submittedIds: [...this.state.submittedIds], animateEnd: true });
+			ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 		});
 	}
 
@@ -161,6 +167,7 @@ class TransactionTips extends PureComponent {
 			});
 			this.hideView = new Animated.Value(1);
 			this.setState({ submittedIds: [...submittedIds], animateEnd: true });
+			ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 		}
 	};
 
