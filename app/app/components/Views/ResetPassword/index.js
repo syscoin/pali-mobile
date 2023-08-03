@@ -26,7 +26,7 @@ import { tryVerifyPassword } from '../../../core/Vault';
 import Engine from '../../../core/Engine';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -205,7 +205,7 @@ class ResetPassword extends PureComponent {
 				const biometryChoice = !(await AsyncStorage.getItem(BIOMETRY_CHOICE_DISABLED));
 				const biometryType = await SecureKeychain.getSupportedBiometryType();
 				const rememberMe = !biometryType && !biometryChoice && !!(await SecureKeychain.getGenericPassword());
-				trigger('notificationSuccess', options);
+				ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 
 				if (biometryType && biometryChoice) {
 					await SecureKeychain.setGenericPassword(password, SecureKeychain.TYPES.BIOMETRICS);

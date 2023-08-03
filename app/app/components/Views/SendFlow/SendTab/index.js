@@ -54,7 +54,7 @@ import LottieView from 'lottie-react-native';
 import NFTImage from '../../../UI/NFTImage';
 import { getRpcNickname } from '../../../../util/ControllerUtils';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -714,7 +714,7 @@ class SendTab extends PureComponent {
 		if (result) {
 			this.onConfirm().then(() => {
 				this.setLoading(false);
-				trigger('notificationSuccess', options);
+				ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			});
 		} else {
 			this.setLoading(false);

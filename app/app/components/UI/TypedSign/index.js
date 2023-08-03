@@ -7,7 +7,7 @@ import SignatureRequest from '../SignatureRequest';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -82,7 +82,7 @@ export default class TypedSign extends PureComponent {
 
 	confirmSignature = async () => {
 		try {
-			trigger('notificationSuccess', options);
+			ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			await this.signMessage();
 			this.props.onConfirm();
 		} catch (error) {

@@ -40,7 +40,7 @@ import { showWalletConnectList } from '../../../actions/walletconnect';
 import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -301,19 +301,19 @@ class Wallet extends PureComponent {
 	};
 
 	hideAssetAmount = opt => {
-		trigger('impactMedium', options);
+		ReactNativeHapticFeedback.trigger('impactMedium', options);
 		this.setState({ isAmountHide: opt.isAmountHide });
 	};
 
 	updateNftChecked = () => {
 		this.setState({ nftChecked: !this.state.nftChecked });
-		trigger('impactLight', options);
+		ReactNativeHapticFeedback.trigger('impactLight', options);
 	};
 
 	swipeChange = (address, chainType) => {
 		this.closeTokenSwipeRow();
 		Engine.context.PreferencesController.updateCurrentChain(address, chainType);
-		trigger('impactLight', options);
+		ReactNativeHapticFeedback.trigger('impactLight', options);
 	};
 
 	pushToSecurity = contactEntry => {
@@ -491,7 +491,7 @@ class Wallet extends PureComponent {
 						onSnapToItem={index => {
 							this.firstItem = index;
 							this.setSelectedAddress(contactEntrys[index].address);
-							trigger('impactMedium', options);
+							ReactNativeHapticFeedback.trigger('impactMedium', options);
 						}}
 						scrollEnabled={!chainEditing && !searchEditing}
 					/>

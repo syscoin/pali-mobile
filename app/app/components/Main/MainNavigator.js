@@ -33,7 +33,7 @@ import Browser from '../Views/Browser';
 import TransactionsView from '../UI/TransactionsView';
 import GlobeIcon from '../UI/GlobeIcon';
 import WalletIcon from '../UI/WalletIcon';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -152,7 +152,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <WalletIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
-								trigger('impactLight', options);
+								ReactNativeHapticFeedback.trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onWalletTabFocused');
 							}
@@ -188,7 +188,7 @@ export default createStackNavigator(
 							),
 							tabBarIcon: ({ focused }) => <GlobeIcon focused={focused} />,
 							tabBarOnPress: ({ defaultHandler }) => {
-								trigger('impactLight', options);
+								ReactNativeHapticFeedback.trigger('impactLight', options);
 								defaultHandler();
 								DeviceEventEmitter.emit('onBrowserTabFocused');
 							}

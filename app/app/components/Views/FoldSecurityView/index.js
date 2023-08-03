@@ -32,7 +32,7 @@ import { onEvent } from '../../../util/statistics';
 import PercentageCircle from '../../UI/PercentageCircle';
 import LottieView from 'lottie-react-native';
 import { getSecurityData } from '../../../util/security';
-import { trigger } from 'react-native-haptic-feedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const options = {
 	enableVibrateFallback: true,
@@ -647,7 +647,7 @@ class FoldSecurityView extends PureComponent {
 						activeOpacity={0.6}
 						style={styles.applyCheckTouch}
 						onPress={() => {
-							trigger('impactMedium', options);
+							ReactNativeHapticFeedback.trigger('impactMedium', options);
 							this.setState({ showFastCheck: true });
 							onEvent('request_detection');
 							this.fastCheckCount = 0;
