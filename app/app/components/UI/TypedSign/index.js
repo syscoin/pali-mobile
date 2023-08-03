@@ -7,6 +7,13 @@ import SignatureRequest from '../SignatureRequest';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';
+import { trigger } from 'react-native-haptic-feedback';
+
+// optional
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	messageText: {
@@ -76,6 +83,7 @@ export default class TypedSign extends PureComponent {
 
 	confirmSignature = async () => {
 		try {
+			trigger('impactHeavy', options);
 			await this.signMessage();
 			this.props.onConfirm();
 		} catch (error) {

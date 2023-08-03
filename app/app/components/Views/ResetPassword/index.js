@@ -26,6 +26,13 @@ import { tryVerifyPassword } from '../../../core/Vault';
 import Engine from '../../../core/Engine';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { trigger } from 'react-native-haptic-feedback';
+
+// optional
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -194,10 +201,13 @@ class ResetPassword extends PureComponent {
 
 			// Set biometrics for new password
 			await SecureKeychain.resetGenericPassword();
+
 			try {
 				const biometryChoice = !(await AsyncStorage.getItem(BIOMETRY_CHOICE_DISABLED));
 				const biometryType = await SecureKeychain.getSupportedBiometryType();
 				const rememberMe = !biometryType && !biometryChoice && !!(await SecureKeychain.getGenericPassword());
+				trigger('impactHeavy', options);
+
 				if (biometryType && biometryChoice) {
 					await SecureKeychain.setGenericPassword(password, SecureKeychain.TYPES.BIOMETRICS);
 				} else if (rememberMe) {
