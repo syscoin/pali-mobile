@@ -8,6 +8,12 @@ import { util } from 'paliwallet-core';
 import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	messageText: {
@@ -72,6 +78,7 @@ export default class PersonalSign extends PureComponent {
 
 	confirmSignature = async () => {
 		try {
+			ReactNativeHapticFeedback.trigger('notificationSuccess', options);
 			await this.signMessage();
 			this.props.onConfirm();
 		} catch (error) {

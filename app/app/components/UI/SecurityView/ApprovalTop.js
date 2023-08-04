@@ -8,6 +8,12 @@ import LottieView from 'lottie-react-native';
 import { colors, fontStyles } from '../../../styles/common';
 import { onEvent } from '../../../util/statistics';
 import { toLowerCaseEquals } from '../../../util/general';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+	enableVibrateFallback: true,
+	ignoreAndroidSystemSettings: false
+};
 
 const styles = StyleSheet.create({
 	topContainer: {
@@ -177,6 +183,7 @@ class ApprovalTop extends Component {
 		if (this.state.checkLoading) {
 			return;
 		}
+		ReactNativeHapticFeedback.trigger('impactMedium', options);
 		this.setState({ checkLoading: true });
 		const { selectedAddress } = this.props;
 		await Engine.context.ApprovalEventsController.refreshAllowances(selectedAddress);
