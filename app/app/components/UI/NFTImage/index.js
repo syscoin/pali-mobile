@@ -256,20 +256,9 @@ class NFTImage extends PureComponent {
 		return (
 			<FastImage
 				ref={this.refImage}
-				source={
-					defaultLoadingError
-						? defaultImg || require('../../../images/nft_default_placehoder.png')
-						: { uri: urlValue }
-				}
+				source={{ uri: urlValue }}
 				style={[style, showBorder && styles.borderStyle]}
-				onLoadEnd={onLoadEnd}
 				resizeMode={resizeMode}
-				onLoad={onLoad}
-				onError={() => {
-					if (!defaultLoadingError) {
-						this.setState({ defaultLoadingError: true });
-					}
-				}}
 			/>
 		);
 	}
