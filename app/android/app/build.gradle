@@ -57,7 +57,7 @@ android {
 		missingDimensionStrategy "minReactNative", "minReactNative46"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		ndk {
-			abiFilters "armeabi-v7a", "arm64-v8a", "x86"
+			abiFilters "armeabi-v7a", "arm64-v8a"
 		}
 		dexOptions {
 			javaMaxHeapSize "2048M"
