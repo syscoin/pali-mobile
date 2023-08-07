@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.white,
 		borderRadius: 10,
 		width: 280,
-		height: 297,
+		height: 300,
 		alignSelf: 'center',
 		alignItems: 'center'
 	},
@@ -1090,7 +1090,10 @@ const Main = props => {
 						<TouchableOpacity style={styles.closeTouch} onPress={() => setShowUpdateModal(false)}>
 							<Image source={require('../../images/ic_pop_close.png')} />
 						</TouchableOpacity>
-						<Image source={require('../../images/ic_pop_update_logo.png')} />
+						<Image
+							style={{ width: 90, height: 90, resizeMode: 'contain' }}
+							source={require('../../images/pali.png')}
+						/>
 						<Text style={styles.newVersion}>{strings('version_update.find_new_version')}</Text>
 						<Text style={styles.versionName}>{props.updateConfig.latest_version}</Text>
 						<View style={styles.line} />
@@ -1103,10 +1106,12 @@ const Main = props => {
 									if (support) {
 										launchAppInGooglePlay();
 									} else {
-										const downloadUrl = props.updateConfig.download_url;
-										if (downloadUrl) {
-											Linking.openURL(downloadUrl);
-										}
+										console.warn('We do not support download from other source');
+										// We do not support download from other source
+										// const downloadUrl = props.updateConfig.download_url;
+										// if (downloadUrl) {
+										// 	Linking.openURL(downloadUrl);
+										// }
 									}
 								} else {
 									jumpIosApp();
@@ -1277,8 +1282,8 @@ const Main = props => {
 			{renderHintView()}
 
 			{ongoingTransactionsModalVisible()}
-			{/* TODO: updates the renderUpdateModal to Pali wallet logic and information */}
-			{/* {renderUpdateModal()} */}
+
+			{renderUpdateModal()}
 			{renderNotificationsModal()}
 			{renderWalletConnectListModal()}
 		</React.Fragment>
