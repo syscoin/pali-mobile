@@ -1106,10 +1106,12 @@ const Main = props => {
 									if (support) {
 										launchAppInGooglePlay();
 									} else {
-										const downloadUrl = props.updateConfig.download_url;
-										if (downloadUrl) {
-											Linking.openURL(downloadUrl);
-										}
+										console.warn('We do not support download from other source');
+										// We do not support download from other source
+										// const downloadUrl = props.updateConfig.download_url;
+										// if (downloadUrl) {
+										// 	Linking.openURL(downloadUrl);
+										// }
 									}
 								} else {
 									jumpIosApp();

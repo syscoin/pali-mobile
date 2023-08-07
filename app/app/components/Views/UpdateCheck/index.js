@@ -155,6 +155,7 @@ class UpdateCheck extends PureComponent {
 										if (support) {
 											launchAppInGooglePlay();
 										} else {
+											console.warn('We do not support download from other source');
 											//Ignore this since we do not provide our APK for download
 											// const downloadUrl = this.props.updateConfig.download_url;
 											// if (downloadUrl) {
