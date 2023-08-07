@@ -157,12 +157,11 @@ export default class Settings extends PureComponent {
 						/>
 					</View>
 					<View style={styles.cardItem}>
-						{/* {TODO: Update the update Check to Pali one instead of Pali Wallet} */}
-						{/* <SettingsDrawer
+						<SettingsDrawer
 							onPress={this.onUpdateCheck}
 							image={require('../../../images/ic_setting_update.png')}
 							title={strings('app_settings.update_check')}
-						/> */}
+						/>
 						{/* {TODO: Update the onInvite to Pali one instead of Pali Wallet
 							and probably update to send for the download page, or invite rewards page, idk}
 						{/* <SettingsDrawer

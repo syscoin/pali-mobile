@@ -19,7 +19,7 @@ export async function jumpIosApp() {
 	// if (isTestflight) {
 	// 	NativeModules.RNToolsManager.jumpTestFlight('JIeW1QjV');
 	// } else {
-	NativeModules.RNToolsManager.jumpAppStore('1576488287'); //微信id,测试使用 414478124
+	NativeModules.RNToolsManager.jumpAppStore('6447639615');
 	// }
 }
 

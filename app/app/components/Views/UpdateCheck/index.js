@@ -9,7 +9,7 @@ import { toggleTestnetVisible } from '../../../actions/settings';
 import MStatusBar from '../../UI/MStatusBar';
 import { WebView } from 'react-native-webview';
 import WebviewProgressBar from '../../UI/WebviewProgressBar';
-import { getAppVersionCode } from '../../../util/ApiClient';
+import { getAppVersionCode, shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import { launchAppInGooglePlay, supportGooglePlay, jumpIosApp } from '../../../util/NativeUtils';
 import Device from '../../../util/Device';
 import { appendLanguage } from '../../../util/browser';
@@ -105,8 +105,7 @@ class UpdateCheck extends PureComponent {
 			}
 		}
 		if (!detailUrl) {
-			//TODO: update api url to Pali ones
-			detailUrl = 'https://gopocket.finance/release-notes-plain';
+			detailUrl = 'https://pali-mobile-changelog.vercel.app';
 		}
 		detailUrl = appendLanguage(detailUrl);
 		this.setState({ forceUpdate: forceUp, updateUrl: detailUrl });
@@ -145,7 +144,7 @@ class UpdateCheck extends PureComponent {
 					{this.renderProgressBar()}
 				</View>
 				<View style={styles.line} />
-				{this.state.forceUpdate ? (
+				{this.state.forceUpdate && !shouldHideSthForAppStoreReviewer() ? (
 					<View style={styles.bottomView}>
 						<View style={styles.bottomDetail}>
 							<TouchableOpacity
@@ -156,10 +155,11 @@ class UpdateCheck extends PureComponent {
 										if (support) {
 											launchAppInGooglePlay();
 										} else {
-											const downloadUrl = this.props.updateConfig.download_url;
-											if (downloadUrl) {
-												Linking.openURL(downloadUrl);
-											}
+											//Ignore this since we do not provide our APK for download
+											// const downloadUrl = this.props.updateConfig.download_url;
+											// if (downloadUrl) {
+											// 	Linking.openURL(downloadUrl);
+											// }
 										}
 									} else {
 										jumpIosApp();

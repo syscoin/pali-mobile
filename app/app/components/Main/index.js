@@ -71,7 +71,7 @@ import OngoingTransactions from '../UI/OngoingTransactions';
 import ShareImageView from '../UI/ShareImageView';
 import { onEvent, onEventWithMap } from '../../util/statistics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAppVersionCode } from '../../util/ApiClient';
+import { getAppVersionCode, shouldHideSthForAppStoreReviewer } from '../../util/ApiClient';
 import Device from '../../util/Device';
 import {
 	BIOMETRY_CHOICE_DISABLED,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.white,
 		borderRadius: 10,
 		width: 280,
-		height: 297,
+		height: 300,
 		alignSelf: 'center',
 		alignItems: 'center'
 	},
@@ -1073,7 +1073,7 @@ const Main = props => {
 	);
 
 	const renderUpdateModal = () => {
-		if (showUpdateModal) {
+		if (showUpdateModal && !shouldHideSthForAppStoreReviewer()) {
 			return (
 				<Modal
 					isVisible={!props.isLockScreen}
@@ -1090,7 +1090,10 @@ const Main = props => {
 						<TouchableOpacity style={styles.closeTouch} onPress={() => setShowUpdateModal(false)}>
 							<Image source={require('../../images/ic_pop_close.png')} />
 						</TouchableOpacity>
-						<Image source={require('../../images/ic_pop_update_logo.png')} />
+						<Image
+							style={{ width: 90, height: 90, resizeMode: 'contain' }}
+							source={require('../../images/pali.png')}
+						/>
 						<Text style={styles.newVersion}>{strings('version_update.find_new_version')}</Text>
 						<Text style={styles.versionName}>{props.updateConfig.latest_version}</Text>
 						<View style={styles.line} />
@@ -1277,8 +1280,8 @@ const Main = props => {
 			{renderHintView()}
 
 			{ongoingTransactionsModalVisible()}
-			{/* TODO: updates the renderUpdateModal to Pali wallet logic and information */}
-			{/* {renderUpdateModal()} */}
+
+			{renderUpdateModal()}
 			{renderNotificationsModal()}
 			{renderWalletConnectListModal()}
 		</React.Fragment>
