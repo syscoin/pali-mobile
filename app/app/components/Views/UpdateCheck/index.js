@@ -9,7 +9,7 @@ import { toggleTestnetVisible } from '../../../actions/settings';
 import MStatusBar from '../../UI/MStatusBar';
 import { WebView } from 'react-native-webview';
 import WebviewProgressBar from '../../UI/WebviewProgressBar';
-import { getAppVersionCode, shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
+import { getAppVersionCode } from '../../../util/ApiClient';
 import { launchAppInGooglePlay, supportGooglePlay, jumpIosApp } from '../../../util/NativeUtils';
 import Device from '../../../util/Device';
 import { appendLanguage } from '../../../util/browser';
@@ -144,7 +144,7 @@ class UpdateCheck extends PureComponent {
 					{this.renderProgressBar()}
 				</View>
 				<View style={styles.line} />
-				{this.state.forceUpdate && !shouldHideSthForAppStoreReviewer() ? (
+				{this.state.forceUpdate ? (
 					<View style={styles.bottomView}>
 						<View style={styles.bottomDetail}>
 							<TouchableOpacity

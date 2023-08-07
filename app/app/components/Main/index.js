@@ -71,7 +71,7 @@ import OngoingTransactions from '../UI/OngoingTransactions';
 import ShareImageView from '../UI/ShareImageView';
 import { onEvent, onEventWithMap } from '../../util/statistics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAppVersionCode, shouldHideSthForAppStoreReviewer } from '../../util/ApiClient';
+import { getAppVersionCode } from '../../util/ApiClient';
 import Device from '../../util/Device';
 import {
 	BIOMETRY_CHOICE_DISABLED,
@@ -1073,7 +1073,7 @@ const Main = props => {
 	);
 
 	const renderUpdateModal = () => {
-		if (showUpdateModal && !shouldHideSthForAppStoreReviewer()) {
+		if (showUpdateModal) {
 			return (
 				<Modal
 					isVisible={!props.isLockScreen}
