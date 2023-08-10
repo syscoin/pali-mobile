@@ -105,8 +105,7 @@ class UpdateCheck extends PureComponent {
 			}
 		}
 		if (!detailUrl) {
-			//TODO: update api url to Pali ones
-			detailUrl = 'https://gopocket.finance/release-notes-plain';
+			detailUrl = 'https://pali-mobile-changelog.vercel.app';
 		}
 		detailUrl = appendLanguage(detailUrl);
 		this.setState({ forceUpdate: forceUp, updateUrl: detailUrl });
@@ -156,10 +155,12 @@ class UpdateCheck extends PureComponent {
 										if (support) {
 											launchAppInGooglePlay();
 										} else {
-											const downloadUrl = this.props.updateConfig.download_url;
-											if (downloadUrl) {
-												Linking.openURL(downloadUrl);
-											}
+											console.warn('We do not support download from other source');
+											//Ignore this since we do not provide our APK for download
+											// const downloadUrl = this.props.updateConfig.download_url;
+											// if (downloadUrl) {
+											// 	Linking.openURL(downloadUrl);
+											// }
 										}
 									} else {
 										jumpIosApp();

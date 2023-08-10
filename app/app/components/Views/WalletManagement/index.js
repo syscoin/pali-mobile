@@ -608,11 +608,11 @@ class WalletManagement extends PureComponent {
 
 						<Text style={styles.modalWarn}>{strings('wallet_management.delete_warn')}</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton2} onPress={this.onDeleteCancal}>
-								<Text style={styles.cancelText2}>{strings('other.cancel')}</Text>
+							<TouchableOpacity style={styles.cancelButton} onPress={this.onDeleteCancal}>
+								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton2} onPress={this.onDeleteOk}>
-								<Text style={styles.okText2}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity style={styles.okButton} onPress={this.onDeleteOk}>
+								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -1075,11 +1075,11 @@ class WalletManagement extends PureComponent {
 
 						<Text style={styles.modalWarn}>{strings('wallet_management.delete_wallet_warn')}</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton2} onPress={this.hideDeleteWalletModal}>
-								<Text style={styles.cancelText2}>{strings('other.cancel')}</Text>
+							<TouchableOpacity style={styles.cancelButton} onPress={this.hideDeleteWalletModal}>
+								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton2} onPress={this.onWalletDelete}>
-								<Text style={styles.okText2}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity style={styles.okButton} onPress={this.onWalletDelete}>
+								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
