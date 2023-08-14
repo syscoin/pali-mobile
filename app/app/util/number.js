@@ -671,7 +671,7 @@ export function revertAmount(amount: string, decimals: number = undefined) {
 	}
 	amount = amount.replace(/\s+/g, '');
 	while (amount.includes(',')) {
-		amount = amount.replace(',', '');
+		amount = amount.replace(',', '.');
 	}
 	if (decimals && amount.includes('.') && isDecimalValue(amount)) {
 		const comps = amount.split('.');
