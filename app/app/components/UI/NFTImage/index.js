@@ -259,6 +259,8 @@ class NFTImage extends PureComponent {
 				source={{ uri: urlValue }}
 				style={[style, showBorder && styles.borderStyle]}
 				resizeMode={resizeMode}
+				onLoadEnd={onLoadEnd}
+				onLoad={onLoad}
 			/>
 		);
 	}
