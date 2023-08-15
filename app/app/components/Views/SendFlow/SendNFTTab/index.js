@@ -68,8 +68,7 @@ const styles = StyleSheet.create({
 		margin: 8
 	},
 	container: {
-		marginHorizontal: 30,
-		height: 590
+		marginHorizontal: 30
 	},
 	noteText: {
 		color: colors.$8F92A1,
@@ -142,7 +141,8 @@ const styles = StyleSheet.create({
 	confirmActionWrapper: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 24
+		marginBottom: 24,
+		marginTop: 24
 	},
 	confirmButton: {
 		flex: 1.4,
