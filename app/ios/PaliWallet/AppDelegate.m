@@ -48,7 +48,11 @@ static void InitializeFlipper(UIApplication *application) {
   UInt64 native_start_time = [[NSDate date] timeIntervalSince1970] * 1000;
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"PaliWallet" initialProperties:@{@"native_start_time": [NSString stringWithFormat:@"%llu", native_start_time]}];
 
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  if (@available(iOS 13.0, *)) {
+      rootView.backgroundColor = [UIColor systemBackgroundColor];
+  } else {
+      rootView.backgroundColor = [UIColor whiteColor];
+  }
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];

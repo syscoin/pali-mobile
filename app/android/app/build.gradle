@@ -53,6 +53,7 @@ android {
 		targetSdkVersion rootProject.ext.targetSdkVersion
 		versionCode 16
 		versionName "1.0.5"
+		ndkVersion rootProject.ext.ndkVersion
 		multiDexEnabled true
 		missingDimensionStrategy "minReactNative", "minReactNative46"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
