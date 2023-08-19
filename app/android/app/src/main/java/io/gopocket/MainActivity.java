@@ -1,7 +1,7 @@
 package io.paliwallet;
 
 import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.ReactFragmentActivity;
+import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
-public class MainActivity extends ReactFragmentActivity {
+public class MainActivity extends ReactActivity {
 
 	/**
 	* Returns the name of the main component registered from JavaScript. This is used to schedule
