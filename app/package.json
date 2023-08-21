@@ -134,7 +134,7 @@
 		"react-native-htmlview": "^0.16.0",
 		"react-native-i18n": "2.0.15",
 		"react-native-jazzicon": "^0.1.2",
-		"react-native-keyboard-aware-scroll-view": "^0.9.3",
+		"react-native-keyboard-aware-scroll-view": "^0.9.5",
 		"react-native-keychain": "git+https://github.com/GoPlusSecurityLabs/react-native-keychain.git",
 		"react-native-level-fs": "3.0.1",
 		"react-native-linear-gradient": "^2.5.6",
