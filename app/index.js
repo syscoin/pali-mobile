@@ -45,7 +45,11 @@ LogBox.ignoreLogs([
 	"Cannot read property 'hash' of null",
 	'componentWillUpdate',
 	'componentWillReceiveProps',
-	'getNode()'
+	'getNode()',
+	'Require cycle:',
+	'Require cycle: node_modules/',
+	'Require cycle: app/',
+	'new NativeEventEmitter()'
 ]);
 
 /**
