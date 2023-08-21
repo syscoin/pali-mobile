@@ -9,8 +9,7 @@ import {
 	Image,
 	Linking,
 	Platform,
-	NativeEventEmitter,
-	NativeModules
+	NativeEventEmitter
 } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -846,7 +845,7 @@ const Main = props => {
 		});
 
 		if (Platform.OS === 'android') {
-			const eventEmitter = new NativeEventEmitter(NativeModules.RNToolsManager);
+			const eventEmitter = new NativeEventEmitter();
 			eventEmitter.addListener('AndroidUmengPushEvent', params => {
 				//umeng android:  {"event": "{\"display_type\":\"notification\",\"extra\":{\"dialog\":\"true\",\"url\":\"http:\\/\\/www.baidu.com\"},\"body\":{\"after_open\":\"go_app\",\"ticker\":\"b-通知标题\",\"title\":\"b-通知标题\",\"play_sound\":\"true\",\"text\":\"b-通知内容\"},\"msg_id\":\"uuk0hs1163469965087710\"}"}
 				const event = params.event;

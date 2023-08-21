@@ -286,7 +286,7 @@ class TokenList extends PureComponent {
 	}
 
 	componentWillUnmount() {
-		DeviceEventEmitter.removeListener('updateSecurity', this.updateSecurity);
+		DeviceEventEmitter.removeAllListeners('updateSecurity');
 	}
 
 	updateSecurity = asset => {

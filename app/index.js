@@ -45,8 +45,7 @@ LogBox.ignoreLogs([
 	"Cannot read property 'hash' of null",
 	'componentWillUpdate',
 	'componentWillReceiveProps',
-	'getNode()',
-	'VirtualizedLists should never be nested inside plain ScrollViews'
+	'getNode()'
 ]);
 
 /**

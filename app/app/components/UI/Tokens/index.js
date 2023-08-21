@@ -667,7 +667,7 @@ class Tokens extends PureComponent {
 		if (Platform.OS === 'android') {
 			BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
 		}
-		DeviceEventEmitter.removeListener('onParentScroll', this.onParentScroll);
+		DeviceEventEmitter.removeAllListeners('onParentScroll');
 	};
 
 	onBackAndroid = () => {
