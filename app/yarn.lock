@@ -13592,8 +13592,8 @@ react-native-fade-in-image@1.4.1:
 
 react-native-fast-image@8.3.7:
   version "8.3.7"
-  resolved "https://registry.npmmirror.com/react-native-fast-image/download/react-native-fast-image-8.3.7.tgz#c4877de17903101f6d94b6736a4f7e5d7b019224"
-  integrity sha1-xId94XkDEB9tlLZzak9+XXsBkiQ=
+  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.7.tgz#c4877de17903101f6d94b6736a4f7e5d7b019224"
+  integrity sha512-J++Ad04PTUe4YgjyGv63gfgV8Fz1gZKAgQHpblf8Z87D9dxfc8UfXHTPv9VLGdTJU4IzdTnQqzoFgDtWdsvBsQ==
 
 react-native-flash-message@^0.2.0:
   version "0.2.0"
@@ -13982,10 +13982,10 @@ react-native-webview@11.0.2:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native@0.65.2:
-  version "0.65.2"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.65.2.tgz#5d580ffe7b64c4966e6178a910aeefd3b40d4fdb"
-  integrity sha512-0pzZFmSv38691PB2Zj2JE3x+57a8vdgGeUw2ai0MR3p6psdRes3BBR8miEv/gB7fgFKNDKdRJGDuyFVioKN1jA==
+react-native@0.65.3:
+  version "0.65.3"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.65.3.tgz#c7bc211c04935b9cc049a280d69b1a401e198f02"
+  integrity sha512-5N93fQ5EJkp9Ys5r2NDCp1x9pmrxPpyQSwLQ3uVwu01XxVSnzCuu4/OzFKr/kgqf0UOxadKl9IWU78XqDIxARA==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^6.0.0"
