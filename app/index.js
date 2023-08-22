@@ -49,7 +49,8 @@ LogBox.ignoreLogs([
 	'Require cycle:',
 	'Require cycle: node_modules/',
 	'Require cycle: app/',
-	'new NativeEventEmitter()'
+	'new NativeEventEmitter()',
+	'EventEmitter.removeListener'
 ]);
 
 /**
