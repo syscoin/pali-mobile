@@ -50,7 +50,9 @@ LogBox.ignoreLogs([
 	'Require cycle: node_modules/',
 	'Require cycle: app/',
 	'new NativeEventEmitter()',
-	'EventEmitter.removeListener'
+	'EventEmitter.removeListener',
+	'Module TcpSockets requires main queue setup',
+	'Module RCTSearchApiManager requires main queue setup'
 ]);
 
 /**

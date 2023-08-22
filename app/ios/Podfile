@@ -37,7 +37,7 @@ target 'PaliWallet' do
     :hermes_enabled => false
   )
 
-  use_flipper!({"Flipper" => "0.93.0", 'Flipper-Folly' => '2.6.7',"Flipper-DoubleConversion" => "1.1.7"})
+  use_flipper!({"Flipper" => "0.93.0", "Flipper-DoubleConversion" => "1.1.7"})
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
