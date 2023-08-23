@@ -7,6 +7,7 @@ import { getVersion } from 'react-native-device-info';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
 import TitleBar from '../../UI/TitleBar';
+import Icon from '../../UI/Icon';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -59,6 +60,14 @@ const styles = {
 		alignItems: 'center',
 		height: 59,
 		width: '100%'
+	},
+	footer: {
+		alignItems: 'center'
+	},
+	footerFont: {
+		color: '#9B989B',
+		fontFamily: 'Poppins',
+		...fontStyles.normal
 	}
 };
 
@@ -155,6 +164,11 @@ export default class AboutView extends PureComponent {
 				<View style={styles.line} />
 
 				<View style={styles.flex3} />
+
+				<View style={styles.footer}>
+					<Text style={styles.footerFont}>Token information and charts powered by:</Text>
+					<Icon name={'coinGecko'} color={colors.white} width="200" height="100" />
+				</View>
 			</SafeAreaView>
 		);
 	}
