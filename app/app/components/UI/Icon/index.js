@@ -11,6 +11,7 @@ import Trash from '../../../images/svg/trash.svg';
 import Visibility from '../../../images/svg/visibility.svg';
 import VisibilityOff from '../../../images/svg/visibilityOff.svg';
 import Wallet from '../../../images/svg/wallet.svg';
+import CoinGecko from '../../../images/svg/coingecko-logo.svg';
 
 const icons = {
 	accountSettings: AccountSettings,
@@ -23,7 +24,8 @@ const icons = {
 	trash: Trash,
 	visibility: Visibility,
 	visibilityOff: VisibilityOff,
-	wallet: Wallet
+	wallet: Wallet,
+	coinGecko: CoinGecko
 };
 
 const Icon = _props => {
