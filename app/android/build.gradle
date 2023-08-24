@@ -27,7 +27,7 @@ buildscript {
 
 allprojects {
 	repositories {
-		mavenLocal()
+		
 		maven {		// Replace AAR from original RN with AAR from react-native-v8
 			url("$rootDir/../node_modules/react-native-v8/dist")
 		}
@@ -50,8 +50,15 @@ allprojects {
 		maven {
       		url("${project(':react-native-minimizer').projectDir}/libs")
     	}
+		mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
 		google()
-		mavenCentral()
+		
 		maven { url 'https://www.jitpack.io' }
 		gradlePluginPortal()
 
