@@ -5,6 +5,8 @@ include ':@react-native-community_blur'
 project(':@react-native-community_blur').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/blur/android')
 include ':lottie-react-native'
 project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
+include ':react-native-lottie-splash-screen'
+project(':react-native-lottie-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-lottie-splash-screen/android')
 include ':react-native-haptic-feedback'
 project(':react-native-haptic-feedback').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-haptic-feedback/android')
 include ':react-native-gesture-handler'

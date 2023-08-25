@@ -4,7 +4,6 @@ import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
-
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -14,6 +13,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.devio.rn.splashscreen.SplashScreen;
+
 
 public class MainActivity extends ReactActivity {
 
@@ -34,7 +34,8 @@ public class MainActivity extends ReactActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SplashScreen.show(this);
+		SplashScreen.show(this, R.id.lottie); // here
+   		SplashScreen.setAnimationFinished(true);// If you want the animation dialog to be forced to close when hide is called, use this code
 		super.onCreate(null);
 	}
 	@Override
