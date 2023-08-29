@@ -62,8 +62,9 @@ coverage
 # editor
 .vscode
 
-# CocoaPods
+# Ruby / CocoaPods
 /ios/Pods/
+/vendor/bundle/
 /ios/Podfile.lock
 
 apikeys

@@ -10,7 +10,9 @@ import com.leon.channel.helper.ChannelReaderUtil;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
+import io.paliwallet.paliwallet.newarchitecture.MainApplicationReactNativeHost;
 import cl.json.ShareApplication;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -112,9 +114,16 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 		}
   	};
 
+	private final ReactNativeHost mNewArchitectureNativeHost =
+      new MainApplicationReactNativeHost(this);
+
 	@Override
 	public ReactNativeHost getReactNativeHost() {
-		return mReactNativeHost;
+		if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+			return mNewArchitectureNativeHost;
+		} else {
+			return mReactNativeHost;
+		}
 	}
 
 	@Override
@@ -131,6 +140,8 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 //		if (BuildConfig.DEBUG) {
 //			WebView.setWebContentsDebuggingEnabled(true);
 //		}
+		// If you opted-in for the New Architecture, we enable the TurboModule system
+   		ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
 		SoLoader.init(this, /* native exopackage */ false);
 
 		initializeFlipper(this, getReactNativeHost().getReactInstanceManager());

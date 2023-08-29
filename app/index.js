@@ -52,7 +52,8 @@ LogBox.ignoreLogs([
 	'new NativeEventEmitter',
 	'EventEmitter.removeListener',
 	'Module TcpSockets requires main queue setup',
-	'Module RCTSearchApiManager requires main queue setup'
+	'Module RCTSearchApiManager requires main queue setup',
+	'ViewPropTypes will be removed from React Native.'
 ]);
 
 /**
