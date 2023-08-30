@@ -18,9 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import io.paliwallet.nativeModules.PreventScreenshotPackage;
-import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 import com.facebook.react.bridge.JSIModulePackage;
-
 import android.text.TextUtils;
 
 import androidx.multidex.MultiDexApplication;
@@ -108,10 +106,7 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			return "index";
 		}
 
-		@Override
-		protected JSIModulePackage getJSIModulePackage() {
-			return new ReanimatedJSIModulePackage();
-		}
+		
   	};
 
 	private final ReactNativeHost mNewArchitectureNativeHost =
