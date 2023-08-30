@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Animated, { Easing, useSharedValue } from 'react-native-reanimated';
+import Animated, { Easing } from 'react-native-reanimated';
 import { removeCurrentNotification, hideCurrentNotification } from '../../../actions/notification';
 import notificationTypes from '../../../util/notifications';
 import TransactionNotification from './TransactionNotification';
@@ -21,7 +21,7 @@ function Notification(props) {
 		removeCurrentNotification
 	} = props;
 
-	const notificationAnimated = useSharedValue(100);
+	const notificationAnimated = useRef(new Animated.Value(100)).current;
 
 	const usePrevious = value => {
 		const ref = useRef();
