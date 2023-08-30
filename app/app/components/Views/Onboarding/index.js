@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Text, Image, View, ScrollView, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { Text, Animated, Image, View, ScrollView, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { colors, fontStyles, baseStyles, activeOpacity } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import FadeOutOverlay from '../../UI/FadeOutOverlay';
-import Animated, { Easing } from 'react-native-reanimated';
+import { Easing } from 'react-native-reanimated';
 import PreventScreenshot from '../../../core/PreventScreenshot';
 
 import CreateBackground from '../../../images/addbackground.png';
