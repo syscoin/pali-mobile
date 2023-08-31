@@ -273,7 +273,9 @@ class HomePage extends PureComponent {
 		// Does not work correctly so we need to force the render of the page.
 		if (Device.isAndroid()) {
 			const tabIndex = await AsyncStorage.getItem(HOMEPAGE_TAB_INDEX);
-			this.scrollableTabView.goToPage(tabIndex);
+			if (tabIndex && this.scrollableTabView) {
+				this.scrollableTabView.goToPage(tabIndex);
+			}
 		}
 	}
 	componentWillUnmount() {
