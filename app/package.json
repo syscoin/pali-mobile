@@ -153,7 +153,7 @@
 		"react-native-safe-area": "^0.5.1",
 		"react-native-safe-area-context": "^3.4.1",
 		"react-native-screens": "^2.16.1",
-		"react-native-scrollable-tab-view": "1.0.0",
+		"react-native-scrollable-tab-view": "^1.0.0",
 		"react-native-search-api": "ombori/react-native-search-api#8/head",
 		"react-native-sensors": "5.3.0",
 		"react-native-share": "^3.2.0",
