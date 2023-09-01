@@ -82,7 +82,6 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			packages.add(new RNToolsPackage());
 			packages.add(new MPAndroidChartPackage());
 			packages.add(new BlurViewPackage());
-			packages.add(new ReactVideoPackage());
 			packages.add(new RNThreadPackage(
 				mReactNativeHost,
 				new AsyncStoragePackage(),
