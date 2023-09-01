@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, ViewPropTypes } from 'react-native';
+import { Animated } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 
 /**
  * View that has the ability to fade in / out

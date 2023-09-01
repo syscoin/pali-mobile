@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ViewPropTypes, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import AndroidMediaPlayer from './AndroidMediaPlayer';
 import Video from 'react-native-video';
 import Device from '../../../util/Device';

@@ -1,0 +1,24 @@
+diff --git a/node_modules/react-native-threads/ios/RNThread.podspec b/node_modules/react-native-threads/RNThread.podspec
+similarity index 82%
+rename from node_modules/react-native-threads/ios/RNThread.podspec
+rename to node_modules/react-native-threads/RNThread.podspec
+index 704c326..6698cd0 100644
+--- a/node_modules/react-native-threads/ios/RNThread.podspec
++++ b/node_modules/react-native-threads/RNThread.podspec
+@@ -1,6 +1,6 @@
+ require 'json'
+ 
+-package = JSON.parse(File.read(File.join(__dir__, '../package.json')))
++package = JSON.parse(File.read(File.join(__dir__, './package.json')))
+ 
+ Pod::Spec.new do |s|
+   s.name           = "RNThread"
+@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
+   s.author         = package['author']
+   s.homepage       = "https://github.com/joltup/RNThread.git"
+   s.source       = { :git => "https://github.com/joltup/RNThread.git", :tag => s.version }
+-  s.source_files  = "**/*.{h,m}"
++  s.source_files  = "ios/**/*.{h,m}"
+   s.platform      = :ios, "7.0"
+   s.tvos.deployment_target = '10.0'
+ 

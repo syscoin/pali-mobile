@@ -9,10 +9,10 @@ import {
 	Image,
 	View,
 	Text,
-	ViewPropTypes,
 	TouchableNativeFeedback,
 	TouchableHighlight
 } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import FA5Icon from 'react-native-vector-icons/FontAwesome5';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import { baseStyles, colors } from '../../../styles/common';

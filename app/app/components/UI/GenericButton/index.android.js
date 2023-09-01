@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ViewPropTypes, TouchableNativeFeedback } from 'react-native';
-
+import { View, TouchableNativeFeedback } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 /**
  * UI component that renders a button
  * specifically for android

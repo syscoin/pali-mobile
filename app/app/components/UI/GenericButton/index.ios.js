@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ViewPropTypes, TouchableOpacity } from 'react-native';
-
+import { TouchableOpacity } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 /**
  * UI component that renders a button
  * specifically for iOS

@@ -18,6 +18,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+ios/.xcode.env.local
 project.xcworkspace
 ios/debug.xcconfig
 ios/release.xcconfig

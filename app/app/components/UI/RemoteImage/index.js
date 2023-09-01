@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ViewPropTypes } from 'react-native';
+import { View } from 'react-native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import FadeIn from 'react-native-fade-in-image';
 import FastImage from 'react-native-fast-image';
 // eslint-disable-next-line import/default
