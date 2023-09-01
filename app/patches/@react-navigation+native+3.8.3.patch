@@ -1,0 +1,54 @@
+diff --git a/node_modules/@react-navigation/native/lib/commonjs/withOrientation.js b/node_modules/@react-navigation/native/lib/commonjs/withOrientation.js
+index 324c382..eb7b1a8 100644
+--- a/node_modules/@react-navigation/native/lib/commonjs/withOrientation.js
++++ b/node_modules/@react-navigation/native/lib/commonjs/withOrientation.js
+@@ -51,11 +51,11 @@ function _default(WrappedComponent) {
+     }
+ 
+     componentDidMount() {
+-      _reactNative.Dimensions.addEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription = Dimensions.addEventListener('change', this.updateWindowDims);
+     }
+ 
+     componentWillUnmount() {
+-      _reactNative.Dimensions.removeEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription?.remove();
+     }
+ 
+     render() {
+diff --git a/node_modules/@react-navigation/native/lib/module/withOrientation.js b/node_modules/@react-navigation/native/lib/module/withOrientation.js
+index fbc1c0b..08ef0e7 100644
+--- a/node_modules/@react-navigation/native/lib/module/withOrientation.js
++++ b/node_modules/@react-navigation/native/lib/module/withOrientation.js
+@@ -31,11 +31,11 @@ export default function (WrappedComponent) {
+     }
+ 
+     componentDidMount() {
+-      Dimensions.addEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription = Dimensions.addEventListener('change', this.updateWindowDims);
+     }
+ 
+     componentWillUnmount() {
+-      Dimensions.removeEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription?.remove();
+     }
+ 
+     render() {
+diff --git a/node_modules/@react-navigation/native/src/withOrientation.js b/node_modules/@react-navigation/native/src/withOrientation.js
+index c449653..e60a7c9 100644
+--- a/node_modules/@react-navigation/native/src/withOrientation.js
++++ b/node_modules/@react-navigation/native/src/withOrientation.js
+@@ -14,11 +14,11 @@ export default function (WrappedComponent) {
+     }
+ 
+     componentDidMount() {
+-      Dimensions.addEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription = Dimensions.addEventListener('change', this.updateWindowDims);
+     }
+ 
+     componentWillUnmount() {
+-      Dimensions.removeEventListener('change', this.handleOrientationChange);
++      this.dimensionsSubscription?.remove();
+     }
+ 
+     handleOrientationChange = ({ window }) => {
