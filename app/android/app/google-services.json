@@ -1,51 +1,15 @@
 {
 	"project_info": {
-		"project_number": "511192186822",
-		"project_id": "palisys",
-		"storage_bucket": "palisys.appspot.com"
+		"project_number": "Put your own firebase configuration data here"
 	},
 	"client": [
 		{
-			"client_info": {
-				"mobilesdk_app_id": "1:511192186822:android:cd532f17a5ed0d6a78bcc7",
-				"android_client_info": {
-					"package_name": "io.paliwallet"
-				}
-			},
-			"oauth_client": [
-				{
-					"client_id": "511192186822-e22vlki25ede8rtohijmumndapj1nq5v.apps.googleusercontent.com",
-					"client_type": 1,
-					"android_info": {
-						"package_name": "io.paliwallet",
-						"certificate_hash": "8025b2a639b3e44ffebb20ebeb42acbf579c014d"
-					}
-				},
-				{
-					"client_id": "511192186822-7c7onh7m7o619vqb7noe9hdsuvrck041.apps.googleusercontent.com",
-					"client_type": 3
-				}
-			],
-			"api_key": [
-				{
-					"current_key": "AIzaSyBG0rLtDVSgpTXag3u4_kD9aIhcm-8CbJM"
-				}
-			],
+			"client_info": {},
+			"oauth_client": [{}, {}],
+			"api_key": [{}],
 			"services": {
 				"appinvite_service": {
-					"other_platform_oauth_client": [
-						{
-							"client_id": "511192186822-7c7onh7m7o619vqb7noe9hdsuvrck041.apps.googleusercontent.com",
-							"client_type": 3
-						},
-						{
-							"client_id": "511192186822-96vlhd8345oi5tnb46gb9mh1b4isfb5f.apps.googleusercontent.com",
-							"client_type": 2,
-							"ios_info": {
-								"bundle_id": "io.pollum.paliwallet"
-							}
-						}
-					]
+					"other_platform_oauth_client": []
 				}
 			}
 		}
