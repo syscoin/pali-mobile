@@ -95,6 +95,12 @@ class LanguageSelector extends PureComponent {
 						onPress={() => {
 							this.setState({ locale: language.locale });
 							setLocale(language.locale);
+							setTimeout(() => {
+								this.props.navigation.pop();
+							}, 50);
+							setTimeout(() => {
+								this.props.navigation.pop();
+							}, 75);
 						}}
 					>
 						<View style={styles.languageInfo}>
