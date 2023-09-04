@@ -653,6 +653,7 @@
 		"delete_account": "Delete Account “{{name}}”?",
 		"delete_this_wallet": "Delete this Wallet",
 		"wallet_index": "Wallet{{number}}",
+		"wallet_imported": "Imported",
 		"add_new_account": "Add New Account",
 		"confirm_password": "Confirm password",
 		"password": "Password",

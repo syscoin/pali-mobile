@@ -652,6 +652,7 @@
 		"delete_account": "确认删除账户 “{{name}}”?",
 		"delete_this_wallet": "删除该钱包",
 		"wallet_index": "钱包{{number}}",
+		"wallet_imported": "进口",
 		"add_new_account": "添加新账户",
 		"confirm_password": "确认密码",
 		"password": "密码",

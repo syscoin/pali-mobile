@@ -573,6 +573,7 @@
 		"delete_account": "¿Eliminar la cuenta “{{name}}”?",
 		"delete_this_wallet": "Eliminar esta Billetera",
 		"wallet_index": "Billetera{{number}}",
+		"wallet_imported": "Importado",
 		"add_new_account": "Agregar Nueva Cuenta",
 		"confirm_password": "Confirmar contraseña",
 		"password": "Contraseña",
