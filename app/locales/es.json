@@ -21,7 +21,7 @@
 		"ok": "OK"
 	},
 	"onboarding": {
-		"title": "Welcome to\nPali Wallet",
+		"title": "Bem vindo a\nPali Wallet",
 		"subtitle": "Web3 on-the-go",
 		"start_exploring_now": "Create\nNew Wallet",
 		"import_seed_phrase": "Import\nSeed Phrase",
@@ -81,7 +81,7 @@
 		"enter_private_key_tips": "Since private key is not human-readable and memorable, most private keys are stored on unsafe devices and imported by copy&paste, which is STRONGLY not recommended by Pali Wallet. After import from private key, better to transfer your asset to a new wallet generated on Seed Phrase by Pali Wallet to get better security."
 	},
 	"wallet": {
-		"title": "Pali Wallet",
+		"title": "Pali Wallet Espanhou",
 		"tokens": "TOKENS",
 		"all_network": "All",
 		"eth_etwork": "Ethereum",
@@ -98,7 +98,7 @@
 		"search_tokens_or_contract": "Search Tokens or Contract Addr"
 	},
 	"app_settings": {
-		"title": "Settings",
+		"title": "Settings Espanhou",
 		"wallet_management": "Wallet & Account",
 		"change_password": "Change Password",
 		"security_settings": "Security Settings",
@@ -121,8 +121,7 @@
 		"use_biometrics_message": "Instead of entering password, use Bio Auth to unlock Pali Wallet.",
 		"transaction_verification": "Transaction needs verification",
 		"verification_message_for_pwd": "Password required for every transaction.",
-		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction.",
-		"language": "Language"
+		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction."
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "Reveal Seed Phrase",

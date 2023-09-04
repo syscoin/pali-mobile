@@ -84,6 +84,10 @@ export default class Settings extends PureComponent {
 		this.props.navigation.navigate('CurrencyUnit');
 	};
 
+	onLanguageSelector = () => {
+		this.props.navigation.navigate('LanguageSelector');
+	};
+
 	onUpdateCheck = () => {
 		this.props.navigation.navigate('UpdateCheck');
 	};
@@ -153,6 +157,12 @@ export default class Settings extends PureComponent {
 							onPress={this.onCurrencyUnit}
 							image={require('../../../images/ic_setting_currency.png')}
 							title={strings('app_settings.currency_unit')}
+						/>
+						<SettingsDrawer
+							onPress={this.onLanguageSelector}
+							image={require('../../../images/ic_setting_language.png')}
+							title={strings('app_settings.language')}
+							iconStyle={{ height: 26, width: 26 }}
 							hideLine
 						/>
 					</View>
