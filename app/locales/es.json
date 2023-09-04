@@ -44,7 +44,8 @@
 		"use_biometrics_message": "En lugar de ingresar la contraseña, usa la Bio Autenticación para desbloquear Pali Wallet.",
 		"transaction_verification": "Se requiere verificación de transacción",
 		"verification_message_for_pwd": "Se requiere contraseña para cada transacción.",
-		"verification_message_for_id": "Se requiere contraseña o FaceID/Huella Digital para cada transacción."
+		"verification_message_for_id": "Se requiere contraseña o FaceID/Huella Digital para cada transacción.",
+		"language": "Idioma"
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "Revelar Frase Semilla",
