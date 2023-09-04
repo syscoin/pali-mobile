@@ -68,7 +68,7 @@ const styles = {
 };
 
 const languageArray = [
-	{ name: 'English', locale: 'en' },
+	{ name: 'English', locale: 'en-US' },
 	{ name: 'Español', locale: 'es' },
 	{ name: '中国人', locale: 'zh' }
 ];
