@@ -73,9 +73,9 @@ export default class WebsiteIcon extends PureComponent {
 		// 	host = host.substr(4);
 		// }
 
-		let iconUrl = `https://api.faviconkit.com/${host}/64`;
+		let iconUrl = `https://api.faviconkit.com/${host}/128`;
 		if (!util.isEtherscanAvailable()) {
-			iconUrl = `https://pali.pollum.cloud/faviconkit/${host}/64`;
+			iconUrl = `https://pali.pollum.cloud/faviconkit/${host}/128`;
 		}
 		return iconUrl;
 	};
