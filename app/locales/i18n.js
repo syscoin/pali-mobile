@@ -6,13 +6,15 @@ import { LANGUAGE } from '../app/constants/storage';
 // Import all locales
 import en from './en.json';
 import zh from './zh-cn.json';
+import es from './es.json';
 // Should the app fallback to English if user locale doesn't exists
 I18n.fallbacks = true;
 I18n.defaultLocale = 'en';
 // Define the supported translations
 I18n.translations = {
 	en,
-	zh
+	zh,
+	es
 };
 // If language selected get locale
 getUserPreferableLocale();
@@ -33,7 +35,8 @@ export async function setLocale(locale) {
 export function getLanguages() {
 	return {
 		en: 'English',
-		zh: 'Chinese - China'
+		zh: 'Chinese - China',
+		es: 'Spanish'
 	};
 }
 
