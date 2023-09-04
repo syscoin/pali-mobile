@@ -1,0 +1,30 @@
+diff --git a/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+index 17883fd..58ac6ac 100644
+--- a/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
++++ b/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+@@ -649,7 +649,11 @@ public class CameraRollModule extends ReactContextBaseJavaModule {
+                 + photoUri.toString(),
+             e);
+       }
+-      retriever.release();
++      try {
++        retriever.release();
++      } catch (IOException ex) {
++        // handle the exception here
++      }
+     }
+ 
+     if (photoDescriptor != null) {
+@@ -719,7 +723,11 @@ public class CameraRollModule extends ReactContextBaseJavaModule {
+                     + photoUri.toString(),
+                 e);
+           }
+-          retriever.release();
++          try {
++            retriever.release();
++          } catch (IOException ex) {
++            // handle the exception here
++          }
+         } else {
+           BitmapFactory.Options options = new BitmapFactory.Options();
+           // Set inJustDecodeBounds to true so we don't actually load the Bitmap, but only get its
