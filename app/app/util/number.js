@@ -1232,7 +1232,13 @@ export function getEip155Url(nft) {
 
 export function extractTicker(text) {
 	const match = text.match(/<em>([^<]+)<\/em>/);
-	return match ? match[1] : text;
+	let ticker = match ? match[1] : text;
+
+	if (!ticker.endsWith('USD')) {
+		ticker += 'USD';
+	}
+
+	return ticker;
 }
 
 export default {
