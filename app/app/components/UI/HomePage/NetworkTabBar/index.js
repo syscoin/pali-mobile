@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 class NetworkTabBar extends PureComponent {
 	static propTypes = {
 		goToPage: PropTypes.func,
-		activeTab: PropTypes.number,
+		activeTab: PropTypes.any,
 		tabs: PropTypes.array,
 		backgroundColor: PropTypes.string
 	};
@@ -58,7 +58,7 @@ class NetworkTabBar extends PureComponent {
 
 	async componentDidMount() {
 		this.props.tabs.forEach((name, page) => {
-			const isTabActive = this.props.activeTab === page;
+			const isTabActive = parseInt(this.props.activeTab) === page;
 			const animated = new Animated.Value(isTabActive ? 1 : 0);
 			this.setState({ [name]: animated });
 		});
@@ -154,7 +154,7 @@ class NetworkTabBar extends PureComponent {
 						const arr = tabName.split(':');
 						const name = arr[0];
 						const chain = Number(arr[1]);
-						const isTabActive = this.props.activeTab === page;
+						const isTabActive = parseInt(this.props.activeTab) === page;
 						const animated = this.state[tabName] || new Animated.Value(isTabActive ? 1 : 0);
 						return this.renderTab(name, chain, page, isTabActive, animated, this.onPressHandler.bind(this));
 					})}

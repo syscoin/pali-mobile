@@ -247,7 +247,7 @@ class HomePage extends PureComponent {
 		if (tabIndex) {
 			initialPage = Number(tabIndex);
 			if (dappPage?.networks) {
-				if (tabIndex > dappPage.networks.length - 1) {
+				if (tabIndex > dappPage.networks.length) {
 					initialPage = 0;
 				}
 			}
@@ -264,6 +264,16 @@ class HomePage extends PureComponent {
 			});
 		} else {
 			this.statusBarHeight = StatusBar.currentHeight || 0;
+		}
+	}
+	async componentWillReceiveProps() {
+		// This is necessary because on android for some reason initialPage
+		// Does not work correctly so we need to force the render of the page.
+		if (Device.isAndroid()) {
+			const tabIndex = await AsyncStorage.getItem(HOMEPAGE_TAB_INDEX);
+			if (tabIndex && this.scrollableTabView) {
+				this.scrollableTabView.goToPage(tabIndex);
+			}
 		}
 	}
 
@@ -617,6 +627,9 @@ class HomePage extends PureComponent {
 						{!shouldHideSth && dappPage.showBanner && this.renderBanner(dappPage)}
 						{dappPage.showContent && (
 							<ScrollableTabView
+								ref={ref => {
+									this.scrollableTabView = ref;
+								}}
 								style={styles.tabView}
 								renderTabBar={this.renderTabBar}
 								locked
