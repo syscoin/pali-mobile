@@ -1230,6 +1230,17 @@ export function getEip155Url(nft) {
 	return `eip155:1/${nft?.asset_contract?.schema_name}:${nft?.address}/${nft?.token_id}`.toLowerCase();
 }
 
+export function extractTicker(text) {
+	const match = text.match(/<em>([^<]+)<\/em>/);
+	let ticker = match ? match[1] : text;
+
+	if (!ticker.endsWith('USD')) {
+		ticker += 'USD';
+	}
+
+	return ticker;
+}
+
 export default {
 	calcAssetPrices,
 	getAssetLogo,
