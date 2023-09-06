@@ -1,52 +1,40 @@
-diff --git a/node_modules/react-native-webview/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/webview/BuildConfig.java b/node_modules/react-native-webview/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/webview/BuildConfig.java
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java b/node_modules/@react-native-community/cameraroll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java
 new file mode 100644
-index 0000000..473fe47
+index 0000000..be91512
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/webview/BuildConfig.java
++++ b/node_modules/@react-native-community/cameraroll/android/build/generated/source/buildConfig/debug/com/reactnativecommunity/cameraroll/BuildConfig.java
 @@ -0,0 +1,10 @@
 +/**
 + * Automatically generated file. DO NOT MODIFY
 + */
-+package com.reactnativecommunity.webview;
++package com.reactnativecommunity.cameraroll;
 +
 +public final class BuildConfig {
 +  public static final boolean DEBUG = Boolean.parseBoolean("true");
-+  public static final String LIBRARY_PACKAGE_NAME = "com.reactnativecommunity.webview";
++  public static final String LIBRARY_PACKAGE_NAME = "com.reactnativecommunity.cameraroll";
 +  public static final String BUILD_TYPE = "debug";
 +}
-diff --git a/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
 new file mode 100644
-index 0000000..630b4d7
+index 0000000..46903c2
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
-@@ -0,0 +1,21 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+@@ -0,0 +1,9 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.reactnativecommunity.webview" >
++    package="com.reactnativecommunity.cameraroll" >
 +
 +    <uses-sdk
-+        android:minSdkVersion="16"
++        android:minSdkVersion="21"
 +        android:targetSdkVersion="33" />
-+
-+    <application>
-+        <provider
-+            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-+            android:authorities="dollar_openBracket_applicationId_closeBracket.fileprovider"
-+            android:exported="false"
-+            android:grantUriPermissions="true" >
-+            <meta-data
-+                android:name="android.support.FILE_PROVIDER_PATHS"
-+                android:resource="@xml/file_provider_paths" />
-+        </provider>
-+    </application>
 +
 +</manifest>
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
 new file mode 100644
-index 0000000..dca49ae
+index 0000000..71559ab
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
 @@ -0,0 +1,16 @@
 +{
 +  "version": 2,
@@ -54,7 +42,7 @@ index 0000000..dca49ae
 +    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.reactnativecommunity.webview",
++  "applicationId": "com.reactnativecommunity.cameraroll",
 +  "variantName": "debug",
 +  "elements": [
 +    {
@@ -65,32 +53,32 @@ index 0000000..dca49ae
 +  ]
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-webview/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
 new file mode 100644
 index 0000000..d8560bd
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
 @@ -0,0 +1,2 @@
 +aarFormatVersion=1.0
 +aarMetadataVersion=1.0
-diff --git a/node_modules/react-native-webview/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-webview/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/@react-native-community/cameraroll/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 new file mode 100644
 index 0000000..9e26dfe
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 @@ -0,0 +1 @@
 +{}
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-webview/android/build/intermediates/compile_r_class_jar/debug/R.jar
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
-index 0000000..74ec290
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-webview/android/build/intermediates/compile_symbol_list/debug/R.txt
+index 0000000..33375fe
+Binary files /dev/null and b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_symbol_list/debug/R.txt
 new file mode 100644
-index 0000000..3a5f626
+index 0000000..bd74fdc
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/compile_symbol_list/debug/R.txt
-@@ -0,0 +1,1857 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_symbol_list/debug/R.txt
+@@ -0,0 +1,1856 @@
 +int anim abc_fade_in 0x0
 +int anim abc_fade_out 0x0
 +int anim abc_grow_fade_in_from_bottom 0x0
@@ -1946,167 +1934,95 @@ index 0000000..3a5f626
 +int styleable ViewStubCompat_android_id 0
 +int styleable ViewStubCompat_android_inflatedId 1
 +int styleable ViewStubCompat_android_layout 2
-+int xml file_provider_paths 0x0
 +int xml rn_dev_preferences 0x0
-diff --git a/node_modules/react-native-webview/android/build/intermediates/compiled_local_resources/debug/out/xml_file_provider_paths.xml.flat b/node_modules/react-native-webview/android/build/intermediates/compiled_local_resources/debug/out/xml_file_provider_paths.xml.flat
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 new file mode 100644
-index 0000000..507087c
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/compiled_local_resources/debug/out/xml_file_provider_paths.xml.flat differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-webview/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
-new file mode 100644
-index 0000000..6e77011
+index 0000000..c718e02
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/debug/shaders"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/debug/shaders"/></dataSet></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugAssets/merger.xml
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 new file mode 100644
-index 0000000..3fb530f
+index 0000000..00de30d
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugAssets/merger.xml
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/assets"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/intermediates/shader_assets/debug/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/debug/assets"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/assets"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/build/intermediates/shader_assets/debug/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/debug/assets"/></dataSet></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..0da27f8
+index 0000000..7e638cd
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
-@@ -0,0 +1,2 @@
-+#Wed Sep 06 12:59:17 BRT 2023
-+/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/res/xml/file_provider_paths.xml=/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/intermediates/packaged_res/debug/xml/file_provider_paths.xml
-diff --git a/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/merger.xml
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Wed Sep 06 12:59:16 BRT 2023
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml
 new file mode 100644
-index 0000000..dc44d97
+index 0000000..ce5d70f
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/incremental/packageDebugResources/merger.xml
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/res"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/generated/res/rs/debug"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/res"><file name="file_provider_paths" path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/res/xml/file_provider_paths.xml" qualifiers="" type="xml"/></source><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/generated/res/rs/debug"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/debug/res"/></dataSet><mergedItems/></merger>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><mergedItems/></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewFileProvider.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewFileProvider.class
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/@react-native-community/cameraroll/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
 new file mode 100644
-index 0000000..6a4035f
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewFileProvider.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$1.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$1.class
-new file mode 100644
-index 0000000..9810448
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$1.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$2.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$2.class
-new file mode 100644
-index 0000000..fad5dae
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$2.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$MimeType.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$MimeType.class
-new file mode 100644
-index 0000000..54d33c6
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$MimeType.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock$ShouldOverrideCallbackState.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock$ShouldOverrideCallbackState.class
-new file mode 100644
-index 0000000..e89aec5
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock$ShouldOverrideCallbackState.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock.class
-new file mode 100644
-index 0000000..723c1b8
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule$ShouldOverrideUrlLoadingLock.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule.class
-new file mode 100644
-index 0000000..3922a9d
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/RNCWebViewModule.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/WebViewConfig.class b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/WebViewConfig.class
-new file mode 100644
-index 0000000..27caddf
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/intermediates/javac/debug/classes/com/reactnativecommunity/webview/WebViewConfig.class differ
-diff --git a/node_modules/react-native-webview/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-webview/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
-new file mode 100644
-index 0000000..d019fda
+index 0000000..78ac5b8
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
-@@ -0,0 +1,3 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+@@ -0,0 +1,2 @@
 +R_DEF: Internal format may change without notice
 +local
-+xml file_provider_paths
-diff --git a/node_modules/react-native-webview/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-webview/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/@react-native-community/cameraroll/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
 new file mode 100644
-index 0000000..5032ea4
+index 0000000..4313fff
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
-@@ -0,0 +1,32 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,11 @@
 +1<?xml version="1.0" encoding="utf-8"?>
 +2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+3    package="com.reactnativecommunity.webview" >
++3    package="com.reactnativecommunity.cameraroll" >
 +4
 +5    <uses-sdk
-+6        android:minSdkVersion="16"
-+6-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
++6        android:minSdkVersion="21"
++6-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +7        android:targetSdkVersion="33" />
-+7-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
++7-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +8
-+9    <application>
-+9-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:4:3-14:17
-+10        <provider
-+10-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:5:5-13:16
-+11            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-+11-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:6:7-45
-+12            android:authorities="${applicationId}.fileprovider"
-+12-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:7:7-58
-+13            android:exported="false"
-+13-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:8:7-31
-+14            android:grantUriPermissions="true" >
-+14-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:9:7-41
-+15            <meta-data
-+15-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:10:7-12:55
-+16                android:name="android.support.FILE_PROVIDER_PATHS"
-+16-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:11:9-59
-+17                android:resource="@xml/file_provider_paths" />
-+17-->/Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:12:9-52
-+18        </provider>
-+19    </application>
-+20
-+21</manifest>
-diff --git a/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
++9</manifest>
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
 new file mode 100644
-index 0000000..8db0697
+index 0000000..46903c2
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
-@@ -0,0 +1,21 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+@@ -0,0 +1,9 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.reactnativecommunity.webview" >
++    package="com.reactnativecommunity.cameraroll" >
 +
 +    <uses-sdk
-+        android:minSdkVersion="16"
++        android:minSdkVersion="21"
 +        android:targetSdkVersion="33" />
-+
-+    <application>
-+        <provider
-+            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
-+            android:authorities="${applicationId}.fileprovider"
-+            android:exported="false"
-+            android:grantUriPermissions="true" >
-+            <meta-data
-+                android:name="android.support.FILE_PROVIDER_PATHS"
-+                android:resource="@xml/file_provider_paths" />
-+        </provider>
-+    </application>
 +
 +</manifest>
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-webview/android/build/intermediates/navigation_json/debug/navigation.json
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/@react-native-community/cameraroll/android/build/intermediates/navigation_json/debug/navigation.json
 new file mode 100644
 index 0000000..0637a08
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/navigation_json/debug/navigation.json
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/navigation_json/debug/navigation.json
 @@ -0,0 +1 @@
 +[]
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/react-native-webview/android/build/intermediates/packaged_manifests/debug/output-metadata.json
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/@react-native-community/cameraroll/android/build/intermediates/packaged_manifests/debug/output-metadata.json
 new file mode 100644
-index 0000000..32e98e0
+index 0000000..a862c6d
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/packaged_manifests/debug/output-metadata.json
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/packaged_manifests/debug/output-metadata.json
 @@ -0,0 +1,16 @@
 +{
 +  "version": 2,
@@ -2114,7 +2030,7 @@ index 0000000..32e98e0
 +    "type": "PACKAGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.reactnativecommunity.webview",
++  "applicationId": "com.reactnativecommunity.cameraroll",
 +  "variantName": "debug",
 +  "elements": [
 +    {
@@ -2125,25 +2041,13 @@ index 0000000..32e98e0
 +  ]
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/intermediates/packaged_res/debug/xml/file_provider_paths.xml b/node_modules/react-native-webview/android/build/intermediates/packaged_res/debug/xml/file_provider_paths.xml
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/@react-native-community/cameraroll/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
 new file mode 100644
-index 0000000..aba5f56
+index 0000000..4b3c4c8
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/packaged_res/debug/xml/file_provider_paths.xml
-@@ -0,0 +1,6 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<paths>
-+  <external-path
-+    name="shared"
-+    path="." />
-+</paths>
-diff --git a/node_modules/react-native-webview/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-webview/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-new file mode 100644
-index 0000000..a5f8df1
---- /dev/null
-+++ b/node_modules/react-native-webview/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-@@ -0,0 +1,1377 @@
-+com.reactnativecommunity.webview
++++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+@@ -0,0 +1,1376 @@
++com.reactnativecommunity.cameraroll
 +anim abc_fade_in
 +anim abc_fade_out
 +anim abc_grow_fade_in_from_bottom
@@ -3518,876 +3422,65 @@ index 0000000..a5f8df1
 +styleable View android_focusable android_theme paddingEnd paddingStart theme
 +styleable ViewBackgroundHelper android_background backgroundTint backgroundTintMode
 +styleable ViewStubCompat android_id android_inflatedId android_layout
-+xml file_provider_paths
 +xml rn_dev_preferences
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/build-history.bin b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/build-history.bin
+diff --git a/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt
 new file mode 100644
-index 0000000..1e95f9e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/build-history.bin differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab
-new file mode 100644
-index 0000000..a332ffa
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream
-new file mode 100644
-index 0000000..192f7b6
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream.len
-new file mode 100644
-index 0000000..fad6f6b
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.len
-new file mode 100644
-index 0000000..eb0b8a0
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at
-new file mode 100644
-index 0000000..a36a963
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i
-new file mode 100644
-index 0000000..b52cc4a
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/inputs/source-to-output.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
-new file mode 100644
-index 0000000..35292cb
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
-new file mode 100644
-index 0000000..da98105
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len
-new file mode 100644
-index 0000000..36fdcc3
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len
-new file mode 100644
-index 0000000..09407ef
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
-new file mode 100644
-index 0000000..95fd53d
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
-new file mode 100644
-index 0000000..9df4236
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab
-new file mode 100644
-index 0000000..77f6b6d
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream
-new file mode 100644
-index 0000000..c14a710
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream.len
-new file mode 100644
-index 0000000..ff9c96f
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.len
-new file mode 100644
-index 0000000..fa606b6
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.values.at
-new file mode 100644
-index 0000000..a268563
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i
-new file mode 100644
-index 0000000..1cb0305
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/constants.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab
-new file mode 100644
-index 0000000..5ce2a87
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
-new file mode 100644
-index 0000000..c974b2e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len
-new file mode 100644
-index 0000000..c9b1a32
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len
-new file mode 100644
-index 0000000..385642d
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
-new file mode 100644
-index 0000000..d2e9b33
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
-new file mode 100644
-index 0000000..5606d3b
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab
-new file mode 100644
-index 0000000..bdf584a
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream
-new file mode 100644
-index 0000000..b078a52
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len
-new file mode 100644
-index 0000000..8107e24
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len
-new file mode 100644
-index 0000000..2a17e6e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at
-new file mode 100644
-index 0000000..c0c1bfa
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i
-new file mode 100644
-index 0000000..ebaa3f2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/java-sources-proto-map.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab
-new file mode 100644
-index 0000000..5eb6956
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream
-new file mode 100644
-index 0000000..08ae4a3
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream.len
-new file mode 100644
-index 0000000..68c71f2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.len
-new file mode 100644
-index 0000000..09407ef
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at
-new file mode 100644
-index 0000000..6d601c0
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i
-new file mode 100644
-index 0000000..7b737b7
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/proto.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab
-new file mode 100644
-index 0000000..724ef57
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
-new file mode 100644
-index 0000000..91bcef2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len
-new file mode 100644
-index 0000000..13ef181
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len
-new file mode 100644
-index 0000000..fd5292d
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
-new file mode 100644
-index 0000000..0448d96
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i
-new file mode 100644
-index 0000000..e845de6
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab
-new file mode 100644
-index 0000000..fc8d151
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream
-new file mode 100644
-index 0000000..781cb67
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len
-new file mode 100644
-index 0000000..7f1939e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.len
-new file mode 100644
-index 0000000..01bdaa1
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at
-new file mode 100644
-index 0000000..45e3fcd
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i
-new file mode 100644
-index 0000000..6f2561b
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/subtypes.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab
-new file mode 100644
-index 0000000..344a1b3
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream
-new file mode 100644
-index 0000000..1828a05
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len
-new file mode 100644
-index 0000000..783cd02
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.len
-new file mode 100644
-index 0000000..eb0b8a0
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at
-new file mode 100644
-index 0000000..61ff8bc
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i
-new file mode 100644
-index 0000000..d63c260
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/jvm/kotlin/supertypes.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab
-new file mode 100644
-index 0000000..9202d67
+index 0000000..e0350f1
 --- /dev/null
-+++ b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/counters.tab
-@@ -0,0 +1,2 @@
-+9
-+0
-\ No newline at end of file
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab
-new file mode 100644
-index 0000000..e005af2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream
-new file mode 100644
-index 0000000..7289fb2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream.len
-new file mode 100644
-index 0000000..fad6f6b
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.len
-new file mode 100644
-index 0000000..eb0b8a0
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at
-new file mode 100644
-index 0000000..a30ec1a
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i
-new file mode 100644
-index 0000000..14f8c4f
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/file-to-id.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab
-new file mode 100644
-index 0000000..6a29241
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream
-new file mode 100644
-index 0000000..afd1b6e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len
-new file mode 100644
-index 0000000..9a6f654
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len
-new file mode 100644
-index 0000000..eb0b8a0
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at
-new file mode 100644
-index 0000000..fb9dbca
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i
-new file mode 100644
-index 0000000..cdf4c62
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/id-to-file.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab
-new file mode 100644
-index 0000000..9f3f468
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream
-new file mode 100644
-index 0000000..9cd717b
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len
-new file mode 100644
-index 0000000..e74ccd2
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.keystream.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len
-new file mode 100644
-index 0000000..58d108e
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at
-new file mode 100644
-index 0000000..5126561
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab.values.at differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i
-new file mode 100644
-index 0000000..a0e5166
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len
-new file mode 100644
-index 0000000..131e265
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/caches-jvm/lookups/lookups.tab_i.len differ
-diff --git a/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/last-build.bin b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/last-build.bin
-new file mode 100644
-index 0000000..06efbf5
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/kotlin/compileDebugKotlin/last-build.bin differ
-diff --git a/node_modules/react-native-webview/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-webview/android/build/outputs/logs/manifest-merger-debug-report.txt
-new file mode 100644
-index 0000000..95198c0
---- /dev/null
-+++ b/node_modules/react-native-webview/android/build/outputs/logs/manifest-merger-debug-report.txt
-@@ -0,0 +1,43 @@
++++ b/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,25 @@
 +-- Merging decision tree log ---
 +manifest
-+ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:1:1-15:12
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:1:1-15:12
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:1:1-15:12
++ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
 +	package
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:2:3-45
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
++		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:3:11-56
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	xmlns:android
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:1:11-69
-+application
-+ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:4:3-14:17
-+provider#com.reactnativecommunity.webview.RNCWebViewFileProvider
-+ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:5:5-13:16
-+	android:grantUriPermissions
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:9:7-41
-+	android:authorities
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:7:7-58
-+	android:exported
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:8:7-31
-+	android:name
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:6:7-45
-+meta-data#android.support.FILE_PROVIDER_PATHS
-+ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:10:7-12:55
-+	android:resource
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:12:9-52
-+	android:name
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml:11:9-59
++		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:11-69
 +uses-sdk
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	android:targetSdkVersion
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	android:minSdkVersion
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/react-native-webview/android/src/main/AndroidManifest.xml
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/META-INF/react-native-webview_debug.kotlin_module b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/META-INF/react-native-webview_debug.kotlin_module
-new file mode 100644
-index 0000000..2983af7
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/META-INF/react-native-webview_debug.kotlin_module differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/RNCWebViewPackage.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/RNCWebViewPackage.class
-new file mode 100644
-index 0000000..cff5208
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/RNCWebViewPackage.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent$Companion.class
-new file mode 100644
-index 0000000..34c97b1
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent.class
-new file mode 100644
-index 0000000..1133e55
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopHttpErrorEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent$Companion.class
-new file mode 100644
-index 0000000..d2a0371
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent.class
-new file mode 100644
-index 0000000..1a272ce
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingErrorEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent$Companion.class
-new file mode 100644
-index 0000000..5c6f514
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent.class
-new file mode 100644
-index 0000000..5b03cf7
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingFinishEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent$Companion.class
-new file mode 100644
-index 0000000..7f965bb
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent.class
-new file mode 100644
-index 0000000..c773838
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingProgressEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent$Companion.class
-new file mode 100644
-index 0000000..9c8f150
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent.class
-new file mode 100644
-index 0000000..d940f08
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopLoadingStartEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent$Companion.class
-new file mode 100644
-index 0000000..61ed3b4
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent.class
-new file mode 100644
-index 0000000..da66cad
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopMessageEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent$Companion.class
-new file mode 100644
-index 0000000..96aba02
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent.class
-new file mode 100644
-index 0000000..2b82fd4
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopRenderProcessGoneEvent.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent$Companion.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent$Companion.class
-new file mode 100644
-index 0000000..1b957b7
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent$Companion.class differ
-diff --git a/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent.class b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent.class
-new file mode 100644
-index 0000000..4b140fa
-Binary files /dev/null and b/node_modules/react-native-webview/android/build/tmp/kotlin-classes/debug/com/reactnativecommunity/webview/events/TopShouldStartLoadWithRequestEvent.class differ
-diff --git a/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java b/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 2190ae7..ec10b02 100644
---- a/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
-+++ b/node_modules/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -1,5 +1,27 @@
- package com.reactnativecommunity.webview;
- 
-+import java.io.ByteArrayInputStream;
-+import java.io.IOException;
-+import java.io.InputStream;
-+import java.nio.charset.Charset;
-+import java.nio.charset.StandardCharsets;
-+import java.nio.charset.UnsupportedCharsetException;
-+
-+import okhttp3.MediaType;
-+import okhttp3.OkHttpClient;
-+import okhttp3.OkHttpClient.Builder;
-+import okhttp3.Request;
-+import okhttp3.Response;
-+import org.json.JSONException;
-+import org.json.JSONObject;
-+import java.net.HttpURLConnection;
-+
-+import android.util.Log;
-+
-+import android.webkit.ServiceWorkerController;
-+import android.webkit.ServiceWorkerClient;
-+
-+
- import android.annotation.SuppressLint;
- import android.annotation.TargetApi;
- import android.app.DownloadManager;
-@@ -129,13 +151,19 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-   public static final int COMMAND_LOAD_URL = 7;
-   public static final int COMMAND_FOCUS = 8;
- 
-+  protected static final String MIME_UNKNOWN = "application/octet-stream";
-+  protected static final String HTML_ENCODING = "UTF-8";
-+  protected static final long BYTES_IN_MEGABYTE = 1000000;
-+
-   // android commands
-   public static final int COMMAND_CLEAR_FORM_DATA = 1000;
-   public static final int COMMAND_CLEAR_CACHE = 1001;
-   public static final int COMMAND_CLEAR_HISTORY = 1002;
- 
-   protected static final String REACT_CLASS = "RNCWebView";
--  protected static final String HTML_ENCODING = "UTF-8";
-+
-+  protected static final String HEADER_CONTENT_TYPE = "content-type";
-+
-   protected static final String HTML_MIME_TYPE = "text/html";
-   protected static final String JAVASCRIPT_INTERFACE = "ReactNativeWebView";
-   protected static final String HTTP_METHOD_POST = "POST";
-@@ -150,11 +178,20 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-   protected @Nullable String mUserAgent = null;
-   protected @Nullable String mUserAgentWithApplicationName = null;
- 
-+  protected static String userAgent;
-+
-+  protected static OkHttpClient httpClient;
-+
-   public RNCWebViewManager() {
-     mWebViewConfig = new WebViewConfig() {
-       public void configWebView(WebView webView) {
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		ADDED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/thalesbrederodesmontarroyoscandido/Desktop/1406pali/pali-mobile/app/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+index 17883fd..ce1cdca 100644
+--- a/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
++++ b/node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+@@ -649,7 +649,11 @@ public class CameraRollModule extends ReactContextBaseJavaModule {
+                 + photoUri.toString(),
+             e);
        }
-     };
-+
-+    httpClient = new Builder()
-+    .followRedirects(false)
-+    .followSslRedirects(false)
-+    .build();
-   }
- 
-   public RNCWebViewManager(WebViewConfig webViewConfig) {
-@@ -181,6 +218,7 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-   protected WebView createViewInstance(ThemedReactContext reactContext) {
-     RNCWebView webView = createRNCWebViewInstance(reactContext);
-+    userAgent = webView.getSettings().getUserAgentString();
-     setupWebChromeClient(reactContext, webView);
-     reactContext.addLifecycleEventListener(webView);
-     mWebViewConfig.configWebView(webView);
-@@ -246,9 +284,100 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-       }
-     });
- 
-+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-+        ServiceWorkerController swController = ServiceWorkerController.getInstance();
-+        swController.setServiceWorkerClient(new ServiceWorkerClient() {
-+            @Override
-+            public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-+                WebResourceResponse response = RNCWebViewManager.this.shouldInterceptRequest(request, false, webView);
-+                if (response != null) {
-+                    return response;
-+                }
-+
-+                return super.shouldInterceptRequest(request);
-+            }
-+        });
-+    }
-+
-     return webView;
-   }
- 
-+  private Boolean urlStringLooksInvalid(String urlString) {
-+    return urlString == null ||
-+       urlString.trim().equals("") ||
-+       !(urlString.startsWith("http") && !urlString.startsWith("www")) ||
-+       urlString.contains("|");
-+  }
-+
-+public static Boolean responseRequiresJSInjection(Response response) {
-+    if (response.isRedirect()) {
-+      return false;
-+    }
-+    final String contentTypeAndCharset = response.header(HEADER_CONTENT_TYPE, MIME_UNKNOWN);
-+    final int responseCode = response.code();
-+
-+    boolean contentTypeIsHtml = contentTypeAndCharset.startsWith(HTML_MIME_TYPE);
-+    boolean responseCodeIsInjectible = responseCode == 200;
-+    String responseBody = "";
-+
-+    if (contentTypeIsHtml && responseCodeIsInjectible) {
+-      retriever.release();
 +      try {
-+        assert response.body() != null;
-+        responseBody = response.peekBody(BYTES_IN_MEGABYTE).string();
-+      } catch (IOException e) {
-+        e.printStackTrace();
-+        return false;
++        retriever.release();
++      } catch (IOException ex) {
++            // handle the exception here
 +      }
-+
-+
-+      boolean responseBodyContainsHTMLLikeString = responseBody.matches("[\\S\\s]*<[a-z]+[\\S\\s]*>[\\S\\s]*");
-+      return responseBodyContainsHTMLLikeString;
-+    } else {
-+      return false;
-+    }
-+  }
-+
-+  public WebResourceResponse shouldInterceptRequest(WebResourceRequest request, Boolean onlyMainFrame, RNCWebView webView) {
-+    Uri url = request.getUrl();
-+    String urlStr = url.toString();
-+
-+    if (onlyMainFrame && !request.isForMainFrame() ||
-+      urlStringLooksInvalid(urlStr)) {
-+      return null;//super.shouldInterceptRequest(webView, request);
-+    }
-+
-+    try {
-+      Request req = new Request.Builder()
-+      .url(urlStr)
-+      .header("User-Agent", userAgent)
-+      .build();
-+
-+      Response response = httpClient.newCall(req).execute();
-+
-+
-+      if (!responseRequiresJSInjection(response)) {
-+        if (onlyMainFrame) {
-+          RNCWebView reactWebView = (RNCWebView) webView;
-+          reactWebView.setInjectForThisURL(urlStr);
-+        }
-+        return null;
-+      }
-+
-+      InputStream is = response.body().byteStream();
-+      MediaType contentType = response.body().contentType();
-+      Charset charset = contentType != null ? contentType.charset(StandardCharsets.UTF_8) : StandardCharsets.UTF_8;
-+
-+      RNCWebView reactWebView = (RNCWebView) webView;
-+      if (response.code() == HttpURLConnection.HTTP_OK) {
-+      is = new InputStreamWithInjectedJS(is, reactWebView.injectedJSBeforeContentLoaded, charset);
-+      }
-+
-+      return new WebResourceResponse("text/html", charset.name(), is);
-+    } catch (Exception e) {
-+      return null;
-+    }
-+  }
-+
-   @ReactProp(name = "javaScriptEnabled")
-   public void setJavaScriptEnabled(WebView view, boolean enabled) {
-     view.getSettings().setJavaScriptEnabled(enabled);
-@@ -274,13 +403,10 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-     if (enabled) {
-       Context ctx = view.getContext();
-       if (ctx != null) {
--        view.getSettings().setAppCachePath(ctx.getCacheDir().getAbsolutePath());
-         view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
--        view.getSettings().setAppCacheEnabled(true);
-       }
-     } else {
-       view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
--      view.getSettings().setAppCacheEnabled(false);
-     }
-   }
- 
-@@ -474,7 +600,6 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
- 
-     // Disable caching
-     view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
--    view.getSettings().setAppCacheEnabled(false);
-     view.clearHistory();
-     view.clearCache(true);
- 
-@@ -778,13 +903,103 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-     }
-   }
- 
--  protected static class RNCWebViewClient extends WebViewClient {
-+  public static class InputStreamWithInjectedJS extends InputStream {
-+    private InputStream pageIS;
-+    private InputStream scriptIS;
-+    private Charset charset;
-+    private static final String REACT_CLASS = "InputStreamWithInjectedJS";
-+    private static Map<Charset, String> script = new HashMap<>();
- 
-+    private boolean hasJS = false;
-+    private boolean headWasFound = false;
-+    private boolean scriptWasInjected = false;
-+    private StringBuffer contentBuffer = new StringBuffer();
-+
-+    private static Charset getCharset(String charsetName) {
-+        Charset cs = StandardCharsets.UTF_8;
-+        try {
-+            if (charsetName != null) {
-+                cs = Charset.forName(charsetName);
-+            }
-+        } catch (UnsupportedCharsetException e) {
-+            Log.d(REACT_CLASS, "wrong charset: " + charsetName);
-+        }
-+
-+        return cs;
-+    }
-+
-+    private static InputStream getScript(Charset charset) {
-+        String js = script.get(charset);
-+        if (js == null) {
-+            String defaultJs = script.get(StandardCharsets.UTF_8);
-+            js = new String(defaultJs.getBytes(StandardCharsets.UTF_8), charset);
-+            script.put(charset, js);
-+        }
-+
-+        return new ByteArrayInputStream(js.getBytes(charset));
-+    }
-+
-+    InputStreamWithInjectedJS(InputStream is, String js, Charset charset) {
-+        if (js == null) {
-+            this.pageIS = is;
-+        } else {
-+            this.hasJS = true;
-+            this.charset = charset;
-+            Charset cs = StandardCharsets.UTF_8;
-+            String jsScript = "<script>" + js + "</script>";
-+            script.put(cs, jsScript);
-+            this.pageIS = is;
-+        }
-+    }
-+
-+    @Override
-+    public int read() throws IOException {
-+        if (scriptWasInjected || !hasJS) {
-+            return pageIS.read();
-+        }
-+
-+        if (!scriptWasInjected && headWasFound) {
-+            int nextByte = scriptIS.read();
-+            if (nextByte == -1) {
-+                scriptIS.close();
-+                scriptWasInjected = true;
-+                return pageIS.read();
-+            } else {
-+                return nextByte;
-+            }
-+        }
-+
-+        if (!headWasFound) {
-+            int nextByte = pageIS.read();
-+            contentBuffer.append((char) nextByte);
-+            int bufferLength = contentBuffer.length();
-+            if (nextByte == 62 && bufferLength >= 6) {
-+                if (contentBuffer.substring(bufferLength - 6).equals("<head>")) {
-+                    this.scriptIS = getScript(this.charset);
-+                    headWasFound = true;
-+                }
-+            }
-+
-+            return nextByte;
-+        }
-+
-+        return pageIS.read();
-+    }
-+
-+  }
-+
-+  protected class RNCWebViewClient extends WebViewClient {
-+
-+    protected static final String REACT_CLASS = "RNCWebViewClient";
-     protected boolean mLastLoadFailed = false;
-     protected @Nullable
-     ReadableArray mUrlPrefixesForDefaultIntent;
-     protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
-     protected @Nullable String ignoreErrFailedForThisURL = null;
-+    protected @Nullable String injectForThisURL = null;
-+    public void setInjectForThisURL(@Nullable String url) {
-+      injectForThisURL = url;
-+    }
- 
-     public void setIgnoreErrFailedForThisURL(@Nullable String url) {
-       ignoreErrFailedForThisURL = url;
-@@ -808,14 +1023,27 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-       super.onPageStarted(webView, url, favicon);
-       mLastLoadFailed = false;
- 
--      RNCWebView reactWebView = (RNCWebView) webView;
--      reactWebView.callInjectedJavaScriptBeforeContentLoaded();
-+      WritableMap eventData = createWebViewEvent(webView, url);
-+      if (TextUtils.equals(url, injectForThisURL)) {
-+        eventData.putBoolean("injectForThisURL", true);
-+      }
-+      injectForThisURL = null;
- 
-       dispatchEvent(
-         webView,
-         new TopLoadingStartEvent(
-           webView.getId(),
--          createWebViewEvent(webView, url)));
-+          eventData));
-+    }
-+
-+    @Override
-+    public WebResourceResponse shouldInterceptRequest(WebView webView, WebResourceRequest request) {
-+        WebResourceResponse response = RNCWebViewManager.this.shouldInterceptRequest(request, true, (RNCWebView)webView);
-+        if (response != null) {
-+            return response;
-+        }
-+
-+        return super.shouldInterceptRequest(webView, request);
      }
  
-     @Override
-@@ -870,6 +1098,21 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-     @TargetApi(Build.VERSION_CODES.N)
-     @Override
-     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-+
-+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-+
-+             /*
-+              * In order to follow redirects properly, we return null in interceptRequest().
-+              * Doing this breaks the web3 injection on the resulting page, so we have to reload to
-+              * make sure web3 is available.
-+              * */
-+
-+          if (request.isForMainFrame() && request.isRedirect()) {
-+              view.loadUrl(request.getUrl().toString());
-+              return true;
+     if (photoDescriptor != null) {
+@@ -719,7 +723,11 @@ public class CameraRollModule extends ReactContextBaseJavaModule {
+                     + photoUri.toString(),
+                 e);
+           }
+-          retriever.release();
++          try {
++            retriever.release();
++          } catch (IOException ex) {
++                // handle the exception here
 +          }
-+      }
-+
-       final String url = request.getUrl().toString();
-       return this.shouldOverrideUrlLoading(view, url);
-     }
-@@ -1245,6 +1488,10 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
-       progressChangedFilter = new ProgressChangedFilter();
-     }
- 
-+    public void setInjectForThisURL(String url) {
-+      mRNCWebViewClient.setInjectForThisURL(url);
-+    }
-+
-     public void setIgnoreErrFailedForThisURL(String url) {
-       mRNCWebViewClient.setIgnoreErrFailedForThisURL(url);
-     }
-diff --git a/node_modules/react-native-webview/apple/RNCWebView.m b/node_modules/react-native-webview/apple/RNCWebView.m
-index 02005db..1c89b1a 100644
---- a/node_modules/react-native-webview/apple/RNCWebView.m
-+++ b/node_modules/react-native-webview/apple/RNCWebView.m
-@@ -801,11 +801,13 @@ - (void)                    webView:(WKWebView *)webView
- - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
- {
- #if !TARGET_OS_OSX
--  UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:message preferredStyle:UIAlertControllerStyleAlert];
--  [alert addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
--    completionHandler();
--  }]];
--  [[self topViewController] presentViewController:alert animated:YES completion:NULL];
-+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:message preferredStyle:UIAlertControllerStyleAlert];
-+    [alert addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-+      completionHandler();
-+    }]];
-+    [[self topViewController] presentViewController:alert animated:YES completion:NULL];
-+  });
- #else
-   NSAlert *alert = [[NSAlert alloc] init];
-   [alert setMessageText:message];
+         } else {
+           BitmapFactory.Options options = new BitmapFactory.Options();
+           // Set inJustDecodeBounds to true so we don't actually load the Bitmap, but only get its
