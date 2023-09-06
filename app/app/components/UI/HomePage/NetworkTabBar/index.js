@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
 import { colors, fontStyles } from '../../../../styles/common';
-import { Easing } from 'react-native-reanimated';
+import { EasingNode } from 'react-native-reanimated';
 import { chainToChainType, getTabIcon } from '../../../../util/ChainTypeImages';
 
 import tabFavourites from '../../../../images/ic_tab_favourites.png';
@@ -132,7 +132,7 @@ class NetworkTabBar extends PureComponent {
 		Animated.timing(this.state[name], {
 			toValue: 0,
 			duration: 300,
-			easing: Easing.linear,
+			easing: EasingNode.linear,
 			useNativeDriver: false
 		}).start();
 	};
@@ -141,7 +141,7 @@ class NetworkTabBar extends PureComponent {
 		Animated.timing(this.state[name], {
 			toValue: 1,
 			duration: 300,
-			easing: Easing.linear,
+			easing: EasingNode.linear,
 			useNativeDriver: false
 		}).start();
 	};

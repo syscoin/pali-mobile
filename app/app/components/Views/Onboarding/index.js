@@ -5,7 +5,7 @@ import { colors, fontStyles, baseStyles, activeOpacity } from '../../../styles/c
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import FadeOutOverlay from '../../UI/FadeOutOverlay';
-import Animated, { Easing } from 'react-native-reanimated';
+import Animated, { EasingNode } from 'react-native-reanimated';
 import PreventScreenshot from '../../../core/PreventScreenshot';
 
 import CreateBackground from '../../../images/addbackground.png';
@@ -139,7 +139,7 @@ class Onboarding extends PureComponent {
 		Animated.timing(animatedRef, {
 			toValue,
 			duration: 500,
-			easing: Easing.linear,
+			easing: EasingNode.linear,
 			useNativeDriver: true
 		}).start();
 	};
