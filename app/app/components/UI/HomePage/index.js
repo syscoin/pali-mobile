@@ -265,12 +265,9 @@ class HomePage extends PureComponent {
 		} else {
 			this.statusBarHeight = StatusBar.currentHeight || 0;
 		}
-	}
-	async componentWillReceiveProps() {
-		// This is necessary because on android for some reason initialPage
-		// Does not work correctly so we need to force the render of the page.
 		if (Device.isAndroid()) {
 			const tabIndex = await AsyncStorage.getItem(HOMEPAGE_TAB_INDEX);
+
 			if (tabIndex && this.scrollableTabView) {
 				this.scrollableTabView.goToPage(tabIndex);
 			}
