@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-
+import { checkAndSetLocale } from '../../../../locales/i18n';
 import { store, persistor } from '../../../store/';
 
 import App from '../../App';
@@ -25,6 +25,8 @@ export default class Root extends PureComponent {
 		SecureKeychain.init(props.code);
 		EntryScriptWeb3.init();
 		EntryScriptWeb3.initVConsole();
+		//Check the user language and defines as the default language.
+		checkAndSetLocale();
 		global.native_start_time = props.native_start_time ? Number(props.native_start_time) : 0;
 	}
 

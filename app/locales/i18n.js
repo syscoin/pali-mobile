@@ -40,6 +40,20 @@ export function getLanguages() {
 	};
 }
 
+// Initialize language of the app.
+export function checkAndSetLocale() {
+	const supportedLanguages = Object.keys(getLanguages());
+
+	// Get the current locale from i18n and split by '-' to get the language part only
+	const currentLocale = I18n.locale.split('-')[0];
+
+	if (supportedLanguages.includes(currentLocale)) {
+		setLocale(currentLocale);
+	} else {
+		setLocale('en');
+	}
+}
+
 // Allow RTL alignment in RTL languages
 ReactNative.I18nManager.allowRTL(isRTL);
 

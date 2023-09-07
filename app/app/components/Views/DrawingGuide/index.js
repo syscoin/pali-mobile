@@ -91,6 +91,15 @@ export default class DrawingGuide extends PureComponent {
 						<Text style={styles.formatText}>随机画</Text>一些线条，绘图的坐标将被用于
 						<Text style={styles.formatText}>真随机数发生器</Text>的一部分熵源，以生成助记词。
 					</Text>
+				) : strings('other.accept_language') === 'es' ? (
+					<Text style={styles.baseText}>
+						Las coordenadas de tu <Text style={styles.formatText}>dibujo aleatorio</Text> se utilizarán como
+						parte de la{' '}
+						<Text style={styles.formatText}>
+							entropía del Generador de Números Verdaderamente Aleatorios
+						</Text>{' '}
+						para la generación de la frase semilla.
+					</Text>
 				) : (
 					<Text style={styles.baseText}>
 						Coordinates of your <Text style={styles.formatText}>random drawing</Text> will be used as a part{' '}
