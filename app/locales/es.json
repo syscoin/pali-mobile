@@ -20,6 +20,83 @@
 		"back": "Atrás",
 		"ok": "Ok"
 	},
+	"onboarding": {
+		"title": "Bienvenido a\nPali Wallet",
+		"subtitle": "Web3 donde quieras",
+		"start_exploring_now": "Crear\nNueva Billetera",
+		"import_seed_phrase": "Importar\nFrase de Semilla",
+		"import_private_key": "Importar\nClave Privada",
+		"import_wallet": "Importar Billetera",
+		"create_wallet": "Crear Billetera",
+		"prompt_text": "Redes Soportadas"
+	},
+	"login": {
+		"password": "Contraseña",
+		"login": "Iniciar Sesión",
+		"invalid_password": "Contraseña Inválida"
+	},
+	"choose_password": {
+		"title": "Establece Tu Contraseña",
+		"secondary_title": "La contraseña será usada para la encriptación de tu frase semilla y desbloqueo de la billetera. Cuanto más compleja sea, más segura será tu billetera.",
+		"password": "Nueva Contraseña",
+		"confirm_password": "Confirma tu contraseña",
+		"enter_again_to_confirm": "Vuelve a introducir para confirmar",
+		"must_be_at_least": "Al menos 6 dígitos",
+		"password_not_match": "Las contraseñas no coinciden",
+		"remember_me": "Mantener estado de sesión",
+		"security_alert_title": "Alerta de Seguridad",
+		"security_alert_message": "Para continuar, necesitas activar el Código de Acceso o cualquier método de autenticación biométrica compatible con tu dispositivo (FaceID, TouchID o Fingerprint)",
+		"enter_password": "Introduce contraseña aquí, al menos 6 dígitos",
+		"biometric_security": "Seguridad Biométrica",
+		"biometric_security_hint": "Habilita {{biometric}} en lugar de ingresar la contraseña para un acceso más rápido y seguro.",
+		"face_id": "Face ID",
+		"touch_id": "Touch ID",
+		"bio_auth": "Bio Auth"
+	},
+	"reset_password": {
+		"title": "Cambiar contraseña",
+		"password": "Nueva Contraseña",
+		"confirm_password": "Confirmar contraseña",
+		"password_reset": "Restablecer Contraseña"
+	},
+	"import_from_seed": {
+		"title": "Introduce la frase semilla",
+		"seed_phrase_placeholder": "Introduce tu frase de semilla aquí",
+		"wrong_seed": "Frase Semilla Incorrecta",
+		"wrong_seed_message": "La frase semilla es inválida, por favor revisa tu entrada.",
+		"password_length_title": "Contraseña Demasiado Corta",
+		"wrong_password": "Contraseñas Incorrectas",
+		"password_dont_match": "Las contraseñas no coinciden",
+		"import": "Importar",
+		"seed_phrase_imported": "Frase Semilla Importada",
+		"enter_seed_phrase_tips": "Solo introduce tantas palabras como tenga tu frase semilla, normalmente deberían ser 12/15/18/24 palabras. Por favor, NO copies y pegues, ya que alguna aplicación podría monitorear tu portapapeles.",
+		"wrong_word": "Esta palabra no está en la lista de la frase semilla, por favor revisa"
+	},
+	"import_from_private_key": {
+		"private_key": "Clave Privada",
+		"private_key_placeholder": "Introduce la clave privada aquí",
+		"wrong_private_key": "Clave Privada Incorrecta",
+		"private_key_imported": "Clave Privada Importada",
+		"enter_private_key": "Introduce la clave privada",
+		"enter_private_key_tips": "Dado que la clave privada no es legible ni memorable para los humanos, la mayoría de las claves privadas se guardan en dispositivos poco seguros y se importan copiando y pegando, lo cual NO es recomendable según Pali Wallet. Después de importar desde una clave privada, es mejor transferir tus activos a una nueva billetera generada en Frase Semilla por Pali Wallet para obtener una mejor seguridad."
+	},
+	"wallet": {
+		"title": "Pali Wallet",
+		"tokens": "TOKENS",
+		"all_network": "Todas",
+		"eth_etwork": "Ethereum",
+		"polygon_network": "Polygon",
+		"arbitrum_network": "Arbitrum",
+		"optimism_network": "Optimismo",
+		"avalanche_network": "Avalanche",
+		"syscoin_network": "Syscoin",
+		"rollux_network": "Rollux",
+		"bsc_network": "BSC",
+		"heco_network": "HECO"
+	},
+	"token": {
+		"search_tokens_or_contract": "Buscar Tokens o Dirección de Contrato"
+	},
 	"app_settings": {
 		"title": "Ajustes",
 		"wallet_management": "Billetera y Cuenta",
