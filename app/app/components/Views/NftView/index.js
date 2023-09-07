@@ -529,7 +529,9 @@ class NftView extends PureComponent {
 		const { nftToken } = this.state;
 		const isAndroid = Device.isAndroid();
 		const isZh = strings('other.accept_language') === 'zh';
-		const buttonWidth = 158;
+		let buttonWidth = Device.getDeviceWidth() - 30;
+		buttonWidth /= 3;
+		buttonWidth += 14;
 		return (
 			<ScrollView
 				style={styles.actionScroll}
@@ -599,8 +601,8 @@ class NftView extends PureComponent {
 							style={{ width: buttonWidth }}
 							source={
 								isZh
-									? require('../../../images/img_sendgift_cn.png')
-									: require('../../../images/img_sendgift_en.png')
+									? require('../../../images/img_send_cn.png')
+									: require('../../../images/img_send_en.png')
 							}
 							resizeMode={'contain'}
 						/>

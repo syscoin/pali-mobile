@@ -1312,7 +1312,9 @@ class WalletManagement extends PureComponent {
 								</Text>
 								{keyring && keyring.isImported && (
 									<View style={styles.importedView}>
-										<Text style={styles.importedText}>{strings('wallet_management.imported')}</Text>
+										<Text style={styles.importedText}>
+											{strings('wallet_management.wallet_imported')}
+										</Text>
 									</View>
 								)}
 							</View>
