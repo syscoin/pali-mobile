@@ -122,7 +122,8 @@
 		"use_biometrics_message": "每次启动Pali Wallet不需要输入密码",
 		"transaction_verification": "交易需要验证",
 		"verification_message_for_pwd": "每次交易需要输入密码",
-		"verification_message_for_id": "每次交易需要输入密码或验证FaceID/指纹"
+		"verification_message_for_id": "每次交易需要输入密码或验证FaceID/指纹",
+		"language": "语言"
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "展示助记词",
@@ -652,6 +653,7 @@
 		"delete_account": "确认删除账户 “{{name}}”?",
 		"delete_this_wallet": "删除该钱包",
 		"wallet_index": "钱包{{number}}",
+		"wallet_imported": "进口",
 		"add_new_account": "添加新账户",
 		"confirm_password": "确认密码",
 		"password": "密码",

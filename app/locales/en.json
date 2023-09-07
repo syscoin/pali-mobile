@@ -121,7 +121,8 @@
 		"use_biometrics_message": "Instead of entering password, use Bio Auth to unlock Pali Wallet.",
 		"transaction_verification": "Transaction needs verification",
 		"verification_message_for_pwd": "Password required for every transaction.",
-		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction."
+		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction.",
+		"language": "Language"
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "Reveal Seed Phrase",
@@ -652,6 +653,7 @@
 		"delete_account": "Delete Account “{{name}}”?",
 		"delete_this_wallet": "Delete this Wallet",
 		"wallet_index": "Wallet{{number}}",
+		"wallet_imported": "Imported",
 		"add_new_account": "Add New Account",
 		"confirm_password": "Confirm password",
 		"password": "Password",
