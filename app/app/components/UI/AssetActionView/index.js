@@ -319,39 +319,33 @@ class AssetActionView extends PureComponent {
 					horizontal
 					contentContainerStyle={styles.actionContainer}
 				>
-					<TouchableOpacity
-						style={[styles.buttonView, { marginLeft: 0 }]}
-						onPress={this.showSendModal}
-						activeOpacity={activeOpacity}
-					>
-						<Text style={styles.buttonContainer}>{strings('other.send')}</Text>
-					</TouchableOpacity>
+					<View style={[styles.buttonView, { marginLeft: 0 }]}>
+						<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.send')}</Text>
+						</TouchableOpacity>
+					</View>
 
 					{!isRpc && showSwapButton && (
-						<TouchableOpacity style={styles.buttonView} onPress={this.onSwap} activeOpacity={activeOpacity}>
-							<Text style={styles.buttonContainer}>{strings('other.swap')}</Text>
-						</TouchableOpacity>
+						<View style={styles.buttonView}>
+							<TouchableOpacity onPress={this.onSwap} activeOpacity={activeOpacity}>
+								<Text style={styles.buttonContainer}>{strings('other.swap')}</Text>
+							</TouchableOpacity>
+						</View>
 					)}
-
-					<TouchableOpacity
-						style={[styles.buttonView, { minWidth: 85 }]}
-						onPress={this.showMigrateModal}
-						activeOpacity={activeOpacity}
-					>
-						{migrationLoading ? (
-							<ActivityIndicator style={styles.buttonIcon} color={'#4D76B8'} />
-						) : (
-							<Text style={styles.buttonContainer}>{strings('other.bridge')}</Text>
-						)}
-					</TouchableOpacity>
-
-					<TouchableOpacity
-						style={styles.buttonView}
-						onPress={this.showReceiveModal}
-						activeOpacity={activeOpacity}
-					>
-						<Text style={styles.buttonContainer}>{strings('other.receive')}</Text>
-					</TouchableOpacity>
+					<View style={[styles.buttonView, { minWidth: 85 }]}>
+						<TouchableOpacity onPress={this.showMigrateModal} activeOpacity={activeOpacity}>
+							{migrationLoading ? (
+								<ActivityIndicator style={styles.buttonIcon} color={'#4D76B8'} />
+							) : (
+								<Text style={styles.buttonContainer}>{strings('other.bridge')}</Text>
+							)}
+						</TouchableOpacity>
+					</View>
+					<View style={styles.buttonView}>
+						<TouchableOpacity onPress={this.showReceiveModal} activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.receive')}</Text>
+						</TouchableOpacity>
+					</View>
 				</ScrollView>
 
 				{this.renderReceiveModal()}
