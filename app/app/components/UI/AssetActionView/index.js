@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { toggleShowHint } from '../../../actions/hint';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors } from '../../../styles/common';
+import { ActivityIndicator, View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { colors, fontStyles } from '../../../styles/common';
 import { calcAssetPrices } from '../../../util/number';
 import Modal from 'react-native-modal';
 import SendTab from '../../Views/SendFlow/SendTab';
@@ -19,16 +19,7 @@ import Engine from '../../../core/Engine';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/Device';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
-import ImageCapInset from '../ImageCapInset';
 
-import img_send_cn from '../../../images/img_send_cn.png';
-import img_send_en from '../../../images/img_send_en.png';
-import img_swap_cn from '../../../images/img_swap_cn.png';
-import img_swap_en from '../../../images/img_swap_en.png';
-import img_crosschain_cn from '../../../images/img_crosschain_cn.png';
-import img_crosschain_en from '../../../images/img_crosschain_en.png';
-import img_receive_cn from '../../../images/img_receive_cn.png';
-import img_receive_en from '../../../images/img_receive_en.png';
 import { supportMigration } from '../../Views/SendFlow/MoveTab/Bridge';
 import { EngineContracts, EngineNetworks } from '../../../util/ControllerUtils';
 
@@ -46,6 +37,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		paddingHorizontal: 15
 	},
+	buttonContainer: {
+		color: '#4D76B8',
+		fontSize: 16,
+		lineHeight: 24,
+		...fontStyles.semibold
+	},
 	actionView: {
 		marginHorizontal: -7,
 		justifyContent: 'center',
@@ -54,6 +51,19 @@ const styles = StyleSheet.create({
 	bottomModal: {
 		justifyContent: 'flex-end',
 		margin: 0
+	},
+	buttonView: {
+		minWidth: 70,
+		height: 40,
+		backgroundColor: 'white',
+		borderWidth: 1,
+		borderColor: '#4D76B8',
+		borderRadius: 5,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 15,
+		marginLeft: 10,
+		paddingHorizontal: 15
 	}
 });
 
@@ -309,68 +319,39 @@ class AssetActionView extends PureComponent {
 					horizontal
 					contentContainerStyle={styles.actionContainer}
 				>
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 20, bottom: 0, right: 20 }}
+					<TouchableOpacity
+						style={[styles.buttonView, { marginLeft: 0 }]}
+						onPress={this.showSendModal}
+						activeOpacity={activeOpacity}
 					>
-						<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
-							<Image
-								style={imageWidths[1] && { width: imageWidths[1] }}
-								onLayout={e => this.onImageLayout(1, buttonWidth, e)}
-								source={isZh ? img_send_cn : img_send_en}
-								resizeMode={'contain'}
-							/>
-						</TouchableOpacity>
-					</ImageCapInset>
+						<Text style={styles.buttonContainer}>{strings('other.send')}</Text>
+					</TouchableOpacity>
+
 					{!isRpc && showSwapButton && (
-						<ImageCapInset
-							style={[styles.actionView, { width: buttonWidth }]}
-							source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-							capInsets={{ top: 0, left: 20, bottom: 0, right: 20 }}
-						>
-							<TouchableOpacity onPress={this.onSwap} activeOpacity={activeOpacity}>
-								<Image
-									style={imageWidths[2] && { width: imageWidths[2] }}
-									onLayout={e => this.onImageLayout(2, buttonWidth, e)}
-									source={isZh ? img_swap_cn : img_swap_en}
-									resizeMode={'contain'}
-								/>
-							</TouchableOpacity>
-						</ImageCapInset>
+						<TouchableOpacity style={styles.buttonView} onPress={this.onSwap} activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.swap')}</Text>
+						</TouchableOpacity>
 					)}
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 20, bottom: 0, right: 20 }}
+
+					<TouchableOpacity
+						style={[styles.buttonView, { minWidth: 85 }]}
+						onPress={this.showMigrateModal}
+						activeOpacity={activeOpacity}
 					>
-						<TouchableOpacity onPress={this.showMigrateModal} activeOpacity={activeOpacity}>
-							{migrationLoading ? (
-								<ActivityIndicator style={styles.buttonIcon} color={colors.brandPink300} />
-							) : (
-								<Image
-									style={imageWidths[3] && { width: imageWidths[3] }}
-									onLayout={e => this.onImageLayout(3, buttonWidth, e)}
-									source={isZh ? img_crosschain_cn : img_crosschain_en}
-									resizeMode={'contain'}
-								/>
-							)}
-						</TouchableOpacity>
-					</ImageCapInset>
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 20, bottom: 0, right: 20 }}
+						{migrationLoading ? (
+							<ActivityIndicator style={styles.buttonIcon} color={'#4D76B8'} />
+						) : (
+							<Text style={styles.buttonContainer}>{strings('other.bridge')}</Text>
+						)}
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.buttonView}
+						onPress={this.showReceiveModal}
+						activeOpacity={activeOpacity}
 					>
-						<TouchableOpacity onPress={this.showReceiveModal} activeOpacity={activeOpacity}>
-							<Image
-								style={imageWidths[4] && { width: imageWidths[4] }}
-								onLayout={e => this.onImageLayout(4, buttonWidth, e)}
-								source={isZh ? img_receive_cn : img_receive_en}
-								resizeMode={'contain'}
-							/>
-						</TouchableOpacity>
-					</ImageCapInset>
+						<Text style={styles.buttonContainer}>{strings('other.receive')}</Text>
+					</TouchableOpacity>
 				</ScrollView>
 
 				{this.renderReceiveModal()}

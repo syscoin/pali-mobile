@@ -338,6 +338,7 @@
 		"all": "All",
 		"receive": "Receive",
 		"send": "Send",
+		"bridge": "Bridge",
 		"migrate": "Crosschain",
 		"move_to_l1": "Move to L1",
 		"move_to_l2": "Move to L2",

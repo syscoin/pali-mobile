@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
 		height: 26
 	},
 	labelText: {
-		fontSize: 28,
+		fontSize: 26,
 		lineHeight: 34,
 		marginLeft: 12,
 		color: colors.$030319,
