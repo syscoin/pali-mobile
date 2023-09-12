@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { strings } from '../../../../locales/i18n';
-import { Image, View, Text, ScrollView } from 'react-native';
+import { Image, View, Text, ScrollView, DeviceEventEmitter } from 'react-native';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
@@ -95,9 +95,9 @@ class LanguageSelector extends PureComponent {
 						onPress={() => {
 							this.setState({ locale: language.locale });
 							setLocale(language.locale);
+
 							setTimeout(() => {
-								this.props.navigation.pop();
-								this.props.navigation.pop();
+								DeviceEventEmitter.emit('languageUpdated');
 							}, 30);
 						}}
 					>

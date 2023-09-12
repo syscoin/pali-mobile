@@ -338,6 +338,7 @@
 		"all": "Todos",
 		"receive": "Recibir",
 		"send": "Enviar",
+		"bridge": "Puente",
 		"migrate": "Transferencia intercadena",
 		"move_to_l1": "Mover a L1",
 		"move_to_l2": "Mover a L2",

@@ -339,6 +339,7 @@
 		"all": "所有",
 		"receive": "接收",
 		"send": "发送",
+		"bridge": "跨链",
 		"migrate": "跨链",
 		"move_to_l1": "迁移到L1",
 		"move_to_l2": "迁移到L2",

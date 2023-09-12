@@ -1442,11 +1442,16 @@ class Tokens extends PureComponent {
 	};
 
 	renderOtcBanner = () => {
-		// 1005 x 216
-		const imgSource =
-			strings('other.accept_language') === 'zh'
-				? require('../../../images/img_otc_banner_cn.png')
-				: require('../../../images/img_otc_banner_en.png');
+		const getImgSource = () => {
+			switch (strings('other.accept_language')) {
+				case 'zh':
+					return require('../../../images/img_otc_banner_cn.png');
+				case 'es':
+					return require('../../../images/img_otc_banner_es.png');
+				default:
+					return require('../../../images/img_otc_banner_en.png');
+			}
+		};
 		const imgWidth = width - 40;
 		const imgHeight = (216 * imgWidth * 1.0) / 1005;
 		return (
@@ -1464,7 +1469,7 @@ class Tokens extends PureComponent {
 							height: imgHeight
 						}
 					]}
-					source={imgSource}
+					source={getImgSource()}
 				/>
 				<TouchableOpacity
 					activeOpacity={0.8}
