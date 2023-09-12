@@ -1,7 +1,7 @@
 import ReactNative from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from 'react-native-i18n';
-import { LANGUAGE } from '../app/constants/storage';
+import { LANGUAGE, FIRST_APP_LOAD } from '../app/constants/storage';
 
 // Import all locales
 import en from './en.json';
@@ -41,7 +41,11 @@ export function getLanguages() {
 }
 
 // Initialize language of the app.
-export function checkAndSetLocale() {
+export async function checkAndSetLocale() {
+	const firstAppLoad = await AsyncStorage.getItem(FIRST_APP_LOAD);
+	//Just run on the first load
+	if (firstAppLoad) return;
+
 	const supportedLanguages = Object.keys(getLanguages());
 
 	// Get the current locale from i18n and split by '-' to get the language part only
@@ -52,6 +56,7 @@ export function checkAndSetLocale() {
 	} else {
 		setLocale('en');
 	}
+	await AsyncStorage.setItem(FIRST_APP_LOAD, 'true');
 }
 
 // Allow RTL alignment in RTL languages

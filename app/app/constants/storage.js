@@ -16,6 +16,8 @@ export const POLYGONSCAN_KEY = `${prefix}polygonscanKey`;
 
 export const LANGUAGE = `${prefix}language`;
 
+export const FIRST_APP_LOAD = 'firstAppLoad';
+
 export const AVAILABLE_ARB = `${prefix}AvailableArbMainnet`;
 
 export const TRUE = 'true';
