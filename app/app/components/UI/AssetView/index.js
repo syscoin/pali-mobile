@@ -403,7 +403,8 @@ class AssetView extends PureComponent {
 		const { TokenRatesController } = Engine.context;
 		const { ticker, load } = await TokenRatesController.getTvSymbol(asset.symbol);
 		if (ticker) {
-			this.setState({ ticker });
+			const newTicker = extractTicker(ticker);
+			this.setState({ ticker: newTicker });
 			return true;
 		} else if (load) {
 			const nowTicker = await TokenRatesController.loadTvSymbol(asset.symbol);

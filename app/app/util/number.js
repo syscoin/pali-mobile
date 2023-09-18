@@ -1231,10 +1231,11 @@ export function getEip155Url(nft) {
 }
 
 export function extractTicker(text) {
-	const match = text.match(/<em>([^<]+)<\/em>/);
-	let ticker = match ? match[1] : text;
+	const cleanedText = text.replace(/<\/?[Ee][Mm]>/g, ''); // Remove <em> and <EM> tags
+	const match = cleanedText.match(/([^<]+)/);
+	let ticker = match ? match[1] : cleanedText;
 
-	if (!ticker.endsWith('USD')) {
+	if (!ticker.endsWith('USD') && !ticker.endsWith('USDT')) {
 		ticker += 'USD';
 	}
 
