@@ -1231,15 +1231,15 @@ export function getEip155Url(nft) {
 }
 
 export function extractTicker(text) {
-	const cleanedText = text.replace(/<\/?[Ee][Mm]>/g, ''); // Remove <em> and <EM> tags
-	const match = cleanedText.match(/([^<]+)/);
-	let ticker = match ? match[1] : cleanedText;
+	// Use a single regular expression to remove <em> and <EM> tags and extract the content before any HTML tag
+	const [cleanedText = ''] = text.replace(/<\/?[Ee][Mm]>/g, '').match(/([^<]+)/) || [];
 
-	if (!ticker.endsWith('USD') && !ticker.endsWith('USDT')) {
-		ticker += 'USD';
-	}
+	// Check for special case when is equal to USDT and append 'USD' where appropriate
+	const shouldAppendUSD = !cleanedText.endsWith('USD') && !cleanedText.endsWith('USDT');
+	const isUSDT = cleanedText === 'USDT';
 
-	return ticker;
+	const ticker = shouldAppendUSD ? `${cleanedText}USD` : cleanedText;
+	return isUSDT ? `${ticker}USD` : ticker;
 }
 
 export default {
