@@ -124,7 +124,10 @@ class NFTImage extends PureComponent {
 							addAudioUrl(urlValue);
 						}
 					}
-					if (res.info()?.headers['Content-Length'] && res.info().headers['Content-Length'] > 1024 * 1024) {
+					if (
+						res.info()?.headers['Content-Length'] &&
+						res.info().headers['Content-Length'] > 1024 * 1024 * 3
+					) {
 						addOutOfMemoryUrl(urlValue);
 					}
 				}
