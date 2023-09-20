@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
 	},
 	tabView: {
 		width: '100%',
-		height: 92
+		minHeight: 92
 	},
 	slider: {
 		flex: 1,

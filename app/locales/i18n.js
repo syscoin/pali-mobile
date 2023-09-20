@@ -1,18 +1,20 @@
 import ReactNative from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from 'react-native-i18n';
-import { LANGUAGE } from '../app/constants/storage';
+import { LANGUAGE, FIRST_APP_LOAD } from '../app/constants/storage';
 
 // Import all locales
 import en from './en.json';
 import zh from './zh-cn.json';
+import es from './es.json';
 // Should the app fallback to English if user locale doesn't exists
 I18n.fallbacks = true;
 I18n.defaultLocale = 'en';
 // Define the supported translations
 I18n.translations = {
 	en,
-	zh
+	zh,
+	es
 };
 // If language selected get locale
 getUserPreferableLocale();
@@ -33,8 +35,28 @@ export async function setLocale(locale) {
 export function getLanguages() {
 	return {
 		en: 'English',
-		zh: 'Chinese - China'
+		zh: 'Chinese - China',
+		es: 'Spanish'
 	};
+}
+
+// Initialize language of the app.
+export async function checkAndSetLocale() {
+	const firstAppLoad = await AsyncStorage.getItem(FIRST_APP_LOAD);
+	//Just run on the first load
+	if (firstAppLoad) return;
+
+	const supportedLanguages = Object.keys(getLanguages());
+
+	// Get the current locale from i18n and split by '-' to get the language part only
+	const currentLocale = I18n.locale.split('-')[0];
+
+	if (supportedLanguages.includes(currentLocale)) {
+		setLocale(currentLocale);
+	} else {
+		setLocale('en');
+	}
+	await AsyncStorage.setItem(FIRST_APP_LOAD, 'true');
 }
 
 // Allow RTL alignment in RTL languages

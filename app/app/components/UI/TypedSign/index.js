@@ -100,7 +100,10 @@ export default class TypedSign extends PureComponent {
 					</View>
 				) : (
 					<Text style={styles.messageText}>
-						<Text style={styles.msgKey}>{key}:</Text> {`${obj[key]}`}
+						<Text style={styles.msgKey}>{key}:</Text>
+						{obj[key].length > 20
+							? obj[key].substring(0, 5) + '...' + obj[key].substring(obj[key].length - 5)
+							: obj[key]}
 					</Text>
 				)}
 			</View>

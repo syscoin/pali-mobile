@@ -121,7 +121,8 @@
 		"use_biometrics_message": "Instead of entering password, use Bio Auth to unlock Pali Wallet.",
 		"transaction_verification": "Transaction needs verification",
 		"verification_message_for_pwd": "Password required for every transaction.",
-		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction."
+		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction.",
+		"language": "Language"
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "Reveal Seed Phrase",
@@ -337,6 +338,7 @@
 		"all": "All",
 		"receive": "Receive",
 		"send": "Send",
+		"bridge": "Bridge",
 		"migrate": "Crosschain",
 		"move_to_l1": "Move to L1",
 		"move_to_l2": "Move to L2",
@@ -652,6 +654,7 @@
 		"delete_account": "Delete Account “{{name}}”?",
 		"delete_this_wallet": "Delete this Wallet",
 		"wallet_index": "Wallet{{number}}",
+		"wallet_imported": "Imported",
 		"add_new_account": "Add New Account",
 		"confirm_password": "Confirm password",
 		"password": "Password",
@@ -702,7 +705,7 @@
 		"network": "Network",
 		"unit_price": "Last Price",
 		"created_by": "Created by ",
-		"send_as_gift": "Send as a Gift",
+		"send_as_gift": "Send",
 		"trade_on_openSea": "Trade on OpenSea",
 		"technical_info": "Technical Info",
 		"collection_contract": "Collection Contract",

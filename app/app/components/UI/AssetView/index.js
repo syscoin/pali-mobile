@@ -14,7 +14,13 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
-import { convertUsdValue, getChainIdByType, onlyAddCurrencySymbol, renderCoinValue } from '../../../util/number';
+import {
+	convertUsdValue,
+	getChainIdByType,
+	onlyAddCurrencySymbol,
+	renderCoinValue,
+	extractTicker
+} from '../../../util/number';
 import { WebView } from 'react-native-webview';
 import Locked from '../Locked';
 import { strings } from '../../../../locales/i18n';
@@ -397,12 +403,14 @@ class AssetView extends PureComponent {
 		const { TokenRatesController } = Engine.context;
 		const { ticker, load } = await TokenRatesController.getTvSymbol(asset.symbol);
 		if (ticker) {
-			this.setState({ ticker });
+			const newTicker = extractTicker(ticker);
+			this.setState({ ticker: newTicker });
 			return true;
 		} else if (load) {
 			const nowTicker = await TokenRatesController.loadTvSymbol(asset.symbol);
+			const extractedTicker = extractTicker(nowTicker);
 			if (nowTicker) {
-				this.setState({ ticker: nowTicker });
+				this.setState({ ticker: extractedTicker });
 			}
 			return !!nowTicker;
 		}

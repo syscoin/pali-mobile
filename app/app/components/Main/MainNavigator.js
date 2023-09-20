@@ -34,6 +34,7 @@ import TransactionsView from '../UI/TransactionsView';
 import GlobeIcon from '../UI/GlobeIcon';
 import WalletIcon from '../UI/WalletIcon';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import LanguageSelector from '../Views/LanguageSelector';
 
 const options = {
 	enableVibrateFallback: true,
@@ -402,6 +403,16 @@ export default createStackNavigator(
 			screen: createStackNavigator({
 				ImportPrivateKeyView: {
 					screen: ImportPrivateKey,
+					navigationOptions: {
+						header: null
+					}
+				}
+			})
+		},
+		LanguageSelectorView: {
+			screen: createStackNavigator({
+				LanguageSelector: {
+					screen: LanguageSelector,
 					navigationOptions: {
 						header: null
 					}

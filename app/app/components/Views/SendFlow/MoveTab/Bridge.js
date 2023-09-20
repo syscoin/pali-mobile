@@ -213,9 +213,20 @@ export function getSupportMigrationMultichain(asset) {
 
 export function getSupportMigration(asset) {
 	const supports = [];
+	const { type } = asset;
+
 	const cBridge = getSupportMigrationCBridge(asset);
 	if (cBridge?.length) {
 		supports.push(...cBridge);
+	}
+
+	const chainSupportsRolluxBridge = {
+		[ChainType.Syscoin]: [ChainType.Rollux],
+		[ChainType.Rollux]: [ChainType.Syscoin]
+	};
+
+	if (chainSupportsRolluxBridge.hasOwnProperty(type)) {
+		supports.push(...chainSupportsRolluxBridge[type]);
 	}
 
 	return supports;

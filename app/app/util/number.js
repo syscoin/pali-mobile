@@ -671,7 +671,7 @@ export function revertAmount(amount: string, decimals: number = undefined) {
 	}
 	amount = amount.replace(/\s+/g, '');
 	while (amount.includes(',')) {
-		amount = amount.replace(',', '');
+		amount = amount.replace(',', '.');
 	}
 	if (decimals && amount.includes('.') && isDecimalValue(amount)) {
 		const comps = amount.split('.');
@@ -1228,6 +1228,19 @@ export function getClaimValues(txs) {
 
 export function getEip155Url(nft) {
 	return `eip155:1/${nft?.asset_contract?.schema_name}:${nft?.address}/${nft?.token_id}`.toLowerCase();
+}
+
+// This function removes any HTML tags from the text and appends 'USD' where appropriate
+export function extractTicker(text) {
+	// Use a single regular expression to remove <em> and <EM> tags and extract the content before any HTML tag
+	const [cleanedText = ''] = text.replace(/<\/?[Ee][Mm]>/g, '').match(/([^<]+)/) || [];
+	//  Append 'USD' where appropriate
+	const shouldAppendUSD = !cleanedText.endsWith('USD') && !cleanedText.endsWith('USDT');
+	// Check for when is equal to USDT and add a USD at the end
+	const isUSDT = cleanedText === 'USDT';
+
+	const ticker = shouldAppendUSD ? `${cleanedText}USD` : cleanedText;
+	return isUSDT ? `${ticker}USD` : ticker;
 }
 
 export default {

@@ -124,7 +124,10 @@ class NFTImage extends PureComponent {
 							addAudioUrl(urlValue);
 						}
 					}
-					if (res.info()?.headers['Content-Length'] && res.info().headers['Content-Length'] > 1024 * 1024) {
+					if (
+						res.info()?.headers['Content-Length'] &&
+						res.info().headers['Content-Length'] > 1024 * 1024 * 3
+					) {
 						addOutOfMemoryUrl(urlValue);
 					}
 				}
@@ -256,20 +259,11 @@ class NFTImage extends PureComponent {
 		return (
 			<FastImage
 				ref={this.refImage}
-				source={
-					defaultLoadingError
-						? defaultImg || require('../../../images/nft_default_placehoder.png')
-						: { uri: urlValue }
-				}
+				source={{ uri: urlValue }}
 				style={[style, showBorder && styles.borderStyle]}
-				onLoadEnd={onLoadEnd}
 				resizeMode={resizeMode}
+				onLoadEnd={onLoadEnd}
 				onLoad={onLoad}
-				onError={() => {
-					if (!defaultLoadingError) {
-						this.setState({ defaultLoadingError: true });
-					}
-				}}
 			/>
 		);
 	}
