@@ -553,7 +553,11 @@ class Nft extends PureComponent {
 		const left = index % columnCount > 0 ? this.getItemSpace(columnCount) : 0;
 		const top = Math.floor(index / columnCount) > 0 ? this.getItemSpace(columnCount) : 0;
 		const tagStyle = columnCount === 3 ? styles.safeTagS : columnCount === 2 ? styles.safeTagM : styles.safeTagL;
-		const image_url = data.image_thumbnail_url || data.image_url;
+		const image_url =
+			data.image_thumbnail_url === 'error' || !data.image_thumbnail_url
+				? data.image_url
+				: data.image_thumbnail_url;
+
 		return (
 			<TouchableOpacity
 				activeOpacity={1.0}
