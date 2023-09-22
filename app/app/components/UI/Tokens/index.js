@@ -234,9 +234,8 @@ const styles = StyleSheet.create({
 	touchChildView: {
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'stretch',
-		width: hideItemWidth,
-		paddingLeft: 6
+		alignItems: 'center',
+		width: hideItemWidth
 	},
 	space: {
 		width: 7
@@ -1115,7 +1114,9 @@ class Tokens extends PureComponent {
 				<View style={styles.touchChildView}>
 					<Image source={require('../../../images/ic_asset_item_hide.png')} />
 					<View style={styles.space} />
-					<Text style={styles.moveText}>{strings('other.hide')}</Text>
+					<Text style={styles.moveText} allowFontScaling={false}>
+						{strings('other.hide')}
+					</Text>
 				</View>
 			</TouchableWithoutFeedback>
 		);
@@ -1126,7 +1127,9 @@ class Tokens extends PureComponent {
 			<View style={styles.touchChildView}>
 				<Image source={require('../../../images/ic_asset_item_hide_disable.png')} />
 				<View style={styles.space} />
-				<Text style={styles.moveTextDiabled}>{strings('other.hide')}</Text>
+				<Text style={styles.moveTextDiabled} allowFontScaling={false}>
+					{strings('other.hide')}
+				</Text>
 			</View>
 		</TouchableWithoutFeedback>
 	);

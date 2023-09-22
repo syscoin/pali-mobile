@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
 		width: 51,
 		color: colors.$030319,
 		...fontStyles.bold,
-		fontSize: 16
+		fontSize: 16,
+		marginRight: 10
 	},
 	address: {
 		color: colors.$60657D,
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
 	securityPanel: {
 		width: '100%',
 		minHeight: 50,
-		paddingTop: 12,
-		paddingBottom: 12,
+		paddingTop: 10,
+		paddingBottom: 10,
 		marginTop: 12,
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -326,9 +327,6 @@ class ApproveTransactionReview extends PureComponent {
 				style={styles.securityPanel}
 			>
 				<Text style={styles.securityText0}>{strings('security.approve_spender_unknown')}</Text>
-				<TouchableOpacity style={styles.commonRiskBtn} activeOpacity={0.6} onPress={this.props.showCommonRisk}>
-					<Text style={styles.commonRiskBtnText}>{strings('security.common_risk')}</Text>
-				</TouchableOpacity>
 			</LinearGradient>
 		);
 	};
@@ -362,20 +360,32 @@ class ApproveTransactionReview extends PureComponent {
 		const approveLimitText = originalAmount === 0 ? strings('other.amend_limit') : strings('other.approve_limit');
 		return (
 			<View style={styles.root} testID={'approve-screen'}>
-				<Text style={styles.title}>{title}</Text>
+				<Text style={styles.title} allowFontScaling={false}>
+					{title}
+				</Text>
 				<TransactionHeader
 					currentPageInformation={{ origin, spenderAddress, title: host, url: activeTabUrl }}
 				/>
 				{this.renderSecurityPanel()}
 				<View style={styles.fromWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.from')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.from, 17)}</Text>
+					<Text style={styles.addressTitle} allowFontScaling={false}>
+						{strings('other.from')}
+					</Text>
+					<Text style={styles.address} allowFontScaling={false}>
+						{renderShortAddress(transaction.from, 16)}
+					</Text>
 				</View>
 				<View style={styles.toWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.to')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.to, 17)}</Text>
+					<Text style={styles.addressTitle} allowFontScaling={false}>
+						{strings('other.to')}
+					</Text>
+					<Text style={styles.address} allowFontScaling={false}>
+						{renderShortAddress(transaction.to, 16)}
+					</Text>
 				</View>
-				<Text style={styles.limitTitle}>{approveLimitText}</Text>
+				<Text style={styles.limitTitle} allowFontScaling={false}>
+					{approveLimitText}
+				</Text>
 				<View style={styles.limitWrapper}>
 					<TouchableOpacity
 						style={styles.selectBtn}
@@ -383,7 +393,9 @@ class ApproveTransactionReview extends PureComponent {
 						disabled={!ready}
 					>
 						<View style={[styles.selectBox, !isInfiniteLimit && styles.unselectBox]} />
-						<Text style={styles.infinite}>{strings('other.infinite')}</Text>
+						<Text style={styles.infinite} allowFontScaling={false}>
+							{strings('other.infinite')}
+						</Text>
 					</TouchableOpacity>
 
 					<View style={baseStyles.flexGrow} />
@@ -403,6 +415,7 @@ class ApproveTransactionReview extends PureComponent {
 						onFocus={this.onLimitInputFocus}
 						editable={ready}
 						value={limitValueFormat}
+						allowFontScaling={false}
 					/>
 				</View>
 				<NetworkFee transaction={transaction.transaction} type={type} onChange={this.onGasChange} />
