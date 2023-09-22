@@ -105,6 +105,7 @@
 		"security_settings": "安全设置",
 		"about": "关于",
 		"invite": "邀请好友",
+		"powered_by": "令牌信息和图表由：",
 		"developer_options": "开发者选项",
 		"currency_unit": "法币单位",
 		"update_check": "检测更新",
@@ -337,6 +338,7 @@
 	"other": {
 		"transactions": "转账记录",
 		"all": "所有",
+		"favorites": "收藏",
 		"receive": "接收",
 		"send": "发送",
 		"bridge": "跨链",
@@ -623,6 +625,7 @@
 		"tab_token": "代币检测",
 		"tab_approval": "授权检测",
 		"intro_title": "授权限额说明",
+		"cancel_approval": "取消批准",
 		"intro_text": "代币授权时会确定授权限额，即最多可操作的代币数量。恶意合约的一般会在此处设置为“无限”！（备注：这种“无限”合约不一定都是恶意，很多安全合约也会这样设置）",
 		"list_title": "代币授权列表",
 		"token_title": "授权列表",

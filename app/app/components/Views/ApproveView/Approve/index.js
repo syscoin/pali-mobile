@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
 	actionContainer: {
 		flex: 0,
 		flexDirection: 'row',
-		marginTop: 39,
-		marginBottom: 30,
+		marginTop: 30,
+		marginBottom: 20,
 		marginHorizontal: 30
 	},
 	cancel: {
@@ -350,37 +350,6 @@ class Approve extends PureComponent {
 		this.setState({ showWebView: false });
 	};
 
-	renderCommonRisk = () => {
-		const { showWebView, statusBarHeight } = this.state;
-		return (
-			<Modal
-				isVisible={showWebView}
-				style={styles.bottomModal}
-				animationIn="slideInUp"
-				animationOut="slideOutDown"
-				backdropOpacity={0.7}
-				animationInTiming={600}
-				animationOutTiming={600}
-				onBackdropPress={this.hideCommonRisk}
-				onBackButtonPress={this.hideCommonRisk}
-			>
-				<View style={{ ...styles.titleBar, marginTop: statusBarHeight }}>
-					<TouchableOpacity style={styles.gobackBtn} onPress={this.hideCommonRisk}>
-						<Image source={require('../../../../images/back.png')} />
-					</TouchableOpacity>
-					<Text style={styles.titleText}>{strings('security.common_risk')}</Text>
-				</View>
-				<WebView
-					javaScriptEnabled
-					setSupportMultipleWindows={false}
-					source={{
-						uri: `https://tops.sardin.cn/token-approve?locale=${strings('other.accept_language')}`
-					}}
-				/>
-			</Modal>
-		);
-	};
-
 	render = () => {
 		const { gasError, ready, loading, checkPassword } = this.state;
 		const { transaction } = this.props;
@@ -436,7 +405,6 @@ class Approve extends PureComponent {
 					/>
 					{checkPassword && <CheckPassword checkResult={this.onInputPwdResult} needDelay={false} />}
 				</KeyboardAwareScrollView>
-				{this.renderCommonRisk()}
 			</Modal>
 		);
 	};

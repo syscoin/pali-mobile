@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import I18n from 'react-native-i18n';
 import {
 	StyleSheet,
 	View,
@@ -427,10 +428,8 @@ class AssetView extends PureComponent {
 		const scriptStart = "startChart('";
 		const scriptEnd = "')";
 		const paramsDivider = "','";
-		const language =
-			Platform.OS === 'ios'
-				? NativeModules.SettingsManager.settings.AppleLocale
-				: NativeModules.I18nManager.localeIdentifier;
+		const language = I18n.locale;
+
 		const JSscript = scriptStart + this.state.ticker + paramsDivider + language + scriptEnd;
 		this.tradingViewChart.injectJavaScript(JSscript);
 		console.info('JSscript = ' + JSscript);

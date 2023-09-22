@@ -14,7 +14,7 @@ const popPadding = 10;
 
 const styles = StyleSheet.create({
 	selectView: {
-		height: 16,
+		height: 18,
 		position: 'absolute',
 		top: 4,
 		bottom: 4,

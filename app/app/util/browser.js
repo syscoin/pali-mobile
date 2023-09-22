@@ -63,7 +63,7 @@ export async function fetchHomepage() {
 }
 
 export function getLanguageDapp(dappPageAll) {
-	return dappPageAll.en;
+	return strings('other.accept_language') === 'es' ? dappPageAll.es : dappPageAll.en;
 }
 
 export function getDapp(dappPageAll) {

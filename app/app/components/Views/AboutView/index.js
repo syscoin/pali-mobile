@@ -67,6 +67,7 @@ const styles = {
 	footerFont: {
 		color: '#9B989B',
 		fontFamily: 'Poppins',
+		fontSize: 16,
 		...fontStyles.normal
 	}
 };
@@ -166,7 +167,9 @@ export default class AboutView extends PureComponent {
 				<View style={styles.flex3} />
 
 				<View style={styles.footer}>
-					<Text style={styles.footerFont}>Token information and charts powered by:</Text>
+					<Text style={styles.footerFont} allowFontScaling={false}>
+						{strings('app_settings.powered_by')}
+					</Text>
 					<Icon name={'coinGecko'} color={colors.white} width="200" height="100" />
 				</View>
 			</SafeAreaView>
