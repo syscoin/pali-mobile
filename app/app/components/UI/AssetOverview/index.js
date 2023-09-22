@@ -297,7 +297,7 @@ class AssetOverview extends PureComponent {
 						<View style={styles.originLogo}>{this.renderLogo()}</View>
 						<View style={styles.symbolBase}>
 							<View style={styles.symbol}>
-								<Text style={styles.symbolText} numberOfLines={1} allowFontScaling={false}>
+								<Text style={styles.symbolText} numberOfLines={1}>
 									{symbol}
 								</Text>
 								{address && (
@@ -315,7 +315,7 @@ class AssetOverview extends PureComponent {
 					</View>
 
 					<View style={styles.assetTrans}>
-						<Text style={styles.assetTransTotal} allowFontScaling={false}>
+						<Text style={styles.assetTransTotal}>
 							{amountSymbol}
 							{renderAmount(price && price > 10000 ? new BigNumber(price).toFixed(2) : price)}
 						</Text>
@@ -349,14 +349,10 @@ class AssetOverview extends PureComponent {
 					</View>
 				</View>
 				<Text style={styles.balanceTitle}>{strings('watch_asset_request.balance')}</Text>
-				<Text style={styles.balance} allowFontScaling={false}>
-					{hideAmount ? '***' : renderAmount(balance)}
-				</Text>
+				<Text style={styles.balance}>{hideAmount ? '***' : renderAmount(balance)}</Text>
 				<Text style={styles.networthTitle}>{strings('other.networth')}</Text>
 				<View style={styles.networkWrapper}>
-					<Text style={styles.balance} allowFontScaling={false}>
-						{hideAmount ? '***' : renderAmount(secondaryBalance)}
-					</Text>
+					<Text style={styles.balance}>{hideAmount ? '***' : renderAmount(secondaryBalance)}</Text>
 					{!asset.lockType && (
 						<TouchableOpacity
 							style={styles.txWrapper}
