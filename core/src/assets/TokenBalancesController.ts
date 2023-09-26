@@ -1,16 +1,16 @@
-import {BN} from 'ethereumjs-util';
-import {Mutex} from 'async-mutex';
-import BaseController, {BaseConfig, BaseState} from '../BaseController';
-import util, {getTronAccountUrl, handleFetch, logDebug, safelyExecute, safelyExecuteWithTimeout} from '../util';
+import { BN } from 'ethereumjs-util';
+import { Mutex } from 'async-mutex';
+import BaseController, { BaseConfig, BaseState } from '../BaseController';
+import util, { getTronAccountUrl, handleFetch, logDebug, safelyExecute, safelyExecuteWithTimeout } from '../util';
 import PreferencesController from '../user/PreferencesController';
 import TronNetworkController from '../network/TronNetworkController';
 import KeyringController from '../keyring/KeyringController';
-import {getControllerFromType} from '../ControllerUtils';
-import AssetsController, {TokenNoChange} from './AssetsController';
-import {Token} from './TokenRatesController';
+import { getControllerFromType } from '../ControllerUtils';
+import AssetsController, { TokenNoChange } from './AssetsController';
+import { Token } from './TokenRatesController';
 import TronContractController from './TronContractController';
-import {BalanceMap} from './AssetsContractController';
-import {NetworkConfig, ChainType} from "../Config";
+import { BalanceMap } from './AssetsContractController';
+import { NetworkConfig, ChainType } from '../Config';
 
 /**
  * @type TokenBalancesConfig
@@ -22,11 +22,12 @@ import {NetworkConfig, ChainType} from "../Config";
  */
 export interface TokenBalancesConfig extends BaseConfig {
   interval: number;
+  intervalRollux: number;
   backgroundMode: boolean;
 }
 
 export interface TokenBalancesState extends BaseState {
-  allContractBalances: {[selectedAddress: string]: {[chainType: number]: {[address: string]: BN}}};
+  allContractBalances: { [selectedAddress: string]: { [chainType: number]: { [address: string]: BN } } };
 }
 
 /**
@@ -35,10 +36,12 @@ export interface TokenBalancesState extends BaseState {
  */
 export class TokenBalancesController extends BaseController<TokenBalancesConfig, TokenBalancesState> {
   private handle?: NodeJS.Timer;
-
+  private handleRollux?: NodeJS.Timer;
   private mutex = new Mutex();
+  private mutexRollux = new Mutex();
 
   private polling_counter = 0;
+  private polling_counterRollux = 0;
 
   /**
    * Name of this controller used during composition
@@ -60,6 +63,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     super(config, state);
     this.defaultConfig = {
       interval: 180000,
+      intervalRollux: 180000,
       backgroundMode: false,
     };
     this.defaultState = {
@@ -71,6 +75,14 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   rehydrate(state: Partial<TokenBalancesState>) {
     const new_state = util.rehydrate(this.name, state);
     this.update(new_state);
+  }
+
+  /**
+   * Starts a new polling interval for both rollux and other networks.
+   */
+  async pollAll() {
+    this.poll();
+    this.pollRollux();
   }
 
   /**
@@ -95,6 +107,80 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     }, this.config.interval);
   }
 
+  /**
+   * Starts a new polling interval
+   *
+   * @param interval - Polling interval used to fetch new token balances
+   */
+  async pollRollux(interval?: number): Promise<void> {
+    if (this.polling_counterRollux > 1) {
+      return;
+    }
+    this.polling_counterRollux += 1;
+    interval && this.configure({ intervalRollux: interval }, false, false);
+    this.handleRollux && clearTimeout(this.handleRollux);
+    await this.refreshRolluxTokens();
+    this.polling_counterRollux -= 1;
+    if (this.polling_counterRollux > 0) {
+      return;
+    }
+    this.handleRollux = setTimeout(() => {
+      this.pollRollux(this.config.intervalRollux);
+    }, this.config.intervalRollux);
+  }
+
+  async refreshRolluxTokens() {
+    if (this.config.backgroundMode) {
+      return;
+    }
+    const preferencesController = this.context.PreferencesController as PreferencesController;
+    const { selectedAddress } = preferencesController.state;
+    if (!selectedAddress) {
+      return;
+    }
+
+    const releaseLock = await this.mutexRollux.acquire();
+    try {
+      const start = Date.now();
+      const intervals: number[] = [];
+
+      const preferences = this.context.PreferencesController as PreferencesController;
+
+      for (const type in NetworkConfig) {
+        const chainType = Number(type);
+        if (NetworkConfig[chainType].Disabled) {
+          continue;
+        }
+        if (chainType === ChainType.Tron) {
+          !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
+            (await safelyExecute(() => this.updateTronBalances(selectedAddress)));
+
+          await safelyExecute(() => this.detectTronTokens(selectedAddress));
+        } else {
+          //Just Updates rollux tokens
+          if (!preferences.isDisabledChain(selectedAddress, chainType) && chainType === ChainType.Rollux) {
+            await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
+          }
+        }
+        intervals.push(Date.now() - start);
+      }
+      const types = preferences.getEnabledRpcChains(selectedAddress);
+      if (types?.length > 0) {
+        for (const type of types) {
+          //Just Updates rollux tokens
+          if (type === ChainType.Rollux) {
+            await safelyExecute(() => this.updateBalances(selectedAddress, type));
+            intervals.push(Date.now() - start);
+          }
+        }
+      }
+
+      logDebug(`leon.w@${this.name} refresh: ${selectedAddress}, intervals=${intervals}`);
+    } finally {
+      releaseLock();
+    }
+  }
+
   async refresh() {
     if (this.config.backgroundMode) {
       return;
@@ -104,6 +190,7 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     if (!selectedAddress) {
       return;
     }
+
     const releaseLock = await this.mutex.acquire();
     try {
       const start = Date.now();
@@ -118,20 +205,25 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
         }
         if (chainType === ChainType.Tron) {
           !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
-          await safelyExecute(() => this.updateTronBalances(selectedAddress));
+            (await safelyExecute(() => this.updateTronBalances(selectedAddress)));
 
           await safelyExecute(() => this.detectTronTokens(selectedAddress));
         } else {
-          !preferences.isDisabledChain(selectedAddress, chainType) &&
-          await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
+          //Updates other tokens besides Rollux
+          if (!preferences.isDisabledChain(selectedAddress, chainType) && chainType !== ChainType.Rollux) {
+            await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
+          }
         }
         intervals.push(Date.now() - start);
       }
       const types = preferences.getEnabledRpcChains(selectedAddress);
       if (types?.length > 0) {
         for (const type of types) {
-          await safelyExecute(() => this.updateBalances(selectedAddress, type));
-          intervals.push(Date.now() - start);
+          //Updates other tokens besides Rollux
+          if (type !== ChainType.Rollux) {
+            await safelyExecute(() => this.updateBalances(selectedAddress, type));
+            intervals.push(Date.now() - start);
+          }
         }
       }
 
@@ -146,9 +238,9 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     try {
       const oldAddressBalances = this.state.allContractBalances[selectedAddress] || {};
       const oldBalances = oldAddressBalances[chainType] || {};
-      oldAddressBalances[chainType] = {...oldBalances, ...balances};
+      oldAddressBalances[chainType] = { ...oldBalances, ...balances };
       this.state.allContractBalances[selectedAddress] = oldAddressBalances;
-      this.update({ allContractBalances: { ...this.state.allContractBalances }});
+      this.update({ allContractBalances: { ...this.state.allContractBalances } });
     } finally {
       releaseLock();
     }
@@ -174,12 +266,16 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
 
     const tokensAddress = tokens.map((token) => token.address);
     tokensAddress.push('0x0');
-    let balances = await safelyExecuteWithTimeout(async () => await contractController.getBalancesInSingleCall(selectedAddress, tokensAddress, true, chainId), true, 40000);
+    let balances = await safelyExecuteWithTimeout(
+      async () => await contractController.getBalancesInSingleCall(selectedAddress, tokensAddress, true, chainId),
+      true,
+      40000,
+    );
     if (!balances) {
       return;
     }
     for (const balancesKey in balances) {
-        newContractBalances[balancesKey] = balances[balancesKey];
+      newContractBalances[balancesKey] = balances[balancesKey];
     }
     if (Object.keys(newContractBalances).length === 0) {
       return;
@@ -209,7 +305,11 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
       return;
     }
     const keyring_controller = this.context.KeyringController as KeyringController;
-    const { state: { provider: { chainId } } } = this.context.TronNetworkController as TronNetworkController;
+    const {
+      state: {
+        provider: { chainId },
+      },
+    } = this.context.TronNetworkController as TronNetworkController;
     const tron_address = keyring_controller.getTronAddress(selectedAddress);
     if (!tron_address) {
       return;
@@ -235,14 +335,21 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   async detectTronTokens(selectedAddress: string) {
     const tron_contract = this.context.TronContractController as TronContractController;
     const assets = this.context.AssetsController as AssetsController;
-    const { state: { provider: { chainId } } } = this.context.TronNetworkController as TronNetworkController;
+    const {
+      state: {
+        provider: { chainId },
+      },
+    } = this.context.TronNetworkController as TronNetworkController;
     const { allTokens, allIgnoredTokens } = assets.state;
     const tokens = allTokens[selectedAddress]?.[chainId] || [];
     const ignoredTokens = allIgnoredTokens[selectedAddress]?.[chainId] || [];
     const tronBalances = this.state.allContractBalances[selectedAddress]?.[ChainType.Tron] || {};
-    const needToAdd = Object.keys(tronBalances).filter((address) => address !== '0x0' &&
-      !tokens.find((token) => token.address === address) &&
-      !ignoredTokens.find((token) => token.address === address));
+    const needToAdd = Object.keys(tronBalances).filter(
+      (address) =>
+        address !== '0x0' &&
+        !tokens.find((token) => token.address === address) &&
+        !ignoredTokens.find((token) => token.address === address),
+    );
     const needAddTokens = [];
     for (const tokenAddress of needToAdd) {
       let decimals;
@@ -280,14 +387,20 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   onComposed() {
     super.onComposed();
     setTimeout(() => this.poll(), 10000);
+    setTimeout(() => this.pollRollux(), 10000);
     const preferences = this.context.PreferencesController as PreferencesController;
     preferences.subscribe(() => setTimeout(() => this.poll(), 100), ['selectedAddress']);
+    preferences.subscribe(() => setTimeout(() => this.pollRollux(), 100), ['selectedAddress']);
     const assets = this.context.AssetsController as AssetsController;
-    assets.subscribe(({ tokenChangedType }) => {
-      if (tokenChangedType !== TokenNoChange) {
-        setTimeout(() => this.poll(), 100);
-      }
-    }, ['allTokens']);
+    assets.subscribe(
+      ({ tokenChangedType }) => {
+        if (tokenChangedType !== TokenNoChange) {
+          setTimeout(() => this.poll(), 100);
+          setTimeout(() => this.pollRollux(), 100);
+        }
+      },
+      ['allTokens'],
+    );
   }
 }
 
