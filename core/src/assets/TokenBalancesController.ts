@@ -108,9 +108,9 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
   }
 
   /**
-   * Starts a new polling interval
+   * Starts a new polling interval for Rollux
    *
-   * @param interval - Polling interval used to fetch new token balances
+   * @param interval - Polling interval used to fetch new Rollux token balances
    */
   async pollRollux(interval?: number): Promise<void> {
     if (this.polling_counterRollux > 1) {
@@ -129,6 +129,9 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
     }, this.config.intervalRollux);
   }
 
+  /**
+   * Refreshes token balances for Rollux tokens
+   */
   async refreshRolluxTokens() {
     if (this.config.backgroundMode) {
       return;
@@ -151,16 +154,10 @@ export class TokenBalancesController extends BaseController<TokenBalancesConfig,
         if (NetworkConfig[chainType].Disabled) {
           continue;
         }
-        if (chainType === ChainType.Tron) {
-          !preferences.isDisabledChain(selectedAddress, ChainType.Tron) &&
-            (await safelyExecute(() => this.updateTronBalances(selectedAddress)));
 
-          await safelyExecute(() => this.detectTronTokens(selectedAddress));
-        } else {
-          //Just Updates rollux tokens
-          if (!preferences.isDisabledChain(selectedAddress, chainType) && chainType === ChainType.Rollux) {
-            await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
-          }
+        //Just Updates rollux tokens
+        if (!preferences.isDisabledChain(selectedAddress, chainType) && chainType === ChainType.Rollux) {
+          await safelyExecute(() => this.updateBalances(selectedAddress, chainType));
         }
         intervals.push(Date.now() - start);
       }
