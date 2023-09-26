@@ -237,7 +237,7 @@ class TransactionTips extends PureComponent {
 			setTimeout(() => {
 				const { TokenBalancesController } = Engine.context;
 				const pollPromises = [];
-				pollPromises.push(...[TokenBalancesController.poll()]);
+				pollPromises.push(...[TokenBalancesController.pollAll()]);
 				Promise.all(pollPromises);
 			}, 2000);
 
