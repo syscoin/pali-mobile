@@ -543,6 +543,7 @@
 		"approve_spender_unknown": "Do not approve any unknown links or airdrops.",
 		"approve_spender_safe": "No risks have been detected in the token approval.",
 		"approve_spender_risk": "The token approval has potential security risks. Please do not approve it!",
+		"approve_spender_risk_pishing": "The token approval has potential security risks. It's probably a pishing token. Please do not approve it!",
 		"common_risk": "Common Risks",
 		"uncheck_tips": "Apply for security detect",
 		"risk_token": "Risky Token",

@@ -179,7 +179,8 @@ class ApproveTransactionReview extends PureComponent {
 		 */
 		handleGasFeeSelection: PropTypes.func,
 		setApproveAmount: PropTypes.func,
-		browser: PropTypes.object
+		browser: PropTypes.object,
+		isScam: PropTypes.bool //If the token is not secure, it will be true
 	};
 
 	state = {
@@ -206,6 +207,7 @@ class ApproveTransactionReview extends PureComponent {
 			setApproveAmount,
 			contractList
 		} = this.props;
+
 		const host = getHost(this.originIsWalletConnect ? origin.split(WALLET_CONNECT_ORIGIN)[1] : origin);
 		let tokenSymbol, tokenDecimals;
 		try {
@@ -217,6 +219,7 @@ class ApproveTransactionReview extends PureComponent {
 			tokenDecimals = 18;
 		}
 		const { spenderAddress, encodedAmount } = decodeApproveData(data);
+
 		setApproveAmount(encodedAmount, spenderAddress);
 		const { name: method } = await getMethodData(data);
 
@@ -230,6 +233,7 @@ class ApproveTransactionReview extends PureComponent {
 			onEvent('RiskApproval');
 		}
 		const initAmount = parseInt(encodedAmount);
+
 		this.setState({
 			host,
 			method,
@@ -237,6 +241,7 @@ class ApproveTransactionReview extends PureComponent {
 			tokenSymbol,
 			token: { symbol: tokenSymbol, decimals: tokenDecimals },
 			spenderAddress,
+
 			securityLevel: spenderInfo?.status || 0,
 			isInfiniteLimit: initAmount !== 0,
 			limitValue: initAmount !== 0 ? '' : '0',
@@ -287,6 +292,7 @@ class ApproveTransactionReview extends PureComponent {
 
 	renderSecurityPanel = () => {
 		const { securityLevel } = this.state;
+		const { isScam } = this.props;
 		if (securityLevel === 1) {
 			return (
 				<LinearGradient
@@ -303,6 +309,26 @@ class ApproveTransactionReview extends PureComponent {
 				</LinearGradient>
 			);
 		}
+
+		if (isScam) {
+			return (
+				<LinearGradient
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 0 }}
+					colors={['#FF9595', '#FD5E5E']}
+					style={styles.securityPanel}
+				>
+					<Image
+						style={styles.securityImage2}
+						source={require('../../../images/approval_security_risk.png')}
+					/>
+					<Text allowFontScaling={false} style={styles.securityText}>
+						{strings('security.approve_spender_risk_pishing')}
+					</Text>
+				</LinearGradient>
+			);
+		}
+
 		if (securityLevel === 2) {
 			return (
 				<LinearGradient
@@ -315,10 +341,13 @@ class ApproveTransactionReview extends PureComponent {
 						style={styles.securityImage2}
 						source={require('../../../images/approval_security_risk.png')}
 					/>
-					<Text style={styles.securityText}>{strings('security.approve_spender_risk')}</Text>
+					<Text allowFontScaling={false} style={styles.securityText}>
+						{strings('security.approve_spender_risk')}
+					</Text>
 				</LinearGradient>
 			);
 		}
+
 		return (
 			<LinearGradient
 				start={{ x: 0, y: 0 }}

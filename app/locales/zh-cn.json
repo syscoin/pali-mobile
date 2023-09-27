@@ -543,6 +543,7 @@
 		"approve_spender_unknown": "切勿向来历不明的空投或链接授权！",
 		"approve_spender_safe": "经检测，暂未发现该代币授权存在问题。",
 		"approve_spender_risk": "经检测，此代币授权存在安全隐患，切勿授权！",
+		"approve_spender_risk_pishing": "经检测，此代币授权存在安全隐患，切勿授权！",
 		"common_risk": "常见风险",
 		"uncheck_tips": "暂未对该代币安全检测，申请检测",
 		"risk_token": "风险代币",

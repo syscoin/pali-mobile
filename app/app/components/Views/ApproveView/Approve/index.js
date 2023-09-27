@@ -149,11 +149,12 @@ class Approve extends PureComponent {
 		spenderAddress: undefined,
 		showWebView: false,
 		originalAmount: -1,
+		isScam: undefined,
 		checkPassword: false,
 		statusBarHeight: 0
 	};
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
 		if (!this.props?.transaction?.id) {
 			this.props.toggleApproveModal(false);
 			return null;
@@ -162,12 +163,43 @@ class Approve extends PureComponent {
 		onEvent('ShowApprovalModal');
 		const { transaction } = this.props;
 		const { encodedAmount } = decodeApproveData(transaction.data);
+		if (this.state.isScam === undefined) {
+			const isScam = await this.getMaliciousBehavior();
+
+			this.setState({ isScam: isScam });
+		}
 		this.setState({ originalAmount: parseInt(encodedAmount) });
 		if (Device.isIos()) {
 			const { StatusBarManager } = NativeModules;
 			StatusBarManager.getHeight(ret => {
 				ret && this.setState({ statusBarHeight: ret.height });
 			});
+		}
+	};
+
+	getMaliciousBehavior = async () => {
+		const {
+			transaction: { data, chainId }
+		} = this.props;
+		const { spenderAddress } = decodeApproveData(data);
+
+		try {
+			const response = await fetch(
+				`https://api.gopluslabs.io/api/v1/approval_security/${chainId}?contract_addresses=${spenderAddress}`
+			);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const data = await response.json();
+			const maliciousBehaviors = data.result.malicious_behavior;
+
+			const isScam = maliciousBehaviors.length > 0;
+
+			return isScam;
+		} catch (error) {
+			util.logError(error, 'error while trying get approve security token data from api');
+			return false;
 		}
 	};
 
@@ -351,7 +383,7 @@ class Approve extends PureComponent {
 	};
 
 	render = () => {
-		const { gasError, ready, loading, checkPassword } = this.state;
+		const { gasError, ready, loading, checkPassword, isScam } = this.state;
 		const { transaction } = this.props;
 		if (!transaction.id) return null;
 
@@ -376,6 +408,7 @@ class Approve extends PureComponent {
 				>
 					<View style={styles.container}>
 						<ApproveTransactionReview
+							isScam={isScam}
 							showCommonRisk={this.showCommonRisk}
 							handleGasFeeSelection={this.handleSetGasFee}
 							setApproveAmount={this.setApproveAmount}
