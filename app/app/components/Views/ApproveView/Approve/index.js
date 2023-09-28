@@ -192,9 +192,10 @@ class Approve extends PureComponent {
 			}
 
 			const data = await response.json();
-			const maliciousBehaviors = data.result.malicious_behavior;
 
-			const isScam = maliciousBehaviors.length > 0;
+			const maliciousBehaviors = data && data.result ? data.result.malicious_behavior : null;
+
+			const isScam = maliciousBehaviors && maliciousBehaviors.length > 0;
 
 			return isScam;
 		} catch (error) {
