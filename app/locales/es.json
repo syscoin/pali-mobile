@@ -541,6 +541,7 @@
 		"approve_spender_unknown": "No apruebes enlaces o airdrops desconocidos.",
 		"approve_spender_safe": "No se han detectado riesgos en la aprobación de tokens.",
 		"approve_spender_risk": "La aprobación de tokens tiene riesgos de seguridad potenciales. Por favor, no la apruebes.",
+		"approve_spender_risk_pishing": "La aprobación de tokens tiene riesgos de seguridad potenciales. Probablemente sea un token de phishing. Por favor, no la apruebes.",
 		"common_risk": "Riesgos Comunes",
 		"uncheck_tips": "Solicitar detección de seguridad",
 		"risk_token": "Token Riesgoso",
