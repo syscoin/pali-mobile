@@ -136,8 +136,12 @@ class ImportPrivateKey extends PureComponent {
 		}
 
 		try {
+			const { EnsController } = Engine.context;
 			if (fromWalletManager) {
 				await importAccountFromPrivateKey(parsedPrivateKey);
+
+				//refresh ens names
+				EnsController.refresh();
 
 				this.props.navigation.pop();
 				setTimeout(() => {
