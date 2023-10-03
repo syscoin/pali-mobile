@@ -257,6 +257,9 @@ class ImportFromSeed extends PureComponent {
 			if (fromWalletManager) {
 				await KeyringController.importAccountWithSeed(parsedSeed);
 
+				//refresh ens names
+				EnsController.refresh();
+
 				this.props.navigation.pop();
 				setTimeout(() => {
 					this.props.toggleShowHint(strings('import_from_seed.seed_phrase_imported'));
