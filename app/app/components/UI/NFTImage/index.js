@@ -86,7 +86,7 @@ class NFTImage extends PureComponent {
 
 	refImage = React.createRef();
 
-	UNSAFE_componentWillMount = async () => {
+	UNSAFE_componentWillMount = () => {
 		const urlValue = convertImageUrl(this.props.imageUrl);
 		if (!urlValue || !urlValue.startsWith('http')) {
 			return;
