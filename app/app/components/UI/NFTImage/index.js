@@ -176,6 +176,7 @@ class NFTImage extends PureComponent {
 			this.setState({ parseError: true });
 		}
 	};
+
 	handleVideoError = () => {
 		this.setState({ videoError: true });
 	};
@@ -257,8 +258,16 @@ class NFTImage extends PureComponent {
 				<View style={[style, showBorder && styles.borderStyle, isBlurBg && styles.bgBlack]}>
 					{this.state.videoError && this.props.videoThumbnail ? (
 						<Video
+							muted
 							source={{ uri: convertToProxyURL(convertImageUrl(this.props.videoThumbnail)) }}
-							style={{ width, height }}
+							style={[{ width, height }, styles.videoLayout]}
+							mixWithOthers={'mix'}
+							useTextureView
+							playWhenInactive
+							playInBackground
+							ignoreSilentSwitch="ignore"
+							disableFocus
+							repeat
 						/>
 					) : (
 						<Video
