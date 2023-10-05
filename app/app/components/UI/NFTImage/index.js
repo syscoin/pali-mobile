@@ -12,6 +12,7 @@ import { addAudioUrl, addImageUrl, addOutOfMemoryUrl, addVideoUrl } from '../../
 import Engine from '../../../core/Engine';
 import { colors } from '../../../styles/common';
 import { isImageFile, isMp3File, isSvgFile, isVideoFile } from '../../../util/general';
+import Device from '../../../util/Device';
 import SvgImage from '../SvgImage';
 
 export const convertImageUrl = imageUrl => {
@@ -85,7 +86,7 @@ class NFTImage extends PureComponent {
 
 	refImage = React.createRef();
 
-	UNSAFE_componentWillMount = () => {
+	UNSAFE_componentWillMount = async () => {
 		const urlValue = convertImageUrl(this.props.imageUrl);
 		if (!urlValue || !urlValue.startsWith('http')) {
 			return;
@@ -99,6 +100,7 @@ class NFTImage extends PureComponent {
 			addAudioUrl,
 			addOutOfMemoryUrl
 		} = this.props;
+
 		if (isImageFile(urlValue) || imageUrls.indexOf(urlValue) !== -1) {
 			this.setState({ isImageUrl: true });
 			// eslint-disable-next-line no-empty
@@ -110,10 +112,13 @@ class NFTImage extends PureComponent {
 		} else if (isSvgFile(urlValue)) {
 		} else {
 			const task = RNFetchBlob.fetch('GET', urlValue);
-			task.then(res => {
+
+			task.then(async res => {
 				const status = res.info()?.status;
+
 				if (status === 200) {
 					const contentType = res.info()?.headers['Content-Type']?.toLowerCase();
+
 					if (contentType) {
 						if (contentType.startsWith('video/')) {
 							this.setState({ isVideoUrl: true });
@@ -131,6 +136,33 @@ class NFTImage extends PureComponent {
 						res.info().headers['Content-Length'] > 1024 * 1024 * 3
 					) {
 						addOutOfMemoryUrl(urlValue);
+					}
+				}
+
+				//Fallback call only on android
+				if (Device.isAndroid()) {
+					if (!status || status !== 200) {
+						const response = await fetch(urlValue, { method: 'HEAD' });
+						const contentType = response.headers.get('Content-Type');
+						if (contentType) {
+							if (contentType.startsWith('video/')) {
+								this.setState({ isVideoUrl: true });
+								addVideoUrl(urlValue);
+							} else if (contentType.startsWith('image/')) {
+								this.setState({ isImageUrl: true });
+								addImageUrl(urlValue);
+							} else if (contentType.startsWith('audio/')) {
+								this.setState({ isAudioUrl: true });
+								addAudioUrl(urlValue);
+							}
+						}
+
+						if (
+							response.headers.get('Content-Length') &&
+							response.headers.get('Content-Length') > 1024 * 1024 * 3
+						) {
+							addOutOfMemoryUrl(urlValue);
+						}
 					}
 				}
 			}).catch(err => {
