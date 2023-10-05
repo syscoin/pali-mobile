@@ -755,6 +755,12 @@ class NftView extends PureComponent {
 														height: this.state.nftImageHeight
 													}
 												]}
+												videoThumbnail={
+													isSupportLuxy(nftToken.chainId) &&
+													nftToken.image_thumbnail_url !== 'error' &&
+													nftToken.image_thumbnail_url &&
+													nftToken.image_thumbnail_url
+												}
 												imageUrl={nftToken.image_url}
 												resizeMode={'stretch'}
 												onLoad={e => {
