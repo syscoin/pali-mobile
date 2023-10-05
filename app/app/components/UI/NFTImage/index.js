@@ -68,7 +68,8 @@ class NFTImage extends PureComponent {
 		resizeMode: PropTypes.string,
 		isBlurBg: PropTypes.bool,
 		svgUseWebView: PropTypes.bool,
-		isThumbnail: PropTypes.bool
+		isThumbnail: PropTypes.bool,
+		videoThumbnail: PropTypes.any
 	};
 
 	state = {
@@ -78,7 +79,8 @@ class NFTImage extends PureComponent {
 		isSvgUrl: false,
 		imageLoadingError: false,
 		defaultLoadingError: false,
-		parseError: false
+		parseError: false,
+		videoError: false
 	};
 
 	refImage = React.createRef();
@@ -141,6 +143,9 @@ class NFTImage extends PureComponent {
 		if (e === 'parseError') {
 			this.setState({ parseError: true });
 		}
+	};
+	handleVideoError = () => {
+		this.setState({ videoError: true });
 	};
 
 	render() {
@@ -218,18 +223,26 @@ class NFTImage extends PureComponent {
 		} else if (isVideoUrl || isVideoFile(urlValue)) {
 			return (
 				<View style={[style, showBorder && styles.borderStyle, isBlurBg && styles.bgBlack]}>
-					<Video
-						muted
-						source={{ uri: convertToProxyURL(urlValue) }}
-						style={[{ width, height }, styles.videoLayout]} //组件样式
-						mixWithOthers={'mix'}
-						useTextureView
-						playWhenInactive
-						playInBackground
-						ignoreSilentSwitch="ignore"
-						disableFocus
-						repeat
-					/>
+					{this.state.videoError && this.props.videoThumbnail ? (
+						<Video
+							source={{ uri: convertToProxyURL(convertImageUrl(this.props.videoThumbnail)) }}
+							style={{ width, height }}
+						/>
+					) : (
+						<Video
+							muted
+							source={{ uri: convertToProxyURL(urlValue) }}
+							style={[{ width, height }, styles.videoLayout]}
+							mixWithOthers={'mix'}
+							useTextureView
+							playWhenInactive
+							playInBackground
+							ignoreSilentSwitch="ignore"
+							disableFocus
+							repeat
+							onError={this.handleVideoError}
+						/>
+					)}
 				</View>
 			);
 		} else if (isSvgUrl || isSvgFile(urlValue)) {
