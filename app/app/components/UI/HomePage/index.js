@@ -239,7 +239,7 @@ class HomePage extends PureComponent {
 			this.setItemDragging(false);
 		});
 		const { dappPageAll } = this.props;
-		const dappPage = dappPageAll.en;
+		const dappPage = strings('other.accept_language') === 'es' ? dappPageAll.es : dappPageAll.en;
 		const shouldHideSth = shouldHideSthForAppStoreReviewer();
 
 		let initialPage = 0;
@@ -372,7 +372,7 @@ class HomePage extends PureComponent {
 		const tabs = [];
 		if (!this.state.shouldHideSth) {
 			tabs.push(
-				<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
+				<View style={styles.content} tabLabel={`${strings('other.favorites')}:${-1}`} key={'network_-1'}>
 					{this.renderFavourites()}
 				</View>
 			);

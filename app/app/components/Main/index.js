@@ -288,6 +288,7 @@ const Main = props => {
 	const [allSession, setAllSession] = useState({});
 	const [isAddChainModalVisible, setIsAddChainModalVisible] = useState(false);
 	const [addChainInfo, setAddChainInfo] = useState('');
+	const [reloadCounter, setReloadCounter] = useState(0);
 
 	const backgroundMode = useRef(false);
 	const removeConnectionStatusListener = useRef();
@@ -901,6 +902,17 @@ const Main = props => {
 		loadSessions();
 	}, [loadSessions]);
 
+	const reloadChild = () => {
+		setReloadCounter(reloadCounter + 1);
+	};
+
+	useEffect(() => {
+		DeviceEventEmitter.addListener('languageUpdated', reloadChild);
+		return () => {
+			DeviceEventEmitter.removeAllListeners('languageUpdated');
+		};
+	}, [reloadChild]);
+
 	useEffect(() => {
 		WC2Manager.hub.on('walletconnectSessionRequest', handleSessionRequest);
 		WC2Manager.hub.on('walletconnectAddChain', handleAddChain);
@@ -1251,7 +1263,7 @@ const Main = props => {
 		</Modal>
 	);
 	return (
-		<React.Fragment>
+		<React.Fragment key={reloadCounter + 'main-screen'}>
 			<View style={styles.flex}>
 				<View style={styles.navigatorView}>
 					<SafeAreaProvider>

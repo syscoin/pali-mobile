@@ -304,6 +304,7 @@ const styles = StyleSheet.create({
 	},
 	faqWrapper: {
 		minHeight: 400,
+		display: 'flex',
 		backgroundColor: colors.white,
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20
@@ -311,7 +312,6 @@ const styles = StyleSheet.create({
 	faqContainer: {
 		margin: 30,
 		marginBottom: 20,
-		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},

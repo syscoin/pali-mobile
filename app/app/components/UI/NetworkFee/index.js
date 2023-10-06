@@ -500,7 +500,9 @@ class NetworkFee extends PureComponent {
 				{ready ? (
 					<>
 						<View style={styles.titleWrapper}>
-							<Text style={styles.title}>{strings('transaction.network_fee')}</Text>
+							<Text style={styles.title} allowFontScaling={false}>
+								{strings('transaction.network_fee')}
+							</Text>
 							<View style={styles.titleRight}>
 								{reloadGas && (
 									<ActivityIndicator
@@ -523,9 +525,11 @@ class NetworkFee extends PureComponent {
 							<ScrollableTabView renderTabBar={() => <></>} page={selectGas ? 0 : 1} locked>
 								<Animated.View style={[baseStyles.flexGrow, { opacity: this.state.fadeAnim }]}>
 									<View style={styles.sliderTitle}>
-										<Text style={styles.recommend}>{this.getGweiText()}</Text>
+										<Text style={styles.recommend} allowFontScaling={false}>
+											{this.getGweiText()}
+										</Text>
 										<Image style={styles.icFire} source={fire} />
-										<Text style={styles.recommend}>
+										<Text style={styles.recommend} allowFontScaling={false}>
 											{gasSpeedSelected > middleSpeed
 												? strings('transaction.fast')
 												: gasSpeedSelected === middleSpeed
@@ -533,7 +537,7 @@ class NetworkFee extends PureComponent {
 												: strings('transaction.safe_low')}
 										</Text>
 									</View>
-									<Text style={styles.amountText}>
+									<Text style={styles.amountText} allowFontScaling={false}>
 										{renderAmount(
 											getEthGasFee(selectTotalGas, transaction.gas, suggestedGasFees?.l1Fee)
 										) +
@@ -564,7 +568,7 @@ class NetworkFee extends PureComponent {
 								<View style={baseStyles.flexGrow}>
 									<View style={styles.customItem}>
 										<View style={styles.gasPrice}>
-											<Text style={styles.gasText}>
+											<Text style={styles.gasText} allowFontScaling={false}>
 												{isEIP1559Transaction
 													? strings('other.tip')
 													: strings('custom_gas.gas_price')}
@@ -580,10 +584,13 @@ class NetworkFee extends PureComponent {
 												autoCapitalize="none"
 												keyboardType="numeric"
 												selectTextOnFocus
+												allowFontScaling={false}
 											/>
 										</View>
 										<View style={[styles.gasPrice, { marginLeft: 28 }]}>
-											<Text style={styles.gasText}>{strings('custom_gas.gas_limit')}</Text>
+											<Text style={styles.gasText} allowFontScaling={false}>
+												{strings('custom_gas.gas_limit')}
+											</Text>
 											<TextInput
 												style={styles.gasInputText}
 												ref={gasInputRef}
@@ -596,10 +603,11 @@ class NetworkFee extends PureComponent {
 												keyboardType="numeric"
 												maxLength={16}
 												selectTextOnFocus
+												allowFontScaling={false}
 											/>
 										</View>
 									</View>
-									<Text style={styles.amountText}>
+									<Text style={styles.amountText} allowFontScaling={false}>
 										{renderAmount(
 											getEthGasFee(customTotalGas, customGasLimitBN, suggestedGasFees?.l1Fee)
 										) +

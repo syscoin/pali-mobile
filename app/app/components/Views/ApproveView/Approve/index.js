@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
 	actionContainer: {
 		flex: 0,
 		flexDirection: 'row',
-		marginTop: 39,
-		marginBottom: 30,
+		marginTop: 30,
+		marginBottom: 20,
 		marginHorizontal: 30
 	},
 	cancel: {
@@ -149,11 +149,12 @@ class Approve extends PureComponent {
 		spenderAddress: undefined,
 		showWebView: false,
 		originalAmount: -1,
+		isScam: undefined,
 		checkPassword: false,
 		statusBarHeight: 0
 	};
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
 		if (!this.props?.transaction?.id) {
 			this.props.toggleApproveModal(false);
 			return null;
@@ -162,12 +163,44 @@ class Approve extends PureComponent {
 		onEvent('ShowApprovalModal');
 		const { transaction } = this.props;
 		const { encodedAmount } = decodeApproveData(transaction.data);
+		if (this.state.isScam === undefined) {
+			const isScam = await this.getMaliciousBehavior();
+
+			this.setState({ isScam: isScam });
+		}
 		this.setState({ originalAmount: parseInt(encodedAmount) });
 		if (Device.isIos()) {
 			const { StatusBarManager } = NativeModules;
 			StatusBarManager.getHeight(ret => {
 				ret && this.setState({ statusBarHeight: ret.height });
 			});
+		}
+	};
+
+	getMaliciousBehavior = async () => {
+		const {
+			transaction: { data, chainId }
+		} = this.props;
+		const { spenderAddress } = decodeApproveData(data);
+
+		try {
+			const response = await fetch(
+				`https://api.gopluslabs.io/api/v1/approval_security/${chainId}?contract_addresses=${spenderAddress}`
+			);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const data = await response.json();
+
+			const maliciousBehaviors = data && data.result ? data.result.malicious_behavior : null;
+
+			const isScam = maliciousBehaviors && maliciousBehaviors.length > 0;
+
+			return isScam;
+		} catch (error) {
+			util.logError(error, 'error while trying get approve security token data from api');
+			return false;
 		}
 	};
 
@@ -350,39 +383,8 @@ class Approve extends PureComponent {
 		this.setState({ showWebView: false });
 	};
 
-	renderCommonRisk = () => {
-		const { showWebView, statusBarHeight } = this.state;
-		return (
-			<Modal
-				isVisible={showWebView}
-				style={styles.bottomModal}
-				animationIn="slideInUp"
-				animationOut="slideOutDown"
-				backdropOpacity={0.7}
-				animationInTiming={600}
-				animationOutTiming={600}
-				onBackdropPress={this.hideCommonRisk}
-				onBackButtonPress={this.hideCommonRisk}
-			>
-				<View style={{ ...styles.titleBar, marginTop: statusBarHeight }}>
-					<TouchableOpacity style={styles.gobackBtn} onPress={this.hideCommonRisk}>
-						<Image source={require('../../../../images/back.png')} />
-					</TouchableOpacity>
-					<Text style={styles.titleText}>{strings('security.common_risk')}</Text>
-				</View>
-				<WebView
-					javaScriptEnabled
-					setSupportMultipleWindows={false}
-					source={{
-						uri: `https://tops.sardin.cn/token-approve?locale=${strings('other.accept_language')}`
-					}}
-				/>
-			</Modal>
-		);
-	};
-
 	render = () => {
-		const { gasError, ready, loading, checkPassword } = this.state;
+		const { gasError, ready, loading, checkPassword, isScam } = this.state;
 		const { transaction } = this.props;
 		if (!transaction.id) return null;
 
@@ -407,6 +409,7 @@ class Approve extends PureComponent {
 				>
 					<View style={styles.container}>
 						<ApproveTransactionReview
+							isScam={isScam}
 							showCommonRisk={this.showCommonRisk}
 							handleGasFeeSelection={this.handleSetGasFee}
 							setApproveAmount={this.setApproveAmount}
@@ -436,7 +439,6 @@ class Approve extends PureComponent {
 					/>
 					{checkPassword && <CheckPassword checkResult={this.onInputPwdResult} needDelay={false} />}
 				</KeyboardAwareScrollView>
-				{this.renderCommonRisk()}
 			</Modal>
 		);
 	};

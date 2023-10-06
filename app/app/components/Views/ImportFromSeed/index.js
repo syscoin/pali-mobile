@@ -253,9 +253,12 @@ class ImportFromSeed extends PureComponent {
 		}
 
 		try {
-			const { KeyringController } = Engine.context;
+			const { KeyringController, EnsController } = Engine.context;
 			if (fromWalletManager) {
 				await KeyringController.importAccountWithSeed(parsedSeed);
+
+				//refresh ens names
+				EnsController.refresh();
 
 				this.props.navigation.pop();
 				setTimeout(() => {

@@ -267,7 +267,7 @@ class Wallet extends PureComponent {
 		} = Engine.context;
 		const actions = [
 			TokenRatesController.poll(),
-			TokenBalancesController.poll(),
+			TokenBalancesController.pollAll(),
 			AssetsDetectionController.detectTokens(),
 			CollectiblesController.poll(),
 			DefiProtocolController.poll(),

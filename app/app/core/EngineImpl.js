@@ -76,7 +76,7 @@ class EngineImpl {
 						otherAccount: strings('other.other_account'),
 						observeAccount: strings('other.observe_account')
 					}),
-					new TokenBalancesController({ interval: 30000 }),
+					new TokenBalancesController({ interval: 30000, intervalRollux: 20000 }),
 					new TokenRatesController(),
 					new TransactionController(),
 					new TypedMessageManager(),

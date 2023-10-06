@@ -12,6 +12,7 @@ import { addAudioUrl, addImageUrl, addOutOfMemoryUrl, addVideoUrl } from '../../
 import Engine from '../../../core/Engine';
 import { colors } from '../../../styles/common';
 import { isImageFile, isMp3File, isSvgFile, isVideoFile } from '../../../util/general';
+import Device from '../../../util/Device';
 import SvgImage from '../SvgImage';
 
 export const convertImageUrl = imageUrl => {
@@ -68,7 +69,8 @@ class NFTImage extends PureComponent {
 		resizeMode: PropTypes.string,
 		isBlurBg: PropTypes.bool,
 		svgUseWebView: PropTypes.bool,
-		isThumbnail: PropTypes.bool
+		isThumbnail: PropTypes.bool,
+		videoThumbnail: PropTypes.any
 	};
 
 	state = {
@@ -78,7 +80,8 @@ class NFTImage extends PureComponent {
 		isSvgUrl: false,
 		imageLoadingError: false,
 		defaultLoadingError: false,
-		parseError: false
+		parseError: false,
+		videoError: false
 	};
 
 	refImage = React.createRef();
@@ -97,6 +100,7 @@ class NFTImage extends PureComponent {
 			addAudioUrl,
 			addOutOfMemoryUrl
 		} = this.props;
+
 		if (isImageFile(urlValue) || imageUrls.indexOf(urlValue) !== -1) {
 			this.setState({ isImageUrl: true });
 			// eslint-disable-next-line no-empty
@@ -108,10 +112,13 @@ class NFTImage extends PureComponent {
 		} else if (isSvgFile(urlValue)) {
 		} else {
 			const task = RNFetchBlob.fetch('GET', urlValue);
-			task.then(res => {
+
+			task.then(async res => {
 				const status = res.info()?.status;
+
 				if (status === 200) {
 					const contentType = res.info()?.headers['Content-Type']?.toLowerCase();
+
 					if (contentType) {
 						if (contentType.startsWith('video/')) {
 							this.setState({ isVideoUrl: true });
@@ -124,8 +131,38 @@ class NFTImage extends PureComponent {
 							addAudioUrl(urlValue);
 						}
 					}
-					if (res.info()?.headers['Content-Length'] && res.info().headers['Content-Length'] > 1024 * 1024) {
+					if (
+						res.info()?.headers['Content-Length'] &&
+						res.info().headers['Content-Length'] > 1024 * 1024 * 3
+					) {
 						addOutOfMemoryUrl(urlValue);
+					}
+				}
+
+				//Fallback call only on android
+				if (Device.isAndroid()) {
+					if (!status || status !== 200) {
+						const response = await fetch(urlValue, { method: 'HEAD' });
+						const contentType = response.headers.get('Content-Type');
+						if (contentType) {
+							if (contentType.startsWith('video/')) {
+								this.setState({ isVideoUrl: true });
+								addVideoUrl(urlValue);
+							} else if (contentType.startsWith('image/')) {
+								this.setState({ isImageUrl: true });
+								addImageUrl(urlValue);
+							} else if (contentType.startsWith('audio/')) {
+								this.setState({ isAudioUrl: true });
+								addAudioUrl(urlValue);
+							}
+						}
+
+						if (
+							response.headers.get('Content-Length') &&
+							response.headers.get('Content-Length') > 1024 * 1024 * 3
+						) {
+							addOutOfMemoryUrl(urlValue);
+						}
 					}
 				}
 			}).catch(err => {
@@ -138,6 +175,10 @@ class NFTImage extends PureComponent {
 		if (e === 'parseError') {
 			this.setState({ parseError: true });
 		}
+	};
+
+	handleVideoError = () => {
+		this.setState({ videoError: true });
 	};
 
 	render() {
@@ -215,18 +256,34 @@ class NFTImage extends PureComponent {
 		} else if (isVideoUrl || isVideoFile(urlValue)) {
 			return (
 				<View style={[style, showBorder && styles.borderStyle, isBlurBg && styles.bgBlack]}>
-					<Video
-						muted
-						source={{ uri: convertToProxyURL(urlValue) }}
-						style={[{ width, height }, styles.videoLayout]} //组件样式
-						mixWithOthers={'mix'}
-						useTextureView
-						playWhenInactive
-						playInBackground
-						ignoreSilentSwitch="ignore"
-						disableFocus
-						repeat
-					/>
+					{this.state.videoError && this.props.videoThumbnail ? (
+						<Video
+							muted
+							source={{ uri: convertToProxyURL(convertImageUrl(this.props.videoThumbnail)) }}
+							style={[{ width, height }, styles.videoLayout]}
+							mixWithOthers={'mix'}
+							useTextureView
+							playWhenInactive
+							playInBackground
+							ignoreSilentSwitch="ignore"
+							disableFocus
+							repeat
+						/>
+					) : (
+						<Video
+							muted
+							source={{ uri: convertToProxyURL(urlValue) }}
+							style={[{ width, height }, styles.videoLayout]}
+							mixWithOthers={'mix'}
+							useTextureView
+							playWhenInactive
+							playInBackground
+							ignoreSilentSwitch="ignore"
+							disableFocus
+							repeat
+							onError={this.handleVideoError}
+						/>
+					)}
 				</View>
 			);
 		} else if (isSvgUrl || isSvgFile(urlValue)) {
