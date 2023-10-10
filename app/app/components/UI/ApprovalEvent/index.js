@@ -184,7 +184,8 @@ class ApprovalEvent extends Component {
 	addApprovalListener = () => {
 		const { TransactionController, ApprovalEventsController } = Engine.context;
 		const { chainId, selectedAddress } = this.props;
-		DeviceEventEmitter.once('OnApprove', approveId => {
+
+		const onApproveListener = DeviceEventEmitter.addListener('OnApprove', approveId => {
 			TransactionController.hub.once(`${approveId}:confirmed`, transactionMeta => {
 				if (transactionMeta.status === TransactionStatus.confirmed) {
 					ApprovalEventsController.refreshOneChainAllowances(selectedAddress, chainId);
@@ -192,6 +193,8 @@ class ApprovalEvent extends Component {
 					this.setState({ loading: false });
 				}
 			});
+			// Remove the DeviceEventEmitter listener after it has been invoked
+			onApproveListener.remove();
 		});
 	};
 

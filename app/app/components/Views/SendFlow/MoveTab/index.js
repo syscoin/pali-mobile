@@ -659,11 +659,22 @@ class MoveTab extends PureComponent {
 
 	waitApprove = () => {
 		const { TransactionController } = Engine.context;
-		DeviceEventEmitter.once('OnApprove', approveId => {
+
+		this.onApproveFunc = approveId => {
 			this.approveMetaId = approveId;
 			this.onApproveConfirmedListener = this.onApproveConfirmed.bind(this);
+
 			TransactionController.hub.once(`${approveId}:confirmed`, this.onApproveConfirmedListener);
-		});
+
+			// Remove the OnApprove listener since it has been triggered
+			if (this.onApproveSubscription) {
+				this.onApproveSubscription.remove();
+				this.onApproveSubscription = null;
+			}
+		};
+
+		// Listen for the OnApprove event
+		this.onApproveSubscription = DeviceEventEmitter.addListener('OnApprove', this.onApproveFunc);
 	};
 
 	onApproveConfirmed = transactionMeta => {
@@ -819,7 +830,7 @@ class MoveTab extends PureComponent {
 	};
 
 	startWaitingTransactionMeta = () => {
-		DeviceEventEmitter.once('MigrateTransactionMeta', meta => {
+		this.onMigrateTransactionMeta = meta => {
 			this.transactionHandled = false;
 			this.setState({ migrateTransactionMeta: meta });
 			this.todoNext({
@@ -829,7 +840,19 @@ class MoveTab extends PureComponent {
 				gas: hexToBN(meta.transaction.gas),
 				gasPrice: hexToBN(meta.transaction.gasPrice)
 			});
-		});
+
+			// Remove the listener since it has been triggered
+			if (this.migrateTransactionMetaSubscription) {
+				this.migrateTransactionMetaSubscription.remove();
+				this.migrateTransactionMetaSubscription = null;
+			}
+		};
+
+		// Listen for the MigrateTransactionMeta event
+		this.migrateTransactionMetaSubscription = DeviceEventEmitter.addListener(
+			'MigrateTransactionMeta',
+			this.onMigrateTransactionMeta
+		);
 	};
 
 	todoNext = transaction => {

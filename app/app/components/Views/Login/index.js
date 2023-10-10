@@ -186,8 +186,14 @@ class Login extends PureComponent {
 	}
 
 	listenBackgroundMode() {
-		this.tryAgainBiometricFunc = this.tryAgainBiometric.bind(this);
-		DeviceEventEmitter.once('BackgroundMode', this.tryAgainBiometricFunc);
+		this.tryAgainBiometricFunc = event => {
+			this.tryAgainBiometric(event);
+			if (this.backgroundModeSubscription) {
+				this.backgroundModeSubscription.remove();
+			}
+		};
+
+		this.backgroundModeSubscription = DeviceEventEmitter.addListener('BackgroundMode', this.tryAgainBiometricFunc);
 	}
 
 	removeBackgroundMode() {
