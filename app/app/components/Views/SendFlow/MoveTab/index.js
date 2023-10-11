@@ -669,7 +669,6 @@ class MoveTab extends PureComponent {
 			// Remove the OnApprove listener since it has been triggered
 			if (this.onApproveSubscription) {
 				this.onApproveSubscription.remove();
-				this.onApproveSubscription = null;
 			}
 		};
 
@@ -844,7 +843,6 @@ class MoveTab extends PureComponent {
 			// Remove the listener since it has been triggered
 			if (this.migrateTransactionMetaSubscription) {
 				this.migrateTransactionMetaSubscription.remove();
-				this.migrateTransactionMetaSubscription = null;
 			}
 		};
 
