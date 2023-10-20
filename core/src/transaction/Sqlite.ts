@@ -495,10 +495,10 @@ export class Sqlite {
           deleteSql,
           [],
           () => {
-            console.log('Successfully cleared browser history');
+            util.logDebug('Successfully cleared browser history');
           },
           (error: any) => {
-            console.log('Could not clear browser history', error);
+            util.logDebug('Could not clear browser history', error);
           },
         );
       },
