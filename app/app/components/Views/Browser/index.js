@@ -715,6 +715,7 @@ class Browser extends PureComponent {
 									openOpenedTab={this.openOpenedTab}
 									newTab={this.newTabRight}
 									activeTab={this.state.initialPage}
+									isLockScreen={this.props.isLockScreen}
 								/>
 							) : (
 								<TabPageView

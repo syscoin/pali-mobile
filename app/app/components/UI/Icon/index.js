@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import AccountSettings from '../../../images/svg/account_settings.svg';
+import Broom from '../../../images/svg/broom.svg';
 import Coin from '../../../images/svg/coin.svg';
 import Edit from '../../../images/svg/edit.svg';
 import Globe from '../../../images/svg/globe.svg';
@@ -15,6 +16,7 @@ import CoinGecko from '../../../images/svg/coingecko-logo.svg';
 
 const icons = {
 	accountSettings: AccountSettings,
+	broom: Broom,
 	coin: Coin,
 	edit: Edit,
 	globe: Globe,
