@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 2,
 		zIndex: 9999,
 		width: 160,
-		height: 70
+		height: 75
 	},
 	closeTabsButton: {
 		flexDirection: 'row',
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
 	closeTabsButtonWithMargin: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 10
+		marginTop: 15
 	},
 	closeTabsButtonText: {
 		marginLeft: 10
