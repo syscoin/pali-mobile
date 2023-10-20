@@ -487,6 +487,27 @@ export class Sqlite {
     });
   }
 
+  clearBrowserHistory() {
+    const deleteSql = 'DELETE FROM BROWSER_HISTORY';
+    this.db.transaction(
+      (cursor: any) => {
+        cursor.executeSql(
+          deleteSql,
+          [],
+          () => {
+            console.log('Successfully cleared browser history');
+          },
+          (error: any) => {
+            console.log('Could not clear browser history', error);
+          },
+        );
+      },
+      (error: any) => {
+        this._errorLog('clearBrowserHistory', error);
+      },
+    );
+  }
+
   getBrowserHistory() {
     return new Promise<any[]>((resolve) => {
       const sql = 'SELECT * FROM BROWSER_HISTORY ORDER BY time DESC';
