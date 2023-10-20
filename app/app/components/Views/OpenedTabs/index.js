@@ -5,6 +5,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import { clearWebViewIOSCache } from 'react-native-webview-ios-cache-clear';
 import Modal from 'react-native-modal';
 import { WebView } from 'react-native-webview';
+import { util } from 'paliwallet-core';
 
 import { colors, fontStyles } from '../../../styles/common';
 import { SvgUri } from 'react-native-svg';
@@ -317,22 +318,21 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 		if (toggleCheckBoxHistory) {
 			await callSqlite('clearBrowserHistory');
 			setToggleCheckBoxHistory(false);
-			console.log('Browser History cleared');
+			util.logDebug('Browser History cleared');
 		}
 		if (toggleCheckBoxCookies) {
 			await CookieManager.clearAll(useWebKit);
 			setToggleCheckBoxCookies(false);
-			console.log('Browser cookies cleared');
+			util.logDebug('Browser cookies cleared');
 		}
 
 		if (toggleCheckBoxCache) {
 			if (Device.isIos()) {
 				const result = await clearWebViewIOSCache();
-				console.log('Browser cache cleared: ', result);
+				util.logDebug('Browser cache cleared: ', result);
 			} else {
 				webviewCacheRef.current.clearCache(true);
-
-				console.log('Browser cache cleared ');
+				util.logDebug('Browser cache cleared');
 			}
 
 			setToggleCheckBoxCache(false);
