@@ -361,7 +361,7 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 					<WebView style={{ width: 0, height: 0 }} ref={webviewCacheRef} />
 
 					<View style={styles.titleLayout}>
-						<Text style={styles.intro}>Clear Data</Text>
+						<Text style={styles.intro}>{strings('browser.clearData')}</Text>
 					</View>
 					<View style={styles.moreModalWrapper}>
 						<View style={styles.moreModalContainer}>
@@ -376,8 +376,8 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 										onValueChange={newValue => setToggleCheckBoxHistory(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}>Browser History</Text>
-										<Text style={styles.subTitle}>Clear your entire browser history.</Text>
+										<Text style={styles.title}> {strings('browser.browserHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearBrowserHistory')}</Text>
 									</View>
 								</View>
 								<View style={styles.checkboxLine} />
@@ -391,8 +391,8 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 										onValueChange={newValue => setToggleCheckBoxCookies(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}>Browser Cookies</Text>
-										<Text style={styles.subTitle}>Clear your browser’s cookies.</Text>
+										<Text style={styles.title}>{strings('browser.cookiesHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearCookiesHistory')}</Text>
 									</View>
 								</View>
 								<View style={styles.checkboxLine} />
@@ -406,8 +406,8 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 										onValueChange={newValue => setToggleCheckBoxCache(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}>Browser Cache</Text>
-										<Text style={styles.subTitle}>Clear your browser’s cache.</Text>
+										<Text style={styles.title}>{strings('browser.cacheHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearCacheHistory')}</Text>
 									</View>
 								</View>
 								<View style={styles.checkboxLine} />
@@ -422,7 +422,7 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 									disabled={isButtonDisabled}
 									onPress={clearBrowserData}
 								>
-									<Text style={styles.okText}>Clear</Text>
+									<Text style={styles.okText}>{strings('browser.clear')}</Text>
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -440,13 +440,12 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 					<TouchableOpacity
 						style={styles.closeTabsButton}
 						onPress={() => {
-							console.log('estranhoooo');
 							setShowOptions(false);
 							setMoreModalVisible(true);
 						}}
 					>
 						<Icon name="broom" color={colors.black} width="18" height="18" />
-						<Text style={styles.closeTabsButtonText}>Clear data</Text>
+						<Text style={styles.closeTabsButtonText}>{strings('browser.clearData')}</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.closeTabsButtonWithMargin}
