@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
+import { compose } from 'redux';
 import {
 	RefreshControl,
 	ScrollView,
@@ -69,6 +71,8 @@ const cardWidth = viewportWidth;
 const cardHeight = (cardWidth * 250) / 375;
 const chainSettingHeight = viewportHeight;
 const scrollToY = cardHeight * 0.56;
+
+const CopilotText = walkthroughable(Text);
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -698,6 +702,9 @@ class Wallet extends PureComponent {
 		>
 			<MStatusBar navigation={this.props.navigation} />
 			<View style={styles.header}>
+				<CopilotStep text="This is a hello world example!" order={1} name="hello">
+					<CopilotText>Hello world!</CopilotText>
+				</CopilotStep>
 				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
 					<Icon name="settings" width="24" height="24" />
 				</TouchableOpacity>
@@ -772,7 +779,10 @@ const mapDispatchToProps = dispatch => ({
 		dispatch(showScanner(onStartScan, onScanError, onScanSuccess))
 });
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+export default compose(
+	copilot(),
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
 )(Wallet);
