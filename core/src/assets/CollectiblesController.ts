@@ -230,6 +230,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
    * and the function will return `undefined`.
    */
   async fetchLuxyNFTs(selectedAddress: string, chainId: string, contractController: any) {
+    const isLuxy = true;
     try {
       const network = chainId === '57' ? 'Syscoin' : 'Rollux';
       const limit = 50;
@@ -258,7 +259,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         return undefined;
       }
 
-      return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController, true);
+      return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController, isLuxy);
     } catch (e) {
       logInfo('PPYang fetchLuxyNFTs e:', e);
       return undefined;
