@@ -2,6 +2,7 @@ import { Mutex } from 'async-mutex';
 import { BigNumber } from 'bignumber.js';
 import BaseController, { BaseConfig, BaseState } from '../BaseController';
 import { ChainType, SupportCollectibles } from '../Config';
+
 import PreferencesController from '../user/PreferencesController';
 import util, {
   CollectibleType,
@@ -257,7 +258,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         return undefined;
       }
 
-      return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController);
+      return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController, true);
     } catch (e) {
       logInfo('PPYang fetchLuxyNFTs e:', e);
       return undefined;
@@ -290,7 +291,13 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController);
   }
 
-  async fixDataCollectibles(collectibles: any, chainId: string, selectedAddress: string, contractController: any) {
+  async fixDataCollectibles(
+    collectibles: any,
+    chainId: string,
+    selectedAddress: string,
+    contractController: any,
+    isLuxy?: boolean,
+  ) {
     const erc721Tokens: string[] = [];
     const erc721Ids: string[] = [];
 
@@ -310,6 +317,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const allOwners: any[] = [];
     if (erc721Tokens.length > 0) {
       let owners: any[] = [];
+
       try {
         owners = await contractController.getERC721OwnersInSingleCall(
           selectedAddress,
@@ -333,9 +341,12 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
           });
         }
       }
+
       if (owners && owners.length === erc721Tokens.length) {
         erc721Tokens.forEach((address, index) => {
           if (toLowerCaseEquals(owners[index], selectedAddress)) {
+            allOwners.push({ balanceOf: new BigNumber(1), address, token_id: erc721Ids[index] });
+          } else if (isLuxy && owners[index] === '0x0000000000000000000000000000000000000000') {
             allOwners.push({ balanceOf: new BigNumber(1), address, token_id: erc721Ids[index] });
           }
         });
@@ -380,11 +391,13 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         return undefined;
       }
     }
+
     const ownedCollectibles: any = [];
     collectibles.forEach((collectible: any) => {
       const owner = allOwners.find(
         (item) => item.address === collectible.asset_contract.address && item.token_id === collectible.token_id,
       );
+
       if (owner) {
         ownedCollectibles.push({ ...collectible, balanceOf: owner.balanceOf, chainId });
       }
