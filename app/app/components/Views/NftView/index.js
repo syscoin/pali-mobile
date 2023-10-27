@@ -737,6 +737,11 @@ class NftView extends PureComponent {
 										{nftToken.animation_url ? (
 											<MediaPlayer
 												uri={convertToProxyURL(nftToken.animation_url)}
+												videoThumbnail={
+													nftToken.image_thumbnail_url !== 'error' &&
+													nftToken.image_thumbnail_url &&
+													nftToken.image_thumbnail_url
+												}
 												style={[
 													styles.tokenImg,
 													{
