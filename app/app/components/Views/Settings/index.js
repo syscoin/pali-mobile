@@ -92,6 +92,10 @@ export default class Settings extends PureComponent {
 		this.props.navigation.navigate('UpdateCheck');
 	};
 
+	onOnboarding = () => {
+		this.props.navigation.navigate('WalletView', { onboard: true });
+	};
+
 	componentDidMount = () => {
 		if (Device.isIos()) {
 			const { StatusBarManager } = NativeModules;
@@ -168,10 +172,16 @@ export default class Settings extends PureComponent {
 					</View>
 					<View style={styles.cardItem}>
 						<SettingsDrawer
+							onPress={this.onOnboarding}
+							image={require('../../../images/ic_setting_update.png')}
+							title={'Start onboarding tour'}
+						/>
+						<SettingsDrawer
 							onPress={this.onUpdateCheck}
 							image={require('../../../images/ic_setting_update.png')}
 							title={strings('app_settings.update_check')}
 						/>
+
 						{/* {TODO: Update the onInvite to Pali one instead of Pali Wallet
 							and probably update to send for the download page, or invite rewards page, idk}
 						{/* <SettingsDrawer

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import { compose } from 'redux';
 import {
+	Button,
 	RefreshControl,
 	ScrollView,
 	ActivityIndicator,
@@ -43,6 +44,7 @@ import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 const options = {
 	enableVibrateFallback: true,
@@ -72,12 +74,42 @@ const cardHeight = (cardWidth * 250) / 375;
 const chainSettingHeight = viewportHeight;
 const scrollToY = cardHeight * 0.56;
 
-const CopilotText = walkthroughable(Text);
+const CopilotView = walkthroughable(View);
 
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 		backgroundColor: colors.white
+	},
+	stepContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		width: 200
+	},
+	stepButton: {
+		backgroundColor: '#C9DEFF',
+		width: 90,
+		height: 30,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 4
+	},
+	skipButton: {
+		borderWidth: 1,
+		borderColor: '#4D76B8',
+		borderStyle: 'solid',
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 5,
+
+		marginTop: 20,
+		height: 40
+	},
+	skipText: {
+		color: '#4D76B8',
+		fontWeight: 'bold',
+		fontSize: 14
 	},
 	loader: {
 		backgroundColor: colors.white,
@@ -125,6 +157,20 @@ const styles = StyleSheet.create({
 	},
 	sliderContentContainer: {
 		paddingVertical: 0
+	},
+	stepNumber: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderWidth: 2,
+		borderRadius: 14,
+		borderColor: '#FFFFFF',
+		backgroundColor: '#4D76B8'
+	},
+	stepNumberText: {
+		fontSize: 12,
+		backgroundColor: 'transparent',
+		color: '#FFFFFF'
 	},
 	sliderItem: {
 		flex: 1,
@@ -192,6 +238,16 @@ const styles = StyleSheet.create({
 	bottomModal: {
 		justifyContent: 'flex-end',
 		margin: 0
+	},
+	tooltipText: {},
+	tooltipContainer: {
+		width: 200
+	},
+	bottomBar: {
+		marginTop: 20,
+		flexDirection: 'column',
+		height: 100,
+		maxHeight: 100
 	}
 });
 
@@ -228,7 +284,8 @@ class Wallet extends PureComponent {
 		ensAvatarData: null,
 		ensSettingPage: HomePage,
 		searchEditing: false,
-		nftChecked: false
+		nftChecked: false,
+		secondStepActive: false
 	};
 
 	popupInfos = {};
@@ -240,9 +297,32 @@ class Wallet extends PureComponent {
 	carouselRef = React.createRef();
 	firstItem = 0;
 
+	handleStepChange = step => {
+		console.log(step);
+	};
+
 	componentDidMount = () => {
+		this.props.copilotEvents.on('stepChange', this.handleStepChange);
+		// setTimeout(() => {
+		// 	//TODO: Preciso fazer lógica para só rodar a primeira vez que abrir o app.
+		// 	//TODO: então se o cara clickar ou em skip ou finish ele deve nunca mais mostrar isso.
+
+		// 	// This is necessary since the onboarding may not work correctly
+		// 	this.carouselRef.current.snapToItem(9999999, false);
+		// 	this.props.start();
+		// }, 1000);
+		this.focusListener = this.props.navigation.addListener('didFocus', () => {
+			const params = this.props.navigation.state.params;
+			if (params && params.onboard) {
+				setTimeout(() => {
+					this.carouselRef.current.snapToItem(9999999, true);
+					this.props.start();
+				}, 500);
+			}
+		});
 		if (Platform.OS === 'android') {
 			this.focusListener = this.props.navigation.addListener('didFocus', () => {
+				console.log('aquiii');
 				AsyncStorage.getItem('NotifypermissionModalShowed').then(previouslyShowed => {
 					if (previouslyShowed !== 'true') {
 						NativeModules.RNToolsManager.getIsNotificationEnabled().then(event => {
@@ -702,12 +782,17 @@ class Wallet extends PureComponent {
 		>
 			<MStatusBar navigation={this.props.navigation} />
 			<View style={styles.header}>
-				<CopilotStep text="This is a hello world example!" order={1} name="hello">
-					<CopilotText>Hello world!</CopilotText>
+				<CopilotStep
+					text="Here is the settings. It allows you to customize your experience using Pali Wallet"
+					order={1}
+					name="onboarding"
+				>
+					<CopilotView style={{ width: 25 }}>
+						<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+							<Icon name="settings" width="24" height="24" />
+						</TouchableOpacity>
+					</CopilotView>
 				</CopilotStep>
-				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
-					<Icon name="settings" width="24" height="24" />
-				</TouchableOpacity>
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
 					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
 				</View>
@@ -722,8 +807,18 @@ class Wallet extends PureComponent {
 						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
 					</TouchableOpacity>
 				)}
+
 				<TouchableOpacity style={styles.scannerButton} hitSlop={styles.hitSlop} onPress={this.openQRScanner}>
-					<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+					<CopilotStep
+						active={true}
+						text="Open QR code scanner. You are able to login with Wallet Connect Using the QRcode"
+						order={2}
+						name="onboarding2"
+					>
+						<CopilotView>
+							<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+						</CopilotView>
+					</CopilotStep>
 				</TouchableOpacity>
 			</View>
 
@@ -779,8 +874,60 @@ const mapDispatchToProps = dispatch => ({
 		dispatch(showScanner(onStartScan, onScanError, onScanSuccess))
 });
 
+const StepNumber = ({ currentStepNumber }) => (
+	<View style={styles.stepNumber}>
+		<Text style={[styles.stepNumberText]}>{currentStepNumber}</Text>
+	</View>
+);
+
+const Tooltip = ({ isFirstStep, isLastStep, handleNext, handlePrev, handleStop, currentStep }) => (
+	<View>
+		<View style={styles.tooltipContainer}>
+			<Text testID="stepDescription" style={styles.tooltipText}>
+				{currentStep.text}
+			</Text>
+		</View>
+		<View style={[styles.bottomBar]}>
+			<View style={styles.stepContainer}>
+				<TouchableOpacity
+					disabled={isFirstStep}
+					style={[styles.stepButton, { opacity: isFirstStep ? 0.5 : 1 }]}
+					onPress={handlePrev}
+				>
+					<SimpleLineIcons color={'#4D76B8'} size={16} name="arrow-left" />
+				</TouchableOpacity>
+
+				<TouchableOpacity
+					disabled={isLastStep}
+					style={[styles.stepButton, { opacity: isLastStep ? 0.5 : 1 }]}
+					onPress={handleNext}
+				>
+					<SimpleLineIcons color={'#4D76B8'} size={16} name="arrow-right" />
+				</TouchableOpacity>
+			</View>
+			{!isLastStep ? (
+				<TouchableOpacity style={styles.skipButton} onPress={handleStop}>
+					<Text style={styles.skipText}>Skip Tour</Text>
+				</TouchableOpacity>
+			) : (
+				<TouchableOpacity style={styles.skipButton} onPress={handleStop}>
+					<Text style={styles.skipText}>Finish</Text>
+				</TouchableOpacity>
+			)}
+		</View>
+	</View>
+);
+
 export default compose(
-	copilot(),
+	copilot({
+		backdropColor: 'rgba(0, 0, 0, 0.64)',
+		stepNumberComponent: StepNumber,
+		tooltipComponent: Tooltip,
+
+		tooltipStyle: {
+			borderRadius: 15
+		}
+	}),
 	connect(
 		mapStateToProps,
 		mapDispatchToProps
