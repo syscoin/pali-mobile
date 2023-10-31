@@ -575,7 +575,7 @@ class CardSwiper extends PureComponent {
 											style={{ marginRight: 10 }}
 										>
 											<CopilotStep
-												text="You can hide your assets value"
+												text={strings('onboarding_wallet.onboarding3')}
 												order={3}
 												name="onboarding3"
 											>
@@ -597,7 +597,7 @@ class CardSwiper extends PureComponent {
 											}}
 										>
 											<CopilotStep
-												text="You can manage your accounts"
+												text={strings('onboarding_wallet.onboarding4')}
 												order={4}
 												name="onboarding4"
 											>
@@ -747,7 +747,11 @@ class CardSwiper extends PureComponent {
 										activeOpacity={0.5}
 										key={'chain-type-more'}
 									>
-										<CopilotStep text="You can manage your networks" order={5} name="onboarding5">
+										<CopilotStep
+											text={strings('onboarding_wallet.onboarding5')}
+											order={5}
+											name="onboarding5"
+										>
 											<CopilotView>
 												<Image
 													style={
