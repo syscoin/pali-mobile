@@ -217,6 +217,7 @@ class ManualBackupStep1 extends PureComponent {
 			this.props.navigation.navigate('WalletManagement');
 		} else {
 			this.props.navigation.navigate('HomeNav');
+			setTimeout(() => DeviceEventEmitter.emit('OnboardingTour'), 250);
 		}
 	};
 

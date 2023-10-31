@@ -51,7 +51,7 @@ android {
 		applicationId "io.paliwallet"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 23
+		versionCode 24
 		versionName "1.1.1"
 		multiDexEnabled true
 		missingDimensionStrategy "minReactNative", "minReactNative46"
