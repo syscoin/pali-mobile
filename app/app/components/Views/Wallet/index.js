@@ -232,8 +232,7 @@ class Wallet extends PureComponent {
 		ensAvatarData: null,
 		ensSettingPage: HomePage,
 		searchEditing: false,
-		nftChecked: false,
-		secondStepActive: false
+		nftChecked: false
 	};
 
 	popupInfos = {};
@@ -259,7 +258,7 @@ class Wallet extends PureComponent {
 			});
 		}
 
-		this.focusListener3 = this.props.navigation.addListener('didFocus', () => {
+		this.focusListenerOnboarding = this.props.navigation.addListener('didFocus', () => {
 			// This is for when the use clicks on the onboarding tour on settings.
 			const params = this.props.navigation.state.params;
 			if (params && params.onboard && this.carouselRef && this.carouselRef.current) {
@@ -271,7 +270,6 @@ class Wallet extends PureComponent {
 
 		if (Platform.OS === 'android') {
 			this.focusListener = this.props.navigation.addListener('didFocus', () => {
-				console.log('aquiii');
 				AsyncStorage.getItem('NotifypermissionModalShowed').then(previouslyShowed => {
 					if (previouslyShowed !== 'true') {
 						NativeModules.RNToolsManager.getIsNotificationEnabled().then(event => {
