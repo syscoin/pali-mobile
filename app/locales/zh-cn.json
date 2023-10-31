@@ -98,8 +98,22 @@
 	"token": {
 		"search_tokens_or_contract": "搜索代币或合约地址"
 	},
+	"onboarding_wallet": {
+		"skip_tour": "跳过导览",
+		"finish": "完成",
+		"onboarding1": "在此自定义您的Pali Wallet体验。",
+		"onboarding2": "扫描QR码通过Wallet Connect登录。",
+		"onboarding3": "选择隐藏资产价值。",
+		"onboarding4": "轻松管理您的账户。",
+		"onboarding5": "轻松管理您的网络。",
+		"onboarding6": "按您的方式排序您的资产。",
+		"onboarding7": "通过粘贴地址或名称来搜索或添加代币。",
+		"onboarding8": "查看代币批准和风险等级。",
+		"onboarding9": "在ERC-20和NFT之间切换。"
+	},
 	"app_settings": {
 		"title": "设置",
+		"idea": "开始入职导览",
 		"wallet_management": "钱包与账户",
 		"change_password": "修改密码",
 		"security_settings": "安全设置",

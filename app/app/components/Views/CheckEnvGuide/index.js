@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import {
 	StyleSheet,
 	Text,
+	DeviceEventEmitter,
 	TouchableOpacity,
 	View,
 	Animated,
@@ -92,6 +93,7 @@ export default class CheckEnvGuide extends PureComponent {
 		if (this.state.type === 2) {
 			setTimeout(() => {
 				this.props.navigation.navigate('Home');
+				setTimeout(() => DeviceEventEmitter.emit('OnboardingTour'), 500);
 			}, 3800);
 		}
 	};
@@ -169,6 +171,7 @@ export default class CheckEnvGuide extends PureComponent {
 												navigation.navigate('WalletManagement');
 											} else {
 												navigation.navigate('Home');
+												setTimeout(() => DeviceEventEmitter.emit('OnboardingTour'), 250);
 											}
 										}}
 									>

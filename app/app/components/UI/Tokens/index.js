@@ -792,7 +792,12 @@ class Tokens extends PureComponent {
 							}
 						}}
 					>
-						<CopilotStep active={!searchEditing} text="You can sort assets" order={6} name="onboarding6">
+						<CopilotStep
+							active={!searchEditing}
+							text={strings('onboarding_wallet.onboarding6')}
+							order={6}
+							name="onboarding6"
+						>
 							<CopilotView>
 								<Image
 									source={
@@ -829,7 +834,7 @@ class Tokens extends PureComponent {
 								>
 									<CopilotStep
 										active={!searchEditing}
-										text="You can Search your tokens and also paste any token address to add for your token list"
+										text={strings('onboarding_wallet.onboarding7')}
 										order={7}
 										name="onboarding7"
 									>
@@ -846,24 +851,15 @@ class Tokens extends PureComponent {
 							)}
 
 							<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
-								<CopilotStep
-									active={!searchEditing}
-									text="You can see your transaction history"
-									order={8}
-									name="onboarding8"
-								>
-									<CopilotView>
-										<Image source={require('../../../images/ic_asset_history.png')} />
-									</CopilotView>
-								</CopilotStep>
+								<Image source={require('../../../images/ic_asset_history.png')} />
 							</TouchableOpacity>
 
 							<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
 								<CopilotStep
 									active={!searchEditing}
-									text="You can see your Approvals and tokens Risk"
-									order={9}
-									name="onboarding9"
+									text={strings('onboarding_wallet.onboarding8')}
+									order={8}
+									name="onboarding8"
 								>
 									<CopilotView>
 										<ImageBackground
@@ -928,9 +924,9 @@ class Tokens extends PureComponent {
 				{!searchEditing && (
 					<CopilotStep
 						active={!searchEditing}
-						text="You can change between ERC-20 tokens and NFTs"
-						order={10}
-						name="onboarding10"
+						order={9}
+						text={strings('onboarding_wallet.onboarding9')}
+						name="onboarding9"
 					>
 						<CopilotView>
 							<View style={[styles.tnLayout]}>

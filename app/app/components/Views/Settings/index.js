@@ -173,8 +173,8 @@ export default class Settings extends PureComponent {
 					<View style={styles.cardItem}>
 						<SettingsDrawer
 							onPress={this.onOnboarding}
-							image={require('../../../images/ic_setting_update.png')}
-							title={'Start onboarding tour'}
+							image={require('../../../images/ic_setting_idea.png')}
+							title={strings('app_settings.idea')}
 						/>
 						<SettingsDrawer
 							onPress={this.onUpdateCheck}
