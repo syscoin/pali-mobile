@@ -256,6 +256,7 @@ class AmountSection extends PureComponent {
 		let inputValueConversion, renderableInputValueConversion, comma;
 		const processedInputValue = isNumberStr(inputValue) ? handleWeiNumber(inputValue) : '0';
 		selectedAsset = selectedAsset || this.props.asset;
+
 		if (selectedAsset.nativeCurrency) {
 			const cRate = this.getRate();
 			if (!isDollar) {
@@ -285,30 +286,36 @@ class AmountSection extends PureComponent {
 				renderableInputValueConversion = `${inputValueConversion} ${selectedAsset.symbol}`;
 			}
 		}
+
 		if (comma) {
 			inputValue = inputValue && inputValue.replace('.', ',');
 		}
+
 		inputValueConversion = inputValueConversion === '0' ? undefined : inputValueConversion;
+
 		if (isDollar) {
 			const tempInputValue = inputValue;
 			inputValue = inputValueConversion;
 			inputValueConversion = tempInputValue;
 
-			this.setState({ amountFormat: renderAmount(inputValue) });
+			this.setState({ amountFormat: inputValue });
 		}
-		inputValueConversion = renderAmount(inputValueConversion);
+
+		inputValueConversion = inputValueConversion;
 
 		const nextEnabled = !validateAmount(inputValue, {
 			allContractBalances,
 			asset,
 			estimatedTotalGas
 		});
+
 		this.setState({
 			inputValue,
 			inputValueConversion,
 			renderableInputValueConversion,
 			nextEnabled
 		});
+
 		this.props.onAmountChange(inputValue, renderableInputValueConversion, nextEnabled);
 	};
 
@@ -316,14 +323,18 @@ class AmountSection extends PureComponent {
 		const {
 			asset: { decimals }
 		} = this.props;
+
 		inputValue = revertAmount(inputValue, decimals);
-		const amountFormat = renderAmount(inputValue);
+
+		const amountFormat = inputValue;
+
 		this.onInputChange(inputValue, selectedAsset, useMax, false);
 		this.setState({ amountFormat });
 	};
 
 	onDollarInputChange = (inputValue, selectedAsset, useMax) => {
 		inputValue = revertAmount(inputValue);
+
 		this.onInputChange(inputValue, selectedAsset, useMax, true);
 	};
 
@@ -338,6 +349,7 @@ class AmountSection extends PureComponent {
 		return (
 			<View style={styles.valueInput}>
 				<TokenImage asset={asset} containerStyle={styles.inputTokenLogo} iconStyle={styles.inputIconStyle} />
+
 				<TextInput
 					style={[styles.inputAmount, inputTextWidth && { width: inputTextWidth }]}
 					ref={this.props.amountInputRef}
@@ -362,6 +374,7 @@ class AmountSection extends PureComponent {
 
 	renderDollarInput = () => {
 		const { inputValueConversion } = this.state;
+
 		const { asset, currencyCode } = this.props;
 		let exchangeRate;
 		if (asset.nativeCurrency) {
