@@ -254,7 +254,7 @@ class AmountSection extends PureComponent {
 		const { asset, allContractBalances, currencyCodeRate } = this.props;
 		const { estimatedTotalGas } = this.state;
 
-		let inputValueConversion, renderableInputValueConversion, comma;
+		let inputValueConversion, renderableInputValueConversion;
 		const processedInputValue = isNumberStr(inputValue) ? handleWeiNumber(inputValue) : '0';
 		selectedAsset = selectedAsset || this.props.asset;
 
@@ -288,9 +288,6 @@ class AmountSection extends PureComponent {
 			}
 		}
 
-		// if (comma) {
-		// 	inputValue = inputValue && inputValue.replace('.', ',');
-		// }
 		inputValueConversion = inputValueConversion === '0' ? undefined : inputValueConversion;
 
 		if (isDollar) {
@@ -300,7 +297,7 @@ class AmountSection extends PureComponent {
 
 			this.setState({ amountFormat: inputValue });
 		}
-		console.log('tatata', inputValueConversion);
+
 		inputValueConversion = inputValueConversion;
 
 		const nextEnabled = !validateAmount(inputValue, {
@@ -308,7 +305,7 @@ class AmountSection extends PureComponent {
 			asset,
 			estimatedTotalGas
 		});
-		console.log('ppppp', inputValueConversion);
+
 		this.setState({
 			inputValue,
 			inputValueConversion,
@@ -333,9 +330,8 @@ class AmountSection extends PureComponent {
 	};
 
 	onDollarInputChange = (inputValue, selectedAsset, useMax) => {
-		console.log('onDollarInputChange', inputValue);
 		inputValue = revertAmount(inputValue);
-		console.log('onDollarInputChange2', inputValue);
+
 		this.onInputChange(inputValue, selectedAsset, useMax, true);
 	};
 
@@ -375,7 +371,7 @@ class AmountSection extends PureComponent {
 
 	renderDollarInput = () => {
 		const { inputValueConversion } = this.state;
-		console.log(inputValueConversion, 'iiiiiii');
+
 		const { asset, currencyCode } = this.props;
 		let exchangeRate;
 		if (asset.nativeCurrency) {
