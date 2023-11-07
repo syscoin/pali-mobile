@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { colors, fontStyles, activeOpacity } from '../../../../styles/common';
-import Device from '../../../../util/Device';
 import {
 	StyleSheet,
 	Text,
@@ -254,7 +253,7 @@ class AmountSection extends PureComponent {
 		const { asset, allContractBalances, currencyCodeRate } = this.props;
 		const { estimatedTotalGas } = this.state;
 
-		let inputValueConversion, renderableInputValueConversion;
+		let inputValueConversion, renderableInputValueConversion, comma;
 		const processedInputValue = isNumberStr(inputValue) ? handleWeiNumber(inputValue) : '0';
 		selectedAsset = selectedAsset || this.props.asset;
 
@@ -286,6 +285,10 @@ class AmountSection extends PureComponent {
 				)}`;
 				renderableInputValueConversion = `${inputValueConversion} ${selectedAsset.symbol}`;
 			}
+		}
+
+		if (comma) {
+			inputValue = inputValue && inputValue.replace('.', ',');
 		}
 
 		inputValueConversion = inputValueConversion === '0' ? undefined : inputValueConversion;
