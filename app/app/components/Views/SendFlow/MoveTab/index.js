@@ -1173,7 +1173,7 @@ class MoveTab extends PureComponent {
 	onAmountChange = (inputValue, useMax) => {
 		const { asset } = this.props;
 		inputValue = revertAmount(inputValue, asset.decimals);
-		const amountFormat = renderAmount(inputValue);
+		const amountFormat = inputValue;
 		this.onInputChange(inputValue, useMax, false);
 		this.setState({ moveAmountFormat: amountFormat, moveAmount: inputValue });
 	};
@@ -1221,9 +1221,9 @@ class MoveTab extends PureComponent {
 			inputValue = inputValueConversion;
 			inputValueConversion = tempInputValue;
 
-			this.setState({ moveAmountFormat: renderAmount(inputValue) });
+			this.setState({ moveAmountFormat: inputValue });
 		}
-		inputValueConversion = renderAmount(inputValueConversion);
+		inputValueConversion = inputValueConversion;
 		this.setState(
 			{
 				inputValue,
