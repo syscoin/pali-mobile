@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { StyleSheet, ScrollView, View, StatusBar, NativeModules } from 'react-native';
+import { StyleSheet, ScrollView, View, Animated, StatusBar, NativeModules } from 'react-native';
 import SettingsDrawer from '../../UI/SettingsDrawer';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import MStatusBar from '../../UI/MStatusBar';
@@ -42,12 +43,14 @@ const styles = StyleSheet.create({
 });
 
 export default class Settings extends PureComponent {
+	fadeAnim = new Animated.Value(1);
 	static propTypes = {
 		/**
 		/* navigation object required to push new views
 		*/
 		navigation: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		IOSStatusBarHeight: 0
@@ -96,6 +99,24 @@ export default class Settings extends PureComponent {
 		this.props.navigation.navigate('WalletView', { onboard: true });
 	};
 
+	onSwitchTheme = () => {
+		const { setTheme } = this.context;
+
+		Animated.timing(this.fadeAnim, {
+			toValue: 0,
+			duration: 125,
+			useNativeDriver: true
+		}).start(() => {
+			setTheme(theme => (theme === 'light' ? 'dark' : 'light'));
+
+			Animated.timing(this.fadeAnim, {
+				toValue: 1,
+				duration: 125,
+				useNativeDriver: true
+			}).start();
+		});
+	};
+
 	componentDidMount = () => {
 		if (Device.isIos()) {
 			const { StatusBarManager } = NativeModules;
@@ -112,9 +133,10 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
+		const { theme } = this.context;
 
 		return (
-			<View style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<Animated.View style={[baseStyles.flexGrow, { opacity: this.fadeAnim }]} testID={'wallet-screen'}>
 				<MStatusBar
 					navigation={this.props.navigation}
 					fixPadding={false}
@@ -172,6 +194,12 @@ export default class Settings extends PureComponent {
 					</View>
 					<View style={styles.cardItem}>
 						<SettingsDrawer
+							onPress={this.onSwitchTheme}
+							image={require('../../../images/ic_setting_theme.png')}
+							title={'Theme'}
+							isTheme={theme}
+						/>
+						<SettingsDrawer
 							onPress={this.onOnboarding}
 							image={require('../../../images/ic_setting_idea.png')}
 							title={strings('app_settings.idea')}
@@ -198,7 +226,7 @@ export default class Settings extends PureComponent {
 						/>
 					</View>
 				</ScrollView>
-			</View>
+			</Animated.View>
 		);
 	};
 }

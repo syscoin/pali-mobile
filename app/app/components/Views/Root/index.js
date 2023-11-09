@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from '../../../theme/ThemeProvider';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { checkAndSetLocale } from '../../../../locales/i18n';
 import { store, persistor } from '../../../store/';
@@ -33,7 +34,9 @@ export default class Root extends PureComponent {
 	render = () => (
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>
-				<App />
+				<ThemeProvider>
+					<App />
+				</ThemeProvider>
 			</PersistGate>
 		</Provider>
 	);

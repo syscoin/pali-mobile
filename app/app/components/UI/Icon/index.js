@@ -6,6 +6,8 @@ import Coin from '../../../images/svg/coin.svg';
 import Edit from '../../../images/svg/edit.svg';
 import Globe from '../../../images/svg/globe.svg';
 import NFT from '../../../images/svg/nft.svg';
+import Moon from '../../../images/svg/ic_moon.svg';
+import Sun from '../../../images/svg/ic_sun.svg';
 import Settings from '../../../images/svg/settings.svg';
 import Shield from '../../../images/svg/shield.svg';
 import Trash from '../../../images/svg/trash.svg';
@@ -21,6 +23,8 @@ const icons = {
 	edit: Edit,
 	globe: Globe,
 	nft: NFT,
+	moon: Moon,
+	sun: Sun,
 	settings: Settings,
 	shield: Shield,
 	trash: Trash,

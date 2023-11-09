@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import { colors } from '../../../styles/common';
+import Icon from '../Icon';
 
 const styles = StyleSheet.create({
 	root: {
@@ -11,6 +12,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		height: 59,
 		alignItems: 'center'
+	},
+	themeIcon: {
+		width: 30,
+		height: 30,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 50
 	},
 	content: {
 		flex: 1
@@ -27,6 +35,9 @@ const styles = StyleSheet.create({
 	},
 	hideLineStyle: {
 		borderBottomWidth: 0
+	},
+	themeContainer: {
+		flexDirection: 'row'
 	}
 });
 
@@ -50,16 +61,39 @@ const defaultProps = {
 	titleStyle: undefined
 };
 
-const SettingsDrawer = ({ image, title, iconStyle, onPress, titleStyle, hideLine, baseStyle }) => (
+const SettingsDrawer = ({ image, title, iconStyle, onPress, titleStyle, hideLine, baseStyle, isTheme }) => (
 	<TouchableOpacity onPress={onPress}>
 		<View style={[styles.root, baseStyle, hideLine && styles.hideLineStyle]}>
 			{image && <Image style={[styles.image, iconStyle]} source={image} />}
 			<View style={styles.content}>
 				<Text style={[styles.title, titleStyle]}>{title}</Text>
 			</View>
-			<View style={styles.action}>
-				<Image source={require('../../../images/angle_right.png')} />
-			</View>
+			{isTheme ? (
+				<View style={styles.themeContainer}>
+					<View style={[styles.themeIcon, { backgroundColor: isTheme === 'dark' ? 'blue' : 'transparent' }]}>
+						<Icon
+							name={'moon'}
+							color={isTheme === 'dark' ? colors.white : colors.black}
+							width="19"
+							height="19"
+						/>
+					</View>
+					<View
+						style={[styles.themeIcon, { backgroundColor: isTheme === 'light' ? 'orange' : 'transparent' }]}
+					>
+						<Icon
+							name={'sun'}
+							color={isTheme === 'dark' ? colors.white : colors.black}
+							width="19"
+							height="19"
+						/>
+					</View>
+				</View>
+			) : (
+				<View style={styles.action}>
+					<Image source={require('../../../images/angle_right.png')} />
+				</View>
+			)}
 		</View>
 	</TouchableOpacity>
 );
