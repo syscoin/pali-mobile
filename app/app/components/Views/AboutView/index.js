@@ -65,8 +65,7 @@ const styles = {
 		alignItems: 'center'
 	},
 	footerFont: {
-		color: '#9B989B',
-		fontFamily: 'Poppins',
+		color: colors.paliGrey300,
 		fontSize: 16,
 		...fontStyles.normal
 	}

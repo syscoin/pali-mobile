@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 	},
 	okText: {
 		fontSize: 14,
-		fontWeight: 'bold',
+		...fontStyles.bold,
 		color: colors.white
 	},
 	bottomModal: {

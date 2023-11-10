@@ -194,15 +194,15 @@ export default class Settings extends PureComponent {
 					</View>
 					<View style={styles.cardItem}>
 						<SettingsDrawer
+							onPress={this.onOnboarding}
+							image={require('../../../images/ic_setting_idea.png')}
+							title={strings('app_settings.idea')}
+						/>
+						<SettingsDrawer
 							onPress={this.onSwitchTheme}
 							image={require('../../../images/ic_setting_theme.png')}
 							title={'Theme'}
 							isTheme={theme}
-						/>
-						<SettingsDrawer
-							onPress={this.onOnboarding}
-							image={require('../../../images/ic_setting_idea.png')}
-							title={strings('app_settings.idea')}
 						/>
 						<SettingsDrawer
 							onPress={this.onUpdateCheck}

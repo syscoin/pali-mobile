@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors, fontStyles } from '../../../styles/common';
 
 import { OTC_ONBOARDING_TOUR, TRUE } from '../../../constants/storage';
 
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
 		width: 200
 	},
 	stepButton: {
-		backgroundColor: '#C9DEFF',
+		backgroundColor: colors.paliBlue100,
 		width: 90,
 		height: 30,
 		alignItems: 'center',
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 	skipButton: {
 		borderWidth: 1,
-		borderColor: '#4D76B8',
+		borderColor: colors.paliBlue400,
 		borderStyle: 'solid',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -40,8 +41,8 @@ const styles = StyleSheet.create({
 		height: 40
 	},
 	skipText: {
-		color: '#4D76B8',
-		fontWeight: 'bold',
+		color: colors.paliBlue400,
+		...fontStyles.bold,
 		fontSize: 14
 	},
 	stepNumber: {
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		borderRadius: 14,
 		borderColor: '#FFFFFF',
-		backgroundColor: '#4D76B8'
+		backgroundColor: colors.paliBlue400
 	},
 	stepNumberText: {
 		fontSize: 12,
