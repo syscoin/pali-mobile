@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 import { createAppContainer, createSwitchNavigator, NavigationActions } from 'react-navigation';
 import codePush from 'react-native-code-push';
-
+import { setCustomText } from 'react-native-global-props';
 import { createStackNavigator } from 'react-navigation-stack';
+
 import Login from '../Views/Login';
 import Onboarding from '../Views/Onboarding';
 import ChoosePassword from '../Views/ChoosePassword';
@@ -146,6 +147,15 @@ class App extends PureComponent {
 				console.error(`Cannot initialize WalletConnect Manager.`, err);
 			});
 		}
+
+		//Sets Default Font Family
+		const customTextProps = {
+			style: {
+				fontFamily: 'Poppins'
+			}
+		};
+		setCustomText(customTextProps);
+
 		initApiClient();
 
 		Linking.addEventListener('url', this.handleDeepLinkEvent);
