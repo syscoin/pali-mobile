@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',

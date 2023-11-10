@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.transparent,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.transparent,
 		alignItems: 'center',

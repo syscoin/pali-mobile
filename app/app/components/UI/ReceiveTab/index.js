@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
 	},
 	cancelButton: {
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderColor: colors.brandPink300,
 		borderWidth: 1,
 		marginHorizontal: 48,
