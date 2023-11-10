@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15
 	},
 	buttonContainer: {
-		color: '#4D76B8',
+		color: colors.brandPink300,
 		fontSize: 16,
 		lineHeight: 24,
 		...fontStyles.semibold
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
 		height: 40,
 		backgroundColor: 'white',
 		borderWidth: 1,
-		borderColor: '#4D76B8',
-		borderRadius: 5,
+		borderColor: colors.brandPink300,
+		borderRadius: 100,
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: 15,
