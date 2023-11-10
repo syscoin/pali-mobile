@@ -109,11 +109,11 @@ const styles = StyleSheet.create({
 		aspectRatio: 3.66
 	},
 	scannerButton: {
-		paddingRight: 20
-	},
-	walletConnectButton: {
 		paddingLeft: 20,
 		paddingRight: 14
+	},
+	walletConnectButton: {
+		paddingRight: 20
 	},
 	buttonImg: {
 		width: 24,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1.5,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -754,18 +754,6 @@ class Wallet extends PureComponent {
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
 					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
 				</View>
-				{this.props.walletConnectIconVisible && (
-					<TouchableOpacity
-						style={styles.walletConnectButton}
-						hitSlop={styles.hitSlop}
-						onPress={() => {
-							this.props.showWalletConnectList();
-						}}
-					>
-						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
-					</TouchableOpacity>
-				)}
-
 				<TouchableOpacity style={styles.scannerButton} hitSlop={styles.hitSlop} onPress={this.openQRScanner}>
 					<CopilotStep
 						active={true}
@@ -778,6 +766,18 @@ class Wallet extends PureComponent {
 						</CopilotView>
 					</CopilotStep>
 				</TouchableOpacity>
+
+				{this.props.walletConnectIconVisible && (
+					<TouchableOpacity
+						style={styles.walletConnectButton}
+						hitSlop={styles.hitSlop}
+						onPress={() => {
+							this.props.showWalletConnectList();
+						}}
+					>
+						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
+					</TouchableOpacity>
+				)}
 			</View>
 
 			<View style={styles.wrapper}>
