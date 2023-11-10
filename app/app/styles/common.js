@@ -84,7 +84,8 @@ export const colors = {
 	$9B989B: '#9B989B',
 	$4CD964: '#4CD964',
 	$D20058: '#D20058',
-	blackAlpha300: "'rgba(0, 0, 0, 0.16)'",
+	blackAlpha200: 'rgba(0, 0, 0, 0.08)',
+	blackAlpha300: 'rgba(0, 0, 0, 0.16)',
 	brandPink300Alpha: 'rgba(254, 110, 145, 0.14)',
 	brandPink300Alpha3: 'rgba(254, 110, 145, 0.3)',
 	brandPink30026: '#FE6E9126',
@@ -233,19 +234,19 @@ export const baseStyles = {
 export const fontStyles = {
 	normal: {
 		fontWeight: 'normal',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	medium: {
 		fontWeight: Device.isAndroid() ? 'bold' : '500',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	semibold: {
 		fontWeight: Device.isAndroid() ? 'bold' : '600',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	bold: {
 		fontWeight: 'bold',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	}
 };
 
