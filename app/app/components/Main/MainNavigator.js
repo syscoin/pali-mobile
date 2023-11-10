@@ -204,7 +204,13 @@ export default createStackNavigator(
 							style: {
 								backgroundColor: colors.white,
 								height: 50,
-								borderTopColor: colors.$F0F0F0
+								borderTopColor: 'rgba(0, 0, 0, 0.1)',
+								borderLeftColor: 'rgba(0, 0, 0, 0.1)',
+								borderRightColor: 'rgba(0, 0, 0, 0.1)',
+								borderBottomColor: 'transparent',
+								borderWidth: 1,
+								borderTopRightRadius: 100,
+								borderTopLeftRadius: 100
 							},
 							tabStyle: {
 								height: 50
