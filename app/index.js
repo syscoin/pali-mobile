@@ -46,7 +46,13 @@ LogBox.ignoreLogs([
 	'componentWillUpdate',
 	'componentWillReceiveProps',
 	'getNode()',
-	'VirtualizedLists should never be nested inside plain ScrollViews'
+	'Require cycle:',
+	'Require cycle: node_modules/',
+	'Require cycle: app/',
+	'new NativeEventEmitter',
+	'EventEmitter.removeListener',
+	'Module TcpSockets requires main queue setup',
+	'Module RCTSearchApiManager requires main queue setup'
 ]);
 
 /**

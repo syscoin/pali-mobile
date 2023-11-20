@@ -76,4 +76,8 @@ RCT_REMAP_METHOD(shake, shakeResolver: (RCTPromiseResolveBlock)resolve  shakeRej
   resolve(shakeToReturn);
 }
 
++ (BOOL) requiresMainQueueSetup {
+  return YES;
+}
+
 @end

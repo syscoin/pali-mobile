@@ -28,7 +28,7 @@ const GlobeIcon = ({ focused }) => {
 
 		DeviceEventEmitter.addListener('onWalletTabFocused', onWalletTabFocused);
 		return () => {
-			DeviceEventEmitter.removeAllListeners('onWalletTabFocused', onWalletTabFocused);
+			DeviceEventEmitter.removeAllListeners('onWalletTabFocused');
 		};
 	}, [scale, rotate]);
 

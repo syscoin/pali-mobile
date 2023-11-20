@@ -1,17 +1,22 @@
 diff --git a/node_modules/react-native-scrollable-tab-view/index.js b/node_modules/react-native-scrollable-tab-view/index.js
-index 82e53c5..ce84aa5 100644
+index 82e53c5..e02cd41 100644
 --- a/node_modules/react-native-scrollable-tab-view/index.js
 +++ b/node_modules/react-native-scrollable-tab-view/index.js
-@@ -13,6 +13,9 @@ const {
+@@ -13,9 +13,12 @@ const {
    InteractionManager,
  } = ReactNative;
  
+-const ViewPagerAndroid = require('@react-native-community/viewpager');
 +// Fix until ViewPagerAndroid is completely working on this library including inside scrollviews
 +const useLikeIOS = Platform.OS === 'ios' || true
 +
- const ViewPagerAndroid = require('@react-native-community/viewpager');
++const ViewPagerAndroid = require('react-native-pager-view');
  const TimerMixin = require('react-timer-mixin');
- const ViewPager = require('@react-native-community/viewpager');
+-const ViewPager = require('@react-native-community/viewpager');
++const ViewPager = require('react-native-pager-view');
+ 
+ const SceneComponent = require('./SceneComponent');
+ const DefaultTabBar = require('./DefaultTabBar');
 @@ -73,7 +76,7 @@ const ScrollableTabView = createReactClass({
      let positionAndroid;
      let offsetAndroid;
@@ -30,7 +35,7 @@ index 82e53c5..ce84aa5 100644
        this.state.scrollXIOS.removeAllListeners();
      } else {
        this.state.positionAndroid.removeAllListeners();
-@@ -134,7 +137,7 @@ const ScrollableTabView = createReactClass({
+@@ -134,17 +137,17 @@ const ScrollableTabView = createReactClass({
    },
  
    goToPage(pageNumber) {
@@ -38,7 +43,20 @@ index 82e53c5..ce84aa5 100644
 +    if (useLikeIOS) {
        const offset = pageNumber * this.state.containerWidth;
        if (this.scrollView) {
-         this.scrollView.getNode().scrollTo({x: offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
+-        this.scrollView.getNode().scrollTo({x: offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
++        this.scrollView.scrollTo({x: offset, y: 0, animated: !this.props.scrollWithoutAnimation, });
+       }
+     } else {
+       if (this.scrollView) {
+         if (this.props.scrollWithoutAnimation) {
+-          this.scrollView.getNode().setPageWithoutAnimation(pageNumber);
++          this.scrollView.setPageWithoutAnimation(pageNumber);
+         } else {
+-          this.scrollView.getNode().setPage(pageNumber);
++          this.scrollView.setPage(pageNumber);
+         }
+       }
+     }
 @@ -223,7 +226,7 @@ const ScrollableTabView = createReactClass({
    },
  
@@ -60,52 +78,9 @@ index 82e53c5..ce84aa5 100644
 @@ -340,7 +343,7 @@ const ScrollableTabView = createReactClass({
        return;
      }
-     
+ 
 -    if (Platform.OS === 'ios') {
 +    if (useLikeIOS) {
        const containerWidthAnimatedValue = new Animated.Value(width);
        // Need to call __makeNative manually to avoid a native animated bug. See
        // https://github.com/facebook/react-native/pull/14435
---- a/node_modules/react-native-scrollable-tab-view/package.json
-+++ b/node_modules/react-native-scrollable-tab-view/package.json
-@@ -29,7 +29,7 @@
-   },
-   "homepage": "https://github.com/brentvatne/react-native-scrollable-tab-view#readme",
-   "dependencies": {
--    "@react-native-community/viewpager": "^2.0.1",
-+    "react-native-pager-view": "^5.4.9",
-     "create-react-class": "^15.6.2",
-     "prop-types": "^15.6.0",
-     "react-timer-mixin": "^0.13.3"
-@@ -68,4 +68,4 @@
-     "stream": "stream-browserify",
-     "vm": "vm-browserify"
-   }
--}
-\ No newline at end of file
-+}
-diff --git a/node_modules/react-native-scrollable-tab-view/index.js b/node_modules/react-native-scrollable-tab-view/index.js
-index ce84aa5..70a0650 100644
---- a/node_modules/react-native-scrollable-tab-view/index.js
-+++ b/node_modules/react-native-scrollable-tab-view/index.js
-@@ -16,9 +16,9 @@ const {
- // Fix until ViewPagerAndroid is completely working on this library including inside scrollviews
- const useLikeIOS = Platform.OS === 'ios' || true
- 
--const ViewPagerAndroid = require('@react-native-community/viewpager');
-+const ViewPagerAndroid = require('react-native-pager-view');
- const TimerMixin = require('react-timer-mixin');
--const ViewPager = require('@react-native-community/viewpager');
-+const ViewPager = require('react-native-pager-view');
- 
- const SceneComponent = require('./SceneComponent');
- const DefaultTabBar = require('./DefaultTabBar');
-@@ -342,7 +342,7 @@ const ScrollableTabView = createReactClass({
-     if (!width || width <= 0 || Math.round(width) === Math.round(this.state.containerWidth)) {
-       return;
-     }
--    
-+
-     if (useLikeIOS) {
-       const containerWidthAnimatedValue = new Animated.Value(width);
-       // Need to call __makeNative manually to avoid a native animated bug. See

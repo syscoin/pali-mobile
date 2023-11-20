@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
 import { colors, fontStyles } from '../../../../styles/common';
-import { Easing } from 'react-native-reanimated';
+import { EasingNode } from 'react-native-reanimated';
 import { chainToChainType, getTabIcon } from '../../../../util/ChainTypeImages';
 
 import tabFavourites from '../../../../images/ic_tab_favourites.png';
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 class NetworkTabBar extends PureComponent {
 	static propTypes = {
 		goToPage: PropTypes.func,
-		activeTab: PropTypes.number,
+		activeTab: PropTypes.any,
 		tabs: PropTypes.array,
 		backgroundColor: PropTypes.string
 	};
@@ -58,7 +58,7 @@ class NetworkTabBar extends PureComponent {
 
 	async componentDidMount() {
 		this.props.tabs.forEach((name, page) => {
-			const isTabActive = this.props.activeTab === page;
+			const isTabActive = parseInt(this.props.activeTab) === page;
 			const animated = new Animated.Value(isTabActive ? 1 : 0);
 			this.setState({ [name]: animated });
 		});
@@ -132,7 +132,7 @@ class NetworkTabBar extends PureComponent {
 		Animated.timing(this.state[name], {
 			toValue: 0,
 			duration: 300,
-			easing: Easing.linear,
+			easing: EasingNode.linear,
 			useNativeDriver: false
 		}).start();
 	};
@@ -141,7 +141,7 @@ class NetworkTabBar extends PureComponent {
 		Animated.timing(this.state[name], {
 			toValue: 1,
 			duration: 300,
-			easing: Easing.linear,
+			easing: EasingNode.linear,
 			useNativeDriver: false
 		}).start();
 	};
@@ -154,7 +154,7 @@ class NetworkTabBar extends PureComponent {
 						const arr = tabName.split(':');
 						const name = arr[0];
 						const chain = Number(arr[1]);
-						const isTabActive = this.props.activeTab === page;
+						const isTabActive = parseInt(this.props.activeTab) === page;
 						const animated = this.state[tabName] || new Animated.Value(isTabActive ? 1 : 0);
 						return this.renderTab(name, chain, page, isTabActive, animated, this.onPressHandler.bind(this));
 					})}
