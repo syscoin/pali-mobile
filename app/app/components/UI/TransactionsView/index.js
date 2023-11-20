@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fontStyles } from '../../../styles/common';
 import Transactions from '../Transactions';
@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import TitleBar from '../TitleBar';
 import { ChainType } from 'paliwallet-core';
 
+const activeOpacity = 0.8;
 const styles = StyleSheet.create({
 	txTitle: {
 		fontSize: 20,
@@ -30,6 +31,43 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		flex: 1
+	},
+	actionScroll: {
+		height: 70,
+		width: '100%'
+	},
+	actionContainer: {
+		flexDirection: 'row',
+		paddingHorizontal: 15,
+		height: 100
+	},
+	buttonContainer: {
+		color: colors.brandPink300,
+		fontSize: 16,
+		lineHeight: 24,
+		...fontStyles.semibold
+	},
+	actionView: {
+		marginHorizontal: -7,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
+	},
+	buttonView: {
+		minWidth: 70,
+		height: 40,
+		backgroundColor: 'white',
+		borderWidth: 1,
+		borderColor: colors.brandPink300,
+		borderRadius: 100,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 15,
+		marginLeft: 10,
+		paddingHorizontal: 15
 	}
 });
 
@@ -77,6 +115,31 @@ class TransactionsView extends PureComponent {
 						/>
 					}
 				/>
+				<ScrollView
+					style={styles.actionScroll}
+					showsHorizontalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					horizontal
+					contentContainerStyle={styles.actionContainer}
+				>
+					<View style={[styles.buttonView, { marginLeft: 0 }]}>
+						<TouchableOpacity activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.send')}</Text>
+						</TouchableOpacity>
+					</View>
+
+					<View style={[styles.buttonView, { minWidth: 85 }]}>
+						<TouchableOpacity activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.bridge')}</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={styles.buttonView}>
+						<TouchableOpacity onPress={this.showReceiveModal} activeOpacity={activeOpacity}>
+							<Text style={styles.buttonContainer}>{strings('other.receive')}</Text>
+						</TouchableOpacity>
+					</View>
+				</ScrollView>
+
 				<View style={styles.container}>
 					<Transactions
 						navigation={navigation}

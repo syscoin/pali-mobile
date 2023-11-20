@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { colors, fontStyles, activeOpacity } from '../../../../styles/common';
+import { colors, fontStyles } from '../../../../styles/common';
 import {
 	StyleSheet,
 	Text,
@@ -41,7 +41,6 @@ const titleBlack = '#030319';
 const amountGray = '#60657D';
 const approxiColor = '#333333';
 const inputBorderColor = '#8F92A1';
-const maxColor = '#09C285';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -95,10 +94,15 @@ const styles = StyleSheet.create({
 		padding: 0
 	},
 	btnMax: {
-		height: 24,
-		paddingLeft: 8,
+		height: 22,
+		justifyContent: 'center',
 		alignItems: 'center',
-		justifyContent: 'center'
+		backgroundColor: 'rgba(0, 0, 0, 0.06)',
+		borderRadius: 100,
+		paddingTop: 2,
+		paddingRight: 8,
+		paddingBottom: 2,
+		paddingLeft: 8
 	},
 	inputTokenLogo: {
 		width: 24,
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
 	maxText: {
 		lineHeight: 13,
 		fontSize: 11,
-		color: maxColor
+		color: colors.paliGrey300
 	},
 	currencyText: {
 		color: colors.$030319,
@@ -361,13 +365,13 @@ class AmountSection extends PureComponent {
 					placeholderTextColor={inputBorderColor}
 				/>
 
-				<TouchableOpacity style={styles.btnMax} onPress={this.useMax} activeOpacity={activeOpacity}>
-					{loadEstimatedTotalGasMax ? (
-						<ActivityIndicator size="small" color={maxColor} />
-					) : (
+				{loadEstimatedTotalGasMax ? (
+					<ActivityIndicator size="small" color={colors.brandPink300} />
+				) : (
+					<TouchableOpacity style={styles.btnMax} onPress={this.useMax}>
 						<Text style={styles.maxText}>{strings('other.max')}</Text>
-					)}
-				</TouchableOpacity>
+					</TouchableOpacity>
+				)}
 			</View>
 		);
 	};

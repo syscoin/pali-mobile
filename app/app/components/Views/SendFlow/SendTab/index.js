@@ -71,12 +71,29 @@ const styles = StyleSheet.create({
 	wrapper: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
-		borderRadius: 20,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50,
 		margin: 8
 	},
 	container: {
-		height: 590,
+		height: 500,
 		marginHorizontal: 30
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 20,
+		marginTop: 25,
+		marginBottom: 25,
+		textTransform: 'uppercase'
 	},
 	networkWrapper: {
 		paddingTop: 9
@@ -1012,11 +1029,10 @@ class SendTab extends PureComponent {
 				onScrollBeginDrag={dismissKeyboard}
 				scrollEnabled={suggestions.length === 0}
 			>
+				<View style={styles.titleLayout}>
+					<Text style={styles.intro}>{strings('other.send')}</Text>
+				</View>
 				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
-					<View style={styles.labelWrapper}>
-						<Image style={styles.labelIcon} source={iconSendActive} />
-						<Text style={styles.labelText}>{strings('other.send')}</Text>
-					</View>
 					{txStep === 1 ? (
 						<View style={styles.stepOne}>
 							<AddressTo

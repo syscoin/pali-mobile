@@ -94,6 +94,28 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginLeft: 6
 	},
+	inputActionContainer: {
+		flexDirection: 'row',
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		top: 14,
+		paddingBottom: 12,
+		paddingLeft: 12,
+		alignItems: 'center'
+	},
+	touchPaste: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.06)',
+		borderRadius: 100,
+		height: 22,
+		paddingTop: 2,
+		paddingRight: 8,
+		paddingBottom: 2,
+		paddingLeft: 8
+	},
+
 	touchSelectDelete: {
 		position: 'absolute',
 		bottom: 0,
@@ -113,7 +135,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 12
 	},
 	pasteLabel: {
-		color: colors.$09C285,
+		color: colors.paliGrey300,
 		fontSize: 11
 	}
 });
@@ -140,11 +162,6 @@ export const AddressTo = props => {
 		<View style={styles.wrapper}>
 			<View style={styles.label}>
 				<Text style={styles.labelText}>{title}</Text>
-				{!!onScan && (
-					<TouchableOpacity onPress={onScan} style={styles.iconWrapper}>
-						<Image source={require('../../../../images/scan_icon_small.png')} style={styles.scanIcon} />
-					</TouchableOpacity>
-				)}
 			</View>
 			{!addressToReady ? (
 				<View style={styles.selectWrapper}>
@@ -171,9 +188,19 @@ export const AddressTo = props => {
 							<Image source={require('../../../../images/search_clear.png')} />
 						</TouchableOpacity>
 					) : (
-						<TouchableOpacity style={styles.touchSelectDelete} onPress={onPastedAddress}>
-							<Text style={styles.pasteLabel}>{strings('other.paste')}</Text>
-						</TouchableOpacity>
+						<View style={styles.inputActionContainer}>
+							<TouchableOpacity style={styles.touchPaste} onPress={onPastedAddress}>
+								<Text style={styles.pasteLabel}>{strings('other.paste')}</Text>
+							</TouchableOpacity>
+							{!!onScan && (
+								<TouchableOpacity onPress={onScan} style={styles.iconWrapper}>
+									<Image
+										source={require('../../../../images/scan_icon_small.png')}
+										style={styles.scanIcon}
+									/>
+								</TouchableOpacity>
+							)}
+						</View>
 					)}
 				</View>
 			) : (
