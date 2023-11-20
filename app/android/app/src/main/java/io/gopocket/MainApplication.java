@@ -18,6 +18,8 @@ import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import io.paliwallet.nativeModules.PreventScreenshotPackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 import com.facebook.react.bridge.JSIModulePackage;
+import com.themeswitchanimation.ThemeSwitchAnimationPackage;
+
 
 import android.text.TextUtils;
 
@@ -77,12 +79,14 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 			@SuppressWarnings("UnnecessaryLocalVariable")
 			List<ReactPackage> packages = new PackageList(this).getPackages();
 			packages.add(new LottiePackage());
+
 			packages.add(new RNGestureHandlerPackage());
 			packages.add(new PreventScreenshotPackage());
 			packages.add(new RNToolsPackage());
 			packages.add(new MPAndroidChartPackage());
 			packages.add(new BlurViewPackage());
 			packages.add(new ReactVideoPackage());
+			packages.add(new ThemeSwitchAnimationPackage());
 			packages.add(new RNThreadPackage(
 				mReactNativeHost,
 				new AsyncStoragePackage(),

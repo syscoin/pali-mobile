@@ -116,7 +116,8 @@ dependencies {
 	implementation project(":react-native-haptic-feedback")
 	implementation project(':react-native-gesture-handler')
 	implementation project(path: ":@react-native-firebase_analytics")
-	
+	implementation project(':react-native-theme-switch-animation')
+
 	implementation 'androidx.multidex:multidex:2.0.1'
 	implementation 'androidx.annotation:annotation:1.1.0'
 	implementation 'androidx.appcompat:appcompat:1.2.0'
