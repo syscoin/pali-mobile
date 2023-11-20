@@ -37,4 +37,6 @@ export const SORT_NETWORK = 'sort_network';
 
 export const OTC_BANNER_HIDE = 'otc_banner_hide';
 
+export const OTC_ONBOARDING_TOUR = 'otc_onboarding_tour';
+
 export const BACKUP_VAULT = 'backup_vault';

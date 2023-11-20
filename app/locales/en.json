@@ -97,6 +97,19 @@
 	"token": {
 		"search_tokens_or_contract": "Search Tokens or Contract Addr"
 	},
+	"onboarding_wallet": {
+		"skip_tour": "Skip Tour",
+		"finish": "Finish",
+		"onboarding1": "Customize your Pali Wallet experience here.",
+		"onboarding2": "Scan QR code to log in via Wallet Connect.",
+		"onboarding3": "Option to hide asset values.",
+		"onboarding4": "Manage accounts effortlessly.",
+		"onboarding5": "Easily manage your networks.",
+		"onboarding6": "Sort your assets your way.",
+		"onboarding7": "Search for or add tokens by pasting the address or name.",
+		"onboarding8": "See token approvals and risk levels.",
+		"onboarding9": "Switch between ERC-20 and NFTs."
+	},
 	"app_settings": {
 		"title": "Settings",
 		"wallet_management": "Wallet & Account",
@@ -123,7 +136,8 @@
 		"transaction_verification": "Transaction needs verification",
 		"verification_message_for_pwd": "Password required for every transaction.",
 		"verification_message_for_id": "Password or FaceID/Fingerprint required for every transaction.",
-		"language": "Language"
+		"language": "Language",
+		"idea": "Start Onboarding Tour"
 	},
 	"reveal_credential": {
 		"seed_phrase_title": "Reveal Seed Phrase",
@@ -208,6 +222,14 @@
 		"add_asset_tip": "%{symbol} has been added to your asset list",
 		"home": "Home",
 		"closeAll": "Close All Tabs",
+		"clearData": "Clear data",
+		"clear": "Clear",
+		"browserHistory": "Browser History",
+		"clearBrowserHistory": "Clear your entire browser history.",
+		"cookiesHistory": "Browser Cookies",
+		"clearCookiesHistory": "Clear your browser’s cookies.",
+		"cacheHistory": "Browser Cache",
+		"clearCacheHistory": "Clear your browser’s cache.",
 		"favourite": "Favourite",
 		"close_tab": "Close Tab",
 		"dont_remind_again": "Don't remind again",

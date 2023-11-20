@@ -1,7 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, Image, Animated } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
+import CookieManager from '@react-native-cookies/cookies';
+import { clearWebViewIOSCache } from 'react-native-webview-ios-cache-clear';
+import Modal from 'react-native-modal';
+import { WebView } from 'react-native-webview';
+import { util } from 'paliwallet-core';
 
-import { colors } from '../../../styles/common';
+import { colors, fontStyles } from '../../../styles/common';
 import { SvgUri } from 'react-native-svg';
 
 import { strings } from '../../../../locales/i18n';
@@ -9,11 +15,38 @@ import { strings } from '../../../../locales/i18n';
 import { URL } from 'paliwallet-core';
 
 import { callSqlite } from '../../../util/ControllerUtils';
+import Device from '../../../util/Device';
 
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Icon from '../../UI/Icon/index.js';
 
 const styles = StyleSheet.create({
+	root: {
+		backgroundColor: '#ebebeb',
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		minHeight: 200,
+		paddingBottom: Device.isIos() && Device.isIphoneX() ? 20 : 0
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	checkboxWrapper: {
+		flexDirection: 'column',
+		marginLeft: 30,
+		marginRight: 30
+	},
+
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 20,
+		marginTop: 30,
+		marginBottom: 30
+	},
 	animatedView: {
 		width: '45%',
 		padding: '3%',
@@ -91,7 +124,7 @@ const styles = StyleSheet.create({
 	optionsContainer: {
 		position: 'absolute',
 		right: 20,
-		top: '100%',
+		top: '6.5%',
 		backgroundColor: '#fff',
 		padding: 10,
 		borderRadius: 12,
@@ -102,11 +135,16 @@ const styles = StyleSheet.create({
 		shadowRadius: 2,
 		zIndex: 9999,
 		width: 160,
-		height: 40
+		height: 75
 	},
 	closeTabsButton: {
 		flexDirection: 'row',
 		alignItems: 'center'
+	},
+	closeTabsButtonWithMargin: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginTop: 15
 	},
 	closeTabsButtonText: {
 		marginLeft: 10
@@ -115,6 +153,74 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		margin: '0.5%'
+	},
+	checkboxStyle: {
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
+	checkboxLine: {
+		backgroundColor: '#ebebeb',
+		height: 1,
+		maxHeight: 1,
+		marginTop: 20
+	},
+	title: {
+		fontSize: 16,
+		color: '#1F1D1F'
+	},
+	subTitle: {
+		fontSize: 14,
+		color: '#808795',
+		marginTop: 8
+	},
+	pwModalButtons: {
+		marginTop: 40,
+		flexDirection: 'row',
+		margin: 30
+	},
+	cancelButton: {
+		flex: 1,
+		height: 44,
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: colors.brandPink300,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	cancelText: {
+		fontSize: 14,
+		color: colors.brandPink300
+	},
+	disabledButton: {
+		opacity: 0.6
+	},
+	okButton: {
+		flex: 1.5,
+		height: 44,
+		borderRadius: 10,
+		backgroundColor: colors.brandPink300,
+		marginLeft: 19,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	okText: {
+		fontSize: 14,
+		fontWeight: 'bold',
+		color: colors.white
+	},
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
+	},
+	moreModalWrapper: {
+		minHeight: 406,
+		backgroundColor: colors.$F6F6F6,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20
+	},
+	moreModalContainer: {
+		flex: 1,
+		marginTop: 20
 	}
 });
 
@@ -198,11 +304,161 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 	);
 };
 
-const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAllTabs }) => {
+const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAllTabs, isLockScreen }) => {
 	const [showOptions, setShowOptions] = useState(false);
+	const [moreModalVisible, setMoreModalVisible] = useState(false);
+	const [toggleCheckBoxHistory, setToggleCheckBoxHistory] = useState(false);
+	const [toggleCheckBoxCache, setToggleCheckBoxCache] = useState(false);
+	const [toggleCheckBoxCookies, setToggleCheckBoxCookies] = useState(false);
+	const webviewCacheRef = useRef(null);
+
+	const clearBrowserData = async () => {
+		const useWebKit = true;
+
+		if (toggleCheckBoxHistory) {
+			await callSqlite('clearBrowserHistory');
+			setToggleCheckBoxHistory(false);
+			util.logDebug('Browser History cleared');
+		}
+		if (toggleCheckBoxCookies) {
+			await CookieManager.clearAll(useWebKit);
+			setToggleCheckBoxCookies(false);
+			util.logDebug('Browser cookies cleared');
+		}
+
+		if (toggleCheckBoxCache) {
+			if (Device.isIos()) {
+				const result = await clearWebViewIOSCache();
+				util.logDebug('Browser cache cleared: ', result);
+			} else {
+				webviewCacheRef.current.clearCache(true);
+				util.logDebug('Browser cache cleared');
+			}
+
+			setToggleCheckBoxCache(false);
+		}
+		hideMoreModal();
+	};
+
+	const hideMoreModal = () => {
+		setMoreModalVisible(false);
+	};
+
+	const renderCleanDataModal = () => {
+		const isButtonDisabled = !toggleCheckBoxCache && !toggleCheckBoxHistory && !toggleCheckBoxCookies;
+		return (
+			<Modal
+				isVisible={!isLockScreen}
+				onBackdropPress={hideMoreModal}
+				onBackButtonPress={hideMoreModal}
+				onSwipeComplete={hideMoreModal}
+				statusBarTranslucent
+				style={styles.bottomModal}
+				animationType="fade"
+				useNativeDriver
+			>
+				<View style={styles.root}>
+					<WebView style={{ width: 0, height: 0 }} ref={webviewCacheRef} />
+
+					<View style={styles.titleLayout}>
+						<Text style={styles.intro}>{strings('browser.clearData')}</Text>
+					</View>
+					<View style={styles.moreModalWrapper}>
+						<View style={styles.moreModalContainer}>
+							<View style={styles.checkboxWrapper}>
+								<View style={styles.checkboxStyle}>
+									<CheckBox
+										disabled={false}
+										boxType="square"
+										onCheckColor={colors.brandPink300}
+										onTintColor="#aaaaaa"
+										value={toggleCheckBoxHistory}
+										onValueChange={newValue => setToggleCheckBoxHistory(newValue)}
+									/>
+									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
+										<Text style={styles.title}> {strings('browser.browserHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearBrowserHistory')}</Text>
+									</View>
+								</View>
+								<View style={styles.checkboxLine} />
+								<View style={styles.checkboxStyle}>
+									<CheckBox
+										disabled={false}
+										boxType="square"
+										onCheckColor={colors.brandPink300}
+										onTintColor="#aaaaaa"
+										value={toggleCheckBoxCookies}
+										onValueChange={newValue => setToggleCheckBoxCookies(newValue)}
+									/>
+									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
+										<Text style={styles.title}>{strings('browser.cookiesHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearCookiesHistory')}</Text>
+									</View>
+								</View>
+								<View style={styles.checkboxLine} />
+								<View style={styles.checkboxStyle}>
+									<CheckBox
+										disabled={false}
+										boxType="square"
+										onCheckColor={colors.brandPink300}
+										onTintColor="#aaaaaa"
+										value={toggleCheckBoxCache}
+										onValueChange={newValue => setToggleCheckBoxCache(newValue)}
+									/>
+									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
+										<Text style={styles.title}>{strings('browser.cacheHistory')}</Text>
+										<Text style={styles.subTitle}>{strings('browser.clearCacheHistory')}</Text>
+									</View>
+								</View>
+								<View style={styles.checkboxLine} />
+							</View>
+
+							<View style={styles.pwModalButtons}>
+								<TouchableOpacity style={styles.cancelButton} onPress={hideMoreModal}>
+									<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+								</TouchableOpacity>
+								<TouchableOpacity
+									style={[styles.okButton, isButtonDisabled ? styles.disabledButton : null]}
+									disabled={isButtonDisabled}
+									onPress={clearBrowserData}
+								>
+									<Text style={styles.okText}>{strings('browser.clear')}</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					</View>
+				</View>
+			</Modal>
+		);
+	};
 
 	return (
 		<View style={styles.flexOne}>
+			{moreModalVisible && renderCleanDataModal()}
+			{showOptions && (
+				<View style={styles.optionsContainer}>
+					<TouchableOpacity
+						style={styles.closeTabsButton}
+						onPress={() => {
+							setShowOptions(false);
+							setMoreModalVisible(true);
+						}}
+					>
+						<Icon name="broom" color={colors.black} width="18" height="18" />
+						<Text style={styles.closeTabsButtonText}>{strings('browser.clearData')}</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.closeTabsButtonWithMargin}
+						onPress={() => {
+							closeAllTabs();
+							setShowOptions(false);
+						}}
+					>
+						<AntIcon color={colors.black} name="closecircleo" size={18} />
+						<Text style={styles.closeTabsButtonText}>{strings('browser.closeAll')}</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 			<View style={styles.header}>
 				<TouchableOpacity style={styles.addButton} onPress={() => newTab()}>
 					<Entypo color={colors.brandPink300} name="plus" size={22} />
@@ -211,20 +467,6 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 				<TouchableOpacity style={styles.optionsButton} onPress={() => setShowOptions(!showOptions)}>
 					<Entypo color={colors.grey600} name="dots-three-vertical" size={24} />
 				</TouchableOpacity>
-				{showOptions && (
-					<View style={styles.optionsContainer}>
-						<TouchableOpacity
-							style={styles.closeTabsButton}
-							onPress={() => {
-								closeAllTabs();
-								setShowOptions(false);
-							}}
-						>
-							<AntIcon color={colors.black} name="closecircleo" size={18} />
-							<Text style={styles.closeTabsButtonText}>{strings('browser.closeAll')}</Text>
-						</TouchableOpacity>
-					</View>
-				)}
 			</View>
 			<ScrollView contentContainerStyle={styles.scrollView}>
 				{tabs.map((tab, index) => (

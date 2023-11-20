@@ -97,8 +97,22 @@
 	"token": {
 		"search_tokens_or_contract": "Buscar Tokens o Dirección de Contrato"
 	},
+	"onboarding_wallet": {
+		"skip_tour": "Omitir Tutorial",
+		"finish": "Terminar",
+		"onboarding1": "Personaliza tu experiencia en Pali Wallet aquí.",
+		"onboarding2": "Escanea el código QR para iniciar sesión a través de Wallet Connect.",
+		"onboarding3": "Opción para ocultar el valor de tus activos.",
+		"onboarding4": "Gestiona tus cuentas sin esfuerzo.",
+		"onboarding5": "Gestiona tus redes fácilmente.",
+		"onboarding6": "Ordena tus activos a tu manera.",
+		"onboarding7": "Busca o añade tokens pegando la dirección del contrato o el nombre.",
+		"onboarding8": "Consulta las aprobaciones de tokens y los niveles de riesgo.",
+		"onboarding9": "Alterna entre ERC-20 y NFTs."
+	},
 	"app_settings": {
 		"title": "Ajustes",
+		"idea": "Iniciar Recorrido de Incorporación",
 		"wallet_management": "Billetera y Cuenta",
 		"change_password": "Cambiar Contraseña",
 		"security_settings": "Configuración de Seguridad",
@@ -208,6 +222,14 @@
 		"add_asset_tip": "Se ha añadido {{symbol}} a tu lista de activos",
 		"home": "Inicio",
 		"closeAll": "Cerrar Todas",
+		"clearData": "Borrar datos",
+		"clear": "Borrar",
+		"browserHistory": "Historial de navegación",
+		"clearBrowserHistory": "Borra todo tu historial de navegación",
+		"cookiesHistory": "Cookies del navegador",
+		"clearCookiesHistory": "Borra las cookies de tu navegador",
+		"cacheHistory": "Caché del navegador",
+		"clearCacheHistory": "Borra la caché de tu navegador",
 		"favourite": "Favorito",
 		"close_tab": "Cerrar Pestaña",
 		"dont_remind_again": "No recordar de nuevo",
