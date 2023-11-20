@@ -17,6 +17,10 @@
 #}
 
 
+# react-native-reanimated https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation
+-keep class com.facebook.react.turbomodule.** { *; }
+
+
 # react native keychain https://github.com/oblador/react-native-keychain#proguard-rules
 -keep class com.facebook.crypto.** {
    *;

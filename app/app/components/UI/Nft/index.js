@@ -186,7 +186,7 @@ class Nft extends PureComponent {
 	};
 
 	componentWillUnmount = () => {
-		DeviceEventEmitter.removeListener('onParentScroll', this.onParentScroll);
+		DeviceEventEmitter.removeAllListeners('onParentScroll');
 	};
 
 	componentDidUpdate(preProps, preState) {

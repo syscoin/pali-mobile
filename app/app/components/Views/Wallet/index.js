@@ -6,6 +6,7 @@ import { OTC_ONBOARDING_TOUR, TRUE } from '../../../constants/storage';
 import {
 	RefreshControl,
 	ScrollView,
+	FlatList,
 	ActivityIndicator,
 	StyleSheet,
 	View,
@@ -781,18 +782,15 @@ class Wallet extends PureComponent {
 			</View>
 
 			<View style={styles.wrapper}>
-				<ScrollView
+				<FlatList
 					style={styles.wrapper}
-					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
-					keyboardShouldPersistTaps="handled"
+					data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
+					keyExtractor={(item, index) => index.toString()}
+					renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
 					scrollEnabled={!this.state.chainItemDraging}
-					ref={this.scrollViewRef}
 					onMomentumScrollEnd={this.contentViewScroll}
-				>
-					<View style={styles.wrapper}>
-						{this.props.selectedAddress ? this.renderContent() : this.renderLoader()}
-					</View>
-				</ScrollView>
+					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+				/>
 			</View>
 			<CopyView
 				isVisible={this.state.isCopyViewVisible}

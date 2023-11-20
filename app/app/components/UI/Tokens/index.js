@@ -43,7 +43,7 @@ import { bottomShadow } from '../CardSwiper';
 import { OTC_BANNER_HIDE, SORT_NAME, SORT_NETWORK, SORT_NETWORTH, TRUE } from '../../../constants/storage';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import ImageCapInset from '../ImageCapInset';
-import { Easing } from 'react-native-reanimated';
+import { EasingNode } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
 import { getSecurityData } from '../../../util/security';
@@ -668,7 +668,7 @@ class Tokens extends PureComponent {
 		if (Platform.OS === 'android') {
 			BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
 		}
-		DeviceEventEmitter.removeListener('onParentScroll', this.onParentScroll);
+		DeviceEventEmitter.removeAllListeners('onParentScroll');
 	};
 
 	onBackAndroid = () => {
@@ -825,7 +825,7 @@ class Tokens extends PureComponent {
 										Animated.timing(this.animWidth, {
 											toValue: searchViewWidth,
 											duration: 200,
-											easing: Easing.linear,
+											easing: EasingNode.linear,
 											useNativeDriver: true
 										}).start(({ finished }) => {
 											this.setState({ searchViewAnimed: true });

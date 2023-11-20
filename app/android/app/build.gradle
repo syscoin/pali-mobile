@@ -32,20 +32,21 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 /**
  * Whether to enable the Hermes VM.
  *
- * This should be set on project.ext.react and mirrored here.  If it is not set
+ * This should be set on project.ext.react and that value will be read here.  If it is not set
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
 def enableHermes = project.ext.react.get("enableHermes", false)
 
+/**
+ * Architectures to build native code for in debug.
+ */
+def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitectures")
+
 android {
 
 	compileSdkVersion rootProject.ext.compileSdkVersion
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
 
 	defaultConfig {
 		applicationId "io.paliwallet"
@@ -93,6 +94,11 @@ android {
 		debug {
 			manifestPlaceholders = [isDebug:true]
 			signingConfig signingConfigs.debug
+			if (nativeArchitectures) {
+                ndk {
+                    abiFilters nativeArchitectures.split(',')
+                }
+            }
 		}
 		release {
 			manifestPlaceholders = [isDebug:false]
@@ -106,6 +112,7 @@ android {
 dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
 	implementation project(':lottie-react-native')
+	implementation project(':react-native-lottie-splash-screen')
 	implementation project(":react-native-haptic-feedback")
 	implementation project(':react-native-gesture-handler')
 	implementation project(path: ":@react-native-firebase_analytics")
@@ -117,7 +124,7 @@ dependencies {
 	implementation 'org.chromium:v8-android:+'
 
 	implementation 'com.google.android.gms:play-services-wallet:18.0.0'
-
+	
 	androidTestImplementation('com.wix:detox:+') { transitive = true }
 	androidTestImplementation 'junit:junit:4.12'
 
