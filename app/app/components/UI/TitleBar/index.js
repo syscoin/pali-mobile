@@ -2,6 +2,7 @@ import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'reac
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
 import { colors, fontStyles } from '../../../styles/common';
+import Icon from '../Icon';
 import React from 'react';
 
 const styles = StyleSheet.create({
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: colors.white
+		backgroundColor: 'transparent'
 	},
 	title: {
 		fontSize: 18,
@@ -78,7 +79,7 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 		<View style={[styles.titleBar, baseStyle, { height, paddingTop }]}>
 			{onBack && (
 				<TouchableOpacity style={[styles.back, { top: paddingTop }]} onPress={onBack}>
-					<Image source={require('../../../images/back.png')} />
+					<Icon name={'back'} color={colors.white} width="24" height="24" />
 				</TouchableOpacity>
 			)}
 			<Text style={[styles.title, titleStyle, { fontSize: dynamicFontSize }]} onLayout={handleTextLayout}>

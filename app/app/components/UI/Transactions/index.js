@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 	},
 	loadMore: {
 		height: 50,
-		paddingBottom: 10,
+		paddingTop: 40,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},

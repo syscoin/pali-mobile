@@ -17,6 +17,7 @@ export const colors = {
 	black: '#000000',
 	white: '#FFFFFF',
 	white100: '#F9FAFB',
+	paliGrey100: '#F9F9F9',
 	paliGrey300: '#808795',
 	grey450: '#8E8E93',
 	grey700: '#3C3F42',

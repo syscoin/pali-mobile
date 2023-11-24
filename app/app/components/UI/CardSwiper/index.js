@@ -14,7 +14,6 @@ import Engine from '../../../core/Engine';
 import Modal from 'react-native-modal';
 import Popover from '../Popover';
 import Device from '../../../util/Device';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
 	ChainTypeBg,
 	ChainTypeIcons,

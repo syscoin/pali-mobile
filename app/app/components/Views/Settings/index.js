@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { StyleSheet, ScrollView, View, Animated, StatusBar, NativeModules } from 'react-native';
+import { StyleSheet, ScrollView, View, Animated, StatusBar, NativeModules, Image, Text } from 'react-native';
+import switchTheme from 'react-native-theme-switch-animation';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
@@ -12,31 +13,38 @@ import Device from '../../../util/Device';
 
 const styles = StyleSheet.create({
 	wrapper: {
-		backgroundColor: colors.$F6F6F6,
 		flex: 1,
 		paddingHorizontal: 20,
 		zIndex: 99999999999999
 	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
 	title: {
-		color: colors.$202020,
-		backgroundColor: colors.$F6F6F6,
+		color: colors.white,
 		fontSize: 22,
 		textAlign: 'center',
 		...fontStyles.bold
 	},
 	cardItem: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.paliGrey100,
 		borderRadius: 10,
 		marginTop: 20
 	},
 	headerStyle: {
 		flexDirection: 'row',
-		backgroundColor: colors.$F6F6F6,
+
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	cardItemTop: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.paliGrey100,
 		borderRadius: 10,
 		marginTop: 14
 	}
@@ -102,18 +110,18 @@ export default class Settings extends PureComponent {
 	onSwitchTheme = () => {
 		const { setTheme } = this.context;
 
-		Animated.timing(this.fadeAnim, {
-			toValue: 0,
-			duration: 125,
-			useNativeDriver: true
-		}).start(() => {
-			setTheme(theme => (theme === 'light' ? 'dark' : 'light'));
-
-			Animated.timing(this.fadeAnim, {
-				toValue: 1,
-				duration: 125,
-				useNativeDriver: true
-			}).start();
+		switchTheme({
+			switchThemeFunction: () => {
+				setTheme(theme => (theme === 'light' ? 'dark' : 'light'));
+			},
+			animationConfig: {
+				type: 'circular',
+				duration: 900,
+				startingPoint: {
+					cxRatio: 0.8,
+					cyRatio: 0.7
+				}
+			}
 		});
 	};
 
@@ -137,15 +145,17 @@ export default class Settings extends PureComponent {
 
 		return (
 			<Animated.View style={[baseStyles.flexGrow, { opacity: this.fadeAnim }]} testID={'wallet-screen'}>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar
 					navigation={this.props.navigation}
 					fixPadding={false}
 					backgroundColor={colors.transparent}
 				/>
-				<View style={{ height: barHeight, backgroundColor: colors.$F6F6F6 }} />
+
+				<View style={{ height: barHeight }} />
+
 				<View style={styles.headerStyle}>
 					<TitleBar
-						baseStyle={{ backgroundColor: colors.$F6F6F6 }}
 						titleStyle={styles.title}
 						title={strings('app_settings.title')}
 						onBack={() => {
