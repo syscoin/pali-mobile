@@ -156,6 +156,7 @@ export default class Settings extends PureComponent {
 
 				<View style={styles.headerStyle}>
 					<TitleBar
+						withBackground
 						titleStyle={styles.title}
 						title={strings('app_settings.title')}
 						onBack={() => {

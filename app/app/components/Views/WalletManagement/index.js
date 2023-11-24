@@ -27,6 +27,7 @@ import SecureKeychain from '../../../core/SecureKeychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import LottieView from 'lottie-react-native';
 import Popover from '../../UI/Popover';
 import { toggleShowHint } from '../../../actions/hint';
@@ -50,6 +51,12 @@ const chainItemWidth = 40;
 const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1
+	},
+	wrapperModal: {
+		maxHeight: '88%',
+		backgroundColor: colors.white,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	wrapper: {
 		backgroundColor: colors.white,
@@ -89,6 +96,22 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
+	},
 	walletTitle: {
 		color: colors.$1A1A1A,
 		fontSize: 18,
@@ -121,6 +144,7 @@ const styles = StyleSheet.create({
 		color: colors.$1A1A1A
 	},
 	importPrivateKeyButton: {
+		marginTop: 5,
 		height: 40,
 		paddingHorizontal: 20,
 		justifyContent: 'center'
@@ -130,6 +154,7 @@ const styles = StyleSheet.create({
 		color: colors.$1A1A1A
 	},
 	createWalletButton: {
+		marginTop: 5,
 		height: 40,
 		paddingLeft: 20,
 		justifyContent: 'center',
@@ -137,6 +162,7 @@ const styles = StyleSheet.create({
 	},
 	createWalletButtonText: {
 		fontSize: 14,
+
 		color: colors.$1A1A1A
 	},
 	askButton: {
@@ -179,6 +205,7 @@ const styles = StyleSheet.create({
 	underline: {
 		flex: 1,
 		borderBottomWidth: 1,
+		marginHorizontal: 16,
 		borderBottomColor: colors.$8F92A1Alpha
 	},
 	cancelButton: {
@@ -392,8 +419,9 @@ const styles = StyleSheet.create({
 		marginHorizontal: 0
 	},
 	walletPopItemButton: {
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
+		marginTop: 5,
 		alignItems: 'center',
 		flexDirection: 'row'
 	},
@@ -430,7 +458,9 @@ const styles = StyleSheet.create({
 		height: 55
 	},
 	paddingVertical7: {
-		paddingVertical: 7
+		paddingVertical: 7,
+		backgroundColor: 'white',
+		paddingBottom: 45
 	},
 	walletMoreTouch: {
 		paddingLeft: 10,
@@ -1133,6 +1163,145 @@ class WalletManagement extends PureComponent {
 		});
 	};
 
+	renderView = () => {
+		const {
+			headerPopModalVisible,
+			headerIconRect,
+			isWalletPop,
+			walletSelectedIndex,
+			walletSelectedType,
+			walletSelectedName,
+			walletMainAddress,
+			walletSelectedCanRemove,
+			renameWalletLoading
+		} = this.state;
+		const { isLockScreen, identities } = this.props;
+
+		const wallet = identities[walletMainAddress];
+		return (
+			<>
+				<View style={styles.titleLayout}>
+					<Text style={styles.intro}>{isWalletPop ? walletSelectedName : strings('other.wallet')}</Text>
+				</View>
+				{isWalletPop ? (
+					<View style={styles.paddingVertical7}>
+						<TouchableOpacity
+							style={styles.walletPopItemButton}
+							onPress={() => {
+								this.hideHeaderPopModal();
+								this.props.navigation.navigate('RevealPrivateCredential', {
+									keyringIndex: walletSelectedIndex,
+									walletName:
+										walletSelectedName.length > 10
+											? walletSelectedName.slice(0, 10) + '...'
+											: walletSelectedName
+								});
+							}}
+						>
+							<Icon width="20" height="20" color={colors.$1A1A1A} name="visibility" />
+							<Text style={styles.walletPopItemText}>
+								{walletSelectedType === KeyringTypes.hd
+									? strings('reveal_credential.seed_phrase_title')
+									: strings('reveal_credential.private_key_title')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+
+						{walletSelectedType === KeyringTypes.hd && (
+							<TouchableOpacity
+								style={styles.walletPopItemButton}
+								onPress={() => {
+									this.hideHeaderPopModal();
+									this.props.navigation.navigate('VerifySeedPhrase', {
+										keyringIndex: walletSelectedIndex,
+										walletName:
+											walletSelectedName.length > 10
+												? walletSelectedName.slice(0, 10) + '...'
+												: walletSelectedName
+									});
+								}}
+							>
+								<Icon width="18" height="18" color={colors.$1A1A1A} name="shield" />
+								<Text style={styles.walletPopItemText}>
+									{strings('wallet_management.verify_seed_phrase')}
+								</Text>
+							</TouchableOpacity>
+						)}
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.walletPopItemButton}
+							onPress={() => {
+								if (!renameWalletLoading || renameWalletLoading === '') {
+									this.onRenameWallet(wallet, walletSelectedIndex);
+								}
+							}}
+						>
+							<Icon width="18" height="18" color={colors.$1A1A1A} name="edit" />
+							<Text style={styles.walletPopItemText}>{strings('wallet_management.rename_wallet')}</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						{walletSelectedCanRemove && (
+							<TouchableOpacity style={styles.walletPopItemButton} onPress={this.showDeleteWalletModal}>
+								<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
+								<Text style={styles.walletPopItemText}>
+									{strings('wallet_management.delete_this_wallet')}
+								</Text>
+							</TouchableOpacity>
+						)}
+					</View>
+				) : (
+					<View style={styles.paddingVertical7}>
+						<TouchableOpacity
+							style={styles.importPhraseButton}
+							activeOpacity={0.7}
+							onPress={this.onImportPhrase}
+						>
+							<Text style={styles.importPhraseButtonText}>
+								{strings('wallet_management.import_seed_phrase')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.importPrivateKeyButton}
+							onPress={this.onImportPrivateKey}
+							activeOpacity={0.5}
+						>
+							<Text style={styles.importPrivateKeyButtonText}>
+								{strings('wallet_management.import_private_key')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.createWalletButton}
+							onPress={this.onCreateWallet}
+							activeOpacity={0.5}
+						>
+							<View style={styles.askBaseLayout}>
+								<Text style={styles.createWalletButtonText}>
+									{strings('wallet_management.create_new_wallet')}
+								</Text>
+								<TouchableOpacity
+									style={styles.askButton}
+									onPress={() => {
+										this.showFaqModal();
+									}}
+								>
+									<Image source={require('../../../images/ask.png')} />
+								</TouchableOpacity>
+							</View>
+						</TouchableOpacity>
+					</View>
+				)}
+			</>
+		);
+	};
+
+	hideModal = () => {
+		this.setState({
+			headerPopModalVisible: false
+		});
+	};
+
 	renderHeaderPopModal = () => {
 		const {
 			headerPopModalVisible,
@@ -1151,129 +1320,23 @@ class WalletManagement extends PureComponent {
 
 		return (
 			<Modal
-				style={styles.margin0}
-				transparent
-				onRequestClose={this.hideHeaderPopModal}
-				visible={headerPopModalVisible && !isLockScreen}
+				isVisible={headerPopModalVisible}
+				onBackdropPress={this.hideModal}
+				onBackButtonPress={this.hideModal}
+				onSwipeComplete={this.hideModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+				useNativeDriver={Device.isAndroid()}
+				backdropTransitionOutTiming={0}
 			>
-				{/*<View style={{width: 200, height: 100, backgroundColor: colors.blue}}></View>*/}
-				<Popover
-					isVisible={headerPopModalVisible}
-					fromRect={headerIconRect}
-					onClose={this.hideHeaderPopModal}
-					disX={-10}
-				>
-					{isWalletPop ? (
-						<View style={styles.paddingVertical7}>
-							<TouchableOpacity
-								style={styles.walletPopItemButton}
-								onPress={() => {
-									this.hideHeaderPopModal();
-									this.props.navigation.navigate('RevealPrivateCredential', {
-										keyringIndex: walletSelectedIndex,
-										walletName:
-											walletSelectedName.length > 10
-												? walletSelectedName.slice(0, 10) + '...'
-												: walletSelectedName
-									});
-								}}
-							>
-								<Icon width="19" height="19" color={colors.$1A1A1A} name="visibility" />
-								<Text style={styles.walletPopItemText}>
-									{walletSelectedType === KeyringTypes.hd
-										? strings('reveal_credential.seed_phrase_title')
-										: strings('reveal_credential.private_key_title')}
-								</Text>
-							</TouchableOpacity>
-
-							{walletSelectedType === KeyringTypes.hd && (
-								<TouchableOpacity
-									style={styles.walletPopItemButton}
-									onPress={() => {
-										this.hideHeaderPopModal();
-										this.props.navigation.navigate('VerifySeedPhrase', {
-											keyringIndex: walletSelectedIndex,
-											walletName:
-												walletSelectedName.length > 10
-													? walletSelectedName.slice(0, 10) + '...'
-													: walletSelectedName
-										});
-									}}
-								>
-									<Icon width="18" height="18" color={colors.$1A1A1A} name="shield" />
-									<Text style={styles.walletPopItemText}>
-										{strings('wallet_management.verify_seed_phrase')}
-									</Text>
-								</TouchableOpacity>
-							)}
-							<TouchableOpacity
-								style={styles.walletPopItemButton}
-								onPress={() => {
-									if (!renameWalletLoading || renameWalletLoading === '') {
-										this.onRenameWallet(wallet, walletSelectedIndex);
-									}
-								}}
-							>
-								<Icon width="18" height="18" color={colors.$1A1A1A} name="edit" />
-								<Text style={styles.walletPopItemText}>
-									{strings('wallet_management.rename_wallet')}
-								</Text>
-							</TouchableOpacity>
-							{walletSelectedCanRemove && (
-								<TouchableOpacity
-									style={styles.walletPopItemButton}
-									onPress={this.showDeleteWalletModal}
-								>
-									<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
-									<Text style={styles.walletPopItemText}>
-										{strings('wallet_management.delete_this_wallet')}
-									</Text>
-								</TouchableOpacity>
-							)}
-						</View>
-					) : (
-						<View>
-							<TouchableOpacity
-								style={styles.importPhraseButton}
-								activeOpacity={0.7}
-								onPress={this.onImportPhrase}
-							>
-								<Text style={styles.importPhraseButtonText}>
-									{strings('wallet_management.import_seed_phrase')}
-								</Text>
-							</TouchableOpacity>
-
-							<TouchableOpacity
-								style={styles.importPrivateKeyButton}
-								onPress={this.onImportPrivateKey}
-								activeOpacity={0.5}
-							>
-								<Text style={styles.importPrivateKeyButtonText}>
-									{strings('wallet_management.import_private_key')}
-								</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={styles.createWalletButton}
-								onPress={this.onCreateWallet}
-								activeOpacity={0.5}
-							>
-								<View style={styles.askBaseLayout}>
-									<Text style={styles.createWalletButtonText}>
-										{strings('wallet_management.create_new_wallet')}
-									</Text>
-									<TouchableOpacity
-										style={styles.askButton}
-										onPress={() => {
-											this.showFaqModal();
-										}}
-									>
-										<Image source={require('../../../images/ask.png')} />
-									</TouchableOpacity>
-								</View>
-							</TouchableOpacity>
-						</View>
-					)}
-				</Popover>
+				{Device.isIos() ? (
+					<KeyboardAvoidingView style={styles.wrapperModal} behavior={'padding'}>
+						{this.renderView()}
+					</KeyboardAvoidingView>
+				) : (
+					<View style={styles.wrapperModal}>{this.renderView()}</View>
+				)}
 			</Modal>
 		);
 	};
@@ -1460,9 +1523,16 @@ class WalletManagement extends PureComponent {
 		this.props.navigation.navigate('ImportPrivateKeyView', { fromWalletManager: true });
 	};
 
+	hideHeaderPopModalVisible = () => {
+		this.setState({ headerPopModalVisible: false });
+	};
+
 	showFaqModal = account => {
 		this.hideHeaderPopModal();
-		this.setState({ faqModalVisible: true });
+		this.hideHeaderPopModalVisible();
+		setTimeout(() => {
+			this.setState({ faqModalVisible: true });
+		}, 500);
 	};
 
 	hideFaqModal = account => {

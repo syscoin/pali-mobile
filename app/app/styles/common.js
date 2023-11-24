@@ -169,6 +169,7 @@ export const colors = {
 	$F8B671: '#F8B671',
 	$C46A4F: '#C46A4F',
 	$3D5BFF: '#3D5BFF',
+	$4D76B8: '#4D76B8',
 	$514570: '#514570',
 	errorBg: 'rgba(252, 101, 100, .1)',
 	correctBg: 'rgba(9, 194, 133, .1)',

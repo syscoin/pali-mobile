@@ -72,8 +72,7 @@ const styles = StyleSheet.create({
 		maxHeight: '88%',
 		backgroundColor: colors.white,
 		borderTopLeftRadius: 50,
-		borderTopRightRadius: 50,
-		margin: 8
+		borderTopRightRadius: 50
 	},
 	container: {
 		height: 500,
@@ -90,9 +89,9 @@ const styles = StyleSheet.create({
 	intro: {
 		...fontStyles.semibold,
 		color: colors.$030319,
-		fontSize: 20,
-		marginTop: 25,
-		marginBottom: 25,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
 		textTransform: 'uppercase'
 	},
 	networkWrapper: {

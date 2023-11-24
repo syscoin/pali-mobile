@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 		color: noTxColor
 	},
 	loadMore: {
-		height: 50,
+		height: 60,
 		paddingTop: 40,
 		alignItems: 'center',
 		justifyContent: 'center'

@@ -52,7 +52,7 @@ const defaultProps = {
 	fullScreenOnAndroid: false
 };
 
-const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, baseStyle }) => {
+const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, baseStyle, withBackground }) => {
 	let height = 44;
 	let paddingTop = 0;
 	const [dynamicFontSize, setDynamicFontSize] = React.useState(18); // default font size
@@ -79,7 +79,11 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 		<View style={[styles.titleBar, baseStyle, { height, paddingTop }]}>
 			{onBack && (
 				<TouchableOpacity style={[styles.back, { top: paddingTop }]} onPress={onBack}>
-					<Icon name={'back'} color={colors.white} width="24" height="24" />
+					{withBackground ? (
+						<Icon name={'back'} color={colors.white} width="24" height="24" />
+					) : (
+						<Image source={require('../../../images/back.png')} />
+					)}
 				</TouchableOpacity>
 			)}
 			<Text style={[styles.title, titleStyle, { fontSize: dynamicFontSize }]} onLayout={handleTextLayout}>

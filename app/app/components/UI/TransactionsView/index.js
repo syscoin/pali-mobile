@@ -141,7 +141,12 @@ class TransactionsView extends PureComponent {
 					}}
 				/>
 				<MStatusBar navigation={navigation} fixPadding={false} backgroundColor={colors.transparent} />
-				<TitleBar title={strings('other.transactions')} titleStyle={styles.txTitle} onBack={this.goBack} />
+				<TitleBar
+					withBackground
+					title={strings('other.transactions')}
+					titleStyle={styles.txTitle}
+					onBack={this.goBack}
+				/>
 
 				<View>
 					<ScrollView
