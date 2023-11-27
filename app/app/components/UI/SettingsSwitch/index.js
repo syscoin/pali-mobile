@@ -6,10 +6,8 @@ import Device from '../../../util/Device';
 
 const styles = StyleSheet.create({
 	root: {
-		backgroundColor: colors.white,
-		borderBottomColor: colors.$F0F0F0,
-		borderBottomWidth: 1,
-		minHeight: 75
+		minHeight: 75,
+		paddingHorizontal: 24
 	},
 	content: {
 		flexDirection: 'row',

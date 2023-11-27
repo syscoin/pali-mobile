@@ -19,6 +19,22 @@ const styles = StyleSheet.create({
 		paddingRight: 30,
 		paddingTop: 30
 	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
+	},
 	title: {
 		...fontStyles.bold,
 		fontSize: 20,
@@ -124,7 +140,6 @@ class TransactionReview extends PureComponent {
 
 		return (
 			<View style={styles.root} testID={'approve-screen'}>
-				<Text style={styles.title}>{strings('transaction.request')}</Text>
 				<TransactionHeader currentPageInformation={currentPageInformation} />
 				<View style={styles.fromWrapper}>
 					<Text style={styles.addressTitle}>{strings('other.from')}</Text>

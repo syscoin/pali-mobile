@@ -65,7 +65,9 @@ const styles = StyleSheet.create({
 		maxHeight: '88%',
 		backgroundColor: colors.white,
 		borderRadius: 20,
-		margin: 8
+		margin: 8,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	container: {
 		marginHorizontal: 30
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
 		width: 140,
 		height: 140,
 		alignSelf: 'center',
-		marginBottom: 24,
+
 		borderRadius: 5
 	},
 	stepTwoImage: {
@@ -195,17 +197,34 @@ const styles = StyleSheet.create({
 		...fontStyles.bold
 	},
 	nftName: {
-		fontSize: 12,
+		fontSize: 14,
 		lineHeight: 16,
 		color: colors.$8F92A1,
-		...fontStyles.normal,
+		...fontStyles.bold,
 		textAlign: 'center',
-		marginTop: 8
+		marginTop: 12,
+		marginBottom: 24
 	},
 	amountTitle: {
 		marginTop: 30,
 		flexDirection: 'row',
 		justifyContent: 'space-between'
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	},
 	titleText: {
 		fontSize: 18,
@@ -802,15 +821,14 @@ class SendNFTTab extends PureComponent {
 				keyboardShouldPersistTaps="handled"
 				onScrollBeginDrag={dismissKeyboard}
 			>
+				<View style={styles.titleLayout}>
+					<Text style={styles.intro}>{strings('other.send_nft')}</Text>
+				</View>
 				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
-					<View style={styles.labelWrapper}>
-						<Image style={styles.labelIcon} source={iconSendActive} />
-						<Text style={styles.labelText}>{strings('other.send_nft')}</Text>
-					</View>
-					<Text style={styles.nftName}>{asset.name}</Text>
 					{txStep === 1 ? (
 						<View style={styles.stepOne}>
 							<NFTImage style={styles.stepOneImage} imageUrl={asset.image_url} />
+							<Text style={styles.nftName}>{asset.name}</Text>
 							<AddressTo
 								inputRef={this.addressToInputRef}
 								highlighted={toInputHighlighted}

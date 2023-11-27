@@ -39,6 +39,15 @@ const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1
 	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
 	padding_wrapper: {
 		flex: 1
 	},
@@ -75,9 +84,9 @@ const styles = StyleSheet.create({
 	},
 	bgWrapper: {
 		position: 'absolute',
-		top: 0,
+		height: 240,
+		borderRadius: 50,
 		backgroundColor: colors.brandPink300,
-		bottom: 0,
 		left: 0,
 		right: 0
 	},
@@ -113,7 +122,8 @@ const styles = StyleSheet.create({
 		zIndex: 1000
 	},
 	widthFull: {
-		width: '100%'
+		width: '100%',
+		height: 240
 	},
 	titleUnfoldLayout: {
 		backgroundColor: colors.white,
@@ -286,7 +296,7 @@ class Asset extends PureComponent {
 
 		if (nativeCurrency) {
 			bgColor = ['#0E223A', '#284F94', '#FE0077'];
-			bgImg = require('../../../images/img_coin_bg_pali.png');
+			bgImg = require('../../../images/pali_background.png');
 		} else {
 			const securityData = getSecurityData(asset);
 			const { notice, risk, normal, isTrust } = securityData;
@@ -295,7 +305,7 @@ class Asset extends PureComponent {
 			const normalNum = normal && normal.length ? normal.length : 0;
 			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0 && normalNum !== 0)) {
 				bgColor = ['#0E223A', '#284F94', '#FE0077'];
-				bgImg = require('../../../images/img_coin_bg_pali.png');
+				bgImg = require('../../../images/pali_background.png');
 			} else if (riskNum > 0) {
 				bgColor = ['#FF6E6E', '#FF6E6E'];
 				bgImg = require('../../../images/img_coin_bg_danger.png');
@@ -304,17 +314,7 @@ class Asset extends PureComponent {
 				bgImg = require('../../../images/img_coin_bg_warning.png');
 			}
 		}
-		return (
-			<LinearGradient
-				start={{ x: -0.2, y: 0 }}
-				end={{ x: 1.3, y: 0.3 }}
-				colors={bgColor}
-				style={styles.bgWrapper}
-			>
-				<Image source={bgImg} style={styles.widthFull} />
-				{!isSecurityViewShowed && <View style={styles.bottomSecurityBg} />}
-			</LinearGradient>
-		);
+		return <Image source={bgImg} style={styles.backgroundImage} />;
 	};
 
 	render = () => {
@@ -457,7 +457,6 @@ class Asset extends PureComponent {
 								>
 									<Image source={backImg} />
 								</TouchableOpacity>
-
 								{scrollEnabled && this.renderUnfold(unFoldOpacity, moveHeight)}
 							</Animated.View>
 						)}

@@ -17,7 +17,7 @@ import { getNormalizedTxState, getTicker } from '../../../util/transactions';
 import { setTransactionObject } from '../../../actions/transaction';
 import Engine from '../../../core/Engine';
 import { safeToChecksumAddress } from '../../../util/address';
-import { colors } from '../../../styles/common';
+import { colors, fontStyles } from '../../../styles/common';
 import PromptView from '../PromptView';
 import { ChainType, isValidAddress, BN, util } from 'paliwallet-core';
 import CheckPassword from '../CheckPassword';
@@ -37,9 +37,26 @@ const styles = StyleSheet.create({
 	},
 	container: {
 		backgroundColor: colors.white,
-		borderTopRightRadius: 10,
-		borderTopLeftRadius: 10
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
+	},
+
 	actionContainer: {
 		flex: 0,
 		flexDirection: 'row',
@@ -378,6 +395,9 @@ class TransactionEditor extends PureComponent {
 					keyboardShouldPersistTaps="handled"
 				>
 					<View style={styles.container}>
+						<View style={styles.titleLayout}>
+							<Text style={styles.intro}>{strings('transaction.request')}</Text>
+						</View>
 						<TransactionReview onFeesChange={this.handleSetGasFee} />
 						{loading ? (
 							<View style={styles.loadingContainer}>

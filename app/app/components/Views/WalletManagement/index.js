@@ -52,6 +52,15 @@ const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1
 	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
 	wrapperModal: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
@@ -353,18 +362,21 @@ const styles = StyleSheet.create({
 		marginTop: 14,
 		marginBottom: 20
 	},
+	backIcon: {
+		color: colors.white
+	},
 	headerLabelStyle: {
 		fontSize: 18,
 		flex: 1,
 		textAlign: 'center',
-		color: colors.$202020,
+		color: colors.white,
 		...fontStyles.bold
 	},
 	headerStyle: {
 		flexDirection: 'row',
 		shadowColor: colors.transparent,
 		elevation: 0,
-		backgroundColor: colors.white,
+		backgroundColor: colors.transparent,
 		borderBottomWidth: 0,
 		alignItems: 'center'
 	},
@@ -1569,7 +1581,12 @@ class WalletManagement extends PureComponent {
 
 		return (
 			<SafeAreaView style={styles.wrapper} testID={'wallet-management-screen'}>
-				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
+				<MStatusBar
+					navigation={this.props.navigation}
+					fixPadding={false}
+					backgroundColor={colors.transparent}
+				/>
 				<View style={styles.headerStyle}>
 					<TouchableOpacity
 						onPress={() => this.props.navigation.pop()}

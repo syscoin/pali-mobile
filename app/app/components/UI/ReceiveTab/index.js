@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
 	wrapper: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
-		borderRadius: 20,
-		margin: 8
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	labelWrapper: {
 		alignSelf: 'center',
@@ -136,6 +136,22 @@ const styles = StyleSheet.create({
 		marginLeft: 12,
 		color: colors.$030319,
 		...fontStyles.bold
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	}
 });
 
@@ -210,6 +226,9 @@ class ReceiveTab extends PureComponent {
 
 		return (
 			<View style={styles.wrapper}>
+				<View style={styles.titleLayout}>
+					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
+				</View>
 				<ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 					<TouchableOpacity activeOpacity={1} style={styles.containStyle}>
 						<View style={styles.labelWrapper}>

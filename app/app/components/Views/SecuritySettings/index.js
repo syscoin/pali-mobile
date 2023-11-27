@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { toggleShowHint } from '../../../actions/hint';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Image, View } from 'react-native';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
@@ -21,17 +21,41 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
 	wrapper: {
-		backgroundColor: colors.white,
+		backgroundColor: colors.transparent,
 		flex: 1,
 		paddingHorizontal: 20
+	},
+	txTitle: {
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold,
+		color: colors.white
+	},
+	containerView: {
+		backgroundColor: colors.$F9F9F9,
+		borderRadius: 20
+	},
+	containerView2: {
+		backgroundColor: colors.$F9F9F9,
+		borderRadius: 20,
+		marginTop: 16
 	},
 	title: {
 		fontSize: 16,
 		...fontStyles.normal,
 		color: colors.$030319
 	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
 	settingDrawerStyle: {
-		marginHorizontal: 0
+		paddingHorizontal: 24
 	}
 });
 
@@ -156,48 +180,58 @@ class SecuritySettings extends PureComponent {
 		} = this.state;
 		return (
 			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
+
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.security_settings')}
 					onBack={() => {
 						this.props.navigation.pop();
 					}}
+					titleStyle={styles.txTitle}
+					withBackground
 				/>
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<SettingsDrawer
-						onPress={this.onResetPassword}
-						title={strings('app_settings.change_password')}
-						titleStyle={styles.title}
-						baseStyle={styles.settingDrawerStyle}
-					/>
-					<SettingsSwitch
-						message={strings(
-							isBiometryType
-								? Device.isIos()
-									? 'app_settings.use_id_message'
-									: 'app_settings.use_biometrics_message'
-								: 'app_settings.keep_login_message'
-						)}
-						title={strings(
-							isBiometryType
-								? Device.isIos()
-									? 'app_settings.use_id'
-									: 'app_settings.use_biometrics'
-								: 'app_settings.keep_login'
-						)}
-						value={biometryChoice}
-						onValueChange={this.onBiometryChange}
-					/>
-					<SettingsSwitch
-						message={strings(
-							Device.isIos()
-								? 'app_settings.verification_message_for_id'
-								: 'app_settings.verification_message_for_pwd'
-						)}
-						title={strings('app_settings.transaction_verification')}
-						value={verificationChoice}
-						onValueChange={this.onVerificationChange}
-					/>
+					<View style={styles.containerView}>
+						<SettingsDrawer
+							onPress={this.onResetPassword}
+							title={strings('app_settings.change_password')}
+							titleStyle={styles.title}
+							baseStyle={styles.settingDrawerStyle}
+						/>
+					</View>
+					<View style={styles.containerView2}>
+						<SettingsSwitch
+							message={strings(
+								isBiometryType
+									? Device.isIos()
+										? 'app_settings.use_id_message'
+										: 'app_settings.use_biometrics_message'
+									: 'app_settings.keep_login_message'
+							)}
+							title={strings(
+								isBiometryType
+									? Device.isIos()
+										? 'app_settings.use_id'
+										: 'app_settings.use_biometrics'
+									: 'app_settings.keep_login'
+							)}
+							value={biometryChoice}
+							onValueChange={this.onBiometryChange}
+						/>
+					</View>
+					<View style={styles.containerView2}>
+						<SettingsSwitch
+							message={strings(
+								Device.isIos()
+									? 'app_settings.verification_message_for_id'
+									: 'app_settings.verification_message_for_pwd'
+							)}
+							title={strings('app_settings.transaction_verification')}
+							value={verificationChoice}
+							onValueChange={this.onVerificationChange}
+						/>
+					</View>
 					{checkPasswordType && (
 						<CheckPassword
 							checkResult={this.onInputPwdResult}

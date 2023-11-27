@@ -135,8 +135,24 @@ const styles = StyleSheet.create({
 	moveWrapper: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
-		borderRadius: 20,
-		margin: 8
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	},
 	labelWrapper: {
 		alignSelf: 'center',
@@ -284,7 +300,7 @@ const styles = StyleSheet.create({
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -328,7 +344,7 @@ const styles = StyleSheet.create({
 		lineHeight: 16,
 		color: colors.$8F92A1,
 		alignSelf: 'center',
-		marginTop: 8,
+		marginTop: 24,
 		marginBottom: 24
 	},
 	bridgeWrapper: {
@@ -1773,11 +1789,10 @@ class MoveTab extends PureComponent {
 				keyboardShouldPersistTaps="handled"
 				onScrollBeginDrag={dismissKeyboard}
 			>
+				<View style={styles.titleLayout}>
+					<Text style={styles.intro}> {strings('other.migration')}</Text>
+				</View>
 				<TouchableOpacity activeOpacity={1} style={styles.scrollViewContent} onPress={dismissKeyboard}>
-					<View style={styles.labelWrapper}>
-						<Image style={styles.labelIcon} source={iconMigrateActive} />
-						<Text style={styles.labelText}>{strings('other.migration')}</Text>
-					</View>
 					<Text style={styles.migrateTip}>{strings('other.migrate_other_network')}</Text>
 					{moveStep !== 4 ? (
 						<View style={styles.wrapper}>

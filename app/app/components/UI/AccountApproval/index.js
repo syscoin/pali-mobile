@@ -11,17 +11,10 @@ import { getChainTypeByChainId } from '../../../util/number';
 const styles = StyleSheet.create({
 	root: {
 		backgroundColor: colors.white,
-		borderTopLeftRadius: 20,
-		borderTopRightRadius: 20,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50,
 		minHeight: 200,
 		paddingBottom: Device.isIphoneX() ? 20 : 0
-	},
-	intro: {
-		...fontStyles.semibold,
-		color: colors.$030319,
-		fontSize: 20,
-		marginTop: 30,
-		marginBottom: 30
 	},
 	actionContainer: {
 		flex: 0,
@@ -42,19 +35,24 @@ const styles = StyleSheet.create({
 	},
 	confirm: {
 		flex: 1,
-		marginLeft: 8,
-		height: 42
+		height: 44,
+		borderRadius: 100,
+		backgroundColor: colors.brandPink300,
+		marginLeft: 19,
+		alignItems: 'center',
+		justifyContent: 'center'
 	},
 	confirmText: {
 		flex: 1,
 		textAlign: 'center',
 		textAlignVertical: 'center',
-		color: colors.brandPink300
+		color: colors.white
 	},
 	domainLogo: {
 		width: 58,
 		height: 58,
-		borderRadius: 10
+		borderRadius: 10,
+		marginTop: 20
 	},
 	assetLogo: {
 		alignItems: 'center',
@@ -84,7 +82,43 @@ const styles = StyleSheet.create({
 	titleLayout: {
 		flexDirection: 'row',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20
+	},
+	cancelButton: {
+		flex: 1,
+		height: 44,
+		borderRadius: 100,
+		borderWidth: 1,
+		borderColor: colors.brandPink300,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	cancelText: {
+		fontSize: 14,
+		color: colors.brandPink300
+	},
+	okButton: {
+		flex: 1,
+		height: 44,
+		borderRadius: 100,
+		backgroundColor: colors.brandPink300,
+		marginLeft: 19,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	okText: {
+		fontSize: 14,
+		color: colors.white
 	}
 });
 
@@ -142,7 +176,6 @@ class AccountApproval extends PureComponent {
 		return (
 			<View style={styles.root}>
 				<View style={styles.titleLayout}>
-					<Image source={require('../../../images/ic_walletconnect.png')} style={styles.titleLeftIcon} />
 					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
 				</View>
 
@@ -156,11 +189,11 @@ class AccountApproval extends PureComponent {
 				<Text style={styles.hostDescription}>{description}</Text>
 
 				<View style={styles.actionContainer}>
-					<TouchableOpacity style={styles.cancel} onPress={this.onCancel}>
+					<TouchableOpacity style={styles.cancelButton} onPress={this.onCancel}>
 						<Text style={styles.cancelText}>{strings('accountApproval.cancel')}</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.confirm} onPress={this.onConfirm}>
-						<Text style={styles.confirmText}>{strings('accountApproval.connect')}</Text>
+					<TouchableOpacity style={styles.okButton} onPress={this.onConfirm}>
+						<Text style={styles.okText}>{strings('accountApproval.connect')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
