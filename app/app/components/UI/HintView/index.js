@@ -1,34 +1,38 @@
 import React, { PureComponent } from 'react';
 import { Text, View, Animated, Easing, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
-import { colors } from '../../../styles/common';
+import { colors, fontStyles } from '../../../styles/common';
 import { toggleHideHint } from '../../../actions/hint';
+import Icon from '../../UI/Icon';
 import { connect } from 'react-redux';
 
 const bgColor = '#00000094';
 
 const styles = {
 	hintTitle: {
-		fontSize: 13,
+		fontSize: 14,
 		color: colors.white,
-		textAlign: 'center'
+		textAlign: 'left',
+		...fontStyles.bold
 	},
 	modalNoBorder: {
 		justifyContent: 'flex-end'
 	},
 	modalContainer: {
 		alignSelf: 'center',
-		backgroundColor: bgColor,
+
 		borderRadius: 10,
 		flexDirection: 'row',
 		paddingVertical: 12,
-		paddingHorizontal: 23
+		paddingHorizontal: 23,
+
+		height: 80
 	},
 	container: {
 		position: 'absolute',
 		left: 0,
 		right: 0,
-		bottom: 12,
+		bottom: -10,
 		flexDirection: 'row',
 		justifyContent: 'center'
 	}
@@ -97,7 +101,32 @@ class HintView extends PureComponent {
 		return (
 			<View style={styles.container} pointerEvents="none">
 				<Animated.View style={[styles.modalContainer, { bottom: this.moveAnim, opacity: this.opacityAnim }]}>
-					<Text style={styles.hintTitle}>{hintText}</Text>
+					<View
+						style={{
+							width: '20%',
+							backgroundColor: colors.greenModal200,
+							alignItems: 'center',
+							justifyContent: 'center',
+
+							borderTopLeftRadius: 10,
+							borderBottomLeftRadius: 10
+						}}
+					>
+						<Icon width="24" height="24" color={colors.white} name="checkCircle" />
+					</View>
+					<View
+						style={{
+							width: '80%',
+							backgroundColor: colors.greenModal100,
+							alignItems: 'flex-start',
+							paddingHorizontal: 10,
+							justifyContent: 'center',
+							borderTopRightRadius: 10,
+							borderBottomRightRadius: 10
+						}}
+					>
+						<Text style={styles.hintTitle}>{hintText}</Text>
+					</View>
 				</Animated.View>
 			</View>
 		);
