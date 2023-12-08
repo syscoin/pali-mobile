@@ -143,35 +143,40 @@ const styles = StyleSheet.create({
 		paddingVertical: 16
 	},
 	importPhraseButton: {
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
-		justifyContent: 'center',
-		marginTop: 8
+		marginTop: 5,
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	importPhraseButtonText: {
 		fontSize: 14,
-		color: colors.$1A1A1A
+		color: colors.$1A1A1A,
+		marginLeft: 12
 	},
 	importPrivateKeyButton: {
-		marginTop: 5,
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
-		justifyContent: 'center'
+		marginTop: 5,
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	importPrivateKeyButtonText: {
 		fontSize: 14,
-		color: colors.$1A1A1A
+		color: colors.$1A1A1A,
+		marginLeft: 12
 	},
 	createWalletButton: {
+		height: 44,
+		flexDirection: 'row',
 		marginTop: 5,
-		height: 40,
 		paddingLeft: 20,
-		justifyContent: 'center',
+		alignItems: 'center',
 		marginBottom: 6
 	},
 	createWalletButtonText: {
 		fontSize: 14,
-
+		marginLeft: 12,
 		color: colors.$1A1A1A
 	},
 	askButton: {
@@ -1199,6 +1204,7 @@ class WalletManagement extends PureComponent {
 					<View style={styles.paddingVertical7}>
 						<TouchableOpacity
 							style={styles.walletPopItemButton}
+							activeOpacity={0.5}
 							onPress={() => {
 								this.hideHeaderPopModal();
 								this.props.navigation.navigate('RevealPrivateCredential', {
@@ -1222,6 +1228,7 @@ class WalletManagement extends PureComponent {
 						{walletSelectedType === KeyringTypes.hd && (
 							<TouchableOpacity
 								style={styles.walletPopItemButton}
+								activeOpacity={0.5}
 								onPress={() => {
 									this.hideHeaderPopModal();
 									this.props.navigation.navigate('VerifySeedPhrase', {
@@ -1242,6 +1249,7 @@ class WalletManagement extends PureComponent {
 						<View style={styles.underline} />
 						<TouchableOpacity
 							style={styles.walletPopItemButton}
+							activeOpacity={0.5}
 							onPress={() => {
 								if (!renameWalletLoading || renameWalletLoading === '') {
 									this.onRenameWallet(wallet, walletSelectedIndex);
@@ -1253,7 +1261,11 @@ class WalletManagement extends PureComponent {
 						</TouchableOpacity>
 						<View style={styles.underline} />
 						{walletSelectedCanRemove && (
-							<TouchableOpacity style={styles.walletPopItemButton} onPress={this.showDeleteWalletModal}>
+							<TouchableOpacity
+								style={styles.walletPopItemButton}
+								activeOpacity={0.5}
+								onPress={this.showDeleteWalletModal}
+							>
 								<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
 								<Text style={styles.walletPopItemText}>
 									{strings('wallet_management.delete_this_wallet')}
@@ -1265,9 +1277,10 @@ class WalletManagement extends PureComponent {
 					<View style={styles.paddingVertical7}>
 						<TouchableOpacity
 							style={styles.importPhraseButton}
-							activeOpacity={0.7}
+							activeOpacity={0.5}
 							onPress={this.onImportPhrase}
 						>
+							<Icon width="20" height="20" color={colors.$1A1A1A} name="sapling" />
 							<Text style={styles.importPhraseButtonText}>
 								{strings('wallet_management.import_seed_phrase')}
 							</Text>
@@ -1278,6 +1291,7 @@ class WalletManagement extends PureComponent {
 							onPress={this.onImportPrivateKey}
 							activeOpacity={0.5}
 						>
+							<Icon width="20" height="20" color={colors.$1A1A1A} name="privateKey" />
 							<Text style={styles.importPrivateKeyButtonText}>
 								{strings('wallet_management.import_private_key')}
 							</Text>
@@ -1289,6 +1303,7 @@ class WalletManagement extends PureComponent {
 							activeOpacity={0.5}
 						>
 							<View style={styles.askBaseLayout}>
+								<Icon width="20" height="20" color={colors.$1A1A1A} name="walletOutline" />
 								<Text style={styles.createWalletButtonText}>
 									{strings('wallet_management.create_new_wallet')}
 								</Text>

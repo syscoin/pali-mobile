@@ -18,22 +18,63 @@ const styles = {
 	flex3: {
 		flex: 3
 	},
+	borderRadiusTop: {
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20
+	},
+	borderRadiusBottom: {
+		borderBottomLeftRadius: 20,
+		borderBottomRightRadius: 20
+	},
 	wrapper: {
 		flex: 1,
 		alignItems: 'center'
 	},
-	image: {
-		marginTop: 26
+	imgCircle: {
+		backgroundColor: colors.white,
+		width: 80,
+		height: 80,
+		borderRadius: 100,
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
+
+	logoPali: {
+		width: 65,
+		height: 65,
+		resizeMode: 'contain'
+	},
+	title: {
+		marginTop: 5,
+		color: colors.white,
+		fontSize: 16,
+		...fontStyles.bold
+	},
+	txTitle: {
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold,
+		color: colors.white
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
+
 	slogan: {
 		marginTop: 8,
 		fontSize: 16,
 		color: colors.grey450
 	},
 	version: {
-		marginTop: 20,
+		marginTop: 5,
 		fontSize: 14,
-		color: colors.$202020,
+		color: colors.white,
 		...fontStyles.bold
 	},
 	line: {
@@ -45,9 +86,11 @@ const styles = {
 	itemLayout: {
 		alignItems: 'center',
 		alignSelf: 'stretch',
-		marginLeft: 30,
-		marginRight: 30,
-		height: 59
+		marginLeft: 15,
+		marginRight: 15,
+		height: 59,
+		backgroundColor: colors.paliGrey100,
+		paddingHorizontal: 15
 	},
 	itemTitle: {
 		fontSize: 14,
@@ -66,7 +109,7 @@ const styles = {
 	},
 	footerFont: {
 		color: colors.paliGrey300,
-		fontSize: 16,
+		fontSize: 12,
 		...fontStyles.normal
 	}
 };
@@ -82,7 +125,7 @@ export default class AboutView extends PureComponent {
 
 	componentDidMount = async () => {
 		const currentVersion = await getVersion();
-		this.setState({ version: 'V ' + currentVersion });
+		this.setState({ version: 'Version: ' + currentVersion });
 	};
 
 	goWebsite = () => {
@@ -104,21 +147,25 @@ export default class AboutView extends PureComponent {
 	render() {
 		return (
 			<SafeAreaView style={styles.wrapper}>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.about')}
 					onBack={() => {
 						this.props.navigation.pop();
 					}}
+					titleStyle={styles.txTitle}
+					withBackground
 				/>
-				<View style={styles.flex} />
-				<Image style={styles.logo} source={require('../../../images/logo_about.png')} />
-				<Text style={styles.slogan}>{strings('other.scale_in_proud')}</Text>
+
+				<View style={styles.imgCircle}>
+					<Image style={styles.logoPali} source={require('../../../images/pali.png')} />
+				</View>
+				<Text style={styles.title}>PALI WALLET</Text>
 				<Text style={styles.version}>{this.state.version}</Text>
 				<View style={styles.flex} />
 
-				<View style={styles.line} />
-				<View style={styles.itemLayout}>
+				<View style={[styles.itemLayout, styles.borderRadiusTop]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goWebsite}>
 						<Image style={styles.logo} source={require('../../../images/ic_website.png')} />
 						<Text style={styles.itemTitle}>{strings('other.official_website')}</Text>
@@ -152,7 +199,7 @@ export default class AboutView extends PureComponent {
 
 				<View style={styles.line} />
 
-				<View style={styles.itemLayout}>
+				<View style={[styles.itemLayout, styles.borderRadiusBottom]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
 						<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />
 						<Text style={styles.itemTitle}>Telegram</Text>
@@ -169,7 +216,7 @@ export default class AboutView extends PureComponent {
 					<Text style={styles.footerFont} allowFontScaling={false}>
 						{strings('app_settings.powered_by')}
 					</Text>
-					<Icon name={'coinGecko'} color={colors.white} width="200" height="100" />
+					<Icon name={'coinGecko'} color={colors.white} width="100" height="35" />
 				</View>
 			</SafeAreaView>
 		);

@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		color: colors.$202020,
 		alignSelf: 'center',
+		textTransform: 'uppercase',
 		...fontStyles.semibold
 	},
 	back: {

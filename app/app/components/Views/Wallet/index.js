@@ -110,8 +110,7 @@ const styles = StyleSheet.create({
 		aspectRatio: 3.66
 	},
 	scannerButton: {
-		paddingLeft: 20,
-		paddingRight: 14
+		paddingLeft: 20
 	},
 	walletConnectButton: {
 		paddingRight: 20
@@ -753,9 +752,13 @@ class Wallet extends PureComponent {
 					</CopilotView>
 				</CopilotStep>
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
+					<Image style={styles.imageTitle} source={require('../../../images/pali_wallet_blue.png')} />
 				</View>
-				<TouchableOpacity style={styles.scannerButton} hitSlop={styles.hitSlop} onPress={this.openQRScanner}>
+				<TouchableOpacity
+					style={[styles.scannerButton, { paddingRight: !this.props.walletConnectIconVisible ? 20 : 14 }]}
+					hitSlop={styles.hitSlop}
+					onPress={this.openQRScanner}
+				>
 					<CopilotStep
 						active={true}
 						text={strings('onboarding_wallet.onboarding2')}

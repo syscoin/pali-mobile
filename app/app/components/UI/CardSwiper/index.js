@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginLeft: 20,
 		width: cardWidth - 40,
-		height: cardHeight - 60,
+
 		borderRadius: 15
 	},
 	tnLayout: {
@@ -371,6 +371,7 @@ class CardSwiper extends PureComponent {
 		const { contactEntry, toggleChainEditing, swipeChange, isLockScreen, allChains } = this.props;
 		const enabledChains = contactEntry.enabledChains || defaultEnabledChains;
 		const disabledChains = allChains.filter(chainType => !enabledChains.includes(chainType)) || [];
+		const deviceWidth = Device.getDeviceWidth();
 		return (
 			<Modal
 				style={styles.margin0}
@@ -379,8 +380,9 @@ class CardSwiper extends PureComponent {
 				visible={popModalVisible && !isLockScreen}
 			>
 				{/*<View style={{width: 200, height: 100, backgroundColor: colors.blue}}></View>*/}
-				<Popover isVisible={popModalVisible} fromRect={iconRect} onClose={this.hidePopModal} disX={-10}>
+				<Popover isVisible={popModalVisible} fromRect={iconRect} onClose={this.hidePopModal} disX={-20}>
 					<ScrollView style={styles.scrollViewMaxHeight}>
+						<View style={{ width: deviceWidth - 40 }} />
 						<View style={styles.paddingVertical14}>
 							{popMoreChains.map((chainType, index) => {
 								const isRpc = util.isRpcChainType(chainType);
@@ -490,7 +492,16 @@ class CardSwiper extends PureComponent {
 							) : (
 								<View style={{ position: 'relative' }}>
 									<Image
-										style={[styles.absoluteStart, styles.cardSizePosition]}
+										style={[
+											styles.absoluteStart,
+											styles.cardSizePosition,
+											{
+												height:
+													Device.getDeviceHeight() < 700 && !hasEns
+														? cardHeight - 50
+														: cardHeight - 60
+											}
+										]}
 										source={
 											isRpc ? require('../../../images/pali-bg.png') : ChainTypeBg[currentIndex]
 										}

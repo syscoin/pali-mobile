@@ -20,10 +20,11 @@ import { ChainType } from 'paliwallet-core';
 const styles = {
 	wrapper: {
 		flex: 1,
-		backgroundColor: colors.white,
+
 		paddingLeft: 20,
 		paddingRight: 20
 	},
+	container: { backgroundColor: colors.paliGrey100, paddingHorizontal: 24, borderRadius: 20, marginTop: 10 },
 	flex: {
 		flex: 1
 	},
@@ -34,15 +35,16 @@ const styles = {
 		backgroundColor: colors.$F0F0F0,
 		height: 0.5,
 		alignSelf: 'stretch',
-		marginTop: 24,
-		marginBottom: 24
+		marginTop: 12
 	},
 	switchLayout: {
 		flexDirection: 'row',
 		marginBottom: 5,
-		marginTop: 24
+		marginTop: 24,
+		backgroundColor: colors.paliGrey100
 	},
 	titleHead: {
+		marginTop: 16,
 		fontSize: 16,
 		marginBottom: 8,
 		color: colors.$030319,
@@ -54,10 +56,14 @@ const styles = {
 	},
 	network: {
 		borderColor: colors.$F0F0F0,
+		backgroundColor: colors.white,
+		borderRadius: 5,
+		paddingHorizontal: 8,
 		flexDirection: 'row',
 		paddingTop: 7,
 		paddingBottom: 7,
-		alignItems: 'center'
+		alignItems: 'center',
+		height: 33
 	},
 	networkInfo: {
 		flex: 1
@@ -66,6 +72,21 @@ const styles = {
 		fontSize: 14,
 		color: colors.$60657D,
 		lineHeight: 18
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
+	txTitle: {
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold,
+		color: colors.white
 	},
 	bottomHeght: {
 		height: 20
@@ -80,6 +101,9 @@ const styles = {
 		backgroundColor: colors.$F0F0F0,
 		height: 0.5,
 		alignSelf: 'stretch'
+	},
+	marginTop5: {
+		marginTop: 5
 	},
 	marginBottom0: {
 		marginBottom: 0
@@ -98,7 +122,7 @@ class DeveloperOptions extends PureComponent {
 
 	networkElement = (selected, onPress, shortName, i, network, chainType) => (
 		<TouchableOpacity
-			style={styles.network}
+			style={[styles.network, i === 1 ? styles.marginTop5 : null]}
 			key={`network-${shortName}-${i}`}
 			onPress={() => onPress && onPress(network, chainType)}
 		>
@@ -137,7 +161,7 @@ class DeveloperOptions extends PureComponent {
 			if (NetworkConfig[type].Disabled) {
 				continue;
 			}
-			elementMap.push(<View key={`line${type}`} style={styles.line} />);
+
 			elementMap.push(
 				<Text key={`title${type}`} style={styles.titleHead}>
 					{getDeveloperTitle(chainType)}
@@ -194,15 +218,22 @@ class DeveloperOptions extends PureComponent {
 	render() {
 		return (
 			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
-				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
+				<MStatusBar
+					navigation={this.props.navigation}
+					fixPadding={false}
+					backgroundColor={colors.transparent}
+				/>
 				<TitleBar
 					title={strings('app_settings.developer_options')}
 					onBack={() => {
 						this.props.navigation.pop();
 					}}
+					titleStyle={styles.txTitle}
+					withBackground
 				/>
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View>
+					<View style={styles.container}>
 						<View style={styles.switchLayout}>
 							<Text style={styles.titleHead}>{strings('developer_options.testnet_availability')}</Text>
 							<View style={styles.flex} />
@@ -215,7 +246,7 @@ class DeveloperOptions extends PureComponent {
 									}
 								}}
 								value={this.props.testnetVisible}
-								trackColor={{ true: colors.$4CD964, false: colors.grey300 }}
+								trackColor={{ true: colors.$4CA1CF, false: colors.grey300 }}
 								thumbColor={colors.white}
 							/>
 						</View>

@@ -2724,10 +2724,10 @@
   dependencies:
     prop-types "^15.5.10"
 
-"@react-native-community/cameraroll@^4.0.4":
+"@react-native-community/cameraroll@4.0.4":
   version "4.0.4"
-  resolved "https://registry.npm.taobao.org/@react-native-community/cameraroll/download/@react-native-community/cameraroll-4.0.4.tgz?cache=0&sync_timestamp=1616488566071&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40react-native-community%2Fcameraroll%2Fdownload%2F%40react-native-community%2Fcameraroll-4.0.4.tgz#3e2567ce54e3985e8e0a51832dfa0e1c5317f75b"
-  integrity sha1-PiVnzlTjmF6OClGDLfoOHFMX91s=
+  resolved "https://registry.yarnpkg.com/@react-native-community/cameraroll/-/cameraroll-4.0.4.tgz#3e2567ce54e3985e8e0a51832dfa0e1c5317f75b"
+  integrity sha512-3SY96Xh1yQjV5M7dFisl5kQmrO/K09URarZwmTN801KEalOoo/opsd/e8Vu1dwSKe0NGCK7A2u0oJQpeNbWbnA==
 
 "@react-native-community/checkbox@^0.4.2":
   version "0.4.2"
@@ -13495,7 +13495,7 @@ react-native-camera@^3.36.0:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-charts-wrapper@^0.5.7:
+react-native-charts-wrapper@0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/react-native-charts-wrapper/-/react-native-charts-wrapper-0.5.7.tgz#13cdb387ede67f4292b92c8b03a8f15de3a7a2f7"
   integrity sha512-d1lOSN47YRUqFGOht4uBP+P7N7OvtRrhgwTOdTNlXC+ZmoveBIIE+bl65uwGkS08kUUBudRBugsCRkf5MB/p2w==
@@ -13971,6 +13971,11 @@ react-native-tcp@aprock/react-native-tcp#11/head:
     ip-regex "^4.1.0"
     process "^0.11.9"
     util "^0.12.1"
+
+react-native-theme-switch-animation@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-theme-switch-animation/-/react-native-theme-switch-animation-0.6.0.tgz#4fa99d572ee683dbdfc9c3b2f088f77a1ecd113b"
+  integrity sha512-XC6xb1J6Pgq4XQFsq6KdxJugRHjwsj04qTDh9rZdi1mkNOy9QKtz7wCQHoK6q8CBZtF3R/sergCw9wZhIRXK3Q==
 
 react-native-threads@^0.0.19:
   version "0.0.19"

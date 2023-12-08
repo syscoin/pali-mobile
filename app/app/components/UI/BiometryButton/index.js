@@ -4,14 +4,15 @@ import { TouchableOpacity, Image as ImageRN, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../../../styles/common';
+import Icon from '../Icon';
 
 const styles = {
 	fixCenterIcon: {
 		marginBottom: -3
 	},
 	image: {
-		height: 24,
-		width: 24
+		height: 20,
+		width: 20
 	},
 	hitSlop: {
 		top: 10,
@@ -21,21 +22,17 @@ const styles = {
 	}
 };
 
-const iosFaceId = require('../../../images/FaceID.png');
-const iosTouchId = require('../../../images/TouchID.png');
-const biometrics = require('../../../images/biometrics.png');
-
 const renderIcon = type => {
 	if (Platform.OS === 'ios') {
-		if (type === 'TouchID') return <ImageRN source={iosTouchId} />;
-		if (type === 'FaceID') return <ImageRN source={iosFaceId} />;
+		if (type === 'TouchID') return <Ionicons color={colors.paliGrey200} size={20} name="ios-finger-print" />;
+		if (type === 'FaceID') return <Icon color={colors.paliGrey200} name="faceId" style={styles.image} />;
 	}
 
 	if (Platform.OS === 'android') {
-		return <ImageRN source={biometrics} />;
+		return <Ionicons color={colors.paliGrey200} size={20} name="ios-finger-print" />;
 	}
 
-	return <Ionicons color={colors.black} style={styles.fixCenterIcon} size={16} name="ios-finger-print" />;
+	return <Ionicons color={colors.paliGrey200} size={20} name="ios-finger-print" />;
 };
 
 const BiometryButton = ({ onPress, hidden, type, style }) => {
