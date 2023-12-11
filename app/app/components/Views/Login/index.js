@@ -33,6 +33,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const paliLogo = require('../../../images/pali.png');
 
+const deviceWidth = Device.getDeviceWidth();
+const deviceHeight = Device.getDeviceHeight();
+
 const styles = StyleSheet.create({
 	flex: {
 		flex: 1
@@ -45,58 +48,55 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		width: '100%',
-		height: 330,
-		position: 'absolute',
-		left: -150
+		height: deviceHeight * 0.4,
+		position: 'absolute'
 	},
 	field: {
-		marginTop: 56,
+		marginTop: 45,
 		flexDirection: 'column'
 	},
 	imagesWrapper: {
 		position: 'relative',
 		marginTop: 20,
-		height: 330,
+		height: deviceHeight * 0.4,
 		alignItems: 'flex-start'
 	},
 	logoImage: {
-		width: 340,
-		height: 340,
+		width: 350,
+		height: deviceHeight * 0.4,
 		resizeMode: 'contain',
 		position: 'absolute',
-		left: -70,
+		left: -100,
 		top: 0
 	},
 	wavesImage: {
 		width: '100%',
-		height: 350,
+		height: deviceHeight * 0.45,
 		resizeMode: 'stretch',
 		zIndex: -1,
 		position: 'absolute',
-		bottom: -80
+		bottom: -deviceHeight * 0.1
 	},
 	titleImage: {
 		width: 200,
 		height: 70,
 		resizeMode: 'contain',
 		alignSelf: 'center',
-		top: 40,
-
-		paddingBottom: 20
+		top: 30
 	},
 	label: {
 		fontSize: 18,
 		...fontStyles.semibold
 	},
 	ctaWrapper: {
-		marginTop: 60
+		marginTop: 20
 	},
 	errorMsg: {
 		minHeight: 15,
 		fontSize: 13,
 		color: colors.$FC6564,
 		lineHeight: 15,
-		marginTop: 8
+		marginTop: 10
 	},
 	hitSlopLeft: {
 		top: 10,

@@ -844,7 +844,7 @@
 		"opensea": "OpenSea"
 	},
 	"token_search": {
-		"token_address_hint": "代币或合约地址",
+		"token_address_hint": "符号或合约地址",
 		"add": "添加"
 	}
 }

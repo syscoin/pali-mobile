@@ -282,7 +282,7 @@
 		"enable_touchid": "Habilitar Touch ID",
 		"enable_faceid": "Habilitar Face ID",
 		"enable_biometrics": "Habilitar Bio Autenticación",
-		"rejectBiometry": "Face ID o huella digital ha excedido el límite máximo de intentos. Bloquea la pantalla de tu teléfono y vuelve a abrirlo, o ve a Configuración > Pali Wallet para habilitar Face ID o huella digital."
+		"rejectBiometry": "Face ID/huella digital: Límite de intentos superado. Bloquea y desbloquea tu teléfono o activa estas opciones en Configuración > Pali Wallet."
 	},
 	"authentication": {
 		"auth_prompt_title": "Autenticación requerida",
@@ -842,7 +842,7 @@
 		"opensea": "OpenSea"
 	},
 	"token_search": {
-		"token_address_hint": "Dirección del token o contrato",
+		"token_address_hint": "Símbolo o dirección del contrato",
 		"add": "Agregar"
 	}
 }
