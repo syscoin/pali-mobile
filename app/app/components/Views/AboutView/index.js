@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import { strings } from '../../../../locales/i18n';
 import { Image, View, Text, Linking, NativeModules, Platform } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getVersion } from 'react-native-device-info';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
 import TitleBar from '../../UI/TitleBar';
 import Icon from '../../UI/Icon';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -118,6 +119,7 @@ export default class AboutView extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		version: ''
@@ -145,8 +147,9 @@ export default class AboutView extends PureComponent {
 	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.wrapper}>
+			<SafeAreaView style={[styles.wrapper, { backgroundColor: isDarkMode && colors.brandBlue700 }]}>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
@@ -165,7 +168,13 @@ export default class AboutView extends PureComponent {
 				<Text style={styles.version}>{this.state.version}</Text>
 				<View style={styles.flex} />
 
-				<View style={[styles.itemLayout, styles.borderRadiusTop]}>
+				<View
+					style={[
+						styles.itemLayout,
+						styles.borderRadiusTop,
+						{ backgroundColor: isDarkMode && colors.brandBlue600 }
+					]}
+				>
 					<TouchableOpacity style={styles.touch} onPress={this.goWebsite}>
 						<Image style={styles.logo} source={require('../../../images/ic_website.png')} />
 						<Text style={styles.itemTitle}>{strings('other.official_website')}</Text>
@@ -176,7 +185,7 @@ export default class AboutView extends PureComponent {
 				<View style={styles.line} />
 
 				<View style={styles.line} />
-				<View style={styles.itemLayout}>
+				<View style={[styles.itemLayout, { backgroundColor: isDarkMode && colors.brandBlue600 }]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goDiscord}>
 						<Image style={styles.logo} source={require('../../../images/ic_discord.png')} />
 						<Text style={styles.itemTitle}>Discord</Text>
@@ -187,7 +196,7 @@ export default class AboutView extends PureComponent {
 				<View style={styles.line} />
 
 				<View style={styles.line} />
-				<View style={styles.itemLayout}>
+				<View style={[styles.itemLayout, { backgroundColor: isDarkMode && colors.brandBlue600 }]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goTwitter}>
 						<Image style={styles.logo} source={require('../../../images/ic_twitter.png')} />
 						<Text style={styles.itemTitle}>Twitter</Text>
@@ -199,7 +208,13 @@ export default class AboutView extends PureComponent {
 
 				<View style={styles.line} />
 
-				<View style={[styles.itemLayout, styles.borderRadiusBottom]}>
+				<View
+					style={[
+						styles.itemLayout,
+						styles.borderRadiusBottom,
+						{ backgroundColor: isDarkMode && colors.brandBlue600 }
+					]}
+				>
 					<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
 						<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />
 						<Text style={styles.itemTitle}>Telegram</Text>

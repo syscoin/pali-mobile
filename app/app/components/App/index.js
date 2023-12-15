@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Linking, View } from 'react-native';
 import { createAppContainer, createSwitchNavigator, NavigationActions } from 'react-navigation';
 import codePush from 'react-native-code-push';
 import { setCustomText } from 'react-native-global-props';
@@ -12,7 +13,7 @@ import Entry from '../Views/Entry';
 import Main from '../Main';
 import SharedDeeplinkManager from '../../core/DeeplinkManager';
 import { initApiClient } from '../../util/ApiClient';
-import { Linking } from 'react-native';
+import { ThemeContext } from '../../theme/ThemeProvider';
 import AppConstants from '../../core/AppConstants';
 import BiometricSecurity from '../Views/BiometricSecurity';
 import ImportPrivateKey from '../Views/ImportPrivateKey';
@@ -46,6 +47,7 @@ const OnboardingView = createSwitchNavigator(
 	},
 	{
 		mode: 'card',
+
 		navigationOptions: {
 			gesturesEnabled: false
 		}
@@ -136,6 +138,8 @@ const AppNavigator = createSwitchNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 class App extends PureComponent {
+	static contextType = ThemeContext;
+
 	componentDidMount = async () => {
 		SharedDeeplinkManager.init({
 			navigate: (routeName, opts) => {
@@ -154,6 +158,7 @@ class App extends PureComponent {
 				fontFamily: 'Poppins'
 			}
 		};
+
 		setCustomText(customTextProps);
 
 		initApiClient();
@@ -180,8 +185,11 @@ class App extends PureComponent {
 	};
 
 	render() {
+		const { theme } = this.context;
+
 		return (
 			<AppContainer
+				theme={theme}
 				ref={nav => {
 					this.navigator = nav;
 				}}

@@ -37,6 +37,7 @@ export const colors = {
 	red000: '#fcf2f3',
 	paliBlue100: '#C9DEFF',
 	paliBlue400: '#4D76B8',
+	paliBlue900: '#061120',
 	blue: '#037dd6',
 	blue000: '#eaf6ff',
 	blue200: '#75C4FD',
@@ -44,6 +45,9 @@ export const colors = {
 	blue600: '#0260A4',
 	blue700: '#0074C8',
 	deepBlue200: '#A0B1D1',
+	deepBlue400: '#677CA1',
+	deepBlue800: '#223552',
+
 	greenModal100: '#83B100',
 	greenModal200: '#83B200',
 	green600: '#1e7e34',
@@ -66,7 +70,9 @@ export const colors = {
 	brandBlue900: '#335e84',
 	brandBlue800: '#07152A',
 	brandBlue700: '#111E33',
-	brandBlue600: '#4da2cf',
+	brandBlue600: '#162742',
+	brandBlue500: '#1E365C',
+	brandBlue400: '#4da2cf',
 	spinnerColor: '#037DD6',
 	success: '#219E37',
 	dimmed: '#00000080',
@@ -170,6 +176,7 @@ export const colors = {
 	loaderOverlay: 'rgba(0,0,0,.3)',
 	white06: 'rgba(255,255,255,.6)',
 	white02: 'rgba(255,255,255,.2)',
+	white016: 'rgba(255, 255, 255, 0.16)',
 	black02: 'rgba(0,0,0,.2)',
 	$FEFEFE: '#FEFEFE',
 	$F9F9F9: '#F9F9F9',
@@ -217,6 +224,16 @@ export const baseStyles = {
 	flexStatic: {
 		flex: 0
 	},
+	darkBackground: {
+		backgroundColor: colors.brandBlue700
+	},
+	darkCardBackground: {
+		backgroundColor: colors.brandBlue500
+	},
+	darkActionBackground: {
+		backgroundColor: colors.deepBlue800
+	},
+	textDark: { color: 'white' },
 	shadow: {
 		shadowOffset: { width: 0, height: 5 },
 		shadowOpacity: 0.08,

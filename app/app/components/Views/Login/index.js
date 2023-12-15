@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 		resizeMode: 'stretch',
 		zIndex: -1,
 		position: 'absolute',
-		bottom: -deviceHeight * 0.1
+		bottom: -deviceHeight * 0.09
 	},
 	titleImage: {
 		width: 200,
@@ -445,8 +445,8 @@ class Login extends PureComponent {
 	setPassword = val => this.setState({ password: val, error: null });
 
 	render = () => {
-		const { theme } = this.context;
-		const isDarkMode = theme && theme === 'dark' ? true : false;
+		const { isDarkMode } = this.context;
+
 		const shouldShowBiometrics = this.state.biometryChoice && this.state.biometryType && this.state.hasCredentials;
 		return (
 			<SafeAreaView

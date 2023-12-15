@@ -24,6 +24,7 @@ import Engine from '../../../core/Engine';
 import ImageCapInset from '../ImageCapInset';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
 import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const favoriteAddr = '0xfavorite';
 
@@ -150,6 +151,7 @@ const LOAD_COUNT = 15;
 
 class Nft extends PureComponent {
 	lottieAnim = true;
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
@@ -697,14 +699,22 @@ class Nft extends PureComponent {
 		if (!this.state.isEtherscanAvailableWaited || this.state.isLoading) {
 			return this.renderLoading();
 		}
-
+		const { isDarkMode } = this.context;
 		const { dataContracts } = this.state;
 		if (dataContracts.length === 0) {
 			return (
 				<View style={styles.noNftLayout}>
 					<View style={styles.noNftLayout}>
-						<Image source={require('../../../images/no_nft_img.png')} />
-						<Text style={styles.noNftText}>{strings('nft.no_nft_found')}</Text>
+						<Image
+							source={
+								isDarkMode
+									? require('../../../images/no_nft_img_dark.png')
+									: require('../../../images/no_nft_img.png')
+							}
+						/>
+						<Text style={[styles.noNftText, isDarkMode && baseStyles.textDark]}>
+							{strings('nft.no_nft_found')}
+						</Text>
 					</View>
 				</View>
 			);

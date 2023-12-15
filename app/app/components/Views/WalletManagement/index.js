@@ -27,9 +27,7 @@ import SecureKeychain from '../../../core/SecureKeychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
-import AntIcon from 'react-native-vector-icons/AntDesign';
 import LottieView from 'lottie-react-native';
-import Popover from '../../UI/Popover';
 import { toggleShowHint } from '../../../actions/hint';
 import { renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
@@ -40,6 +38,7 @@ import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
 import Icon from '../../UI/Icon';
 import WC2Manager from '../../../../app/core/WalletConnect/WalletConnectV2';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const cardMargin = 20;
 const cardPadding = 18;
@@ -538,6 +537,7 @@ class WalletManagement extends PureComponent {
 		wealths: PropTypes.object,
 		isLockScreen: PropTypes.bool
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		deleteAccountModalVisible: false,
@@ -1372,20 +1372,29 @@ class WalletManagement extends PureComponent {
 		const { addAccountLoadingIndex } = this.state;
 		const { identities } = this.props;
 		const walletButtonRef = React.createRef();
+		const { isDarkMode } = this.context;
 
 		return (
 			<ImageCapInset
-				style={styles.cardWrapper}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				style={[styles.cardWrapper, isDarkMode && baseStyles.darkCardBackground]}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'default_card_dark' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/default_card_dark.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 				key={'element-' + keyringIndex}
 			>
-				<View style={styles.childrenWrapper} activeOpacity={1}>
+				<View style={[styles.childrenWrapper, isDarkMode && baseStyles.darkCardBackground]} activeOpacity={1}>
 					<View style={styles.flexOne}>
 						<View style={styles.rowFlex}>
 							<View style={styles.rowFlex2}>
 								<Text
-									style={styles.walletTitle}
+									style={[styles.walletTitle, isDarkMode && baseStyles.textDark]}
 									allowFontScaling={false}
 									numberOfLines={1}
 									ellipsizeMode="tail"
@@ -1412,28 +1421,29 @@ class WalletManagement extends PureComponent {
 							<TouchableOpacity
 								style={styles.walletMoreTouch}
 								onPress={async () => {
-									walletButtonRef?.current?.measure((ox, oy, width, height, px, py) => {
-										const statusBarHeight = StatusBar.currentHeight;
-										const dis = Device.isAndroid() ? statusBarHeight : 0;
-										this.setState({
-											headerPopModalVisible: true,
-											isWalletPop: true,
-											walletSelectedCanRemove: canRemove,
-											walletSelectedIndex: keyringIndex,
-											walletSelectedType: keyring.type,
-											walletSelectedName: identities[keyring.accounts[0]].walletName
-												? identities[keyring.accounts[0]].walletName
-												: strings('wallet_management.wallet_index', {
-														number: keyringIndex + 1
-												  }),
+									this.setState({
+										headerPopModalVisible: true,
+										isWalletPop: true,
+										walletSelectedCanRemove: canRemove,
+										walletSelectedIndex: keyringIndex,
+										walletSelectedType: keyring.type,
+										walletSelectedName: identities[keyring.accounts[0]].walletName
+											? identities[keyring.accounts[0]].walletName
+											: strings('wallet_management.wallet_index', {
+													number: keyringIndex + 1
+											  }),
 
-											walletMainAddress: keyring.accounts[0],
-											headerIconRect: { x: px, y: py - dis, width, height }
-										});
+										walletMainAddress: keyring.accounts[0]
 									});
 								}}
 							>
-								<Image source={require('../../../images/ic_defi_more.png')} ref={walletButtonRef} />
+								<Icon
+									width="28"
+									height="28"
+									color={isDarkMode ? colors.white : colors.paliGrey200}
+									name="menu"
+									ref={walletButtonRef}
+								/>
 							</TouchableOpacity>
 						</View>
 
@@ -1593,9 +1603,13 @@ class WalletManagement extends PureComponent {
 	render = () => {
 		const { keyrings } = this.props;
 		const { createWalletLoading, error } = this.state;
+		const { isDarkMode } = this.context;
 
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'wallet-management-screen'}>
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-management-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar
 					navigation={this.props.navigation}

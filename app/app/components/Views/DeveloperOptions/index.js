@@ -4,6 +4,7 @@ import { Image, View, Text, Switch, ScrollView, ActivityIndicator } from 'react-
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import Device from '../../../util/Device';
 import checkIcon from '../../../images/network_check.png';
 import { connect } from 'react-redux';
@@ -119,6 +120,7 @@ class DeveloperOptions extends PureComponent {
 		startNetworkChange: PropTypes.func,
 		allNetworkChanging: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	networkElement = (selected, onPress, shortName, i, network, chainType) => (
 		<TouchableOpacity
@@ -216,8 +218,12 @@ class DeveloperOptions extends PureComponent {
 	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, { backgroundColor: isDarkMode && colors.brandBlue700 }]}
+				testID={'wallet-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar
 					navigation={this.props.navigation}

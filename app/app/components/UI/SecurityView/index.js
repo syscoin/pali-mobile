@@ -309,7 +309,7 @@ class SecurityView extends PureComponent {
 					styles.topLayout,
 					{
 						height: 240 + titleHeight,
-						backgroundColor: tabIndex === 0 ? colors.brandBlue600 : colors.brandBlue900
+						backgroundColor: tabIndex === 0 ? colors.brandBlue400 : colors.brandBlue900
 					}
 				]}
 			>

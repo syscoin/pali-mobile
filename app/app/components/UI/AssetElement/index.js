@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import { baseStyles } from '../../../styles/common';
 
 const styles = StyleSheet.create({
 	itemWrapper: {
@@ -55,6 +57,8 @@ export default class AssetElement extends PureComponent {
 		isEnd: PropTypes.bool
 	};
 
+	static contextType = ThemeContext;
+
 	static defaultProps = {
 		canSwipeout: false
 	};
@@ -65,12 +69,21 @@ export default class AssetElement extends PureComponent {
 	};
 
 	render = () => {
+		const { isDarkMode } = this.context;
 		const { children, indexKey, isEnd } = this.props;
 		return (
 			<View style={styles.itemWrapper} key={'element' + indexKey}>
 				<ImageCapInset
 					style={isEnd ? styles.capInsetWrapper2 : styles.capInsetWrapper}
-					source={Device.isAndroid() ? { uri: 'card' } : require('../../../images/card.png')}
+					source={
+						Device.isAndroid()
+							? isDarkMode
+								? { uri: 'card_dark' }
+								: { uri: 'card' }
+							: isDarkMode
+							? require('../../../images/card_dark.png')
+							: require('../../../images/card.png')
+					}
 					capInsets={{ top: 30, left: 30, bottom: 30, right: 30 }}
 				>
 					<TouchableWithoutFeedback onPress={this.handleOnPress}>

@@ -7,6 +7,8 @@ import { queryContractMap } from '../../../data/ContractData';
 import { isSmartContractAddress } from '../../../util/transactions';
 import Engine from '../../../core/Engine';
 import { ChainType, defaultEnabledChains, isValidAddress, util } from 'paliwallet-core';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	searchSection: {
@@ -14,7 +16,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 52,
 		alignItems: 'center',
-		paddingHorizontal: 15
+		paddingHorizontal: 15,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4
+	},
+	shadowDark: {
+		shadowColor: colors.paliBlue100
 	},
 	textInput: {
 		flex: 1,
@@ -45,6 +54,7 @@ export default class AssetSearch extends PureComponent {
 		searchQuery: '',
 		inputWidth: '85%'
 	};
+	static contextType = ThemeContext;
 
 	static propTypes = {
 		/**
@@ -240,14 +250,21 @@ export default class AssetSearch extends PureComponent {
 
 	render = () => {
 		const { searchQuery } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.searchSection} testID={'add-searched-token-screen'}>
-				<Image source={require('../../../images/ic_search.png')} style={styles.icon} />
+			<View style={[styles.searchSection, isDarkMode && styles.shadowDark]} testID={'add-searched-token-screen'}>
+				<AntIcon
+					size={18}
+					color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+					name="search1"
+					style={styles.icon}
+				/>
+
 				<TextInput
-					style={styles.textInput}
+					style={[styles.textInput, { color: isDarkMode ? colors.white : colors.black }]}
 					value={searchQuery}
 					placeholder={strings('token_search.token_address_hint')}
-					placeholderTextColor={colors.$8F92A1}
+					placeholderTextColor={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
 					onChangeText={newText => this.onTextChange(newText)}
 					testID={'input-search-asset'}
 					fontSize={14}
@@ -257,7 +274,11 @@ export default class AssetSearch extends PureComponent {
 				<Text>{this.input && this.input.current && this.input.current.value}</Text>
 				{!(searchQuery === '') && (
 					<TouchableOpacity style={styles.touchPadding} onPress={this.deleteInput} hitSlop={styles.hitSlop}>
-						<Image source={require('../../../images/search_clear.png')} />
+						<AntIcon
+							size={16}
+							color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+							name="closecircle"
+						/>
 					</TouchableOpacity>
 				)}
 			</View>

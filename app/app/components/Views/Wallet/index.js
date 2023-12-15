@@ -49,6 +49,7 @@ import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -84,6 +85,9 @@ const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 		backgroundColor: colors.white
+	},
+	wrapperDark: {
+		backgroundColor: colors.brandBlue700
 	},
 	loader: {
 		backgroundColor: colors.white,
@@ -216,6 +220,8 @@ class Wallet extends PureComponent {
 		isLockScreen: PropTypes.bool,
 		famousAccounts: PropTypes.array
 	};
+
+	static contextType = ThemeContext;
 
 	state = {
 		refreshing: false,
@@ -481,8 +487,10 @@ class Wallet extends PureComponent {
 			currentContactEntry = contactEntrys[0];
 		}
 
+		const { isDarkMode } = this.context;
+
 		return (
-			<View style={styles.wrapper}>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View>
 					<Carousel
 						keyboardShouldPersistTaps={'always'}
@@ -736,79 +744,88 @@ class Wallet extends PureComponent {
 		}
 	};
 
-	render = () => (
-		<SafeAreaView
-			style={baseStyles.flexGrow}
-			testID={'wallet-screen'}
-			onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
-		>
-			<MStatusBar navigation={this.props.navigation} />
-			<View style={styles.header}>
-				<CopilotStep text={strings('onboarding_wallet.onboarding1')} order={1} name="onboarding1">
-					<CopilotView style={{ width: 25 }}>
-						<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
-							<Icon name="settings" width="24" height="24" />
-						</TouchableOpacity>
-					</CopilotView>
-				</CopilotStep>
-				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-					<Image style={styles.imageTitle} source={require('../../../images/pali_wallet_blue.png')} />
-				</View>
-				<TouchableOpacity
-					style={[styles.scannerButton, { paddingRight: !this.props.walletConnectIconVisible ? 20 : 14 }]}
-					hitSlop={styles.hitSlop}
-					onPress={this.openQRScanner}
-				>
-					<CopilotStep
-						active={true}
-						text={strings('onboarding_wallet.onboarding2')}
-						order={2}
-						name="onboarding2"
-					>
-						<CopilotView>
-							<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+	render = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+				onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
+			>
+				<MStatusBar navigation={this.props.navigation} />
+				<View style={[styles.header, isDarkMode && baseStyles.darkBackground]}>
+					<CopilotStep text={strings('onboarding_wallet.onboarding1')} order={1} name="onboarding1">
+						<CopilotView style={{ width: 25 }}>
+							<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+								<Icon name="settings" width="24" height="24" color={colors.paliGrey200} />
+							</TouchableOpacity>
 						</CopilotView>
 					</CopilotStep>
-				</TouchableOpacity>
-
-				{this.props.walletConnectIconVisible && (
+					<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
+						<Image style={styles.imageTitle} source={require('../../../images/pali_wallet_blue.png')} />
+					</View>
 					<TouchableOpacity
-						style={styles.walletConnectButton}
+						style={[styles.scannerButton, { paddingRight: !this.props.walletConnectIconVisible ? 20 : 14 }]}
 						hitSlop={styles.hitSlop}
-						onPress={() => {
-							this.props.showWalletConnectList();
-						}}
+						onPress={this.openQRScanner}
 					>
-						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
+						<CopilotStep
+							active={true}
+							text={strings('onboarding_wallet.onboarding2')}
+							order={2}
+							name="onboarding2"
+						>
+							<CopilotView>
+								<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+							</CopilotView>
+						</CopilotStep>
 					</TouchableOpacity>
-				)}
-			</View>
 
-			<View style={styles.wrapper}>
-				<FlatList
-					style={styles.wrapper}
-					data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
-					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
-					scrollEnabled={!this.state.chainItemDraging}
-					onMomentumScrollEnd={this.contentViewScroll}
-					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+					{this.props.walletConnectIconVisible && (
+						<TouchableOpacity
+							style={styles.walletConnectButton}
+							hitSlop={styles.hitSlop}
+							onPress={() => {
+								this.props.showWalletConnectList();
+							}}
+						>
+							<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
+						</TouchableOpacity>
+					)}
+				</View>
+
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
+					<FlatList
+						style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+						data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
+						keyExtractor={(item, index) => index.toString()}
+						renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
+						scrollEnabled={!this.state.chainItemDraging}
+						onMomentumScrollEnd={this.contentViewScroll}
+						refreshControl={
+							<RefreshControl
+								refreshing={this.state.refreshing}
+								onRefresh={this.onRefresh}
+								tintColor={isDarkMode ? colors.white : colors.black}
+							/>
+						}
+					/>
+				</View>
+				<CopyView
+					isVisible={this.state.isCopyViewVisible}
+					title={this.state.copyViewText}
+					onCancel={async () => this.setState({ isCopyViewVisible: false })}
+					onOK={async () => {
+						this.setState({ isCopyViewVisible: false });
+						Clipboard.setString(this.state.copyViewText);
+					}}
 				/>
-			</View>
-			<CopyView
-				isVisible={this.state.isCopyViewVisible}
-				title={this.state.copyViewText}
-				onCancel={async () => this.setState({ isCopyViewVisible: false })}
-				onOK={async () => {
-					this.setState({ isCopyViewVisible: false });
-					Clipboard.setString(this.state.copyViewText);
-				}}
-			/>
-			{this.state.showNotifypermissionModal && this.renderNotifyPermissionModal()}
-			{this.renderSetEnsAvatarModal()}
-			{this.renderEnsSettingModal()}
-		</SafeAreaView>
-	);
+				{this.state.showNotifypermissionModal && this.renderNotifyPermissionModal()}
+				{this.renderSetEnsAvatarModal()}
+				{this.renderEnsSettingModal()}
+			</SafeAreaView>
+		);
+	};
 }
 
 const mapStateToProps = state => ({

@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n, { setLocale } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import { toggleTestnetVisible } from '../../../actions/settings';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = {
 	wrapper: {
@@ -95,6 +96,7 @@ class LanguageSelector extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	constructor(props) {
 		super(props);
@@ -130,8 +132,12 @@ class LanguageSelector extends PureComponent {
 		});
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, { backgroundColor: isDarkMode && colors.brandBlue700 }]}
+				testID={'wallet-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar

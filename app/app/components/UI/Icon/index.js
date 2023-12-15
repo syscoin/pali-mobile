@@ -10,7 +10,9 @@ import FaceId from '../../../images/svg/face_id.svg';
 import Fingerprint from '../../../images/svg/fingerprint.svg';
 import Globe from '../../../images/svg/globe.svg';
 import NFT from '../../../images/svg/nft.svg';
+import Menu from '../../../images/svg/menu.svg';
 import Moon from '../../../images/svg/ic_moon.svg';
+import Order from '../../../images/svg/order.svg';
 import PrivateKey from '../../../images/svg/private_key.svg';
 import Sun from '../../../images/svg/ic_sun.svg';
 import Sapling from '../../../images/svg/sapling.svg';
@@ -34,7 +36,9 @@ const icons = {
 	faceId: FaceId,
 	globe: Globe,
 	nft: NFT,
+	menu: Menu,
 	moon: Moon,
+	order: Order,
 	privateKey: PrivateKey,
 	sun: Sun,
 	sapling: Sapling,

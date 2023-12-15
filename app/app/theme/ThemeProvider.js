@@ -5,7 +5,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const ThemeContext = createContext();
 
 // Create a custom hook to use the theme
-export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => {
+	const { theme, setTheme } = useContext(ThemeContext);
+	const isDarkMode = theme === 'dark';
+
+	// Return both theme and isDarkMode
+	return { theme, isDarkMode, setTheme };
+};
 
 // Create a provider component
 export const ThemeProvider = ({ children }) => {

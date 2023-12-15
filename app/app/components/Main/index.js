@@ -88,6 +88,7 @@ import { toggleShowHint } from '../../actions/hint';
 import { logDebug } from 'paliwallet-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
 import { isMainnetChain } from '../../util/ControllerUtils';
+import { useTheme } from '../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -310,6 +311,7 @@ const Main = props => {
 	const [notificationTitle, setNotificationTitle] = useState('');
 	const [notificationMessage, setNotificationMessage] = useState('');
 	const [notificationUrl, setNotificationUrl] = useState('');
+	const { isDarkMode } = useTheme();
 
 	const pollForIncomingTransactions = useCallback(async () => {
 		await Engine.refreshTransactionHistory();
@@ -1262,10 +1264,47 @@ const Main = props => {
 			</View>
 		</Modal>
 	);
+
+	const settingsRoutes = [
+		'WalletManagementView',
+		'RevealPrivateCredentialView',
+		'VerifySeedPhraseView',
+		'ResetPasswordView',
+		'SecuritySettingsView',
+		'AboutView',
+		'DeveloperOptionsView',
+		'CurrencyUnitView',
+		'UpdateCheckView',
+		'DrawingBoardView',
+		'DrawingGuideView',
+		'CheckEnvGuideView',
+		'ManualBackupStep1View',
+		'ManualBackupStep2View',
+		'ImportFromSeedView',
+		'ImportPrivateKeyView',
+		'LanguageSelectorView',
+		'LoginView'
+	];
+
+	const inSettings = settingsRoutes.includes(
+		props.navigation.state.routes[props.navigation.state.routes.length - 1].routeName
+	);
+
 	return (
 		<React.Fragment key={reloadCounter + 'main-screen'}>
 			<View style={styles.flex}>
-				<View style={styles.navigatorView}>
+				<View
+					style={[
+						styles.navigatorView,
+						{
+							backgroundColor: isDarkMode
+								? inSettings
+									? colors.brandBlue700
+									: colors.brandBlue500
+								: colors.white
+						}
+					]}
+				>
 					<SafeAreaProvider>
 						<MainNavigator navigation={props.navigation} />
 					</SafeAreaProvider>

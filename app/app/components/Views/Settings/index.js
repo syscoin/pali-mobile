@@ -47,6 +47,9 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.paliGrey100,
 		borderRadius: 10,
 		marginTop: 14
+	},
+	cardItemDark: {
+		backgroundColor: colors.brandBlue600
 	}
 });
 
@@ -141,10 +144,16 @@ export default class Settings extends PureComponent {
 		} else if (Device.isIos()) {
 			barHeight = this.state.IOSStatusBarHeight;
 		}
-		const { theme } = this.context;
+		const { theme, isDarkMode } = this.context;
 
 		return (
-			<Animated.View style={[baseStyles.flexGrow, { opacity: this.fadeAnim }]} testID={'wallet-screen'}>
+			<Animated.View
+				style={[
+					baseStyles.flexGrow,
+					{ opacity: this.fadeAnim, backgroundColor: isDarkMode ? colors.brandBlue700 : colors.white }
+				]}
+				testID={'wallet-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar
 					navigation={this.props.navigation}
@@ -166,7 +175,7 @@ export default class Settings extends PureComponent {
 				</View>
 
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View style={styles.cardItemTop}>
+					<View style={[styles.cardItemTop, isDarkMode && styles.cardItemDark]}>
 						<SettingsDrawer
 							onPress={this.onWalletManagement}
 							image={require('../../../images/ic_setting_wallet.png')}
@@ -179,7 +188,7 @@ export default class Settings extends PureComponent {
 							hideLine
 						/> */}
 					</View>
-					<View style={styles.cardItem}>
+					<View style={[styles.cardItem, isDarkMode && styles.cardItemDark]}>
 						<SettingsDrawer
 							onPress={this.onSecuritySettings}
 							image={require('../../../images/ic_setting_Security.png')}
@@ -203,7 +212,7 @@ export default class Settings extends PureComponent {
 							hideLine
 						/>
 					</View>
-					<View style={styles.cardItem}>
+					<View style={[styles.cardItem, isDarkMode && styles.cardItemDark]}>
 						<SettingsDrawer
 							onPress={this.onOnboarding}
 							image={require('../../../images/ic_setting_idea.png')}
