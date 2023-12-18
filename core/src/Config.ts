@@ -523,8 +523,10 @@ export const NetworkConfig: { [type: number]: any } = {
 export const SupportCollectibles = [
   ChainType.Ethereum,
   ChainType.Polygon,
+  ChainType.Arbitrum,
   ChainType.Bsc,
   ChainType.Avax,
+  ChainType.Optimism,
   ChainType.Syscoin,
   ChainType.Rollux,
 ];

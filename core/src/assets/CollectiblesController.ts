@@ -98,6 +98,15 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
   private polling_counter = 0;
 
+  private nftChains: { [key: string]: string } = {
+    '1': 'ethereum',
+    '10': 'optimism',
+    '56': 'bsc',
+    '137': 'matic',
+    '42161': 'arbitrum',
+    '43114': 'avalanche',
+  };
+
   /**
    * Name of this controller used during composition
    */
@@ -135,46 +144,40 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     return SupportCollectibles.includes(chainType);
   }
 
-  private isSupportOpensea(chainId: string) {
-    return chainId === '1' || chainId === '4' || chainId === '137';
-  }
-
   private isSupportLuxy(chainId: string) {
     return chainId === '57' || chainId === '570';
   }
 
-  private getOwnerCollectiblesApi(chainId: string, address: string, offset: number) {
-    const { openSeaApiKey, openSeaApiKeyForRinkeby } = this.config;
+  private isSupportOpensea(chainId: string) {
+    return Object.keys(this.nftChains).includes(chainId);
+  }
 
-    if (chainId === '4') {
-      return {
-        api: `https://rinkeby-api.opensea.io/api/v1/assets?owner=${address}&offset=${offset}&limit=50`,
-        key: openSeaApiKeyForRinkeby,
-        version: 'v1',
-      };
-    } else if (chainId === '137') {
-      return {
-        api: `https://api.opensea.io/api/v2/assets/matic?owner_address=${address}`,
-        key: openSeaApiKey,
-        version: 'v2',
-      };
-    }
+  private getChainName(chainId: string): string {
+    return this.nftChains[chainId] || 'unknown';
+  }
+
+  private getOwnerCollectiblesApi(chainId: string, address: string) {
+    const { openSeaApiKey } = this.config;
+    const chainName = this.getChainName(chainId);
+
     return {
-      api: `https://api.opensea.io/api/v1/assets?owner=${address}&offset=${offset}&limit=50`,
+      api: `https://api.opensea.io/api/v2/chain/${chainName}/account/${address}/nfts?limit=50`,
       key: openSeaApiKey,
-      version: 'v1',
+      version: 'v2',
     };
   }
 
   private async getOwnerCollectibles(chainId: string, selectedAddress: string) {
     let response: Response;
     let collectibles: any = [];
+    const chainName = this.getChainName(chainId);
     try {
       let offset = 0;
       let pagingFinish = false;
       let api;
+
       do {
-        const openseaApi = this.getOwnerCollectiblesApi(chainId, selectedAddress, offset);
+        const openseaApi = this.getOwnerCollectiblesApi(chainId, selectedAddress);
         response = await timeoutFetch(
           api || openseaApi.api,
           openseaApi.key ? { headers: { 'X-API-KEY': openseaApi.key } } : {},
@@ -182,30 +185,24 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         );
         const collectiblesArray = await response.json();
         let results;
-        if (openseaApi.version === 'v1') {
-          results = collectiblesArray.assets;
-        } else {
-          results = collectiblesArray.results;
-        }
+
+        results = collectiblesArray.nfts;
+
         if (results?.length) {
           collectibles = [...collectibles, ...results];
         }
         if (!results || results.length <= 0) {
           pagingFinish = true;
         }
-        if (openseaApi.version === 'v1') {
-          if (results.length < 50) {
-            pagingFinish = true;
-          }
-        } else if (openseaApi.version === 'v2') {
-          if (collectiblesArray.next) {
-            api = collectiblesArray.next;
-            api = 'https://api.opensea.io/api/v2/assets/matic' + api.substring(api.indexOf('?'), api.length);
-          } else {
-            api = undefined;
-            pagingFinish = true;
-          }
+
+        if (collectiblesArray.next) {
+          let nextCode = collectiblesArray.next;
+          api = `https://api.opensea.io/api/v2/chain/${chainName}/account/${selectedAddress}/nfts?limit=50&next=${nextCode}`;
+        } else {
+          api = undefined;
+          pagingFinish = true;
         }
+
         offset += 50;
         if (offset >= LOAD_NFT_MAX) {
           pagingFinish = true;
@@ -286,6 +283,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
   async getCollectiblesByOpensea(chainId: string, selectedAddress: string, contractController: any) {
     const collectibles = await this.getOwnerCollectibles(chainId, selectedAddress);
+
     if (!collectibles) {
       return undefined;
     }
@@ -301,17 +299,28 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   ) {
     const erc721Tokens: string[] = [];
     const erc721Ids: string[] = [];
-
     const erc1155Tokens: string[] = [];
     const erc1155Ids: string[] = [];
 
     collectibles.forEach((collectible: any) => {
-      if (collectible.asset_contract.schema_name === 'ERC721') {
-        erc721Tokens.push(collectible.asset_contract.address);
-        erc721Ids.push(collectible.token_id);
-      } else if (collectible.asset_contract.schema_name === 'ERC1155') {
-        erc1155Tokens.push(collectible.asset_contract.address);
-        erc1155Ids.push(collectible.token_id);
+      const assetContractAddress = collectible.asset_contract
+        ? collectible.asset_contract.address
+        : collectible.contract;
+      const tokenId = collectible.token_id ? collectible.token_id : collectible.identifier;
+      const tokenStandard = collectible.token_standard ? collectible.token_standard.toLowerCase() : null;
+
+      if (
+        (collectible.asset_contract && collectible.asset_contract.schema_name === 'ERC721') ||
+        tokenStandard === 'erc721'
+      ) {
+        erc721Tokens.push(assetContractAddress);
+        erc721Ids.push(tokenId);
+      } else if (
+        (collectible.asset_contract && collectible.asset_contract.schema_name === 'ERC1155') ||
+        tokenStandard === 'erc1155'
+      ) {
+        erc1155Tokens.push(assetContractAddress);
+        erc1155Ids.push(tokenId);
       }
     });
 
@@ -356,6 +365,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         return undefined;
       }
     }
+
     if (erc1155Tokens.length > 0) {
       let owners: any[] = [];
       try {
@@ -381,6 +391,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
           });
         }
       }
+
       if (owners && owners.length === erc1155Tokens.length) {
         erc1155Tokens.forEach((address, index) => {
           if (owners[index]?.gt(0)) {
@@ -396,11 +407,17 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const ownedCollectibles: any = [];
     collectibles.forEach((collectible: any) => {
       const owner = allOwners.find(
-        (item) => item.address === collectible.asset_contract.address && item.token_id === collectible.token_id,
+        (item) =>
+          item.address === (collectible.asset_contract ? collectible.asset_contract.address : collectible.contract) &&
+          item.token_id === (collectible.token_id ? collectible.token_id : collectible.identifier),
       );
 
       if (owner) {
-        ownedCollectibles.push({ ...collectible, balanceOf: owner.balanceOf, chainId });
+        ownedCollectibles.push({
+          ...collectible,
+          balanceOf: owner.balanceOf,
+          chainId,
+        });
       }
     });
 
@@ -495,7 +512,8 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         if (
           collectibles.find(
             (collectible) =>
-              collectible.token_id === nftTx.tokenID && collectible.asset_contract.address === nftTx.contractAddress,
+              collectible.token_id === (nftTx.tokenID ? nftTx.tokenID : nftTx.identifier) &&
+              collectible.asset_contract.address === (nftTx.contractAddress ? nftTx.contractAddress : nftTx.contract),
           )
         ) {
           continue;
@@ -590,11 +608,14 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
   async updateCollectibles(selectedAddress: string, chainId: string, newCollectible: any[]) {
     const releaseLock = await this.mutexData.acquire();
     const addressCollectibleContracts = this.state.allCollectibleContracts[selectedAddress];
+
     const collectibleContracts: CollectibleContract[] = [];
     newCollectible.forEach((collectible: any) => {
       if (
         !collectibleContracts.find(
-          (contract: CollectibleContract) => contract.address === collectible.asset_contract.address,
+          (contract: CollectibleContract) =>
+            contract.address ===
+            (collectible.asset_contract ? collectible.asset_contract.address : collectible.contract),
         )
       ) {
         const collectibleContract = {
@@ -603,8 +624,12 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         };
         collectibleContracts.push(collectibleContract);
       }
-      collectible.address = collectible.asset_contract.address;
-      delete collectible.asset_contract;
+      collectible.address = collectible.asset_contract ? collectible.asset_contract.address : collectible.contract;
+      if (collectible.asset_contract) {
+        delete collectible.asset_contract;
+      } else {
+        delete collectible.contract;
+      }
     });
 
     const newAddressCollectibleContracts = {
@@ -716,6 +741,8 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const releaseLock = await this.mutexData.acquire();
     let newCollectible;
     let newAllCollectibleContracts;
+    console.log(this.state.allCollectibleContracts[selectedAddress], 'time do Brasil');
+
     if (balanceOf.isZero()) {
       newCollectible = collectibles.filter(
         (collectible) => collectible.token_id !== token_id || collectible.address !== address,
@@ -725,6 +752,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
           ? this.state.allCollectibleContracts[selectedAddress][chainId]
           : undefined;
         if (contracts) {
+          console.log(contracts, 'wowww1');
           const newContracts = contracts.filter((contract) => contract.address !== address);
 
           const newCollectibleContracts = {
@@ -738,6 +766,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         }
       }
     } else {
+      console.log(collectibles, 'wowww');
       collectibles.forEach((collectible) => {
         if (collectible.token_id === token_id && collectible.address === address) {
           collectible.balanceOf = balanceOf;
