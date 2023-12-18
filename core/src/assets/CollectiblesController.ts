@@ -287,7 +287,43 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     if (!collectibles) {
       return undefined;
     }
-    return await this.fixDataCollectibles(collectibles, chainId, selectedAddress, contractController);
+
+    const updateCollectibles = await this.getCollectionData(collectibles);
+
+    console.log(updateCollectibles, 'updateCollectibles');
+    return await this.fixDataCollectibles(updateCollectibles, chainId, selectedAddress, contractController);
+  }
+
+  private async getCollectionData(collectionArray: any[]) {
+    const { openSeaApiKey } = this.config;
+
+    for (let item of collectionArray) {
+      const collectionSlug = item.collection;
+      let api = `https://api.opensea.io/api/v2/collections/${collectionSlug}`;
+      let response: Response;
+
+      try {
+        response = await timeoutFetch(api, openSeaApiKey ? { headers: { 'X-API-KEY': openSeaApiKey } } : {}, 15000);
+
+        const data = await response.json();
+
+        item.collection = {
+          name: data.name ? data.name : null,
+          slug: data.collection ? data.collection : null,
+          image_url: data.image_url ? data.image_url : null,
+          description: data.description ? data.description : null,
+        };
+
+        item.creator = {
+          address: data.owner ? data.owner : null,
+        };
+      } catch (error) {
+        console.error('Error fetching data for:', collectionSlug, error);
+        // Depending on your error handling strategy, you might want to continue or stop the loop
+      }
+    }
+
+    return collectionArray;
   }
 
   async fixDataCollectibles(
@@ -618,10 +654,21 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
             (collectible.asset_contract ? collectible.asset_contract.address : collectible.contract),
         )
       ) {
-        const collectibleContract = {
-          ...collectible.asset_contract,
-          chainId,
-        };
+        let collectibleContract;
+        if (collectible.asset_contract) {
+          collectibleContract = {
+            ...collectible.asset_contract,
+            chainId,
+          };
+        } else {
+          collectibleContract = {
+            address: collectible.contract,
+            image_url: collectible.collection.image_url,
+            schema_name: collectible.token_standard.toUpperCase(),
+            chainId,
+          };
+        }
+
         collectibleContracts.push(collectibleContract);
       }
       collectible.address = collectible.asset_contract ? collectible.asset_contract.address : collectible.contract;
@@ -636,6 +683,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       ...addressCollectibleContracts,
       [chainId]: collectibleContracts,
     };
+
     const newCollectibleContracts = {
       ...this.state.allCollectibleContracts,
       [selectedAddress]: newAddressCollectibleContracts,

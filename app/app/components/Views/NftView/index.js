@@ -842,10 +842,19 @@ class NftView extends PureComponent {
 										)}
 										{nftToken.creator && nftToken.creator.address && (
 											<View style={styles.createdByLayout}>
-												<FastImage
-													source={{ uri: nftToken.creator.profile_img_url }}
-													style={styles.createdByIcon}
-												/>
+												{nftToken.creator.profile_img_url ? (
+													<FastImage
+														source={{
+															uri: nftToken.creator.profile_img_url
+														}}
+														style={styles.createdByIcon}
+													/>
+												) : (
+													<FastImage
+														source={require('../../../images/nft_default_placehoder.png')}
+														style={styles.createdByIcon}
+													/>
+												)}
 												<Text style={styles.createdByText}>{strings('nft.created_by')}</Text>
 												<TouchableOpacity
 													activeOpacity={0.8}
@@ -934,13 +943,15 @@ class NftView extends PureComponent {
 												</Text>
 											</View>
 										)}
-										{nftToken.token_id && (
+										{(nftToken.token_id || nftToken.identifier) && (
 											<View>
 												<TouchableOpacity
 													activeOpacity={0.5}
 													style={styles.technicalItem}
 													onPress={() => {
-														this.copyAddressToClipboard(nftToken.token_id);
+														this.copyAddressToClipboard(
+															nftToken.token_id || nftToken.identifier
+														);
 													}}
 												>
 													<Text
@@ -948,7 +959,7 @@ class NftView extends PureComponent {
 														numberOfLines={1}
 														ellipsizeMode={'tail'}
 													>
-														{nftToken.token_id}
+														{nftToken.token_id || nftToken.identifier}
 													</Text>
 													<Image source={require('../../../images/tx_copy.png')} />
 												</TouchableOpacity>
