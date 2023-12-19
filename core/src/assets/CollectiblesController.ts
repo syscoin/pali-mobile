@@ -48,6 +48,14 @@ export interface CollectibleId {
   chainId: string;
 }
 
+export interface Collection {
+  name: string | null;
+  slug: string | null;
+  image_url: string | null;
+  description: string | null;
+  address: string | null;
+}
+
 export interface Collectible {
   chainId: string;
   token_id: string;
@@ -66,6 +74,7 @@ export interface Collectible {
   creator: ApiCollectibleCreator | null;
   last_sale: ApiCollectibleLastSale | null;
   balanceOf: BigNumber;
+  collection: Collection | null;
 }
 
 export interface CollectiblesState extends BaseState {
@@ -288,38 +297,64 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       return undefined;
     }
 
-    const updateCollectibles = await this.getCollectionData(collectibles);
+    const updateCollectibles = await this.getCollectionData(collectibles, selectedAddress, chainId);
 
     console.log(updateCollectibles, 'updateCollectibles');
     return await this.fixDataCollectibles(updateCollectibles, chainId, selectedAddress, contractController);
   }
 
-  private async getCollectionData(collectionArray: any[]) {
+  private async getCollectionData(collectionArray: any[], selectedAddress: string, selectedChainId: string) {
     const { openSeaApiKey } = this.config;
+    const collectionCache = new Map();
+    const alreadyFetchedCollections = this.state.allCollectibles[selectedAddress]?.[selectedChainId] || [];
+
+    // Update the cache with already fetched collections
+    alreadyFetchedCollections.forEach((item) => {
+      if (item.collection && item.collection.slug) {
+        collectionCache.set(item.collection.slug, item.collection);
+      }
+    });
 
     for (let item of collectionArray) {
       const collectionSlug = item.collection;
-      let api = `https://api.opensea.io/api/v2/collections/${collectionSlug}`;
-      let response: Response;
 
-      try {
-        response = await timeoutFetch(api, openSeaApiKey ? { headers: { 'X-API-KEY': openSeaApiKey } } : {}, 15000);
+      // Check if the collection data is already available, if not call the opensea api
+      if (!collectionCache.has(collectionSlug)) {
+        let api = `https://api.opensea.io/api/v2/collections/${collectionSlug}`;
+        let response: Response;
 
-        const data = await response.json();
+        try {
+          response = await timeoutFetch(api, openSeaApiKey ? { headers: { 'X-API-KEY': openSeaApiKey } } : {}, 15000);
+          const data = await response.json();
 
+          const collectionData = {
+            name: data.name || null,
+            slug: data.collection || null,
+            image_url: data.image_url || null,
+            description: data.description || null,
+            address: data.owner || null,
+          };
+
+          collectionCache.set(collectionSlug, collectionData);
+        } catch (error) {
+          logInfo('PPYang Error fetching data for getCollectionData e:', collectionSlug, error);
+        }
+      }
+
+      // If the collection data is already available, add it to the collectible
+      if (!item.collection || typeof item.collection === 'string') {
+        const cachedData = collectionCache.get(collectionSlug);
         item.collection = {
-          name: data.name ? data.name : null,
-          slug: data.collection ? data.collection : null,
-          image_url: data.image_url ? data.image_url : null,
-          description: data.description ? data.description : null,
+          name: cachedData.name,
+          slug: cachedData.slug,
+          image_url: cachedData.image_url,
+          description: cachedData.description,
+          address: cachedData.address,
         };
 
         item.creator = {
-          address: data.owner ? data.owner : null,
+          address: cachedData.address,
         };
-      } catch (error) {
-        console.error('Error fetching data for:', collectionSlug, error);
-        // Depending on your error handling strategy, you might want to continue or stop the loop
       }
     }
 
@@ -661,10 +696,18 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
             chainId,
           };
         } else {
+          let imageUrl = null;
+          let schemaName = collectible.token_standard ? collectible.token_standard.toUpperCase() : null;
+
+          // Check if collectible.collection is an object and has the necessary properties
+          if (typeof collectible.collection === 'object' && collectible.collection !== null) {
+            imageUrl = collectible.collection.image_url;
+          }
+
           collectibleContract = {
             address: collectible.contract,
-            image_url: collectible.collection.image_url,
-            schema_name: collectible.token_standard.toUpperCase(),
+            image_url: imageUrl,
+            schema_name: schemaName,
             chainId,
           };
         }
@@ -789,7 +832,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const releaseLock = await this.mutexData.acquire();
     let newCollectible;
     let newAllCollectibleContracts;
-    console.log(this.state.allCollectibleContracts[selectedAddress], 'time do Brasil');
 
     if (balanceOf.isZero()) {
       newCollectible = collectibles.filter(
@@ -800,7 +842,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
           ? this.state.allCollectibleContracts[selectedAddress][chainId]
           : undefined;
         if (contracts) {
-          console.log(contracts, 'wowww1');
           const newContracts = contracts.filter((contract) => contract.address !== address);
 
           const newCollectibleContracts = {
@@ -814,7 +855,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
         }
       }
     } else {
-      console.log(collectibles, 'wowww');
       collectibles.forEach((collectible) => {
         if (collectible.token_id === token_id && collectible.address === address) {
           collectible.balanceOf = balanceOf;
