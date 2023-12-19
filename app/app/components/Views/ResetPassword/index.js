@@ -28,6 +28,7 @@ import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from '../../UI/Icon';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -182,6 +183,7 @@ class ResetPassword extends PureComponent {
 
 		toggleShowHint: PropTypes.func
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		password: '',
@@ -334,20 +336,29 @@ class ResetPassword extends PureComponent {
 
 	renderConfirmPassword() {
 		const { warningIncorrectPassword, password } = this.state;
+		const { isDarkMode } = this.context;
+
 		return (
-			<KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={'padding'}>
+			<KeyboardAvoidingView
+				style={[styles.keyboardAvoidingView, isDarkMode && baseStyles.darkBackground]}
+				behavior={'padding'}
+			>
 				<KeyboardAwareScrollView
 					style={baseStyles.flexGrow}
 					enableOnAndroid
 					keyboardShouldPersistTaps="handled"
 				>
 					<View style={styles.confirmPasswordWrapper}>
-						<Text style={styles.confirm_title}>{strings('manual_backup_step_1.confirm_password')}</Text>
-						<Text style={styles.confirm_label}>{strings('manual_backup_step_1.before_continiuing')}</Text>
+						<Text style={[styles.confirm_title, { color: isDarkMode && colors.white }]}>
+							{strings('manual_backup_step_1.confirm_password')}
+						</Text>
+						<Text style={[styles.confirm_label, { color: isDarkMode && colors.paliGrey200 }]}>
+							{strings('manual_backup_step_1.before_continiuing')}
+						</Text>
 
 						<View style={styles.container}>
 							<TextInput
-								style={[baseStyles.input, { width: '95%' }]}
+								style={[baseStyles.input, { width: '95%', color: isDarkMode && colors.white }]}
 								placeholder={strings('manual_backup_step_1.password')}
 								placeholderTextColor={colors.grey100}
 								onChangeText={this.onPasswordChange}
@@ -362,7 +373,7 @@ class ResetPassword extends PureComponent {
 							>
 								<Icon
 									name={this.state.confirmPasswordSecure ? 'visibilityOff' : 'visibility'}
-									color={colors.greytransparent}
+									color={isDarkMode ? colors.white : colors.greytransparent}
 									style={styles.visibilityBtn}
 								/>
 							</TouchableOpacity>
@@ -392,6 +403,7 @@ class ResetPassword extends PureComponent {
 
 	renderResetPassword() {
 		const { password, confirmPassword, loading } = this.state;
+		const { isDarkMode } = this.context;
 		const passwordsMatch = password !== '' && password === confirmPassword;
 		const showMatchLength = password && password.length > 0 && password.length < 6;
 		const showMatchPwd =
@@ -399,7 +411,7 @@ class ResetPassword extends PureComponent {
 		const canSubmit = passwordsMatch;
 
 		return (
-			<View style={styles.mainWrapper}>
+			<View style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View style={styles.wrapper} testID={'choose-password-screen'}>
 					<KeyboardAwareScrollView
 						style={styles.scrollableWrapper}
@@ -408,13 +420,13 @@ class ResetPassword extends PureComponent {
 						keyboardShouldPersistTaps="handled"
 					>
 						<View testID={'create-password-screen'}>
-							<Text style={[styles.hintLabel, styles.titlePadding]}>
+							<Text style={[styles.hintLabel, styles.titlePadding, { color: isDarkMode && 'white' }]}>
 								{strings('reset_password.password')}
 							</Text>
 
 							<View style={styles.container}>
 								<TextInput
-									style={[baseStyles.input, { width: '90%' }]}
+									style={[baseStyles.input, { width: '90%', color: isDarkMode && colors.white }]}
 									value={password}
 									onChangeText={this.onPasswordChange}
 									secureTextEntry={this.state.newPasswordSecure}
@@ -432,7 +444,7 @@ class ResetPassword extends PureComponent {
 								>
 									<Icon
 										name={this.state.newPasswordSecure ? 'visibilityOff' : 'visibility'}
-										color={colors.greytransparent}
+										color={isDarkMode ? colors.white : colors.greytransparent}
 										style={styles.visibilityBtn}
 									/>
 								</TouchableOpacity>
@@ -442,12 +454,14 @@ class ResetPassword extends PureComponent {
 							</View>
 
 							<View style={styles.field}>
-								<Text style={styles.hintLabel}>{strings('reset_password.confirm_password')}</Text>
+								<Text style={[styles.hintLabel, { color: isDarkMode && 'white' }]}>
+									{strings('reset_password.confirm_password')}
+								</Text>
 
 								<View style={styles.container}>
 									<TextInput
 										ref={this.confirmPasswordInput}
-										style={[baseStyles.input, { width: '90%' }]}
+										style={[baseStyles.input, { width: '90%', color: isDarkMode && colors.white }]}
 										value={confirmPassword}
 										onChangeText={this.setConfirmPassword}
 										secureTextEntry={this.state.confirmNewPasswordSecure}
@@ -465,7 +479,7 @@ class ResetPassword extends PureComponent {
 									>
 										<Icon
 											name={this.state.confirmNewPasswordSecure ? 'visibilityOff' : 'visibility'}
-											color={colors.greytransparent}
+											color={isDarkMode ? colors.white : colors.greytransparent}
 											style={styles.visibilityBtn}
 										/>
 									</TouchableOpacity>
@@ -507,12 +521,15 @@ class ResetPassword extends PureComponent {
 
 	render() {
 		const { view, ready } = this.state;
+		const { isDarkMode } = this.context;
 		if (!ready) return this.renderLoader();
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<MStatusBar navigation={this.props.navigation} />
 				<TitleBar
 					title={strings('password_reset.change_password')}
+					titleStyle={{ color: isDarkMode && colors.white }}
+					withBackground
 					onBack={() => {
 						this.props.navigation.pop();
 					}}

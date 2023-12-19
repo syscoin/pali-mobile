@@ -149,7 +149,7 @@ export default class AboutView extends PureComponent {
 	render() {
 		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={[styles.wrapper, { backgroundColor: isDarkMode && colors.brandBlue700 }]}>
+			<SafeAreaView style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar

@@ -221,7 +221,7 @@ class DeveloperOptions extends PureComponent {
 		const { isDarkMode } = this.context;
 		return (
 			<SafeAreaView
-				style={[baseStyles.flexGrow, { backgroundColor: isDarkMode && colors.brandBlue700 }]}
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
 				testID={'wallet-screen'}
 			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
@@ -239,9 +239,11 @@ class DeveloperOptions extends PureComponent {
 					withBackground
 				/>
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View style={styles.container}>
-						<View style={styles.switchLayout}>
-							<Text style={styles.titleHead}>{strings('developer_options.testnet_availability')}</Text>
+					<View style={[styles.container, isDarkMode && baseStyles.darkBackground]}>
+						<View style={[styles.switchLayout, isDarkMode && baseStyles.darkBackground]}>
+							<Text style={[styles.titleHead, isDarkMode && baseStyles.textDark]}>
+								{strings('developer_options.testnet_availability')}
+							</Text>
 							<View style={styles.flex} />
 							<Switch
 								style={styles.switch}

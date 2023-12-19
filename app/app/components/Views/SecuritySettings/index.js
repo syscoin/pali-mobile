@@ -18,6 +18,7 @@ import CheckPassword from '../../UI/CheckPassword';
 import PromptView from '../../UI/PromptView';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -69,6 +70,7 @@ class SecuritySettings extends PureComponent {
 		 */
 		navigation: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		biometryChoice: false,
@@ -178,8 +180,13 @@ class SecuritySettings extends PureComponent {
 			onlyCheckInputPwd,
 			error
 		} = this.state;
+		const { isDarkMode } = this.context;
+
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
@@ -198,6 +205,7 @@ class SecuritySettings extends PureComponent {
 							title={strings('app_settings.change_password')}
 							titleStyle={styles.title}
 							baseStyle={styles.settingDrawerStyle}
+							ignoreDarkMode
 						/>
 					</View>
 					<View style={styles.containerView2}>

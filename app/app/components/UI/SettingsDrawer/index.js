@@ -69,14 +69,34 @@ const defaultProps = {
 	titleStyle: undefined
 };
 
-const SettingsDrawer = ({ image, title, iconStyle, onPress, titleStyle, hideLine, baseStyle, isTheme }) => {
+const SettingsDrawer = ({
+	image,
+	title,
+	iconStyle,
+	onPress,
+	titleStyle,
+	hideLine,
+	baseStyle,
+	isTheme,
+	ignoreDarkMode = false
+}) => {
 	const { isDarkMode } = useTheme();
+
 	return (
 		<TouchableOpacity onPress={onPress}>
-			<View style={[styles.root, baseStyle, isDarkMode && styles.rootDark, hideLine && styles.hideLineStyle]}>
+			<View
+				style={[
+					styles.root,
+					baseStyle,
+					!ignoreDarkMode && isDarkMode && styles.rootDark,
+					hideLine && styles.hideLineStyle
+				]}
+			>
 				{image && <Image style={[styles.image, iconStyle]} source={image} />}
 				<View style={styles.content}>
-					<Text style={[styles.title, titleStyle, isDarkMode && styles.titleDark]}>{title}</Text>
+					<Text style={[styles.title, titleStyle, !ignoreDarkMode && isDarkMode && styles.titleDark]}>
+						{title}
+					</Text>
 				</View>
 				{isTheme ? (
 					<View style={styles.themeContainer}>
