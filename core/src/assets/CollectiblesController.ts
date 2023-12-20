@@ -309,6 +309,10 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const alreadyFetchedCollections = this.state.allCollectibles[selectedAddress]?.[selectedChainId] || [];
 
     // Update the cache with already fetched collections
+
+    //TODO: adicionar um timestamp na collection cache para atualizar a cada 1 semana, para
+    // Atualizar os metadados da colecction ja chamadas pela api antes.
+
     alreadyFetchedCollections.forEach((item) => {
       if (item.collection && item.collection.slug) {
         collectionCache.set(item.collection.slug, item.collection);
