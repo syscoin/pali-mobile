@@ -368,6 +368,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
    * Used to verify if the collection cache is expired
    */
   private isCacheExpired(timestamp: number) {
+    // 1 week expiry time
     const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
     const currentTime = Date.now();
 
