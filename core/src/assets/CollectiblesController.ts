@@ -299,7 +299,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
     const updateCollectibles = await this.getCollectionData(collectibles, selectedAddress, chainId);
 
-    console.log(updateCollectibles, 'updateCollectibles');
     return await this.fixDataCollectibles(updateCollectibles, chainId, selectedAddress, contractController);
   }
 
@@ -309,10 +308,6 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
     const alreadyFetchedCollections = this.state.allCollectibles[selectedAddress]?.[selectedChainId] || [];
 
     // Update the cache with already fetched collections
-
-    //TODO: adicionar um timestamp na collection cache para atualizar a cada 1 semana, para
-    // Atualizar os metadados da colecction ja chamadas pela api antes.
-
     alreadyFetchedCollections.forEach((item) => {
       if (item.collection && item.collection.slug) {
         collectionCache.set(item.collection.slug, item.collection);
@@ -323,7 +318,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       const collectionSlug = item.collection;
 
       // Check if the collection data is already available, if not call the opensea api
-      if (!collectionCache.has(collectionSlug)) {
+      if (!collectionCache.has(collectionSlug) || this.isCacheExpired(collectionCache.get(collectionSlug).updatedAt)) {
         let api = `https://api.opensea.io/api/v2/collections/${collectionSlug}`;
         let response: Response;
 
@@ -337,11 +332,11 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
             image_url: data.image_url || null,
             description: data.description || null,
             address: data.owner || null,
+            updatedAt: Date.now(),
           };
 
           collectionCache.set(collectionSlug, collectionData);
         } catch (error) {
-          //TODO: testar caso a chamada falhe se a nft sem collection pode acabar crashando o app ou algo assim.
           logInfo('PPYang Error fetching data for getCollectionData e:', collectionSlug, error);
         }
       }
@@ -349,21 +344,34 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       // If the collection data is already available, add it to the collectible
       if (!item.collection || typeof item.collection === 'string') {
         const cachedData = collectionCache.get(collectionSlug);
-        item.collection = {
-          name: cachedData.name,
-          slug: cachedData.slug,
-          image_url: cachedData.image_url,
-          description: cachedData.description,
-          address: cachedData.address,
-        };
+        if (cachedData) {
+          item.collection = {
+            name: cachedData.name,
+            slug: cachedData.slug,
+            image_url: cachedData.image_url,
+            description: cachedData.description,
+            address: cachedData.address,
+            updatedAt: cachedData.updatedAt,
+          };
 
-        item.creator = {
-          address: cachedData.address,
-        };
+          item.creator = {
+            address: cachedData.address,
+          };
+        }
       }
     }
 
     return collectionArray;
+  }
+
+  /**
+   * Used to verify if the collection cache is expired
+   */
+  private isCacheExpired(timestamp: number) {
+    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+    const currentTime = Date.now();
+
+    return currentTime - timestamp > oneWeekInMilliseconds;
   }
 
   async fixDataCollectibles(
