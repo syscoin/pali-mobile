@@ -341,6 +341,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
           collectionCache.set(collectionSlug, collectionData);
         } catch (error) {
+          //TODO: testar caso a chamada falhe se a nft sem collection pode acabar crashando o app ou algo assim.
           logInfo('PPYang Error fetching data for getCollectionData e:', collectionSlug, error);
         }
       }
