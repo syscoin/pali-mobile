@@ -1423,10 +1423,10 @@
     "@json-rpc-tools/types" "^1.7.6"
     "@pedrouid/environment" "^1.0.1"
 
-"@luncheon/simplify-svg-path@^0.1.3":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@luncheon/simplify-svg-path/-/simplify-svg-path-0.1.5.tgz#ec7d3fbc7e6cc06f7696d846a4b310000e2552a1"
-  integrity sha512-D7oBkAz65OfFgHBRuQ2eXhm/+pQcYyC41jE+TJ4Hi/5+12qgG1mzk0DMpTKVsqJLYn8gbq9roUSLbaEy4M5MRw==
+"@luncheon/simplify-svg-path@0.2.0", "@luncheon/simplify-svg-path@^0.1.3":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@luncheon/simplify-svg-path/-/simplify-svg-path-0.2.0.tgz#d70b6479280b477b87f6f6d4450646914160ace6"
+  integrity sha512-zBh9HwFBJUGMbUDf88HleyqcmO81d9Hiv9wxcwBeBLGGfzfEGIuaOSjyAH6f3fvh/pFxF1pEnolY2PzSJxsSAg==
 
 "@maticnetwork/maticjs@2.0.45":
   version "2.0.45"
