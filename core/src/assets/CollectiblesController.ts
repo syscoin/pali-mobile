@@ -299,7 +299,15 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
 
     const updateCollectibles = await this.getCollectionData(collectibles, selectedAddress, chainId);
 
-    return await this.fixDataCollectibles(updateCollectibles, chainId, selectedAddress, contractController);
+    //Clean up collectibles data to use the same format as the other collectibles
+    const finalCollectibles = updateCollectibles.map((collectible: { token_id: any; identifier: any }) => {
+      return {
+        ...collectible,
+        token_id: collectible.token_id ? collectible.token_id : collectible.identifier,
+      };
+    });
+
+    return await this.fixDataCollectibles(finalCollectibles, chainId, selectedAddress, contractController);
   }
 
   private async getCollectionData(collectionArray: any[], selectedAddress: string, selectedChainId: string) {
@@ -391,7 +399,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       const assetContractAddress = collectible.asset_contract
         ? collectible.asset_contract.address
         : collectible.contract;
-      const tokenId = collectible.token_id ? collectible.token_id : collectible.identifier;
+      const tokenId = collectible.token_id;
       const tokenStandard = collectible.token_standard ? collectible.token_standard.toLowerCase() : null;
 
       if (
@@ -494,7 +502,7 @@ export class CollectiblesController extends BaseController<CollectiblesConfig, C
       const owner = allOwners.find(
         (item) =>
           item.address === (collectible.asset_contract ? collectible.asset_contract.address : collectible.contract) &&
-          item.token_id === (collectible.token_id ? collectible.token_id : collectible.identifier),
+          item.token_id === collectible.token_id,
       );
 
       if (owner) {
