@@ -65,8 +65,15 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 4379F36F969347758D1A9F96 /* Lottie.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 62CA59B71E3C173B002D7188;
+			remoteGlobalIDString = 486E83B1220A317C007CD915;
 			remoteInfo = Lottie_iOS;
+		};
+		FFFC9AB42B55C3CC007644E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4379F36F969347758D1A9F96 /* Lottie.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 486E8675220A3751007CD915;
+			remoteInfo = LottieLibraryMacOS;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -187,9 +194,10 @@
 			isa = PBXGroup;
 			children = (
 				15723E2D225FD0B800A5B418 /* Lottie.framework */,
-				15723E2F225FD0B800A5B418 /* Lottie.framework */,
 				15723E31225FD0B800A5B418 /* Lottie.framework */,
+				15723E2F225FD0B800A5B418 /* Lottie.framework */,
 				15723E33225FD0B800A5B418 /* libLottie.a */,
+				FFFC9AB52B55C3CC007644E2 /* libLottie.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -401,6 +409,13 @@
 			fileType = archive.ar;
 			path = libLottie.a;
 			remoteRef = 15723E32225FD0B800A5B418 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FFFC9AB52B55C3CC007644E2 /* libLottie.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libLottie.a;
+			remoteRef = FFFC9AB42B55C3CC007644E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -615,7 +630,7 @@
 				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWalletDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 6YCW295639;
@@ -682,7 +697,7 @@
 				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 6YCW295639;
 				ENABLE_BITCODE = NO;

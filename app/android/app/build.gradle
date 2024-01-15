@@ -52,8 +52,8 @@ android {
 		applicationId "io.paliwallet"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 28
-		versionName "1.1.3"
+		versionCode 29
+		versionName "1.1.4"
 		multiDexEnabled true
 		missingDimensionStrategy "minReactNative", "minReactNative46"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -77,10 +77,10 @@ android {
 
 	signingConfigs {
 		release {
-			storeFile file('../GoPocket')
-			storePassword System.getenv("KEYSTORE_PASSWD")
-			keyAlias 'GoPocket'
-			keyPassword System.getenv("KEYSTORE_PASSWD")
+			storeFile file('paliwallet.keystore')
+			storePassword "paligangue"
+			keyAlias 'my-alias'
+			keyPassword "paligangue"
 		}
 		debug {
             storeFile file('debug.keystore')
