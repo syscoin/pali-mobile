@@ -1,7 +1,12 @@
 import React, { PureComponent } from 'react';
+import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
+import { compose } from 'redux';
+import { OTC_ONBOARDING_TOUR, TRUE } from '../../../constants/storage';
+
 import {
 	RefreshControl,
 	ScrollView,
+	FlatList,
 	ActivityIndicator,
 	StyleSheet,
 	View,
@@ -16,10 +21,13 @@ import {
 	Text,
 	DeviceEventEmitter
 } from 'react-native';
+
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { colors, baseStyles, fontStyles } from '../../../styles/common';
 import Tokens, { closeAllOpenRows, hideRiskPop } from '../../UI/Tokens';
+import { StepNumber, Tooltip } from '../../UI/OnboardingTour';
+import Device from '../../../util/Device';
 import Icon from '../../UI/Icon';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
@@ -70,6 +78,8 @@ const cardHeight = (cardWidth * 250) / 375;
 const chainSettingHeight = viewportHeight;
 const scrollToY = cardHeight * 0.56;
 
+const CopilotView = walkthroughable(View);
+
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
@@ -102,7 +112,6 @@ const styles = StyleSheet.create({
 	scannerButton: {
 		paddingRight: 20
 	},
-
 	walletConnectButton: {
 		paddingLeft: 20,
 		paddingRight: 14
@@ -236,7 +245,30 @@ class Wallet extends PureComponent {
 	carouselRef = React.createRef();
 	firstItem = 0;
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
+		if (Device.isIos()) {
+			// This is for IOS onboarding
+			DeviceEventEmitter.addListener('OnboardingTour', async () => {
+				const otcOnboardingTour = await AsyncStorage.getItem(OTC_ONBOARDING_TOUR);
+
+				if (!otcOnboardingTour || otcOnboardingTour !== TRUE) {
+					if (this.carouselRef && this.carouselRef.current) {
+						this.props.start();
+					}
+				}
+			});
+		}
+
+		this.focusListenerOnboarding = this.props.navigation.addListener('didFocus', () => {
+			// This is for when the use clicks on the onboarding tour on settings.
+			const params = this.props.navigation.state.params;
+			if (params && params.onboard && this.carouselRef && this.carouselRef.current) {
+				this.carouselRef.current.snapToItem(9999999, true);
+				this.props.start();
+				this.props.navigation.state.params = {};
+			}
+		});
+
 		if (Platform.OS === 'android') {
 			this.focusListener = this.props.navigation.addListener('didFocus', () => {
 				AsyncStorage.getItem('NotifypermissionModalShowed').then(previouslyShowed => {
@@ -266,7 +298,7 @@ class Wallet extends PureComponent {
 		} = Engine.context;
 		const actions = [
 			TokenRatesController.poll(),
-			TokenBalancesController.poll(),
+			TokenBalancesController.pollAll(),
 			AssetsDetectionController.detectTokens(),
 			CollectiblesController.poll(),
 			DefiProtocolController.poll(),
@@ -581,6 +613,13 @@ class Wallet extends PureComponent {
 		</Modal>
 	);
 
+	// This is for android onboarding
+	onOnboarding = () => {
+		if (this.carouselRef && this.carouselRef.current) {
+			this.props.start();
+		}
+	};
+
 	renderNotifyPermissionModal = () => (
 		<Modal isVisible={this.state.showNotifypermissionModal && !this.props.isLockScreen} statusBarTranslucent>
 			<View style={styles.notifyModalContainer}>
@@ -592,6 +631,9 @@ class Wallet extends PureComponent {
 							style={styles.cancelButton}
 							onPress={() => {
 								this.setState({ showNotifypermissionModal: false });
+								setTimeout(() => {
+									this.onOnboarding(), 300;
+								});
 							}}
 						>
 							<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
@@ -600,9 +642,14 @@ class Wallet extends PureComponent {
 							style={styles.okButton}
 							onPress={() => {
 								this.setState({ showNotifypermissionModal: false });
+
 								setTimeout(() => {
 									NativeModules.RNToolsManager.gotoSetNotification();
 								}, 50);
+
+								setTimeout(() => {
+									this.onOnboarding();
+								}, 300);
 							}}
 						>
 							<Text style={styles.okText}>{strings('navigation.ok')}</Text>
@@ -698,9 +745,13 @@ class Wallet extends PureComponent {
 		>
 			<MStatusBar navigation={this.props.navigation} />
 			<View style={styles.header}>
-				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
-					<Icon name="settings" width="24" height="24" />
-				</TouchableOpacity>
+				<CopilotStep text={strings('onboarding_wallet.onboarding1')} order={1} name="onboarding1">
+					<CopilotView style={{ width: 25 }}>
+						<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+							<Icon name="settings" width="24" height="24" />
+						</TouchableOpacity>
+					</CopilotView>
+				</CopilotStep>
 				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
 					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
 				</View>
@@ -715,24 +766,31 @@ class Wallet extends PureComponent {
 						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
 					</TouchableOpacity>
 				)}
+
 				<TouchableOpacity style={styles.scannerButton} hitSlop={styles.hitSlop} onPress={this.openQRScanner}>
-					<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+					<CopilotStep
+						active={true}
+						text={strings('onboarding_wallet.onboarding2')}
+						order={2}
+						name="onboarding2"
+					>
+						<CopilotView>
+							<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+						</CopilotView>
+					</CopilotStep>
 				</TouchableOpacity>
 			</View>
 
 			<View style={styles.wrapper}>
-				<ScrollView
+				<FlatList
 					style={styles.wrapper}
-					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
-					keyboardShouldPersistTaps="handled"
+					data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
+					keyExtractor={(item, index) => index.toString()}
+					renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
 					scrollEnabled={!this.state.chainItemDraging}
-					ref={this.scrollViewRef}
 					onMomentumScrollEnd={this.contentViewScroll}
-				>
-					<View style={styles.wrapper}>
-						{this.props.selectedAddress ? this.renderContent() : this.renderLoader()}
-					</View>
-				</ScrollView>
+					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+				/>
 			</View>
 			<CopyView
 				isVisible={this.state.isCopyViewVisible}
@@ -772,7 +830,18 @@ const mapDispatchToProps = dispatch => ({
 		dispatch(showScanner(onStartScan, onScanError, onScanSuccess))
 });
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+export default compose(
+	copilot({
+		backdropColor: 'rgba(0, 0, 0, 0.64)',
+		stepNumberComponent: StepNumber,
+		tooltipComponent: Tooltip,
+
+		tooltipStyle: {
+			borderRadius: 15
+		}
+	}),
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)
 )(Wallet);

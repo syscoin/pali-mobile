@@ -16,6 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import io.paliwallet.nativeModules.PreventScreenshotPackage;
+import com.swmansion.reanimated.ReanimatedJSIModulePackage;
+import com.facebook.react.bridge.JSIModulePackage;
 
 import android.text.TextUtils;
 
@@ -102,6 +104,11 @@ public class MainApplication extends MultiDexApplication implements ShareApplica
 		@Override
 		protected String getJSMainModuleName() {
 			return "index";
+		}
+
+		@Override
+		protected JSIModulePackage getJSIModulePackage() {
+			return new ReanimatedJSIModulePackage();
 		}
   	};
 

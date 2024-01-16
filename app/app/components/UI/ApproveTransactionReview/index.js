@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
 		width: 51,
 		color: colors.$030319,
 		...fontStyles.bold,
-		fontSize: 16
+		fontSize: 16,
+		marginRight: 10
 	},
 	address: {
 		color: colors.$60657D,
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
 	securityPanel: {
 		width: '100%',
 		minHeight: 50,
-		paddingTop: 12,
-		paddingBottom: 12,
+		paddingTop: 10,
+		paddingBottom: 10,
 		marginTop: 12,
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -178,7 +179,8 @@ class ApproveTransactionReview extends PureComponent {
 		 */
 		handleGasFeeSelection: PropTypes.func,
 		setApproveAmount: PropTypes.func,
-		browser: PropTypes.object
+		browser: PropTypes.object,
+		isScam: PropTypes.bool //If the token is not secure, it will be true
 	};
 
 	state = {
@@ -205,6 +207,7 @@ class ApproveTransactionReview extends PureComponent {
 			setApproveAmount,
 			contractList
 		} = this.props;
+
 		const host = getHost(this.originIsWalletConnect ? origin.split(WALLET_CONNECT_ORIGIN)[1] : origin);
 		let tokenSymbol, tokenDecimals;
 		try {
@@ -216,6 +219,7 @@ class ApproveTransactionReview extends PureComponent {
 			tokenDecimals = 18;
 		}
 		const { spenderAddress, encodedAmount } = decodeApproveData(data);
+
 		setApproveAmount(encodedAmount, spenderAddress);
 		const { name: method } = await getMethodData(data);
 
@@ -229,6 +233,7 @@ class ApproveTransactionReview extends PureComponent {
 			onEvent('RiskApproval');
 		}
 		const initAmount = parseInt(encodedAmount);
+
 		this.setState({
 			host,
 			method,
@@ -236,6 +241,7 @@ class ApproveTransactionReview extends PureComponent {
 			tokenSymbol,
 			token: { symbol: tokenSymbol, decimals: tokenDecimals },
 			spenderAddress,
+
 			securityLevel: spenderInfo?.status || 0,
 			isInfiniteLimit: initAmount !== 0,
 			limitValue: initAmount !== 0 ? '' : '0',
@@ -286,6 +292,7 @@ class ApproveTransactionReview extends PureComponent {
 
 	renderSecurityPanel = () => {
 		const { securityLevel } = this.state;
+		const { isScam } = this.props;
 		if (securityLevel === 1) {
 			return (
 				<LinearGradient
@@ -302,6 +309,26 @@ class ApproveTransactionReview extends PureComponent {
 				</LinearGradient>
 			);
 		}
+
+		if (isScam) {
+			return (
+				<LinearGradient
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 0 }}
+					colors={['#FF9595', '#FD5E5E']}
+					style={styles.securityPanel}
+				>
+					<Image
+						style={styles.securityImage2}
+						source={require('../../../images/approval_security_risk.png')}
+					/>
+					<Text allowFontScaling={false} style={styles.securityText}>
+						{strings('security.approve_spender_risk_pishing')}
+					</Text>
+				</LinearGradient>
+			);
+		}
+
 		if (securityLevel === 2) {
 			return (
 				<LinearGradient
@@ -314,10 +341,13 @@ class ApproveTransactionReview extends PureComponent {
 						style={styles.securityImage2}
 						source={require('../../../images/approval_security_risk.png')}
 					/>
-					<Text style={styles.securityText}>{strings('security.approve_spender_risk')}</Text>
+					<Text allowFontScaling={false} style={styles.securityText}>
+						{strings('security.approve_spender_risk')}
+					</Text>
 				</LinearGradient>
 			);
 		}
+
 		return (
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
@@ -326,9 +356,6 @@ class ApproveTransactionReview extends PureComponent {
 				style={styles.securityPanel}
 			>
 				<Text style={styles.securityText0}>{strings('security.approve_spender_unknown')}</Text>
-				<TouchableOpacity style={styles.commonRiskBtn} activeOpacity={0.6} onPress={this.props.showCommonRisk}>
-					<Text style={styles.commonRiskBtnText}>{strings('security.common_risk')}</Text>
-				</TouchableOpacity>
 			</LinearGradient>
 		);
 	};
@@ -362,20 +389,32 @@ class ApproveTransactionReview extends PureComponent {
 		const approveLimitText = originalAmount === 0 ? strings('other.amend_limit') : strings('other.approve_limit');
 		return (
 			<View style={styles.root} testID={'approve-screen'}>
-				<Text style={styles.title}>{title}</Text>
+				<Text style={styles.title} allowFontScaling={false}>
+					{title}
+				</Text>
 				<TransactionHeader
 					currentPageInformation={{ origin, spenderAddress, title: host, url: activeTabUrl }}
 				/>
 				{this.renderSecurityPanel()}
 				<View style={styles.fromWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.from')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.from, 17)}</Text>
+					<Text style={styles.addressTitle} allowFontScaling={false}>
+						{strings('other.from')}
+					</Text>
+					<Text style={styles.address} allowFontScaling={false}>
+						{renderShortAddress(transaction.from, 16)}
+					</Text>
 				</View>
 				<View style={styles.toWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.to')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.to, 17)}</Text>
+					<Text style={styles.addressTitle} allowFontScaling={false}>
+						{strings('other.to')}
+					</Text>
+					<Text style={styles.address} allowFontScaling={false}>
+						{renderShortAddress(transaction.to, 16)}
+					</Text>
 				</View>
-				<Text style={styles.limitTitle}>{approveLimitText}</Text>
+				<Text style={styles.limitTitle} allowFontScaling={false}>
+					{approveLimitText}
+				</Text>
 				<View style={styles.limitWrapper}>
 					<TouchableOpacity
 						style={styles.selectBtn}
@@ -383,7 +422,9 @@ class ApproveTransactionReview extends PureComponent {
 						disabled={!ready}
 					>
 						<View style={[styles.selectBox, !isInfiniteLimit && styles.unselectBox]} />
-						<Text style={styles.infinite}>{strings('other.infinite')}</Text>
+						<Text style={styles.infinite} allowFontScaling={false}>
+							{strings('other.infinite')}
+						</Text>
 					</TouchableOpacity>
 
 					<View style={baseStyles.flexGrow} />
@@ -403,6 +444,7 @@ class ApproveTransactionReview extends PureComponent {
 						onFocus={this.onLimitInputFocus}
 						editable={ready}
 						value={limitValueFormat}
+						allowFontScaling={false}
 					/>
 				</View>
 				<NetworkFee transaction={transaction.transaction} type={type} onChange={this.onGasChange} />

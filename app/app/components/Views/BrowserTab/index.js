@@ -1789,13 +1789,13 @@ const BrowserTab = props => {
 			});
 			props.navigation.addListener('willBlur', () => {
 				BackHandler.removeEventListener('hardwareBackPress', handleAndroidBackPress);
-				DeviceEventEmitter.removeListener('AddressbarStateEmitter', addressbarState);
+				DeviceEventEmitter.removeAllListeners('AddressbarStateEmitter');
 			});
 			setInitListener(true);
 		}
 		return function cleanup() {
 			BackHandler.removeEventListener('hardwareBackPress', handleAndroidBackPress);
-			DeviceEventEmitter.removeListener('AddressbarStateEmitter', addressbarState);
+			DeviceEventEmitter.removeAllListeners('AddressbarStateEmitter');
 		};
 	}, [backEnabled, go, goBack, initListener, isTabActive, props.addressBarRef, props.navigation, showHomepage]);
 

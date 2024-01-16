@@ -54,6 +54,21 @@ const defaultProps = {
 const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, baseStyle }) => {
 	let height = 44;
 	let paddingTop = 0;
+	const [dynamicFontSize, setDynamicFontSize] = React.useState(18); // default font size
+	React.useEffect(() => {
+		// Reset the dynamic font size when the title changes
+		setDynamicFontSize(18);
+	}, [title]);
+
+	const handleTextLayout = e => {
+		const { width } = e.nativeEvent.layout;
+		const containerWidth = 280; // Define or fetch the container width
+		if (width > containerWidth) {
+			// Reduce font size if text is too wide
+			setDynamicFontSize(prevSize => prevSize * 0.9);
+		}
+	};
+
 	if (fullScreenOnAndroid) {
 		height = Device.isAndroid() && StatusBar.currentHeight ? height + StatusBar.currentHeight : height;
 		paddingTop = Device.isAndroid() && StatusBar.currentHeight ? StatusBar.currentHeight : 0;
@@ -66,7 +81,9 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 					<Image source={require('../../../images/back.png')} />
 				</TouchableOpacity>
 			)}
-			<Text style={[styles.title, titleStyle]}>{title}</Text>
+			<Text style={[styles.title, titleStyle, { fontSize: dynamicFontSize }]} onLayout={handleTextLayout}>
+				{title}
+			</Text>
 			{rightView && <View style={[styles.rightView, { top: paddingTop }]}>{rightView}</View>}
 		</View>
 	);

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { colors, fontStyles } from '../../../styles/common';
@@ -35,6 +36,8 @@ const rightShadow = (20.0 / 375) * cardWidth;
 const chainAllWidth = cardWidth - leftShadow - rightShadow - 12 * 2;
 const chainItemWidth = 40;
 const chainColumnNum = Math.floor(chainAllWidth / chainItemWidth);
+
+const CopilotView = walkthroughable(View);
 
 const ObserveColorStyle = { color: '#3FBDD2' };
 
@@ -562,6 +565,7 @@ class CardSwiper extends PureComponent {
 									)}
 
 									<View style={styles.flexSpace} />
+
 									<View style={[styles.topIconsView, hasEns && styles.paddingTopZero]}>
 										<TouchableOpacity
 											hitSlop={styles.hitSlopLeft}
@@ -570,25 +574,42 @@ class CardSwiper extends PureComponent {
 											}}
 											style={{ marginRight: 10 }}
 										>
-											<Icon
-												name={amountHide ? 'visibilityOff' : 'visibility'}
-												color={colors.white}
-												width="22"
-												height="22"
-											/>
+											<CopilotStep
+												text={strings('onboarding_wallet.onboarding3')}
+												order={3}
+												name="onboarding3"
+											>
+												<CopilotView>
+													<Icon
+														name={amountHide ? 'visibilityOff' : 'visibility'}
+														color={colors.white}
+														width="22"
+														height="22"
+													/>
+												</CopilotView>
+											</CopilotStep>
 										</TouchableOpacity>
+
 										<TouchableOpacity
 											hitSlop={styles.hitSlopRight}
 											onPress={() => {
 												this.props.navigation.navigate('WalletManagement');
 											}}
 										>
-											<Icon
-												name={'accountSettings'}
-												color={colors.white}
-												width="19"
-												height="19"
-											/>
+											<CopilotStep
+												text={strings('onboarding_wallet.onboarding4')}
+												order={4}
+												name="onboarding4"
+											>
+												<CopilotView>
+													<Icon
+														name={'accountSettings'}
+														color={colors.white}
+														width="19"
+														height="19"
+													/>
+												</CopilotView>
+											</CopilotStep>
 										</TouchableOpacity>
 									</View>
 								</View>
@@ -726,14 +747,22 @@ class CardSwiper extends PureComponent {
 										activeOpacity={0.5}
 										key={'chain-type-more'}
 									>
-										<Image
-											style={
-												this.state.popModalVisible || hasInMore
-													? styles.networkSelected
-													: styles.networkNormal
-											}
-											source={require('../../../images/ic_card_more.png')}
-										/>
+										<CopilotStep
+											text={strings('onboarding_wallet.onboarding5')}
+											order={5}
+											name="onboarding5"
+										>
+											<CopilotView>
+												<Image
+													style={
+														this.state.popModalVisible || hasInMore
+															? styles.networkSelected
+															: styles.networkNormal
+													}
+													source={require('../../../images/ic_card_more.png')}
+												/>
+											</CopilotView>
+										</CopilotStep>
 										<View
 											style={[
 												styles.chainNameView,

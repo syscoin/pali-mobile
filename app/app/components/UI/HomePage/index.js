@@ -239,7 +239,7 @@ class HomePage extends PureComponent {
 			this.setItemDragging(false);
 		});
 		const { dappPageAll } = this.props;
-		const dappPage = dappPageAll.en;
+		const dappPage = strings('other.accept_language') === 'es' ? dappPageAll.es : dappPageAll.en;
 		const shouldHideSth = shouldHideSthForAppStoreReviewer();
 
 		let initialPage = 0;
@@ -247,7 +247,7 @@ class HomePage extends PureComponent {
 		if (tabIndex) {
 			initialPage = Number(tabIndex);
 			if (dappPage?.networks) {
-				if (tabIndex > dappPage.networks.length - 1) {
+				if (tabIndex > dappPage.networks.length) {
 					initialPage = 0;
 				}
 			}
@@ -264,6 +264,13 @@ class HomePage extends PureComponent {
 			});
 		} else {
 			this.statusBarHeight = StatusBar.currentHeight || 0;
+		}
+		if (Device.isAndroid()) {
+			const tabIndex = await AsyncStorage.getItem(HOMEPAGE_TAB_INDEX);
+
+			if (tabIndex && this.scrollableTabView) {
+				this.scrollableTabView.goToPage(tabIndex);
+			}
 		}
 	}
 
@@ -365,7 +372,7 @@ class HomePage extends PureComponent {
 		const tabs = [];
 		if (!this.state.shouldHideSth) {
 			tabs.push(
-				<View style={styles.content} tabLabel={'Favourites:-1'} key={'network_-1'}>
+				<View style={styles.content} tabLabel={`${strings('other.favorites')}:${-1}`} key={'network_-1'}>
 					{this.renderFavourites()}
 				</View>
 			);
@@ -617,6 +624,9 @@ class HomePage extends PureComponent {
 						{!shouldHideSth && dappPage.showBanner && this.renderBanner(dappPage)}
 						{dappPage.showContent && (
 							<ScrollableTabView
+								ref={ref => {
+									this.scrollableTabView = ref;
+								}}
 								style={styles.tabView}
 								renderTabBar={this.renderTabBar}
 								locked

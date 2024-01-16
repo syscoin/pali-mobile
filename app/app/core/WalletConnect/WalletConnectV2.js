@@ -987,7 +987,7 @@ export class WC2Manager {
 		util.logDebug(`WC2::session_proposal id=${id}`, params, params.proposer.metadata);
 
 		// If our wallet does not support the chain, reject the session
-		if (!params.requiredNamespaces.eip155) {
+		if (!params.requiredNamespaces.eip155 && !params.optionalNamespaces.eip155) {
 			await this.web3Wallet.rejectSession({
 				id: proposal.id,
 				reason: getSdkError('UNSUPPORTED_CHAINS')
@@ -1012,54 +1012,68 @@ export class WC2Manager {
 				}
 			}
 
-			Object.keys(requiredNamespaces).forEach(key => {
-				const accounts = [];
+			if (requiredNamespaces && Object.keys(requiredNamespaces).length > 0) {
+				Object.keys(requiredNamespaces).forEach(key => {
+					const accounts = [];
 
-				requiredNamespaces[key].chains.map(chain => {
-					[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
-				});
+					requiredNamespaces[key].chains.map(chain => {
+						[selectedAddress].map(acc => accounts.push(`${chain}:${acc}`));
+					});
 
-				namespaces[key] = {
-					accounts,
-					methods: requiredNamespaces[key].methods,
-					events: requiredNamespaces[key].events
-				};
-			});
-
-			Object.keys(optionalNamespaces).forEach(key => {
-				const accounts = [];
-
-				optionalNamespaces[key].chains.map(chain => {
-					if (chainsEnabled.includes(chain.split(':')[1]))
-						[selectedAddress].map(acc => {
-							if (!namespaces.eip155.accounts.includes(`${chain}:${acc}`)) {
-								return accounts.push(`${chain}:${acc}`);
-							}
-						});
-				});
-
-				if (!namespaces[key]) {
 					namespaces[key] = {
 						accounts,
-						methods: optionalNamespaces[key].methods,
-						events: optionalNamespaces[key].events
+						methods: requiredNamespaces[key].methods,
+						events: requiredNamespaces[key].events
 					};
-				} else {
-					namespaces[key] = {
-						accounts: [...namespaces[key].accounts, ...accounts],
-						methods: [...new Set([...namespaces[key].methods, ...optionalNamespaces[key].methods])],
-						events: [...new Set([...namespaces[key].events, ...optionalNamespaces[key].events])]
-					};
-				}
-			});
-
-			try {
-				WC2Manager.hub.emit('walletconnectSessionRequest', {
-					proposal,
-					namespaces,
-					relays,
-					currentPageInformation: proposer
 				});
+			}
+
+			if (optionalNamespaces && Object.keys(optionalNamespaces).length > 0) {
+				Object.keys(optionalNamespaces).forEach(key => {
+					const accounts = [];
+
+					optionalNamespaces[key].chains.map(chain => {
+						if (chainsEnabled.includes(chain.split(':')[1]))
+							[selectedAddress].map(acc => {
+								if (namespaces.eip155 && namespaces.eip155.accounts) {
+									if (!namespaces.eip155.accounts.includes(`${chain}:${acc}`)) {
+										return accounts.push(`${chain}:${acc}`);
+									}
+								} else {
+									return accounts.push(`${chain}:${acc}`);
+								}
+							});
+					});
+
+					if (!namespaces[key]) {
+						namespaces[key] = {
+							accounts,
+							methods: optionalNamespaces[key].methods,
+							events: optionalNamespaces[key].events
+						};
+					} else {
+						namespaces[key] = {
+							accounts: [...namespaces[key].accounts, ...accounts],
+							methods: [...new Set([...namespaces[key].methods, ...optionalNamespaces[key].methods])],
+							events: [...new Set([...namespaces[key].events, ...optionalNamespaces[key].events])]
+						};
+					}
+				});
+			}
+			try {
+				if (namespaces && Object.keys(namespaces).length > 0) {
+					WC2Manager.hub.emit('walletconnectSessionRequest', {
+						proposal,
+						namespaces,
+						relays,
+						currentPageInformation: proposer
+					});
+				} else {
+					await this.web3Wallet.rejectSession({
+						id: proposal.id,
+						reason: getSdkError('UNSUPPORTED_NAMESPACE_KEY')
+					});
+				}
 			} catch (err) {
 				await this.web3Wallet.rejectSession({
 					id: proposal.id,

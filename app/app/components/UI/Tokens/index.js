@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import {
 	TouchableOpacity,
 	StyleSheet,
@@ -42,7 +43,7 @@ import { bottomShadow } from '../CardSwiper';
 import { OTC_BANNER_HIDE, SORT_NAME, SORT_NETWORK, SORT_NETWORTH, TRUE } from '../../../constants/storage';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import ImageCapInset from '../ImageCapInset';
-import { Easing } from 'react-native-reanimated';
+import { EasingNode } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
 import { getSecurityData } from '../../../util/security';
@@ -54,6 +55,7 @@ const hideItemWidth = 70;
 const popPadding = 10;
 const r = width / 375;
 
+const CopilotView = walkthroughable(View);
 const headerMarginHorizontal = 14;
 const securityBtnWidth = 115;
 const securityBtnHeight = 52;
@@ -234,9 +236,8 @@ const styles = StyleSheet.create({
 	touchChildView: {
 		flex: 1,
 		justifyContent: 'center',
-		alignItems: 'stretch',
-		width: hideItemWidth,
-		paddingLeft: 6
+		alignItems: 'center',
+		width: hideItemWidth
 	},
 	space: {
 		width: 7
@@ -667,7 +668,7 @@ class Tokens extends PureComponent {
 		if (Platform.OS === 'android') {
 			BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
 		}
-		DeviceEventEmitter.removeListener('onParentScroll', this.onParentScroll);
+		DeviceEventEmitter.removeAllListeners('onParentScroll');
 	};
 
 	onBackAndroid = () => {
@@ -791,14 +792,23 @@ class Tokens extends PureComponent {
 							}
 						}}
 					>
-						<Image
-							source={
-								searchEditing
-									? require('../../../images/ic_asset_back.png')
-									: require('../../../images/ic_asset_sorting.png')
-							}
-							ref={this.buttonRef}
-						/>
+						<CopilotStep
+							active={!searchEditing}
+							text={strings('onboarding_wallet.onboarding6')}
+							order={6}
+							name="onboarding6"
+						>
+							<CopilotView>
+								<Image
+									source={
+										searchEditing
+											? require('../../../images/ic_asset_back.png')
+											: require('../../../images/ic_asset_sorting.png')
+									}
+									ref={this.buttonRef}
+								/>
+							</CopilotView>
+						</CopilotStep>
 					</TouchableOpacity>
 				)}
 				<View style={styles.headerSearch}>
@@ -815,14 +825,23 @@ class Tokens extends PureComponent {
 										Animated.timing(this.animWidth, {
 											toValue: searchViewWidth,
 											duration: 200,
-											easing: Easing.linear,
+											easing: EasingNode.linear,
 											useNativeDriver: true
 										}).start(({ finished }) => {
 											this.setState({ searchViewAnimed: true });
 										});
 									}}
 								>
-									<Image source={require('../../../images/ic_asset_search.png')} />
+									<CopilotStep
+										active={!searchEditing}
+										text={strings('onboarding_wallet.onboarding7')}
+										order={7}
+										name="onboarding7"
+									>
+										<CopilotView>
+											<Image source={require('../../../images/ic_asset_search.png')} />
+										</CopilotView>
+									</CopilotStep>
 								</TouchableOpacity>
 							)}
 							{isEtherscanAvailable && !shouldHideSthForAppStoreReviewer() && (
@@ -834,13 +853,23 @@ class Tokens extends PureComponent {
 							<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
 								<Image source={require('../../../images/ic_asset_history.png')} />
 							</TouchableOpacity>
+
 							<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
-								<ImageBackground
-									source={require('../../../images/ic_asset_security.png')}
-									style={styles.backgroundImage}
+								<CopilotStep
+									active={!searchEditing}
+									text={strings('onboarding_wallet.onboarding8')}
+									order={8}
+									name="onboarding8"
 								>
-									<MaterialIcons color={colors.$8F92A1} size={22} name="security" />
-								</ImageBackground>
+									<CopilotView>
+										<ImageBackground
+											source={require('../../../images/ic_asset_security.png')}
+											style={styles.backgroundImage}
+										>
+											<MaterialIcons color={colors.$8F92A1} size={22} name="security" />
+										</ImageBackground>
+									</CopilotView>
+								</CopilotStep>
 							</TouchableOpacity>
 
 							<View style={styles.flexOne} />
@@ -893,70 +922,81 @@ class Tokens extends PureComponent {
 					)}
 				</View>
 				{!searchEditing && (
-					<View style={[styles.tnLayout]}>
-						<AnimatedTouchableOpacity
-							hitSlop={styles.hitSlop}
-							activeOpacity={1.0}
-							style={[
-								styles.tokenTouch,
-								!nftChecked && styles.tnChecked,
-								{
-									borderRadius: 50,
-									marginLeft: 2
-								}
-							]}
-							onPress={() => {
-								if (
-									!searchEditing &&
-									selectedAddress?.toLowerCase() === this.props.contactEntry.address?.toLowerCase()
-								) {
-									updateNftChecked();
-									Engine.context.PreferencesController.updateCurrentTokenType(
-										selectedAddress,
-										!nftChecked ? TokenType.NFT : TokenType.TOKEN
-									);
-								}
-							}}
-						>
-							<Icon
-								name="coin"
-								color={!nftChecked ? colors.white : colors.$8F92A1}
-								width="22"
-								height="20"
-							/>
-						</AnimatedTouchableOpacity>
-						<AnimatedTouchableOpacity
-							hitSlop={styles.hitSlop}
-							activeOpacity={1.0}
-							style={[
-								styles.nftTouch,
-								nftChecked && styles.tnChecked,
-								{
-									borderRadius: 50,
-									marginRight: 2
-								}
-							]}
-							onPress={() => {
-								if (
-									!searchEditing &&
-									selectedAddress?.toLowerCase() === this.props.contactEntry.address?.toLowerCase()
-								) {
-									updateNftChecked();
-									Engine.context.PreferencesController.updateCurrentTokenType(
-										selectedAddress,
-										!nftChecked ? TokenType.NFT : TokenType.TOKEN
-									);
-								}
-							}}
-						>
-							<Icon
-								name="nft"
-								color={nftChecked ? colors.white : colors.$8F92A1}
-								width="17"
-								height="17"
-							/>
-						</AnimatedTouchableOpacity>
-					</View>
+					<CopilotStep
+						active={!searchEditing}
+						order={9}
+						text={strings('onboarding_wallet.onboarding9')}
+						name="onboarding9"
+					>
+						<CopilotView>
+							<View style={[styles.tnLayout]}>
+								<AnimatedTouchableOpacity
+									hitSlop={styles.hitSlop}
+									activeOpacity={1.0}
+									style={[
+										styles.tokenTouch,
+										!nftChecked && styles.tnChecked,
+										{
+											borderRadius: 50,
+											marginLeft: 2
+										}
+									]}
+									onPress={() => {
+										if (
+											!searchEditing &&
+											selectedAddress?.toLowerCase() ===
+												this.props.contactEntry.address?.toLowerCase()
+										) {
+											updateNftChecked();
+											Engine.context.PreferencesController.updateCurrentTokenType(
+												selectedAddress,
+												!nftChecked ? TokenType.NFT : TokenType.TOKEN
+											);
+										}
+									}}
+								>
+									<Icon
+										name="coin"
+										color={!nftChecked ? colors.white : colors.$8F92A1}
+										width="22"
+										height="20"
+									/>
+								</AnimatedTouchableOpacity>
+								<AnimatedTouchableOpacity
+									hitSlop={styles.hitSlop}
+									activeOpacity={1.0}
+									style={[
+										styles.nftTouch,
+										nftChecked && styles.tnChecked,
+										{
+											borderRadius: 50,
+											marginRight: 2
+										}
+									]}
+									onPress={() => {
+										if (
+											!searchEditing &&
+											selectedAddress?.toLowerCase() ===
+												this.props.contactEntry.address?.toLowerCase()
+										) {
+											updateNftChecked();
+											Engine.context.PreferencesController.updateCurrentTokenType(
+												selectedAddress,
+												!nftChecked ? TokenType.NFT : TokenType.TOKEN
+											);
+										}
+									}}
+								>
+									<Icon
+										name="nft"
+										color={nftChecked ? colors.white : colors.$8F92A1}
+										width="17"
+										height="17"
+									/>
+								</AnimatedTouchableOpacity>
+							</View>
+						</CopilotView>
+					</CopilotStep>
 				)}
 			</View>
 		);
@@ -1115,7 +1155,9 @@ class Tokens extends PureComponent {
 				<View style={styles.touchChildView}>
 					<Image source={require('../../../images/ic_asset_item_hide.png')} />
 					<View style={styles.space} />
-					<Text style={styles.moveText}>{strings('other.hide')}</Text>
+					<Text style={styles.moveText} allowFontScaling={false}>
+						{strings('other.hide')}
+					</Text>
 				</View>
 			</TouchableWithoutFeedback>
 		);
@@ -1126,7 +1168,9 @@ class Tokens extends PureComponent {
 			<View style={styles.touchChildView}>
 				<Image source={require('../../../images/ic_asset_item_hide_disable.png')} />
 				<View style={styles.space} />
-				<Text style={styles.moveTextDiabled}>{strings('other.hide')}</Text>
+				<Text style={styles.moveTextDiabled} allowFontScaling={false}>
+					{strings('other.hide')}
+				</Text>
 			</View>
 		</TouchableWithoutFeedback>
 	);

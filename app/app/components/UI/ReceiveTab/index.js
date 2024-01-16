@@ -161,14 +161,20 @@ class ReceiveTab extends PureComponent {
 
 	onShare = () => {
 		this.setState({ shareLoading: true });
-		DeviceEventEmitter.once('onShareUri', uri => {
+
+		const shareUriListener = DeviceEventEmitter.addListener('onShareUri', uri => {
 			Share.open({
 				url: uri
 			}).catch(err => {
 				util.logError('Error while trying to share address', err);
 			});
+
+			shareUriListener.remove();
+
 			this.setState({ shareLoading: false });
 		});
+
+		// Emit the event
 		DeviceEventEmitter.emit('showShareView', this.props.asset.type);
 	};
 

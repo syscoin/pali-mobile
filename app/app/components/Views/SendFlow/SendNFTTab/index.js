@@ -714,7 +714,7 @@ class SendNFTTab extends PureComponent {
 
 	onCryptoInputChange = inputValue => {
 		inputValue = revertAmount(inputValue);
-		const amountFormat = renderAmount(inputValue);
+		const amountFormat = inputValue;
 		const amountReady = this.props.asset.balanceOf.gte(new BigNumber(inputValue, 10));
 		this.setState({ amountFormat, amountReady, inputValue });
 	};

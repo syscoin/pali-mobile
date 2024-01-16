@@ -138,7 +138,12 @@ const TransactionHeader = props => {
 		}
 		if (title === TransactionTypes.ORIGIN_CLAIM) {
 			title = strings('other.claim');
+		} else if (title === TransactionTypes.ORIGIN_CANCEL_APPROVAL) {
+			title = strings('approval_management.cancel_approval');
+		} else if (title === TransactionTypes.ORIGIN_MOVE_TO_L2) {
+			title = strings('other.move_to_l2');
 		}
+
 		return <Text style={styles.domainUrl}>{title}</Text>;
 	};
 

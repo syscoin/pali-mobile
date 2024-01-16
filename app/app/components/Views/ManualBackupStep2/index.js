@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Text, TouchableOpacity, View, StyleSheet, Image, ScrollView } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet, Image, ScrollView, DeviceEventEmitter } from 'react-native';
 import PropTypes from 'prop-types';
 import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
@@ -274,6 +274,7 @@ class ManualBackupStep2 extends PureComponent {
 				navigation.navigate('WalletManagement');
 			} else {
 				navigation.navigate('HomeNav');
+				setTimeout(() => DeviceEventEmitter.emit('OnboardingTour'), 250);
 			}
 		}
 	};

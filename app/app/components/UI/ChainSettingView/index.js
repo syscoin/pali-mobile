@@ -562,7 +562,7 @@ class ChainSettingView extends PureComponent {
 				explorerValue.trim()
 			);
 			await PreferencesController.addRpcChain(this.props.selectedAddress, chainType);
-			TokenBalancesController.poll();
+			TokenBalancesController.pollAll();
 			this.setState({ currentPage: PAGE_HOME });
 			this.props.toggleShowHint(strings('chainSetting.custom_network_added'));
 		} catch (e) {

@@ -13,12 +13,15 @@
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 #import <UMCommon/UMCommon.h>
 #import <React/RCTLinkingManager.h>
-#import <Lottie/Lottie.h>
-#import "RNSplashScreen.h"
+
+
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 #import <UMPush/UMessage.h>
 #import <Firebase.h>
+#import "RNSplashScreen.h" 
+#import "PaliWallet-Swift.h" 
+
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -48,7 +51,11 @@ static void InitializeFlipper(UIApplication *application) {
   UInt64 native_start_time = [[NSDate date] timeIntervalSince1970] * 1000;
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"PaliWallet" initialProperties:@{@"native_start_time": [NSString stringWithFormat:@"%llu", native_start_time]}];
 
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  if (@available(iOS 13.0, *)) {
+      rootView.backgroundColor = [UIColor systemBackgroundColor];
+  } else {
+      rootView.backgroundColor = [UIColor whiteColor];
+  }
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -56,24 +63,26 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
+
+
+
+
+  Dynamic *t = [Dynamic new];
+  UIView *animationUIView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"splash_screen"]; // change lottieName to your lottie files name
+  animationUIView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
+
+  // register LottieSplashScreen to RNSplashScreen
+  [RNSplashScreen showLottieSplash:animationUIView inRootView:rootView];
+
+  // casting UIView type to AnimationView type
+  AnimationView *animationView = (AnimationView *) animationUIView;
+
+  // play
+  [t playWithAnimationView:animationView];
+
+  // If you want the animation layout to be forced to remove when hide is called, use this code
+  [RNSplashScreen setAnimationFinished:true];
  
-  LOTAnimationView *animation = [LOTAnimationView animationNamed:@"splash_screen" inBundle:[NSBundle mainBundle]];
-   CGFloat newWidth = 320 * 1.3; 
-   CGFloat newHeight = 487 * 1.8; 
-
-    // Calculate the new x and y positions
-   CGFloat newX = self.window.bounds.size.width / 2 - newWidth / 2;
-   CGFloat newY = self.window.bounds.size.height / 2 - newHeight / 2;
-
-   // Set the new frame for the animation
-   animation.frame = CGRectMake(newX, newY, newWidth, newHeight);
-   animation.loopAnimation = NO;
-   [animation playWithCompletion:^(BOOL animationFinished) {
-     // Do Something
-  }];
-
-  [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
-  [rootView.subviews[rootView.subviews.count - 1] addSubview:animation];  
 
   [UMConfigure initWithAppkey:@"60af0efb6c421a3d97cec8e8" channel:@"App Store"];
   

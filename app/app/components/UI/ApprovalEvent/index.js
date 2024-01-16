@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
 	name: {
 		width: 60,
 		fontSize: 12,
+		marginRight: 6,
 		color: colors.$030319,
 		...fontStyles.medium
 	},
@@ -183,7 +184,8 @@ class ApprovalEvent extends Component {
 	addApprovalListener = () => {
 		const { TransactionController, ApprovalEventsController } = Engine.context;
 		const { chainId, selectedAddress } = this.props;
-		DeviceEventEmitter.once('OnApprove', approveId => {
+
+		const onApproveListener = DeviceEventEmitter.addListener('OnApprove', approveId => {
 			TransactionController.hub.once(`${approveId}:confirmed`, transactionMeta => {
 				if (transactionMeta.status === TransactionStatus.confirmed) {
 					ApprovalEventsController.refreshOneChainAllowances(selectedAddress, chainId);
@@ -191,6 +193,8 @@ class ApprovalEvent extends Component {
 					this.setState({ loading: false });
 				}
 			});
+			// Remove the DeviceEventEmitter listener after it has been invoked
+			onApproveListener.remove();
 		});
 	};
 
@@ -226,7 +230,7 @@ class ApprovalEvent extends Component {
 				</View>
 				<View style={styles.nameValueLine}>
 					<Text style={styles.name}>{strings('approval_management.contract')}</Text>
-					<Text style={styles.value}>{spender.substr(0, 12) + '...' + spender.substr(-12)}</Text>
+					<Text style={styles.value}>{spender.substr(0, 11) + '...' + spender.substr(-11)}</Text>
 					<TouchableOpacity onPress={this.openEtherscan.bind(this, spender)}>
 						<Image style={styles.icon} source={require('../../../images/browser.png')} />
 					</TouchableOpacity>

@@ -6,14 +6,14 @@ import util, { handleFetch, logDebug, safelyExecute, toLowerCaseEquals } from '.
 import { getContractController } from '../ControllerUtils';
 import CollectiblesController from '../assets/CollectiblesController';
 import PreferencesController from './PreferencesController';
-import { ChainType } from "../Config";
+import { ChainType } from '../Config';
 
 export interface EnsEntry {
   ensName: string;
-  address: string;// checksum address
+  address: string; // checksum address
   avatar?: string;
   avatarUrl?: string;
-  timestamp: number;// lookup timestamp
+  timestamp: number; // lookup timestamp
 }
 
 export interface EnsConfig extends BaseConfig {
@@ -22,8 +22,8 @@ export interface EnsConfig extends BaseConfig {
 }
 
 export interface EnsState extends BaseState {
-  ensEntries: {[address: string]: EnsEntry};
-  avatarUrls: {[avatar: string]: string};
+  ensEntries: { [address: string]: EnsEntry };
+  avatarUrls: { [avatar: string]: string };
 }
 
 export class EnsController extends BaseController<EnsConfig, EnsState> {
@@ -52,18 +52,22 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
     if (!isValidAddress(address) || isZeroAddress(address)) {
       return false;
     }
+
     address = toChecksumAddress(address);
     const ensEntry = this.state.ensEntries[address];
+
     if (ensEntry) {
       if (Date.now() - ensEntry.timestamp < this.config.lookupInterval) {
         return false;
       }
     }
+
     const entry = await this.getEnsEntry('', address);
     if (entry) {
       this.state.ensEntries[address] = entry;
       return true;
     }
+
     return false;
   }
 
@@ -71,6 +75,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
     if (!address && !ensName) {
       return undefined;
     }
+
     try {
       const networkController = this.networks[ChainType.Ethereum];
       if (!networkController.ismainnet() || networkController.isLoading()) {
@@ -82,9 +87,11 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       if (!address) {
         address = await ens.lookup(ensName);
       }
+
       if (!isValidAddress(address) || isZeroAddress(address)) {
         return undefined;
       }
+
       address = toChecksumAddress(address);
       if (!ensName) {
         ensName = await ens.reverse(address);
@@ -98,6 +105,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       const resolver = await ens.getResolverForNode(node);
       const result = await resolver.text(node, 'avatar');
       const avatarUrl = await this.getAvatarUrl(result[0]);
+
       return {
         address,
         ensName,
@@ -141,7 +149,13 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
 
       const { contractController } = getContractController(this, chainId);
       const collectiblesController = this.context.CollectiblesController as CollectiblesController;
-      const cImage = await collectiblesController.getCollectibleImage(contractController, contractType?.toUpperCase(), contractAddress, tokenID, chainId);
+      const cImage = await collectiblesController.getCollectibleImage(
+        contractController,
+        contractType?.toUpperCase(),
+        contractAddress,
+        tokenID,
+        chainId,
+      );
       if (cImage?.image) {
         this.state.avatarUrls[avatar] = cImage.image;
         this.update({ avatarUrls: { ...this.state.avatarUrls } });
@@ -196,12 +210,14 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
           return this.state.ensEntries[key].address;
         }
       }
+
       const nowEntry = await this.getEnsEntry(ensName, '');
       if (nowEntry) {
         this.state.ensEntries[nowEntry.address] = nowEntry;
         this.update({ ensEntries: { ...this.state.ensEntries } });
         return nowEntry.address;
       }
+
       return undefined;
     } finally {
       releaseLock();
@@ -219,15 +235,17 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       method: 'POST',
       body: JSON.stringify(graphQL),
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     };
-    const allName = await handleFetch(graphUrl, options).then((result) => {
-      return result?.data?.accounts?.map((item: any) => {
-        return { address: item?.id, name: item?.domains?.[0]?.name };
-      });
-    }).catch(() => undefined);
+    const allName = await handleFetch(graphUrl, options)
+      .then((result) => {
+        return result?.data?.accounts?.map((item: any) => {
+          return { address: item?.id, name: item?.domains?.[0]?.name };
+        });
+      })
+      .catch(() => undefined);
     if (allName !== undefined) {
       const releaseLock = await this.mutex.acquire();
       try {
@@ -259,22 +277,24 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
     const graphUrl = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens';
     const graphQL = {
       operationName: 'tokens',
-      variables: { count, 'name': `${name}` },
+      variables: { count, name: `${name}` },
       query: `query lookup($name: String!, $count: Int!) { domains(first: $count, where: {name_contains: $name, resolvedAddress_not: null}) { name resolver { addr { id } } } }`,
     };
     const options = {
       method: 'POST',
       body: JSON.stringify(graphQL),
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     };
-    return handleFetch(graphUrl, options).then((result) => {
-      return result?.data?.domains?.map((item: any) => {
-       return { name: item?.name, address: item?.resolver?.addr?.id };
-      });
-    }).catch(() => undefined);
+    return handleFetch(graphUrl, options)
+      .then((result) => {
+        return result?.data?.domains?.map((item: any) => {
+          return { name: item?.name, address: item?.resolver?.addr?.id };
+        });
+      })
+      .catch(() => undefined);
   }
 
   async getNodeByName(ensName: string) {
@@ -306,6 +326,7 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
 
   async refresh() {
     const releaseLock = await this.mutex.acquire();
+
     try {
       const tokenBalancesController = this.context.TokenBalancesController;
       if (tokenBalancesController?.config.backgroundMode) {
@@ -322,12 +343,15 @@ export class EnsController extends BaseController<EnsConfig, EnsState> {
       }
       let needUpdate = false;
       for (const address of addresss) {
-        needUpdate = await safelyExecute(() => this.pollEnsEntryFromAddress(address)) || needUpdate;
+        needUpdate = (await safelyExecute(() => this.pollEnsEntryFromAddress(address))) || needUpdate;
       }
       const existAddresss = Object.keys(this.state.ensEntries);
 
       for (const address of existAddresss) {
-        if (!addresss.includes(address) && Date.now() - this.state.ensEntries[address].timestamp > this.config.lookupInterval) {
+        if (
+          !addresss.includes(address) &&
+          Date.now() - this.state.ensEntries[address].timestamp > this.config.lookupInterval
+        ) {
           needUpdate = true;
           delete this.state.ensEntries[address];
         }
