@@ -70,7 +70,7 @@
 			remoteGlobalIDString = 486E83B1220A317C007CD915;
 			remoteInfo = Lottie_iOS;
 		};
-		FF25D8982B1E273400D0CEB6 /* PBXContainerItemProxy */ = {
+		FFFC9AB42B55C3CC007644E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4379F36F969347758D1A9F96 /* Lottie.xcodeproj */;
 			proxyType = 2;
@@ -201,7 +201,7 @@
 				15723E31225FD0B800A5B418 /* Lottie.framework */,
 				15723E2F225FD0B800A5B418 /* Lottie.framework */,
 				15723E33225FD0B800A5B418 /* libLottie.a */,
-				FF25D8992B1E273400D0CEB6 /* libLottie.a */,
+				FFFC9AB52B55C3CC007644E2 /* libLottie.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -417,11 +417,11 @@
 			remoteRef = 15723E32225FD0B800A5B418 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		FF25D8992B1E273400D0CEB6 /* libLottie.a */ = {
+		FFFC9AB52B55C3CC007644E2 /* libLottie.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libLottie.a;
-			remoteRef = FF25D8982B1E273400D0CEB6 /* PBXContainerItemProxy */;
+			remoteRef = FFFC9AB42B55C3CC007644E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -638,7 +638,7 @@
 				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWalletDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 21;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 6YCW295639;
@@ -673,7 +673,7 @@
 					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
 				);
 				LLVM_LTO = YES;
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -705,7 +705,7 @@
 				CODE_SIGN_ENTITLEMENTS = PaliWallet/PaliWallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 6YCW295639;
 				ENABLE_BITCODE = NO;
@@ -740,7 +740,7 @@
 					"\"$(SRCROOT)/PaliWallet/System/Library/Frameworks\"",
 				);
 				LLVM_LTO = YES;
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.4;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"$(inherited)",

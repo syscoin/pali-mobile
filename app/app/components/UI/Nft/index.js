@@ -254,6 +254,7 @@ class Nft extends PureComponent {
 
 		const allContracts = this.state.allContracts;
 		let allCollectiblesList = this.state.allCollectiblesList;
+
 		if (startIndex === 0 || focusUpdate) {
 			allContracts.length = 0;
 			allCollectiblesList.length = 0;
@@ -350,6 +351,7 @@ class Nft extends PureComponent {
 						collectibles.push(...allCollectibles[currentChainId]);
 					}
 				}
+
 				for (const item of allContracts) {
 					const isFavorite = item.favoriteAddr === favoriteAddr;
 					let items = [];
@@ -359,7 +361,9 @@ class Nft extends PureComponent {
 						);
 					}
 					const securityNfts = SecurityController?.state?.securityNfts || [];
+
 					items = items.map((token, i) => {
+						let address = token.address || token.contract;
 						let type;
 						if (isRpcChainId(token.chainId)) {
 							type = getRpcChainTypeByChainId(token.chainId);
@@ -367,11 +371,12 @@ class Nft extends PureComponent {
 							type = getChainTypeByChainId(token.chainId);
 						}
 						const contract = allCollectibleContracts?.[token.chainId]?.find(
-							contract => contract.address === token.address
+							contract => contract.address === address
 						);
-						const securityData = securityNfts.find(v => toLowerCaseEquals(v.address, token.address));
+						const securityData = securityNfts.find(v => toLowerCaseEquals(v.address, address));
 						return { ...token, type, asset_contract: contract, securityData };
 					});
+
 					if (items.length > 0) {
 						allCollectiblesList = [...allCollectiblesList, ...items];
 					}
@@ -464,6 +469,7 @@ class Nft extends PureComponent {
 			rowCount * itemSize + itemSpace * (rowCount - 1) + this.getItemTextHeight(columnCount) * rowCount;
 
 		this.lottieAnim = items.length < 10;
+
 		return (
 			<ImageCapInset
 				style={styles.cardWrapper}
@@ -701,6 +707,7 @@ class Nft extends PureComponent {
 		}
 		const { isDarkMode } = this.context;
 		const { dataContracts } = this.state;
+
 		if (dataContracts.length === 0) {
 			return (
 				<View style={styles.noNftLayout}>
