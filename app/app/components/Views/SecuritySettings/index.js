@@ -199,16 +199,17 @@ class SecuritySettings extends PureComponent {
 					withBackground
 				/>
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View style={styles.containerView}>
+					<View style={[styles.containerView, isDarkMode && baseStyles.darkBackground600]}>
 						<SettingsDrawer
 							onPress={this.onResetPassword}
 							title={strings('app_settings.change_password')}
-							titleStyle={styles.title}
-							baseStyle={styles.settingDrawerStyle}
+							titleStyle={[styles.title, isDarkMode && baseStyles.textDark]}
+							baseStyle={[styles.settingDrawerStyle, isDarkMode && baseStyles.darkBackground600]}
 							ignoreDarkMode
+							hideLine
 						/>
 					</View>
-					<View style={styles.containerView2}>
+					<View style={[styles.containerView2, isDarkMode && baseStyles.darkBackground600]}>
 						<SettingsSwitch
 							message={strings(
 								isBiometryType
@@ -217,6 +218,7 @@ class SecuritySettings extends PureComponent {
 										: 'app_settings.use_biometrics_message'
 									: 'app_settings.keep_login_message'
 							)}
+							isDarkMode={isDarkMode}
 							title={strings(
 								isBiometryType
 									? Device.isIos()
@@ -228,13 +230,14 @@ class SecuritySettings extends PureComponent {
 							onValueChange={this.onBiometryChange}
 						/>
 					</View>
-					<View style={styles.containerView2}>
+					<View style={[styles.containerView2, isDarkMode && baseStyles.darkBackground600]}>
 						<SettingsSwitch
 							message={strings(
 								Device.isIos()
 									? 'app_settings.verification_message_for_id'
 									: 'app_settings.verification_message_for_pwd'
 							)}
+							isDarkMode={isDarkMode}
 							title={strings('app_settings.transaction_verification')}
 							value={verificationChoice}
 							onValueChange={this.onVerificationChange}

@@ -782,7 +782,7 @@
 		"delete_rpc": "{{networkName}} will be deleted for all accounts.",
 		"cancel": "Cancel",
 		"delete": "Delete",
-		"info": "info"
+		"info": "Info"
 	},
 	"observer": {
 		"observe_only_ccounts": "Observe-only Accounts",

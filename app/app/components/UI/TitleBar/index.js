@@ -57,6 +57,7 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 	let height = 44;
 	let paddingTop = 0;
 	const [dynamicFontSize, setDynamicFontSize] = React.useState(18); // default font size
+
 	React.useEffect(() => {
 		// Reset the dynamic font size when the title changes
 		setDynamicFontSize(18);

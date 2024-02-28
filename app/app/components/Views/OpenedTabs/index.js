@@ -6,8 +6,9 @@ import { clearWebViewIOSCache } from 'react-native-webview-ios-cache-clear';
 import Modal from 'react-native-modal';
 import { WebView } from 'react-native-webview';
 import { util } from 'paliwallet-core';
+import { useTheme } from '../../../theme/ThemeProvider';
 
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { SvgUri } from 'react-native-svg';
 
 import { strings } from '../../../../locales/i18n';
@@ -312,6 +313,8 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 	const [toggleCheckBoxCookies, setToggleCheckBoxCookies] = useState(false);
 	const webviewCacheRef = useRef(null);
 
+	const { isDarkMode } = useTheme();
+
 	const clearBrowserData = async () => {
 		const useWebKit = true;
 
@@ -414,15 +417,26 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 							</View>
 
 							<View style={styles.pwModalButtons}>
-								<TouchableOpacity style={styles.cancelButton} onPress={hideMoreModal}>
-									<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+								<TouchableOpacity
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+									onPress={hideMoreModal}
+								>
+									<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+										{strings('action_view.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.okButton, isButtonDisabled ? styles.disabledButton : null]}
+									style={[
+										styles.okButton,
+										isDarkMode && baseStyles.darkConfirmButton,
+										isButtonDisabled ? styles.disabledButton : null
+									]}
 									disabled={isButtonDisabled}
 									onPress={clearBrowserData}
 								>
-									<Text style={styles.okText}>{strings('browser.clear')}</Text>
+									<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+										{strings('browser.clear')}
+									</Text>
 								</TouchableOpacity>
 							</View>
 						</View>

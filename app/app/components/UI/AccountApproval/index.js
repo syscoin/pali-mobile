@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { strings } from '../../../../locales/i18n';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import WebsiteIcon from '../WebsiteIcon';
 import Engine from '../../../core/Engine';
 import { getChainTypeByChainId } from '../../../util/number';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+
 const styles = StyleSheet.create({
 	root: {
 		backgroundColor: colors.white,
@@ -126,6 +128,7 @@ const styles = StyleSheet.create({
  * Account access approval component
  */
 class AccountApproval extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Object containing current page title, url, and icon href
@@ -162,7 +165,7 @@ class AccountApproval extends PureComponent {
 
 	render = () => {
 		const { currentPageInformation } = this.props;
-
+		const { isDarkMode } = this.context;
 		const meta =
 			(currentPageInformation &&
 				currentPageInformation.currentPageInformation &&
@@ -189,11 +192,21 @@ class AccountApproval extends PureComponent {
 				<Text style={styles.hostDescription}>{description}</Text>
 
 				<View style={styles.actionContainer}>
-					<TouchableOpacity style={styles.cancelButton} onPress={this.onCancel}>
-						<Text style={styles.cancelText}>{strings('accountApproval.cancel')}</Text>
+					<TouchableOpacity
+						style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+						onPress={this.onCancel}
+					>
+						<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+							{strings('accountApproval.cancel')}
+						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.okButton} onPress={this.onConfirm}>
-						<Text style={styles.okText}>{strings('accountApproval.connect')}</Text>
+					<TouchableOpacity
+						style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+						onPress={this.onConfirm}
+					>
+						<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+							{strings('accountApproval.connect')}
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

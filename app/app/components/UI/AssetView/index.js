@@ -37,6 +37,7 @@ import EntryScriptWeb3 from '../../../core/EntryScriptWeb3';
 import Approve from '../../Views/ApproveView/Approve';
 import { store } from '../../../store';
 import { toggleApproveModalInModal } from '../../../actions/modals';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 import ic_liquidity from '../../../images/ic_coin_liquidity.png';
 import ic_volume from '../../../images/ic_coin_volume.png';
@@ -243,6 +244,7 @@ const htmlStyle = StyleSheet.create({
  * View that renders a list of transactions for a specific asset
  */
 class AssetView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		style: PropTypes.any,
 		navigation: PropTypes.object,
@@ -391,7 +393,7 @@ class AssetView extends PureComponent {
 			const fileContent = await EntryScriptWeb3.getTVhtml();
 			// eslint-disable-next-line no-empty
 			if (fileContent) {
-				this.setState({ tvHtmlContent: fileContent });
+				this.setState({ tvHtmlContent: fileContent + `?theme=dark` });
 				return true;
 			}
 			// eslint-disable-next-line no-empty
@@ -429,11 +431,15 @@ class AssetView extends PureComponent {
 		const scriptEnd = "')";
 		const paramsDivider = "','";
 		const language = I18n.locale;
+		const { theme } = this.context;
 
-		const JSscript = scriptStart + this.state.ticker + paramsDivider + language + scriptEnd;
+		// Include theme in the parameters
+		const JSscript = `${scriptStart}${
+			this.state.ticker
+		}${paramsDivider}${language}${paramsDivider}${theme}${paramsDivider}${scriptEnd}`;
 		this.tradingViewChart.injectJavaScript(JSscript);
 		console.info('JSscript = ' + JSscript);
-		console.info("Injcted to TraidngView's webview");
+		console.info("Injected to TradingView's webview");
 	};
 
 	initCoinInfo = async queryId => {
@@ -499,15 +505,28 @@ class AssetView extends PureComponent {
 		}
 		eventList.sort((a, b) => b.timestamp - a.timestamp);
 		const isRpc = util.isRpcChainType(asset.type);
+		const { isDarkMode } = this.context;
 		return (
 			<ImageCapInset
 				style={[styles.cardWrapper, styles.bodyMargin]}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'dark800_card' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/dark800_card.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 			>
 				<View style={styles.otherBody}>
-					<Text style={styles.approvalTitle}>{strings('approval_management.token_title')}</Text>
-					<Text style={styles.approvalHint}>{strings('approval_management.hint')}</Text>
+					<Text style={[styles.approvalTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('approval_management.token_title')}
+					</Text>
+					<Text style={[styles.approvalHint, isDarkMode && baseStyles.subTextDark]}>
+						{strings('approval_management.hint')}
+					</Text>
 					<View style={styles.divider} />
 					{eventList.map((event, i) => (
 						<ApprovalEvent
@@ -521,7 +540,7 @@ class AssetView extends PureComponent {
 					{eventList.length === 0 && (
 						<View style={styles.approvalEmpty}>
 							<Image style={styles.approvalEmptyIcon} source={require('../../../images/notx.png')} />
-							<Text style={styles.approvalEmptyText}>
+							<Text style={[styles.approvalEmptyText, isDarkMode && baseStyles.textDark]}>
 								{strings(isRpc ? 'approval_management.empty_rpc' : 'approval_management.empty')}
 							</Text>
 						</View>
@@ -575,15 +594,23 @@ class AssetView extends PureComponent {
 		const fdv = coinInfo?.fdv ? convertUsdValue(coinInfo.fdv, currencyCodeRate) : undefined;
 
 		const coinIntro = asset.nativeCurrency ? this.getCoinIntro(asset.type, coinInfo?.intro || '') : '';
-
+		const { isDarkMode } = this.context;
 		return (
 			<ImageCapInset
 				style={[styles.cardWrapper, styles.bodyMargin]}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'dark800_card' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/dark800_card.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 			>
 				<View style={[styles.otherBody, styles.dashboardWrapper]}>
-					<Text style={styles.dashboardText}>
+					<Text style={[styles.dashboardText, isDarkMode && baseStyles.textDark]}>
 						{strings('other.token_dashboard', { token: asset.symbol })}
 					</Text>
 					{this.renderSubCoinInfo(
@@ -637,7 +664,9 @@ class AssetView extends PureComponent {
 							}}
 							activeOpacity={0.8}
 						>
-							<Text style={styles.introText}>{strings('other.coin_contract_address')}</Text>
+							<Text style={[styles.introText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.coin_contract_address')}
+							</Text>
 							<Text style={[styles.introMsgText, htmlStyle.p]} numberOfLines={1} ellipsizeMode={'middle'}>
 								{asset.address}
 							</Text>
@@ -645,9 +674,11 @@ class AssetView extends PureComponent {
 					)}
 					{!!coinIntro && (
 						<>
-							<Text style={styles.introText}>{strings('other.coin_intro')}</Text>
+							<Text style={[styles.introText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.coin_intro')}
+							</Text>
 							<HTMLView
-								style={styles.introMsgText}
+								style={[styles.introMsgText]}
 								stylesheet={htmlStyle}
 								value={'<p>' + coinIntro + '</p>'}
 								onLinkPress={url => {
@@ -670,38 +701,52 @@ class AssetView extends PureComponent {
 		this.props.toggleShowHint(strings('other.copied', { str: name }));
 	};
 
-	renderSubCoinInfo = (image, name, value, value2) => (
-		<TouchableOpacity
-			style={styles.coinInfoWrapper}
-			onPress={() => {
-				this.onCopyCoinInfo(name, value);
-			}}
-			activeOpacity={0.8}
-			disabled={!value}
-		>
-			<Image source={image} />
-			<View style={styles.coinInfoTextWrapper}>
-				<Text style={styles.coinInfoTitle}>{name}</Text>
-				{!!value && (
-					<Text style={styles.coinInfoValue} numberOfLines={1} ellipsizeMode={'tail'}>
-						{value}
-					</Text>
-				)}
-			</View>
-			<View style={baseStyles.flexGrow} />
-			<Text style={styles.coinInfoBigValue}>{value2 || '--'}</Text>
-		</TouchableOpacity>
-	);
+	renderSubCoinInfo = (image, name, value, value2) => {
+		const { isDarkMode } = this.context;
+		return (
+			<TouchableOpacity
+				style={styles.coinInfoWrapper}
+				onPress={() => {
+					this.onCopyCoinInfo(name, value);
+				}}
+				activeOpacity={0.8}
+				disabled={!value}
+			>
+				<Image source={image} />
+				<View style={styles.coinInfoTextWrapper}>
+					<Text style={[styles.coinInfoTitle, isDarkMode && baseStyles.textDark]}>{name}</Text>
+					{!!value && (
+						<Text
+							style={[styles.coinInfoValue, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							ellipsizeMode={'tail'}
+						>
+							{value}
+						</Text>
+					)}
+				</View>
+				<View style={baseStyles.flexGrow} />
+				<Text style={[styles.coinInfoBigValue, isDarkMode && baseStyles.textDark]}>{value2 || '--'}</Text>
+			</TouchableOpacity>
+		);
+	};
 
 	renderAsset = () => {
 		const { timeArray, data, coinGeckoId, ticker, tvHtmlContent } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<>
 				{(!!coinGeckoId || !!ticker) && (
 					<ImageCapInset
 						style={[styles.cardWrapper, styles.bodyMargin]}
 						source={
-							Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')
+							Device.isAndroid()
+								? isDarkMode
+									? { uri: 'dark800_card' }
+									: { uri: 'default_card' }
+								: isDarkMode
+								? require('../../../images/dark800_card.png')
+								: require('../../../images/default_card.png')
 						}
 						capInsets={baseStyles.capInsets}
 					>
@@ -709,17 +754,19 @@ class AssetView extends PureComponent {
 							{!!ticker && !!tvHtmlContent ? (
 								<WebView
 									source={{ html: this.state.tvHtmlContent }}
-									style={styles.chart}
+									style={[styles.chart, isDarkMode && baseStyles.darkActionBackground]}
 									ref={WebView => {
 										this.tradingViewChart = WebView;
 									}}
 									onLoadEnd={() => this.startTvChart()}
 								/>
 							) : data?.dataSets?.length > 0 ? (
-								<View style={styles.chartLayout}>
-									<Text style={styles.chartTrading}>{strings('other.trading')}</Text>
+								<View style={[styles.chartLayout]}>
+									<Text style={[styles.chartTrading, isDarkMode && baseStyles.textDark]}>
+										{strings('other.trading')}
+									</Text>
 									<CandleStickChart
-										style={styles.chart}
+										style={[styles.chart]}
 										data={this.state.data}
 										chartDescription={{ text: '' }}
 										xAxis={this.state.xAxis}
@@ -739,7 +786,14 @@ class AssetView extends PureComponent {
 									</View>
 								</View>
 							) : (
-								<View style={[styles.chart, styles.chartLayout, styles.loading]}>
+								<View
+									style={[
+										styles.chart,
+										styles.chartLayout,
+										isDarkMode && baseStyles.darkBackground600,
+										styles.loading
+									]}
+								>
 									<ActivityIndicator size="large" color={colors.brandPink300} />
 								</View>
 							)}
@@ -755,22 +809,36 @@ class AssetView extends PureComponent {
 
 	render = () => {
 		const { header, asset, style } = this.props;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={[styles.wrapper, style && style]} activeOpacity={1}>
 				<ImageCapInset
 					style={[styles.cardWrapper, styles.headerMargin]}
-					source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+					source={
+						Device.isAndroid()
+							? isDarkMode
+								? { uri: 'dark800_card' }
+								: { uri: 'default_card' }
+							: isDarkMode
+							? require('../../../images/dark800_card.png')
+							: require('../../../images/default_card.png')
+					}
 					capInsets={baseStyles.capInsets}
 				>
-					<View style={styles.otherBody}>{header}</View>
+					<View style={[styles.otherBody]}>{header}</View>
 				</ImageCapInset>
 
 				{asset.lockType ? (
 					<ImageCapInset
 						style={[styles.cardWrapper, styles.bodyMargin]}
 						source={
-							Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')
+							Device.isAndroid()
+								? isDarkMode
+									? { uri: 'dark800_card' }
+									: { uri: 'default_card' }
+								: isDarkMode
+								? require('../../../images/dark800_card.png')
+								: require('../../../images/default_card.png')
 						}
 						capInsets={baseStyles.capInsets}
 					>

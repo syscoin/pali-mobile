@@ -24,6 +24,7 @@ import { ChainType, util } from 'paliwallet-core';
 import GlobalAlert from '../GlobalAlert';
 import { getTokenName } from '../../../util/number';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const darkBlack = '#030319';
 const grey = '#60657D';
@@ -156,6 +157,7 @@ const styles = StyleSheet.create({
 });
 
 class ReceiveTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Selected address as string
@@ -223,6 +225,7 @@ class ReceiveTab extends PureComponent {
 	render() {
 		const { asset } = this.props;
 		const { shareLoading } = this.state;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.wrapper}>
@@ -269,11 +272,13 @@ class ReceiveTab extends PureComponent {
 						</View>
 						<View style={baseStyles.flexGrow} />
 						<TouchableOpacity
-							style={styles.cancelButton}
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 							onPress={this.onCancel}
 							activeOpacity={activeOpacity}
 						>
-							<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+							<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.cancel')}
+							</Text>
 						</TouchableOpacity>
 					</TouchableOpacity>
 				</ScrollView>

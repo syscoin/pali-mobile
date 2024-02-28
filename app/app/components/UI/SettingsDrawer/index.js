@@ -59,7 +59,7 @@ const propTypes = {
 	 * Display SettingsNotification
 	 */
 	image: PropTypes.number,
-	titleStyle: PropTypes.object,
+	titleStyle: PropTypes.array,
 	hideLine: PropTypes.bool,
 	baseStyle: PropTypes.any
 };

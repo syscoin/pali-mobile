@@ -224,8 +224,26 @@ export const baseStyles = {
 	flexStatic: {
 		flex: 0
 	},
+	darkCancelButton: { borderColor: colors.white, color: 'white' },
+	darkConfirmButton: {
+		borderColor: colors.white,
+		backgroundColor: colors.white,
+		color: colors.$4CA1CF
+	},
+	darkConfirmText: {
+		color: colors.$4CA1CF
+	},
 	darkBackground: {
 		backgroundColor: colors.brandBlue700
+	},
+	darkInputBackground: {
+		backgroundColor: colors.brandBlue800
+	},
+	darkModalBackground: {
+		backgroundColor: colors.paliBlue900
+	},
+	darkBackground600: {
+		backgroundColor: colors.brandBlue600
 	},
 	darkCardBackground: {
 		backgroundColor: colors.brandBlue500
@@ -234,6 +252,7 @@ export const baseStyles = {
 		backgroundColor: colors.deepBlue800
 	},
 	textDark: { color: 'white' },
+	subTextDark: { color: colors.paliGrey200 },
 	shadow: {
 		shadowOffset: { width: 0, height: 5 },
 		shadowOpacity: 0.08,

@@ -55,6 +55,7 @@ import NFTImage from '../../../UI/NFTImage';
 import { getRpcNickname } from '../../../../util/ControllerUtils';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -345,6 +346,7 @@ const styles = StyleSheet.create({
  * View that wraps the wraps the "Send" screen
  */
 class SendTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
@@ -1021,6 +1023,7 @@ class SendTab extends PureComponent {
 
 		const { mainBalance, asset, onClose } = this.props;
 		const nextEnable = valueEnable && toSelectedAddressReady;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView
 				showsVerticalScrollIndicator={false}
@@ -1116,26 +1119,35 @@ class SendTab extends PureComponent {
 							)}
 							<View style={styles.confirmActionWrapper}>
 								<TouchableOpacity
-									style={styles.cancelButton}
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 									onPress={onClose}
 									activeOpacity={activeOpacity}
 									disabled={loading}
 								>
-									<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+									<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+										{strings('other.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.confirmButton, nextEnable && styles.confirmButtonEnabled]}
+									style={[
+										styles.confirmButton,
+										nextEnable &&
+											(isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+									]}
 									onPress={this.onNext}
 									activeOpacity={activeOpacity}
 									disabled={loading || !nextEnable}
 								>
 									{loading ? (
-										<ActivityIndicator size="small" color="white" />
+										<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 									) : (
 										<Text
 											style={[
 												styles.confirmButtonText,
-												nextEnable && styles.confirmButtonTextEnable
+												nextEnable &&
+													(isDarkMode
+														? baseStyles.darkConfirmText
+														: styles.confirmButtonTextEnable)
 											]}
 										>
 											{strings('other.next')}
@@ -1199,12 +1211,14 @@ class SendTab extends PureComponent {
 							<View style={baseStyles.flexGrow} />
 							<View style={styles.confirmActionWrapper}>
 								<TouchableOpacity
-									style={styles.cancelButton}
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 									onPress={this.onCancel}
 									activeOpacity={activeOpacity}
 									disabled={loading}
 								>
-									<Text style={styles.cancelButtonText}>{strings('action_view.cancel')}</Text>
+									<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+										{strings('action_view.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
 									style={[styles.confirmButton, confirmEnabled && styles.confirmButtonEnabled]}
@@ -1213,7 +1227,7 @@ class SendTab extends PureComponent {
 									disabled={!confirmEnabled || loading}
 								>
 									{loading ? (
-										<ActivityIndicator size="small" color="white" />
+										<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 									) : (
 										<Text
 											style={[

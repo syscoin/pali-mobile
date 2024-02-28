@@ -14,6 +14,7 @@ import { colors } from '../../../styles/common';
 import { isImageFile, isMp3File, isSvgFile, isVideoFile } from '../../../util/general';
 import Device from '../../../util/Device';
 import SvgImage from '../SvgImage';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 export const convertImageUrl = imageUrl => {
 	if (util.isIPFSUrl(imageUrl)) {
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
 });
 
 class NFTImage extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		videoUrls: PropTypes.array,
 		imageUrls: PropTypes.array,
@@ -204,6 +206,7 @@ class NFTImage extends PureComponent {
 			parseError
 		} = this.state;
 		const urlValue = convertImageUrl(this.props.imageUrl);
+		const { isDarkMode } = this.context;
 
 		let width = style?.width;
 		let height = style?.height;
@@ -242,7 +245,11 @@ class NFTImage extends PureComponent {
 							? defaultImg || require('../../../images/nft_default_placehoder.png')
 							: { uri: urlValue }
 					}
-					style={[style, showBorder && styles.borderStyle]}
+					style={[
+						style,
+						showBorder && styles.borderStyle,
+						isDarkMode && { borderColor: colors.brandBlue700 }
+					]}
 					onLoadEnd={onLoadEnd}
 					resizeMode={resizeMode}
 					onLoad={onLoad}
@@ -255,7 +262,14 @@ class NFTImage extends PureComponent {
 			);
 		} else if (isVideoUrl || isVideoFile(urlValue)) {
 			return (
-				<View style={[style, showBorder && styles.borderStyle, isBlurBg && styles.bgBlack]}>
+				<View
+					style={[
+						style,
+						showBorder && styles.borderStyle,
+						isBlurBg && styles.bgBlack,
+						isDarkMode && { borderColor: colors.brandBlue700 }
+					]}
+				>
 					{this.state.videoError && this.props.videoThumbnail ? (
 						<Video
 							muted
@@ -288,7 +302,14 @@ class NFTImage extends PureComponent {
 			);
 		} else if (isSvgUrl || isSvgFile(urlValue)) {
 			return (
-				<View style={[style, styles.svgBorderRadius, showBorder && styles.borderStyle]}>
+				<View
+					style={[
+						style,
+						styles.svgBorderRadius,
+						showBorder && styles.borderStyle,
+						isDarkMode && { borderColor: colors.brandBlue700 }
+					]}
+				>
 					{svgUseWebView ? (
 						<SvgImage
 							ref={this.refImage}
@@ -310,11 +331,21 @@ class NFTImage extends PureComponent {
 				</View>
 			);
 		}
+
 		return (
 			<FastImage
 				ref={this.refImage}
-				source={{ uri: urlValue }}
-				style={[style, showBorder && styles.borderStyle]}
+				source={
+					imageLoadingError
+						? defaultImg || require('../../../images/nft_default_placehoder.png')
+						: { uri: urlValue }
+				}
+				onError={() => {
+					if (!imageLoadingError) {
+						this.setState({ imageLoadingError: true });
+					}
+				}}
+				style={[style, showBorder && styles.borderStyle, isDarkMode && { borderColor: colors.brandBlue700 }]}
 				resizeMode={resizeMode}
 				onLoadEnd={onLoadEnd}
 				onLoad={onLoad}

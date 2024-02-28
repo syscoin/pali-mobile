@@ -105,8 +105,9 @@ class LanguageSelector extends PureComponent {
 		};
 	}
 
-	renderCurrencyItem = () =>
-		languageArray.map(language => {
+	renderCurrencyItem = () => {
+		const { isDarkMode } = this.context;
+		return languageArray.map(language => {
 			const selected = language.locale === i18n.locale ? <Image source={checkIcon} /> : null;
 			return (
 				<View key={language.name}>
@@ -122,20 +123,23 @@ class LanguageSelector extends PureComponent {
 						}}
 					>
 						<View style={styles.languageInfo}>
-							<Text style={styles.languageLabel}>{language.name}</Text>
+							<Text style={[styles.languageLabel, isDarkMode && baseStyles.textDark]}>
+								{language.name}
+							</Text>
 						</View>
 						<View>{selected}</View>
 					</TouchableOpacity>
-					<View style={styles.line} />
+					<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 				</View>
 			);
 		});
+	};
 
 	render() {
 		const { isDarkMode } = this.context;
 		return (
 			<SafeAreaView
-				style={[baseStyles.flexGrow, { backgroundColor: isDarkMode && colors.brandBlue700 }]}
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
 				testID={'wallet-screen'}
 			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
@@ -148,7 +152,9 @@ class LanguageSelector extends PureComponent {
 					titleStyle={styles.txTitle}
 					withBackground
 				/>
-				<View style={styles.wrapper}>{this.renderCurrencyItem()}</View>
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>
+					{this.renderCurrencyItem()}
+				</View>
 			</SafeAreaView>
 		);
 	}

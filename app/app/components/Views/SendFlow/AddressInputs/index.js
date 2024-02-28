@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { colors, fontStyles } from '../../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../../styles/common';
 import PropTypes from 'prop-types';
 import { renderShortAddress } from '../../../../util/address';
 import { strings } from '../../../../../locales/i18n';
 import { isValidAddress } from 'paliwallet-core';
 import NFTImage from '../../../UI/NFTImage';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
 const holderGrey = '#8F92A1';
 const labelTextColor = '#030319';
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
 });
 
 export const AddressTo = props => {
+	const { isDarkMode } = useTheme();
 	const {
 		addressToReady,
 		inputRef,
@@ -161,7 +163,7 @@ export const AddressTo = props => {
 	return (
 		<View style={styles.wrapper}>
 			<View style={styles.label}>
-				<Text style={styles.labelText}>{title}</Text>
+				<Text style={[styles.labelText, isDarkMode && baseStyles.textDark]}>{title}</Text>
 			</View>
 			{!addressToReady ? (
 				<View style={styles.selectWrapper}>
@@ -175,7 +177,7 @@ export const AddressTo = props => {
 							placeholder={placeholder}
 							placeholderTextColor={holderGrey}
 							spellCheck={false}
-							style={[styles.textInput, inputWidth]}
+							style={[styles.textInput, inputWidth, isDarkMode && baseStyles.textDark]}
 							numberOfLines={1}
 							onFocus={onInputFocus}
 							onBlur={onInputBlur}
@@ -217,7 +219,7 @@ export const AddressTo = props => {
 								<Image style={styles.ensIcon} source={require('../../../../images/ic_ens.png')} />
 							))}
 						<Text
-							style={styles.textAddress}
+							style={[styles.textAddress, isDarkMode && baseStyles.textDark]}
 							numberOfLines={1}
 							allowFontScaling={false}
 							ellipsizeMode={'middle'}

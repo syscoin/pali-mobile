@@ -635,6 +635,7 @@ class WalletManagement extends PureComponent {
 	renderDeleteAccount = () => {
 		const { deleteAccountModalVisible } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={deleteAccountModalVisible && !isLockScreen}
@@ -645,21 +646,36 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer2}>
-						<Text style={styles.modalTitle}>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
 							{strings('wallet_management.delete_account', {
 								name: this.currentModalAccount?.name
 							})}
 						</Text>
 
-						<Text style={styles.modalWarn}>{strings('wallet_management.delete_warn')}</Text>
+						<Text style={[styles.modalWarn, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.delete_warn')}
+						</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onDeleteCancal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onDeleteCancal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onDeleteOk}>
-								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onDeleteOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.confirm_delete')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -720,7 +736,7 @@ class WalletManagement extends PureComponent {
 
 	renderRenameWallet = () => {
 		const { renameWalletModalVisible, walletNameValue } = this.state;
-
+		const { isDarkMode } = this.context;
 		const { isLockScreen } = this.props;
 
 		return (
@@ -733,22 +749,39 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.rename_account')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.rename_account')}
+						</Text>
 						<TextInput
-							style={styles.textInput}
+							style={[styles.textInput, isDarkMode && baseStyles.textDark]}
 							value={walletNameValue}
 							onChangeText={this.onWalletNameChange}
 						/>
 						<View style={styles.underline} />
-						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
+						<Text style={[styles.modalEg, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.rename_eg')}
+						</Text>
 						<View style={styles.modalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onRenameWalletCancel}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onRenameWalletCancel}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onRenameWalletOk}>
-								<Text style={styles.okText}>{strings('wallet_management.rename')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onRenameWalletOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.rename')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -760,6 +793,7 @@ class WalletManagement extends PureComponent {
 	renderRenameAccount = () => {
 		const { renameAccountModalVisible, accountNameValue } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={renameAccountModalVisible && !isLockScreen}
@@ -770,22 +804,39 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.rename_account')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.rename_account')}
+						</Text>
 						<TextInput
-							style={styles.textInput}
+							style={[styles.textInput, isDarkMode && baseStyles.textDark]}
 							value={accountNameValue}
 							onChangeText={this.onAccountNameChange}
 						/>
 						<View style={styles.underline} />
-						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
+						<Text style={[styles.modalEgisDarkMode, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.rename_eg')}
+						</Text>
 						<View style={styles.modalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onRenameCancal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onRenameCancal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onRenameOk}>
-								<Text style={styles.okText}>{strings('wallet_management.rename')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onRenameOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.rename')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -861,6 +912,7 @@ class WalletManagement extends PureComponent {
 	renderCheckPassword = () => {
 		const { checkPasswordModalVisible, passwordValue, wrongPwVisible } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={checkPasswordModalVisible && !isLockScreen}
@@ -871,12 +923,22 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.confirm_password')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.confirm_password')}
+						</Text>
 						<TextInput
 							ref={this.fieldRef}
-							style={styles.pwInput}
+							style={[
+								styles.pwInput,
+								isDarkMode && baseStyles.textDark,
+								isDarkMode && baseStyles.darkInputBackground,
+								isDarkMode && { borderColor: colors.white016 }
+							]}
 							value={passwordValue}
 							onChangeText={this.onPasswordValueChange}
 							secureTextEntry
@@ -890,11 +952,21 @@ class WalletManagement extends PureComponent {
 							{strings('wallet_management.wrong_password')}
 						</Text>
 						<View style={styles.pwModalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.hideCheckPasswordModal}>
-								<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.hideCheckPasswordModal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('action_view.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onConfirmPw}>
-								<Text style={styles.okText}>{strings('action_view.confirm')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onConfirmPw}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('action_view.confirm')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -915,7 +987,9 @@ class WalletManagement extends PureComponent {
 		wallet.walletName = walletName;
 
 		this.currentModalWallet = wallet;
-		this.setState({ renameWalletModalVisible: true, walletNameValue: walletName });
+		setTimeout(() => {
+			this.setState({ renameWalletModalVisible: true, walletNameValue: walletName });
+		}, 500);
 	};
 
 	showDeleteAccountModal = account => {
@@ -1095,13 +1169,18 @@ class WalletManagement extends PureComponent {
 	};
 
 	showDeleteWalletModal = () => {
+		const { walletSelectedName } = this.state;
 		this.hideHeaderPopModal();
-		this.setState({ deleteWalletModalVisible: true });
+
+		setTimeout(() => {
+			this.setState({ deleteWalletModalVisible: true, walletSelectedName: walletSelectedName });
+		}, 500);
 	};
 
 	renderDeleteWallet = () => {
 		const { deleteWalletModalVisible, walletSelectedName } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={deleteWalletModalVisible && !isLockScreen}
@@ -1112,21 +1191,36 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer2}>
-						<Text style={styles.modalTitle}>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
 							{strings('wallet_management.delete_wallet', {
 								name: walletSelectedName
 							})}
 						</Text>
 
-						<Text style={styles.modalWarn}>{strings('wallet_management.delete_wallet_warn')}</Text>
+						<Text style={[styles.modalWarn, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.delete_wallet_warn')}
+						</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.hideDeleteWalletModal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.hideDeleteWalletModal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onWalletDelete}>
-								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onWalletDelete}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.confirm_delete')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -1193,15 +1287,17 @@ class WalletManagement extends PureComponent {
 			renameWalletLoading
 		} = this.state;
 		const { isLockScreen, identities } = this.props;
-
+		const { isDarkMode } = this.context;
 		const wallet = identities[walletMainAddress];
 		return (
 			<>
 				<View style={styles.titleLayout}>
-					<Text style={styles.intro}>{isWalletPop ? walletSelectedName : strings('other.wallet')}</Text>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>
+						{isWalletPop ? walletSelectedName : strings('other.wallet')}
+					</Text>
 				</View>
 				{isWalletPop ? (
-					<View style={styles.paddingVertical7}>
+					<View style={[styles.paddingVertical7, isDarkMode && baseStyles.darkModalBackground]}>
 						<TouchableOpacity
 							style={styles.walletPopItemButton}
 							activeOpacity={0.5}
@@ -1216,8 +1312,13 @@ class WalletManagement extends PureComponent {
 								});
 							}}
 						>
-							<Icon width="20" height="20" color={colors.$1A1A1A} name="visibility" />
-							<Text style={styles.walletPopItemText}>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="visibility"
+							/>
+							<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
 								{walletSelectedType === KeyringTypes.hd
 									? strings('reveal_credential.seed_phrase_title')
 									: strings('reveal_credential.private_key_title')}
@@ -1240,8 +1341,13 @@ class WalletManagement extends PureComponent {
 									});
 								}}
 							>
-								<Icon width="18" height="18" color={colors.$1A1A1A} name="shield" />
-								<Text style={styles.walletPopItemText}>
+								<Icon
+									width="18"
+									height="18"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="shield"
+								/>
+								<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
 									{strings('wallet_management.verify_seed_phrase')}
 								</Text>
 							</TouchableOpacity>
@@ -1256,32 +1362,49 @@ class WalletManagement extends PureComponent {
 								}
 							}}
 						>
-							<Icon width="18" height="18" color={colors.$1A1A1A} name="edit" />
-							<Text style={styles.walletPopItemText}>{strings('wallet_management.rename_wallet')}</Text>
+							<Icon
+								width="18"
+								height="18"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="edit"
+							/>
+							<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.rename_wallet')}
+							</Text>
 						</TouchableOpacity>
 						<View style={styles.underline} />
 						{walletSelectedCanRemove && (
 							<TouchableOpacity
 								style={styles.walletPopItemButton}
 								activeOpacity={0.5}
-								onPress={this.showDeleteWalletModal}
+								onPress={() => this.showDeleteWalletModal()}
 							>
-								<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
-								<Text style={styles.walletPopItemText}>
+								<Icon
+									width="18"
+									height="18"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="trash"
+								/>
+								<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
 									{strings('wallet_management.delete_this_wallet')}
 								</Text>
 							</TouchableOpacity>
 						)}
 					</View>
 				) : (
-					<View style={styles.paddingVertical7}>
+					<View style={[styles.paddingVertical7, isDarkMode && baseStyles.darkModalBackground]}>
 						<TouchableOpacity
 							style={styles.importPhraseButton}
 							activeOpacity={0.5}
 							onPress={this.onImportPhrase}
 						>
-							<Icon width="20" height="20" color={colors.$1A1A1A} name="sapling" />
-							<Text style={styles.importPhraseButtonText}>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="sapling"
+							/>
+							<Text style={[styles.importPhraseButtonText, isDarkMode && baseStyles.textDark]}>
 								{strings('wallet_management.import_seed_phrase')}
 							</Text>
 						</TouchableOpacity>
@@ -1291,8 +1414,13 @@ class WalletManagement extends PureComponent {
 							onPress={this.onImportPrivateKey}
 							activeOpacity={0.5}
 						>
-							<Icon width="20" height="20" color={colors.$1A1A1A} name="privateKey" />
-							<Text style={styles.importPrivateKeyButtonText}>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="privateKey"
+							/>
+							<Text style={[styles.importPrivateKeyButtonText, isDarkMode && baseStyles.textDark]}>
 								{strings('wallet_management.import_private_key')}
 							</Text>
 						</TouchableOpacity>
@@ -1303,8 +1431,13 @@ class WalletManagement extends PureComponent {
 							activeOpacity={0.5}
 						>
 							<View style={styles.askBaseLayout}>
-								<Icon width="20" height="20" color={colors.$1A1A1A} name="walletOutline" />
-								<Text style={styles.createWalletButtonText}>
+								<Icon
+									width="20"
+									height="20"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="walletOutline"
+								/>
+								<Text style={[styles.createWalletButtonText, isDarkMode && baseStyles.textDark]}>
 									{strings('wallet_management.create_new_wallet')}
 								</Text>
 								<TouchableOpacity
@@ -1344,10 +1477,11 @@ class WalletManagement extends PureComponent {
 		const { isLockScreen, identities } = this.props;
 
 		const wallet = identities[walletMainAddress];
+		const { isDarkMode } = this.context;
 
 		return (
 			<Modal
-				isVisible={headerPopModalVisible}
+				isVisible={headerPopModalVisible && !isLockScreen}
 				onBackdropPress={this.hideModal}
 				onBackButtonPress={this.hideModal}
 				onSwipeComplete={this.hideModal}
@@ -1358,11 +1492,16 @@ class WalletManagement extends PureComponent {
 				backdropTransitionOutTiming={0}
 			>
 				{Device.isIos() ? (
-					<KeyboardAvoidingView style={styles.wrapperModal} behavior={'padding'}>
+					<KeyboardAvoidingView
+						style={[styles.wrapperModal, isDarkMode && baseStyles.darkCardBackground]}
+						behavior={'padding'}
+					>
 						{this.renderView()}
 					</KeyboardAvoidingView>
 				) : (
-					<View style={styles.wrapperModal}>{this.renderView()}</View>
+					<View style={[styles.wrapperModal && isDarkMode && baseStyles.darkCardBackground]}>
+						{this.renderView()}
+					</View>
 				)}
 			</Modal>
 		);

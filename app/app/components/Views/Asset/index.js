@@ -16,7 +16,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import AssetOverview from '../../UI/AssetOverview';
 import iconBackWhite from '../../../images/ic_back_white.png';
 import iconBackBlack from '../../../images/back.png';
@@ -31,6 +31,7 @@ import { iosShake } from '../../../util/NativeUtils';
 import { onEvent } from '../../../util/statistics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getSecurityData } from '../../../util/security';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const activeOpacity = 0.8;
 const { height } = Dimensions.get('screen');
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
  * and also the transaction list
  */
 class Asset extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to access the props
@@ -263,6 +265,7 @@ class Asset extends PureComponent {
 			riskText = strings('security.security_risk_medium');
 			riskImg = require('../../../images/img_defi_warning.png');
 		}
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				disabled={unFoldOpacity.__getValue() < 0.2}
@@ -273,13 +276,22 @@ class Asset extends PureComponent {
 					}
 				}}
 			>
-				<Animated.View opacity={unFoldOpacity} style={styles.titleUnfoldLayout}>
+				<Animated.View
+					opacity={unFoldOpacity}
+					style={[styles.titleUnfoldLayout, isDarkMode && baseStyles.darkInputBackground]}
+				>
 					<Image source={riskImg} style={styles.securityIcon} />
 					<View style={styles.titleUnfoldInContent}>
-						<Text style={styles.titleUnfoldSecurityText} allowFontScaling={false}>
+						<Text
+							style={[styles.titleUnfoldSecurityText, isDarkMode && baseStyles.textDark]}
+							allowFontScaling={false}
+						>
 							{riskText}
 						</Text>
-						<Text style={styles.titleUnfoldSecurityDesc} allowFontScaling={false}>
+						<Text
+							style={[styles.titleUnfoldSecurityDesc, isDarkMode && baseStyles.subTextDark]}
+							allowFontScaling={false}
+						>
 							{strings('fold_security.tap_to_check')}
 						</Text>
 					</View>
@@ -329,12 +341,16 @@ class Asset extends PureComponent {
 			isSecurityViewShowed,
 			immediatelyShowed
 		} = this.state;
+		const { isDarkMode } = this.context;
 		const { navigation, selectedAddress } = this.props;
 		if (!asset) return this.renderLoader();
 		const isHideAmount = hideAmount || isGlobalAmountHide;
+		const outputRangeColors = isDarkMode
+			? [colors.transparent, '#FFFFFF30', colors.brandBlue600]
+			: [colors.transparent, '#FFFFFF30', '#FFFFFFFF'];
 		const backgroundColor = navBackColorOffset.interpolate({
 			inputRange: [0, this.changeNavHeight / 2, this.changeNavHeight],
-			outputRange: [colors.transparent, '#FFFFFF30', '#FFFFFFFF'],
+			outputRange: outputRangeColors,
 			extrapolate: 'clamp',
 			useNativeDriver: true
 		});
@@ -357,7 +373,7 @@ class Asset extends PureComponent {
 
 		return (
 			<React.Fragment>
-				<View style={styles.wrapper}>
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>
 					<MStatusBar
 						navigation={navigation}
 						barStyle={barStyle}
@@ -385,9 +401,15 @@ class Asset extends PureComponent {
 								if (y >= -60) {
 									this.setState({ navBackColorOffset: new Animated.Value(y) });
 									if (y > this.changeNavHeight / 2) {
-										this.setState({ barStyle: 'dark-content', backImg: iconBackBlack });
+										this.setState({
+											barStyle: 'dark-content',
+											backImg: isDarkMode ? iconBackWhite : iconBackBlack
+										});
 									} else {
-										this.setState({ barStyle: 'light-content', backImg: iconBackWhite });
+										this.setState({
+											barStyle: 'light-content',
+											backImg: isDarkMode ? iconBackBlack : iconBackWhite
+										});
 									}
 								}
 							}}
@@ -404,14 +426,20 @@ class Asset extends PureComponent {
 								}
 							}}
 						>
-							<View style={styles.flexOne}>
-								<View style={[styles.assetTopBg, { top: 140 + headerHeight }]} />
+							<View style={[styles.flexOne]}>
+								<View
+									style={[
+										styles.assetTopBg,
+										isDarkMode && baseStyles.darkBackground600,
+										{ top: 140 + headerHeight }
+									]}
+								/>
 								<AssetView
 									ref={this.assetViewRef}
-									style={{ paddingTop: headerHeight }}
+									style={[{ paddingTop: headerHeight }]}
 									navigation={navigation}
 									header={
-										<View style={styles.assetOverviewWrapper}>
+										<View style={[styles.assetOverviewWrapper]}>
 											<AssetOverview
 												navigation={navigation}
 												selectedAddress={selectedAddress}
@@ -430,7 +458,7 @@ class Asset extends PureComponent {
 
 						{scrollEnabled && isSecurityViewShowed && (
 							<FoldSecurityView
-								style={styles.foldView}
+								style={[styles.foldView]}
 								asset={asset}
 								isSecurityViewShowed={isSecurityViewShowed}
 								securityViewOpacity={this.securityViewOpacity}
@@ -443,6 +471,7 @@ class Asset extends PureComponent {
 								opacity={this.buttonOpacity}
 								style={[
 									styles.draggerWrapper,
+
 									{
 										backgroundColor,
 										height: headerHeight,
@@ -462,7 +491,7 @@ class Asset extends PureComponent {
 						)}
 					</View>
 				</View>
-				<SafeAreaView style={styles.bottomBg} />
+				<SafeAreaView style={[styles.bottomBg, isDarkMode && baseStyles.darkBackground600]} />
 				{!asset.lockType && !immediatelyShowed && (
 					<AssetActionView navigation={navigation} asset={asset} hideOtherModal={this.hideSecurityModal} />
 				)}

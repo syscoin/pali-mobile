@@ -50,6 +50,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -300,6 +301,7 @@ const styles = StyleSheet.create({
  * View that wraps the wraps the "Send" screen
  */
 class SendNFTTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
@@ -760,10 +762,15 @@ class SendNFTTab extends PureComponent {
 
 	renderTokenInput = () => {
 		const { amountFormat, inputTextWidth } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.valueInput}>
 				<TextInput
-					style={[styles.inputAmount, inputTextWidth && { width: inputTextWidth }]}
+					style={[
+						styles.inputAmount,
+						inputTextWidth && { width: inputTextWidth },
+						isDarkMode && baseStyles.textDark
+					]}
 					ref={this.amountInputRef}
 					value={amountFormat}
 					onLayout={this.onTextInputLayout}
@@ -814,17 +821,27 @@ class SendNFTTab extends PureComponent {
 		} = this.state;
 		const { asset, onClose } = this.props;
 		const { transaction, loading, error } = this.state;
+		const { isDarkMode } = this.context;
 		const isReady = txStep === 1 ? toSelectedAddressReady && amountReady : confirmEnabled;
+
 		return (
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 				onScrollBeginDrag={dismissKeyboard}
+				style={[
+					{ borderTopEndRadius: 50, borderTopStartRadius: 50 },
+					isDarkMode && baseStyles.darkModalBackground
+				]}
 			>
-				<View style={styles.titleLayout}>
-					<Text style={styles.intro}>{strings('other.send_nft')}</Text>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.send_nft')}</Text>
 				</View>
-				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
+				<TouchableOpacity
+					style={[styles.container, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1}
+					onPress={dismissKeyboard}
+				>
 					{txStep === 1 ? (
 						<View style={styles.stepOne}>
 							<NFTImage style={styles.stepOneImage} imageUrl={asset.image_url} />
@@ -853,7 +870,9 @@ class SendNFTTab extends PureComponent {
 								})}
 							</Text>
 							<View style={styles.amountTitle}>
-								<Text style={styles.titleText}>{strings('other.amount')}</Text>
+								<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.amount')}
+								</Text>
 								<Text style={styles.amountText}>
 									{strings('other.amount_available', { amount: asset.balanceOf })}
 								</Text>
@@ -893,23 +912,34 @@ class SendNFTTab extends PureComponent {
 					<View style={baseStyles.flexGrow} />
 					<View style={styles.confirmActionWrapper}>
 						<TouchableOpacity
-							style={styles.cancelButton}
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 							onPress={txStep === 1 ? onClose : this.onCancel}
 							activeOpacity={activeOpacity}
 							disabled={loading}
 						>
-							<Text style={styles.cancelButtonText}>{strings('action_view.cancel')}</Text>
+							<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('action_view.cancel')}
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.confirmButton, isReady && styles.confirmButtonEnabled]}
+							style={[
+								styles.confirmButton,
+								isReady && (isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+							]}
 							onPress={txStep === 1 ? this.onNextStep : this.onConfirmClick}
 							activeOpacity={activeOpacity}
 							disabled={!isReady || loading}
 						>
 							{loading ? (
-								<ActivityIndicator size="small" color="white" />
+								<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 							) : (
-								<Text style={[styles.confirmButtonText, isReady && styles.confirmButtonTextEnable]}>
+								<Text
+									style={[
+										styles.confirmButtonText,
+										isReady &&
+											(isDarkMode ? baseStyles.darkConfirmText : styles.confirmButtonTextEnable)
+									]}
+								>
 									{strings(txStep === 1 ? 'other.next' : 'action_view.confirm')}
 								</Text>
 							)}

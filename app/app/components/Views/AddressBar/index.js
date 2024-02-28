@@ -12,7 +12,7 @@ import {
 	Dimensions,
 	DeviceEventEmitter
 } from 'react-native';
-import { colors } from '../../../styles/common';
+import { colors, baseStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
 import { strings } from '../../../../locales/i18n';
@@ -23,6 +23,7 @@ import AppConstants from '../../../core/AppConstants';
 import { getActiveTabId } from '../../../util/browser';
 import { captureRef, dirs } from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	topTabbar: {
@@ -126,6 +127,7 @@ const { HOMEPAGE_URL } = AppConstants;
 const screenWidth = Dimensions.get('window').width;
 
 export default class AddressBar extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		onFocusChange: PropTypes.func,
 		onTextChange: PropTypes.func,
@@ -317,7 +319,7 @@ export default class AddressBar extends PureComponent {
 		const onlyOneTab = rightTabUrl === 'add' && leftTabUrl === 'add';
 
 		const webPageState = !isHomePage && !inputEditing;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View
 				style={[
@@ -325,11 +327,12 @@ export default class AddressBar extends PureComponent {
 					{
 						width: screenWidth,
 						backgroundColor: colors.white
-					}
+					},
+					isDarkMode && baseStyles.darkCardBackground
 				]}
 			>
 				<TouchableOpacity
-					style={inputEditing && styles.hide}
+					style={[inputEditing && styles.hide]}
 					onPress={() => {
 						goHome(tabId);
 					}}

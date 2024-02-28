@@ -75,6 +75,7 @@ import CheckPassword from '../../../UI/CheckPassword';
 import { getSupportMigration, isSupportCBridge } from './Bridge';
 import { getEstimatedTotalGas } from '../../../../util/Amount';
 import { getChainTypeName } from '../../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const arbiBgColor = '#B8B4BF';
 const logoBorderColor = '#DCDCDC';
@@ -393,6 +394,7 @@ const styles = StyleSheet.create({
 });
 
 class MoveTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		asset: PropTypes.object,
@@ -1407,6 +1409,7 @@ class MoveTab extends PureComponent {
 		const { loading, nextEnabled, networkSelectType, claimEthereumGas } = this.state;
 		const { asset, onClose, mainBalance } = this.props;
 		const showTips = networkSelectType === ChainType.Ethereum && claimEthereumGas;
+		const { isDarkMode } = this.context;
 		return (
 			<>
 				<View style={styles.amountWrapper}>
@@ -1438,12 +1441,14 @@ class MoveTab extends PureComponent {
 				)}
 				<View style={styles.actionRow}>
 					<TouchableOpacity
-						style={styles.cancelButton}
+						style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 						onPress={onClose && onClose}
 						activeOpacity={activeOpacity}
 						disabled={loading}
 					>
-						<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+						<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+							{strings('other.cancel')}
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={[styles.nextButton, nextEnabled && styles.nextButtonEnabled]}
@@ -1633,6 +1638,7 @@ class MoveTab extends PureComponent {
 	renderApprove = () => {
 		const { asset } = this.props;
 		const { loading } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<>
 				{loading ? (
@@ -1666,11 +1672,11 @@ class MoveTab extends PureComponent {
 				<View style={baseStyles.flexGrow} />
 				<View style={styles.actionRow}>
 					<TouchableOpacity
-						style={styles.cancelButton}
+						style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 						onPress={loading ? this.onClose : this.onBack}
 						activeOpacity={activeOpacity}
 					>
-						<Text style={styles.cancelButtonText}>
+						<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
 							{strings(loading ? 'other.check_later' : 'navigation.back')}
 						</Text>
 					</TouchableOpacity>
@@ -1702,6 +1708,7 @@ class MoveTab extends PureComponent {
 			asset: { symbol, type }
 		} = this.props;
 		const showTips = networkSelectType === ChainType.Ethereum && claimEthereumGas;
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.wrapper}>
 				<View style={styles.rowWrapper}>
@@ -1759,10 +1766,12 @@ class MoveTab extends PureComponent {
 					<TouchableOpacity
 						onPress={this.onBack}
 						activeOpacity={activeOpacity}
-						style={styles.cancelButton}
+						style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 						disabled={loading}
 					>
-						<Text style={styles.cancelButtonText}>{strings('navigation.back')}</Text>
+						<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+							{strings('navigation.back')}
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={[styles.nextButton, styles.nextButtonEnabled]}

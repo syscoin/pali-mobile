@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -34,6 +34,8 @@ import {
 	isRpcChainId
 } from '../../../util/ControllerUtils';
 import { ChainTypeBgOngoing, ChainTypes, getChainTypeName } from '../../../util/ChainTypeImages';
+
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -141,6 +143,7 @@ const styles = StyleSheet.create({
 const ROW_HEIGHT = 194;
 
 class OngoingTransactions extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		transactionMetas: PropTypes.array,
@@ -425,22 +428,28 @@ class OngoingTransactions extends PureComponent {
 		);
 	};
 
-	renderCancelButton = (transactionMeta, canceling) =>
-		canceling ? (
+	renderCancelButton = (transactionMeta, canceling) => {
+		const { isDarkMode } = this.context;
+		return canceling ? (
 			<View style={styles.canceling}>
-				<Text style={styles.cancelButtonText}>{strings('other.cancelling')}</Text>
+				<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.cancelling')}
+				</Text>
 			</View>
 		) : (
 			<TouchableOpacity
-				style={styles.cancelButton}
+				style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 				onPress={() => {
 					this.startCancel(transactionMeta);
 				}}
 				activeOpacity={0.8}
 			>
-				<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+				<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.cancel')}
+				</Text>
 			</TouchableOpacity>
 		);
+	};
 
 	renderMigrating = () => (
 		<>

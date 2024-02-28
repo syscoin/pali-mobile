@@ -627,46 +627,52 @@ class Wallet extends PureComponent {
 		}
 	};
 
-	renderNotifyPermissionModal = () => (
-		<Modal isVisible={this.state.showNotifypermissionModal && !this.props.isLockScreen} statusBarTranslucent>
-			<View style={styles.notifyModalContainer}>
-				<View style={styles.flexOne}>
-					<Text style={styles.notifyTitle}>{strings('other.enable_notification')}</Text>
-					<Text style={styles.notifyDesc}>{strings('other.enable_notification_message')}</Text>
-					<View style={styles.modalButtons}>
-						<TouchableOpacity
-							style={styles.cancelButton}
-							onPress={() => {
-								this.setState({ showNotifypermissionModal: false });
-								setTimeout(() => {
-									this.onOnboarding(), 300;
-								});
-							}}
-						>
-							<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.okButton}
-							onPress={() => {
-								this.setState({ showNotifypermissionModal: false });
+	renderNotifyPermissionModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal isVisible={this.state.showNotifypermissionModal && !this.props.isLockScreen} statusBarTranslucent>
+				<View style={styles.notifyModalContainer}>
+					<View style={styles.flexOne}>
+						<Text style={styles.notifyTitle}>{strings('other.enable_notification')}</Text>
+						<Text style={styles.notifyDesc}>{strings('other.enable_notification_message')}</Text>
+						<View style={styles.modalButtons}>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={() => {
+									this.setState({ showNotifypermissionModal: false });
+									setTimeout(() => {
+										this.onOnboarding(), 300;
+									});
+								}}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={() => {
+									this.setState({ showNotifypermissionModal: false });
 
-								setTimeout(() => {
-									NativeModules.RNToolsManager.gotoSetNotification();
-								}, 50);
+									setTimeout(() => {
+										NativeModules.RNToolsManager.gotoSetNotification();
+									}, 50);
 
-								setTimeout(() => {
-									this.onOnboarding();
-								}, 300);
-							}}
-						>
-							<Text style={styles.okText}>{strings('navigation.ok')}</Text>
-						</TouchableOpacity>
+									setTimeout(() => {
+										this.onOnboarding();
+									}, 300);
+								}}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('navigation.ok')}
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
-			</View>
-		</Modal>
-	);
-
+			</Modal>
+		);
+	};
 	_onStartShouldSetResponderCapture = () => hideRiskPop();
 
 	showEnsSettingModal = async ensEntry => {

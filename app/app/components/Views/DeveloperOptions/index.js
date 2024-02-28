@@ -122,18 +122,25 @@ class DeveloperOptions extends PureComponent {
 	};
 	static contextType = ThemeContext;
 
-	networkElement = (selected, onPress, shortName, i, network, chainType) => (
-		<TouchableOpacity
-			style={[styles.network, i === 1 ? styles.marginTop5 : null]}
-			key={`network-${shortName}-${i}`}
-			onPress={() => onPress && onPress(network, chainType)}
-		>
-			<View style={styles.networkInfo}>
-				<Text style={styles.networkLabel}>{shortName}</Text>
-			</View>
-			<View>{selected}</View>
-		</TouchableOpacity>
-	);
+	networkElement = (selected, onPress, shortName, i, network, chainType) => {
+		const { isDarkMode } = this.context;
+		return (
+			<TouchableOpacity
+				style={[
+					styles.network,
+					i === 1 ? styles.marginTop5 : null,
+					isDarkMode && { backgroundColor: '#2539546f' }
+				]}
+				key={`network-${shortName}-${i}`}
+				onPress={() => onPress && onPress(network, chainType)}
+			>
+				<View style={styles.networkInfo}>
+					<Text style={[styles.networkLabel, isDarkMode && baseStyles.subTextDark]}>{shortName}</Text>
+				</View>
+				<View>{selected}</View>
+			</TouchableOpacity>
+		);
+	};
 
 	onNetworkChange = (type, chainType, force = false) => {
 		if (!force && this.props.allNetworkChanging[chainType]) {
@@ -144,6 +151,7 @@ class DeveloperOptions extends PureComponent {
 	};
 
 	renderNetworks = () => {
+		const { isDarkMode } = this.context;
 		const { allProvider, allNetworkChanging } = this.props;
 		const elementMap = [];
 
@@ -165,7 +173,7 @@ class DeveloperOptions extends PureComponent {
 			}
 
 			elementMap.push(
-				<Text key={`title${type}`} style={styles.titleHead}>
+				<Text key={`title${type}`} style={[styles.titleHead, isDarkMode && baseStyles.textDark]}>
 					{getDeveloperTitle(chainType)}
 				</Text>
 			);
@@ -239,8 +247,8 @@ class DeveloperOptions extends PureComponent {
 					withBackground
 				/>
 				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View style={[styles.container, isDarkMode && baseStyles.darkBackground]}>
-						<View style={[styles.switchLayout, isDarkMode && baseStyles.darkBackground]}>
+					<View style={[styles.container, isDarkMode && baseStyles.darkBackground600]}>
+						<View style={[styles.switchLayout, isDarkMode && baseStyles.darkBackground600]}>
 							<Text style={[styles.titleHead, isDarkMode && baseStyles.textDark]}>
 								{strings('developer_options.testnet_availability')}
 							</Text>

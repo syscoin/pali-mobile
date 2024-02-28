@@ -17,13 +17,14 @@ import { getNormalizedTxState, getTicker } from '../../../util/transactions';
 import { setTransactionObject } from '../../../actions/transaction';
 import Engine from '../../../core/Engine';
 import { safeToChecksumAddress } from '../../../util/address';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import PromptView from '../PromptView';
 import { ChainType, isValidAddress, BN, util } from 'paliwallet-core';
 import CheckPassword from '../CheckPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../constants/storage';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
  * PureComponent that supports editing and reviewing a transaction
  */
 class TransactionEditor extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Callback triggered when this transaction is cancelled
@@ -388,6 +390,7 @@ class TransactionEditor extends PureComponent {
 
 	render = () => {
 		const { ready, error, loading, checkPassword } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<React.Fragment>
 				<KeyboardAwareScrollView
@@ -405,15 +408,22 @@ class TransactionEditor extends PureComponent {
 							</View>
 						) : (
 							<View style={styles.actionContainer}>
-								<TouchableOpacity style={styles.cancel} onPress={this.onCancel}>
-									<Text style={styles.cancelText}>{strings('transaction.reject')}</Text>
+								<TouchableOpacity
+									style={[styles.cancel, isDarkMode && baseStyles.darkCancelButton]}
+									onPress={this.onCancel}
+								>
+									<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+										{strings('transaction.reject')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={styles.confirm}
+									style={[styles.confirm, isDarkMode && baseStyles.darkConfirmButton]}
 									onPress={this.onConfirm}
 									disabled={!ready || loading}
 								>
-									<Text style={styles.confirmText}>{strings('transaction.confirm')}</Text>
+									<Text style={[styles.confirmText, isDarkMode && baseStyles.darkConfirmText]}>
+										{strings('transaction.confirm')}
+									</Text>
 								</TouchableOpacity>
 							</View>
 						)}

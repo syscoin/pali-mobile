@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import TitleBar from '../../UI/TitleBar';
 import Icon from '../../UI/Icon';
 import { ThemeContext } from '../../../theme/ThemeProvider';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -82,7 +83,7 @@ const styles = {
 		backgroundColor: colors.$F0F0F0,
 		height: 0.5,
 		alignSelf: 'stretch',
-		marginHorizontal: 30
+		marginHorizontal: 15
 	},
 	itemLayout: {
 		alignItems: 'center',
@@ -168,62 +169,51 @@ export default class AboutView extends PureComponent {
 				<Text style={styles.version}>{this.state.version}</Text>
 				<View style={styles.flex} />
 
-				<View
-					style={[
-						styles.itemLayout,
-						styles.borderRadiusTop,
-						{ backgroundColor: isDarkMode && colors.brandBlue600 }
-					]}
-				>
+				<View style={[styles.itemLayout, styles.borderRadiusTop, isDarkMode && baseStyles.darkBackground600]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goWebsite}>
-						<Image style={styles.logo} source={require('../../../images/ic_website.png')} />
-						<Text style={styles.itemTitle}>{strings('other.official_website')}</Text>
+						<MaterialIcon color={isDarkMode ? colors.white : colors.black} size={22} name="web" />
+						<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('other.official_website')}
+						</Text>
 						<View style={styles.flex} />
 						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
 					</TouchableOpacity>
 				</View>
-				<View style={styles.line} />
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 
-				<View style={styles.line} />
-				<View style={[styles.itemLayout, { backgroundColor: isDarkMode && colors.brandBlue600 }]}>
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+				<View style={[styles.itemLayout, isDarkMode && baseStyles.darkBackground600]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goDiscord}>
-						<Image style={styles.logo} source={require('../../../images/ic_discord.png')} />
-						<Text style={styles.itemTitle}>Discord</Text>
+						<MaterialIcon color={isDarkMode ? colors.white : colors.black} size={22} name="discord" />
+
+						<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>Discord</Text>
 						<View style={styles.flex} />
 						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
 					</TouchableOpacity>
 				</View>
-				<View style={styles.line} />
-
-				<View style={styles.line} />
-				<View style={[styles.itemLayout, { backgroundColor: isDarkMode && colors.brandBlue600 }]}>
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+				<View style={[styles.itemLayout, isDarkMode && baseStyles.darkBackground600]}>
 					<TouchableOpacity style={styles.touch} onPress={this.goTwitter}>
-						<Image style={styles.logo} source={require('../../../images/ic_twitter.png')} />
-						<Text style={styles.itemTitle}>Twitter</Text>
+						<MaterialIcon color={isDarkMode ? colors.white : colors.black} size={22} name="twitter" />
+						<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>Twitter</Text>
 						<View style={styles.flex} />
 						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
 					</TouchableOpacity>
 				</View>
-				<View style={styles.line} />
-
-				<View style={styles.line} />
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+				<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 
 				<View
-					style={[
-						styles.itemLayout,
-						styles.borderRadiusBottom,
-						{ backgroundColor: isDarkMode && colors.brandBlue600 }
-					]}
+					style={[styles.itemLayout, styles.borderRadiusBottom, isDarkMode && baseStyles.darkBackground600]}
 				>
 					<TouchableOpacity style={styles.touch} onPress={this.goTelegram}>
-						<Image style={styles.logo} source={require('../../../images/ic_telegarm.png')} />
-						<Text style={styles.itemTitle}>Telegram</Text>
+						<MaterialIcon color={isDarkMode ? colors.white : colors.black} size={22} name="telegram" />
+						<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>Telegram</Text>
 						<View style={styles.flex} />
 						<Image style={styles.logo} source={require('../../../images/about_arrow.png')} />
 					</TouchableOpacity>
 				</View>
-
-				<View style={styles.line} />
 
 				<View style={styles.flex3} />
 

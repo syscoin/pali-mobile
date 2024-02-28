@@ -13,6 +13,7 @@ import MStatusBar from '../../UI/MStatusBar';
 import { CURRENCIES } from '../../../util/currencies';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = {
 	wrapper: {
@@ -88,13 +89,16 @@ const styles = {
 const currencyArray = Object.keys(CURRENCIES);
 
 class CurrencyUnit extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		navigation: PropTypes.object,
 		currencyCode: PropTypes.string
 	};
 
-	renderCurrencyItem = () =>
-		currencyArray.map((currency, i) => {
+	renderCurrencyItem = () => {
+		const { isDarkMode } = this.context;
+		return currencyArray.map((currency, i) => {
 			const selected = currency === this.props.currencyCode ? <Image source={checkIcon} /> : null;
 			return (
 				<View key={`currency-${i}`}>
@@ -106,18 +110,23 @@ class CurrencyUnit extends PureComponent {
 					>
 						<View style={styles.currencyInfo}>
 							<Image source={CURRENCIES[currency].icon} />
-							<Text style={styles.currencyLabel}>{currency}</Text>
+							<Text style={[styles.currencyLabel, isDarkMode && baseStyles.textDark]}>{currency}</Text>
 						</View>
 						<View>{selected}</View>
 					</TouchableOpacity>
-					<View style={styles.line} />
+					<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 				</View>
 			);
 		});
+	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+			>
 				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
@@ -128,7 +137,10 @@ class CurrencyUnit extends PureComponent {
 					titleStyle={styles.txTitle}
 					withBackground
 				/>
-				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
+				<ScrollView
+					style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}
+					keyboardShouldPersistTaps="handled"
+				>
 					<View>{this.renderCurrencyItem()}</View>
 				</ScrollView>
 			</SafeAreaView>

@@ -3,7 +3,7 @@ import { toggleShowHint } from '../../../actions/hint';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { calcAssetPrices } from '../../../util/number';
 import Modal from 'react-native-modal';
 import SendTab from '../../Views/SendFlow/SendTab';
@@ -19,7 +19,7 @@ import Engine from '../../../core/Engine';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/Device';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
-
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { supportMigration } from '../../Views/SendFlow/MoveTab/Bridge';
 import { EngineContracts, EngineNetworks } from '../../../util/ControllerUtils';
 
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
 });
 
 class AssetActionView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		asset: PropTypes.object,
@@ -310,6 +311,8 @@ class AssetActionView extends PureComponent {
 		let buttonWidth = Device.getDeviceWidth() - (showSwapButton ? 15 : 30);
 		buttonWidth /= showSwapButton ? 3.5 : 3;
 		buttonWidth += 14;
+		const { isDarkMode } = this.context;
+
 		return (
 			<>
 				<ScrollView
@@ -319,31 +322,61 @@ class AssetActionView extends PureComponent {
 					horizontal
 					contentContainerStyle={styles.actionContainer}
 				>
-					<View style={[styles.buttonView, { marginLeft: 0 }]}>
+					<View
+						style={[
+							styles.buttonView,
+							{ marginLeft: 0 },
+							isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+						]}
+					>
 						<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
-							<Text style={styles.buttonContainer}>{strings('other.send')}</Text>
+							<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>
+								{strings('other.send')}
+							</Text>
 						</TouchableOpacity>
 					</View>
 
 					{!isRpc && showSwapButton && (
-						<View style={styles.buttonView}>
+						<View
+							style={[
+								styles.buttonView,
+								isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+							]}
+						>
 							<TouchableOpacity onPress={this.onSwap} activeOpacity={activeOpacity}>
-								<Text style={styles.buttonContainer}>{strings('other.swap')}</Text>
+								<Text style={[styles.buttonContainer, baseStyles.textDark]}>
+									{strings('other.swap')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					)}
-					<View style={[styles.buttonView, { minWidth: 85 }]}>
+					<View
+						style={[
+							styles.buttonView,
+							{ minWidth: 85 },
+							isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+						]}
+					>
 						<TouchableOpacity onPress={this.showMigrateModal} activeOpacity={activeOpacity}>
 							{migrationLoading ? (
 								<ActivityIndicator style={styles.buttonIcon} color={'#4D76B8'} />
 							) : (
-								<Text style={styles.buttonContainer}>{strings('other.bridge')}</Text>
+								<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>
+									{strings('other.bridge')}
+								</Text>
 							)}
 						</TouchableOpacity>
 					</View>
-					<View style={styles.buttonView}>
+					<View
+						style={[
+							styles.buttonView,
+							isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+						]}
+					>
 						<TouchableOpacity onPress={this.showReceiveModal} activeOpacity={activeOpacity}>
-							<Text style={styles.buttonContainer}>{strings('other.receive')}</Text>
+							<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>
+								{strings('other.receive')}
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</ScrollView>

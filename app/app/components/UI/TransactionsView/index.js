@@ -2,12 +2,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, ScrollView, View, TouchableOpacity, Text, LayoutAnimation, Image, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import Transactions from '../Transactions';
 import { strings } from '../../../../locales/i18n';
 import GlobalAlert from '../GlobalAlert';
 import TransactionsSwitch from '../TransactionsSwitch';
 import Device from '../../../util/Device';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 import MStatusBar from '../MStatusBar';
 
@@ -85,6 +86,8 @@ const AlertTag = 'TransactionsTab';
  * View that renders a list of transactions for a specific asset
  */
 class TransactionsView extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string
@@ -117,6 +120,7 @@ class TransactionsView extends PureComponent {
 
 	render = () => {
 		const { navigation, selectedAddress } = this.props;
+		const { isDarkMode } = this.context;
 		const { txType } = this.state;
 		const chainType = this.props.navigation.getParam('chainType', ChainType.All);
 		const asset = this.props.navigation.getParam('asset');
@@ -128,7 +132,7 @@ class TransactionsView extends PureComponent {
 		const backgroundHeight = this.calculateBackgroundHeight();
 
 		return (
-			<SafeAreaView style={styles.wrapper}>
+			<SafeAreaView style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 				<Image
 					source={require('../../../images/pali_background.png')}
 					style={{

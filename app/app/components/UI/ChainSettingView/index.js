@@ -18,6 +18,7 @@ import { ChainType, defaultEnabledChains } from 'paliwallet-core';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import DragGridView from '../../Views/DragGridView';
 import Engine from '../../../core/Engine';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
@@ -27,6 +28,7 @@ import { getRpcName, getIsRpc, getAssetIcon } from '../../../util/rpcUtil';
 import PromptView from '../PromptView';
 import { toggleShowHint } from '../../../actions/hint';
 import { ChainTypeSettingsItems } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const { width: viewportWidth } = Dimensions.get('window');
 const dragParentWidth = viewportWidth - (20 + 20) * 2;
@@ -43,6 +45,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginHorizontal: 40,
 		marginVertical: 40
+	},
+	backIcon: {
+		color: colors.black
 	},
 	alignRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
 	icon: {
@@ -264,6 +269,7 @@ const styles = StyleSheet.create({
 });
 
 class ChainSettingView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
@@ -325,22 +331,31 @@ class ChainSettingView extends PureComponent {
 		return false;
 	};
 
-	renderItemView = (item, index) => (
-		<View style={styles.itemView} key={item.chainType}>
-			{item.isRpc ? getAssetIcon(item.chainType) : <Image source={item.icon} />}
-			<Text style={styles.itemText} numberOfLines={1} allowFontScaling={false}>
-				{item.text}
-			</Text>
-		</View>
-	);
+	renderItemView = (item, index) => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.itemView} key={item.chainType}>
+				{item.isRpc ? getAssetIcon(item.chainType) : <Image source={item.icon} />}
+				<Text
+					style={[styles.itemText, isDarkMode && baseStyles.textDark]}
+					numberOfLines={1}
+					allowFontScaling={false}
+				>
+					{item.text}
+				</Text>
+			</View>
+		);
+	};
 
 	renderCustomRPC = () => {
 		const { nameValue, rpcValue, chainValue, currencyValue, explorerValue, rpcBtnEnalbe, loading } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<View style={styles.customRpcInfoTilte}>
-					<Image source={require('../../../images/ic_rpc_info.png')} />
-					<Text style={styles.curstomRpcLabel}>{strings('chainSetting.info')}</Text>
+					<Text style={[styles.curstomRpcLabel, isDarkMode && baseStyles.textDark]}>
+						{strings('chainSetting.info')}
+					</Text>
 					<View style={styles.flexOne} />
 					<TouchableOpacity
 						activeOpacity={0.5}
@@ -356,7 +371,11 @@ class ChainSettingView extends PureComponent {
 					<View style={styles.flexOne}>
 						<TextInput
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={nameValue}
 							placeholder={strings('chainSetting.network_name')}
 							placeholderTextColor={colors.$8F92A1}
@@ -376,7 +395,11 @@ class ChainSettingView extends PureComponent {
 						<TextInput
 							ref={this.rpcTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={rpcValue}
 							placeholder={strings('chainSetting.rpc_url')}
 							placeholderTextColor={colors.$8F92A1}
@@ -396,7 +419,11 @@ class ChainSettingView extends PureComponent {
 						<TextInput
 							ref={this.chainTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={chainValue}
 							placeholder={strings('chainSetting.chain_id')}
 							placeholderTextColor={colors.$8F92A1}
@@ -416,7 +443,11 @@ class ChainSettingView extends PureComponent {
 						<TextInput
 							ref={this.currencyTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={currencyValue}
 							placeholder={strings('chainSetting.currency_symbol')}
 							placeholderTextColor={colors.$8F92A1}
@@ -436,7 +467,11 @@ class ChainSettingView extends PureComponent {
 						<TextInput
 							ref={this.explorerTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={explorerValue}
 							placeholder={strings('chainSetting.explorer_url')}
 							placeholderTextColor={colors.$8F92A1}
@@ -469,6 +504,7 @@ class ChainSettingView extends PureComponent {
 		//图片142， 93
 		const itemWidth = '100%';
 		const itemHeight = 44;
+		const { isDarkMode } = this.context;
 		return (
 			<View
 				style={[
@@ -496,7 +532,11 @@ class ChainSettingView extends PureComponent {
 				>
 					<View style={styles.rpcItemContent}>
 						<View style={styles.alignRow}>
-							<Text style={styles.rpcItemTitle} numberOfLines={1} allowFontScaling={false}>
+							<Text
+								style={[styles.rpcItemTitle, isDarkMode && baseStyles.textDark]}
+								numberOfLines={1}
+								allowFontScaling={false}
+							>
 								{item.name.length > 15 ? `${item.name.substring(0, 12)}...` : item.name}{' '}
 							</Text>
 
@@ -506,7 +546,11 @@ class ChainSettingView extends PureComponent {
 						</View>
 						<View style={styles.rpcItemRow}>
 							<View>
-								<Text style={styles.rpcItemChainId} numberOfLines={1} allowFontScaling={false}>
+								<Text
+									style={[styles.rpcItemChainId, isDarkMode && baseStyles.textDark]}
+									numberOfLines={1}
+									allowFontScaling={false}
+								>
 									{strings('chainSetting.chain_id_item')}
 								</Text>
 							</View>
@@ -564,15 +608,22 @@ class ChainSettingView extends PureComponent {
 		const rpcList = searchTerm ? filteredRpcList : this.rpcListData;
 
 		rpcList.sort((x, y) => x.name.toUpperCase().localeCompare(y.name.toUpperCase()));
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.rpcMarginTop}>
 				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
-					<View style={styles.searchContainer}>
+					<View
+						style={[
+							styles.searchContainer,
+							isDarkMode && { color: 'white', borderColor: colors.white016 },
+							isDarkMode && baseStyles.darkBackground600
+						]}
+					>
 						<TextInput
 							placeholder="Search..."
-							style={{ flex: 1 }}
+							style={[{ flex: 1 }, isDarkMode && { color: 'white' }]}
 							value={searchTerm}
+							placeholderTextColor={colors.paliGrey200}
 							onChangeText={this.handleSearchChange}
 						/>
 
@@ -663,12 +714,20 @@ class ChainSettingView extends PureComponent {
 				}
 			});
 		}
-
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<ImageCapInset
 					style={styles.cardWrapper}
-					source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+					source={
+						Device.isAndroid()
+							? isDarkMode
+								? { uri: 'dark800_card' }
+								: { uri: 'default_card' }
+							: isDarkMode
+							? require('../../../images/dark800_card.png')
+							: require('../../../images/default_card.png')
+					}
 					capInsets={baseStyles.capInsets}
 				>
 					<View style={[styles.childrenWrapper, baseStyle]} showsVerticalScrollIndicator={false}>
@@ -685,10 +744,14 @@ class ChainSettingView extends PureComponent {
 											}
 										}}
 									>
-										<Image source={require('../../../images/ic_back_rpc.png')} />
+										<EvilIcons
+											name="chevron-left"
+											size={32}
+											style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+										/>
 									</TouchableOpacity>
 								)}
-								<Text style={styles.titleText}>
+								<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]}>
 									{currentPage === PAGE_HOME
 										? strings('chainSetting.title')
 										: currentPage === PAGE_INPUT_RPC
@@ -713,8 +776,9 @@ class ChainSettingView extends PureComponent {
 							{currentPage === PAGE_HOME && (
 								<View>
 									<View style={styles.enableLayout}>
-										<Image source={require('../../../images/ic_chain_enable.png')} />
-										<Text style={styles.enableText}>{strings('chainSetting.enable')}</Text>
+										<Text style={[styles.enableText, isDarkMode && baseStyles.textDark]}>
+											{strings('chainSetting.enable')}
+										</Text>
 										<View style={styles.flexOne} />
 										<TouchableOpacity
 											hitSlop={styles.hitSlop}
@@ -783,8 +847,9 @@ class ChainSettingView extends PureComponent {
 
 									<View style={styles.lineView} />
 									<View style={styles.enableLayout}>
-										<Image source={require('../../../images/ic_chain_disabled.png')} />
-										<Text style={styles.enableText}>{strings('chainSetting.disable')}</Text>
+										<Text style={[styles.enableText, isDarkMode && baseStyles.textDark]}>
+											{strings('chainSetting.disable')}
+										</Text>
 									</View>
 									<View style={styles.minHeight}>
 										{disabledChains.length > 0 ? (
@@ -837,7 +902,7 @@ class ChainSettingView extends PureComponent {
 											</DragGridView>
 										) : (
 											<View style={styles.noDisableLayout}>
-												<Text style={styles.noDisableText}>
+												<Text style={[styles.noDisableText, isDarkMode && baseStyles.textDark]}>
 													{strings('chainSetting.no_disabled_chains')}
 												</Text>
 											</View>

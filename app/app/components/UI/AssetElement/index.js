@@ -89,6 +89,20 @@ export default class AssetElement extends PureComponent {
 					<TouchableWithoutFeedback onPress={this.handleOnPress}>
 						<View style={styles.childrenWrapper}>{children}</View>
 					</TouchableWithoutFeedback>
+					{!isEnd && (
+						<View
+							style={{
+								width: '110%',
+								flex: 0.5,
+								marginLeft: -5,
+								marginTop: 5,
+								height: 0.5,
+								borderWidth: 1,
+								borderColor: '#FFFFFF29',
+								borderStyle: 'dotted'
+							}}
+						/>
+					)}
 				</ImageCapInset>
 			</View>
 		);

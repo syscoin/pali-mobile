@@ -48,7 +48,7 @@ import { EasingNode } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
 import { getSecurityData } from '../../../util/security';
-import { getIcLogoByChainType } from '../../../util/ChainTypeImages';
+import { getIcLogoByChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 const { width, height } = Dimensions.get('window');
 
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginHorizontal: headerMarginHorizontal,
 		marginTop: -bottomShadow / 2,
-		marginBottom: 3
+		marginBottom: 10
 	},
 	header_add: {
 		marginLeft: 8,
@@ -585,7 +585,8 @@ const styles = StyleSheet.create({
 	},
 	popLine: {
 		height: 1,
-		backgroundColor: colors.$F0F0F0,
+		flex: 1,
+		backgroundColor: 'red',
 		marginTop: 10,
 		marginBottom: 20
 	},
@@ -1154,7 +1155,7 @@ class Tokens extends PureComponent {
 							style={styles.tagView}
 							height={20}
 							width={20}
-							source={getIcLogoByChainType(asset.type)}
+							source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
 						/>
 					) : (
 						<View style={styles.defiCard}>
@@ -1162,7 +1163,7 @@ class Tokens extends PureComponent {
 								style={styles.defiImageCard}
 								height={15}
 								width={15}
-								source={getIcLogoByChainType(asset.type)}
+								source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
 							/>
 						</View>
 					)}
