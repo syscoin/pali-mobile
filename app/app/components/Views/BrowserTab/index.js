@@ -851,7 +851,7 @@ const BrowserTab = props => {
 		try {
 			if (url.startsWith('wc:') || url.startsWith('paliwallet://wc')) {
 				SharedDeeplinkManager.parse(url, {
-					origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK
+					origin: undefined
 				});
 				return false;
 			}
