@@ -595,7 +595,7 @@
 		"no_ownership_takeback_desc": "Contracts with ownership takeback mechanism, after its owner grants the ownership to others he can still take it back. We regard this as a security issue. If the contract has the ability please consult the project team its usage.",
 		"unpausable_trading_desc": "Pausable trading may cause trading of this token ceased. If the contract has the ability please consult the project team its usage.",
 		"anti_whale_desc": "Tokens with anti-whale logic can limit large amount trading to prevent massive volatility. This item is just for reference only, which doesn't mean whether the contract is secure or not if there is or no anti-whale feature.",
-		"holders": "Hoders",
+		"holders": "Holders",
 		"lp": "LPs",
 		"dexs": "DEXs",
 		"sell_tax": "Sell Tax",

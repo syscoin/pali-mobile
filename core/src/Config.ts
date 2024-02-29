@@ -354,8 +354,8 @@ export const NetworkConfig: { [type: number]: any } = {
           ticker: 'SYS',
           nickname: 'Rollux',
         },
-        ExplorerUrl: 'https://explorer.rollux.com/',
-        ExplorerApiUrl: 'https://explorer.rollux.com/',
+        ExplorerUrl: 'https://explorer.rollux.com',
+        ExplorerApiUrl: 'https://explorer.rollux.com',
       },
       'Rollux Testnet': {
         provider: {
