@@ -597,73 +597,88 @@ class FoldSecurityView extends PureComponent {
 		}, delayTime);
 	};
 
-	renderUnDetected = () => (
-		<View style={styles.unDetectedWrap}>
-			{this.state.showFastCheck ? (
-				<View style={styles.fastCheckWrap}>
-					<Text style={styles.fastCheckTitle}>{strings('security.detecting')}</Text>
-					<LottieView
-						style={styles.animation}
-						autoPlay
-						loop
-						source={require('../../../animations/detecting.json')}
-					/>
-					<Text style={styles.fastCheckDesc}>{strings('security.take_seconds')}</Text>
-				</View>
-			) : (
-				<View style={styles.flexOne}>
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_contract_security')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
+	renderUnDetected = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.unDetectedWrap}>
+				{this.state.showFastCheck ? (
+					<View style={[styles.fastCheckWrap, isDarkMode && baseStyles.darkBackground]}>
+						<Text style={[styles.fastCheckTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('security.detecting')}
+						</Text>
+						<LottieView
+							style={styles.animation}
+							autoPlay
+							loop
+							source={require('../../../animations/detecting.json')}
 						/>
+						<Text style={[styles.fastCheckDesc, isDarkMode && baseStyles.textDark]}>
+							{strings('security.take_seconds')}
+						</Text>
 					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_holders_status')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_liqudity_providers')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_trading_tax')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<View style={styles.fullLine} />
-					<View style={styles.flexGrowOne} />
+				) : (
+					<View style={[styles.flexOne, isDarkMode && baseStyles.darkInputBackground]}>
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_contract_security')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_holders_status')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_liqudity_providers')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_trading_tax')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<View style={[styles.fullLine, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+						<View style={styles.flexGrowOne} />
 
-					<TouchableOpacity
-						activeOpacity={0.6}
-						style={styles.applyCheckTouch}
-						onPress={() => {
-							ReactNativeHapticFeedback.trigger('impactMedium', options);
-							this.setState({ showFastCheck: true });
-							onEvent('request_detection');
-							this.fastCheckCount = 0;
-							this.timeoutFastCheck(0);
-						}}
-					>
-						<Image source={require('../../../images/ic_gplus_white.png')} />
-						<Text style={[styles.applyCheckText]}>{strings('fold_security.apply_check')}</Text>
-					</TouchableOpacity>
-				</View>
-			)}
-		</View>
-	);
+						<TouchableOpacity
+							activeOpacity={0.6}
+							style={styles.applyCheckTouch}
+							onPress={() => {
+								ReactNativeHapticFeedback.trigger('impactMedium', options);
+								this.setState({ showFastCheck: true });
+								onEvent('request_detection');
+								this.fastCheckCount = 0;
+								this.timeoutFastCheck(0);
+							}}
+						>
+							<Image source={require('../../../images/ic_gplus_white.png')} />
+							<Text style={[styles.applyCheckText]}>{strings('fold_security.apply_check')}</Text>
+						</TouchableOpacity>
+					</View>
+				)}
+			</View>
+		);
+	};
 
 	renderCheckedItem = (title, desc, checked, addLine) => {
 		const { isDarkMode } = this.context;
@@ -1123,7 +1138,7 @@ class FoldSecurityView extends PureComponent {
 
 	renderSecurityView = () => {
 		const { asset } = this.props;
-
+		const { isDarkMode } = this.context;
 		const { risk, notice, normal, isTrust } = this.state.securityData;
 		const noticeNum = notice ? notice.length : 0;
 		const riskNum = risk ? risk.length : 0;
@@ -1131,7 +1146,8 @@ class FoldSecurityView extends PureComponent {
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		let riskTextColor = colors.$60657D;
+		let riskTextColor = isDarkMode ? colors.paliGrey200 : colors.$60657D;
+
 		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
@@ -1145,7 +1161,7 @@ class FoldSecurityView extends PureComponent {
 			riskImg = require('../../../images/img_defi_warning.png');
 			riskTextColor = colors.$FFB000;
 		}
-		const { isDarkMode } = this.context;
+
 		return (
 			<View style={styles.flexOne}>
 				<View style={[styles.securityTitle, isDarkMode && baseStyles.darkInputBackground]}>

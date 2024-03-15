@@ -722,10 +722,10 @@ class ChainSettingView extends PureComponent {
 					source={
 						Device.isAndroid()
 							? isDarkMode
-								? { uri: 'dark800_card' }
+								? { uri: 'dark500_card' }
 								: { uri: 'default_card' }
 							: isDarkMode
-							? require('../../../images/dark800_card.png')
+							? require('../../../images/dark500_card.png')
 							: require('../../../images/default_card.png')
 					}
 					capInsets={baseStyles.capInsets}
@@ -770,7 +770,9 @@ class ChainSettingView extends PureComponent {
 								</Text>
 							)}
 
-							{currentPage !== PAGE_RPC_LIST && <View style={styles.lineView} />}
+							{currentPage !== PAGE_RPC_LIST && (
+								<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+							)}
 							{currentPage === PAGE_INPUT_RPC && this.renderCustomRPC()}
 							{currentPage === PAGE_RPC_LIST && this.renderRpcList()}
 							{currentPage === PAGE_HOME && (
@@ -845,7 +847,7 @@ class ChainSettingView extends PureComponent {
 										{favouriteChainItems.map((item, index) => this.renderItemView(item, index))}
 									</DragGridView>
 
-									<View style={styles.lineView} />
+									<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 									<View style={styles.enableLayout}>
 										<Text style={[styles.enableText, isDarkMode && baseStyles.textDark]}>
 											{strings('chainSetting.disable')}
@@ -908,7 +910,7 @@ class ChainSettingView extends PureComponent {
 											</View>
 										)}
 									</View>
-									<View style={styles.lineView} />
+									<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 
 									<TouchableOpacity
 										style={styles.doneButton}

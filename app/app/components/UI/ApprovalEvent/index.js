@@ -235,7 +235,9 @@ class ApprovalEvent extends Component {
 					<Text style={[styles.name, isDarkMode && baseStyles.textDark]}>
 						{strings('approval_management.contract')}
 					</Text>
-					<Text style={styles.value}>{spender.substr(0, 11) + '...' + spender.substr(-11)}</Text>
+					<Text style={[styles.value, isDarkMode && baseStyles.subTextDark]}>
+						{spender.substr(0, 11) + '...' + spender.substr(-11)}
+					</Text>
 					<TouchableOpacity onPress={this.openEtherscan.bind(this, spender)}>
 						<Image style={styles.icon} source={require('../../../images/browser.png')} />
 					</TouchableOpacity>
@@ -244,7 +246,7 @@ class ApprovalEvent extends Component {
 					<Text style={[styles.name, isDarkMode && baseStyles.textDark]}>
 						{strings('approval_management.limit')}
 					</Text>
-					<Text style={styles.value}>
+					<Text style={[styles.value, isDarkMode && baseStyles.subTextDark]}>
 						{allowance > 1e40 ? strings('approval_management.infinite') : allowance}
 					</Text>
 					{allowance > 1e40 && (
@@ -257,7 +259,9 @@ class ApprovalEvent extends Component {
 					<Text style={[styles.name, isDarkMode && baseStyles.textDark]}>
 						{strings('approval_management.time')}
 					</Text>
-					<Text style={styles.value}>{this.formatDate(event.timestamp)}</Text>
+					<Text style={[styles.value, isDarkMode && baseStyles.subTextDark]}>
+						{this.formatDate(event.timestamp)}
+					</Text>
 				</View>
 				<TouchableOpacity style={styles.approveBtn} activeOpacity={0.6} onPress={this.cancelApproval}>
 					{loading ? (
@@ -266,7 +270,9 @@ class ApprovalEvent extends Component {
 						<Text style={styles.approveBtnText}>{strings('approval_management.revoke_approval')}</Text>
 					)}
 				</TouchableOpacity>
-				{!hideDivider && <View style={styles.bottomDivider} />}
+				{!hideDivider && (
+					<View style={[styles.bottomDivider, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+				)}
 			</View>
 		);
 	}

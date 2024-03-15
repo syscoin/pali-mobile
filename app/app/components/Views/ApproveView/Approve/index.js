@@ -409,7 +409,7 @@ class Approve extends PureComponent {
 					contentContainerStyle={styles.keyboardAwareWrapper}
 					keyboardShouldPersistTaps="handled"
 				>
-					<View style={styles.container}>
+					<View style={[styles.container, isDarkMode && baseStyles.darkModalBackground]}>
 						<ApproveTransactionReview
 							isScam={isScam}
 							showCommonRisk={this.showCommonRisk}
@@ -430,14 +430,8 @@ class Approve extends PureComponent {
 										{strings('transaction.reject')}
 									</Text>
 								</TouchableOpacity>
-								<TouchableOpacity
-									style={[styles.confirm, isDarkMode && baseStyles.darkConfirmButton]}
-									onPress={this.onConfirm}
-									disabled={!ready}
-								>
-									<Text style={[styles.confirmText, isDarkMode && baseStyles.darkConfirmText]}>
-										{strings('transaction.confirm')}
-									</Text>
+								<TouchableOpacity style={[styles.confirm]} onPress={this.onConfirm} disabled={!ready}>
+									<Text style={[styles.confirmText]}>{strings('transaction.confirm')}</Text>
 								</TouchableOpacity>
 							</View>
 						)}

@@ -479,10 +479,10 @@ class Nft extends PureComponent {
 				source={
 					Device.isAndroid()
 						? isDarkMode
-							? { uri: 'default_card_dark' }
+							? { uri: 'dark500_card' }
 							: { uri: 'default_card' }
 						: isDarkMode
-						? require('../../../images/default_card_dark.png')
+						? require('../../../images/dark500_card.png')
 						: require('../../../images/default_card.png')
 				}
 				capInsets={baseStyles.capInsets}
@@ -608,7 +608,8 @@ class Nft extends PureComponent {
 							{
 								width: itemWidth,
 								height: itemWidth
-							}
+							},
+							isDarkMode && baseStyles.darkBackground
 						]}
 					>
 						{this.lottieAnim ? (

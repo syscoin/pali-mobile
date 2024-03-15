@@ -157,13 +157,8 @@ class SignatureRequest extends PureComponent {
 							{strings('transaction.reject')}
 						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity
-						style={[styles.confirm, isDarkMode && baseStyles.darkConfirmButton]}
-						onPress={this.onConfirm}
-					>
-						<Text style={[styles.confirmText, isDarkMode && baseStyles.darkConfirmText]}>
-							{strings('transaction.confirm')}
-						</Text>
+					<TouchableOpacity style={[styles.confirm]} onPress={this.onConfirm}>
+						<Text style={[styles.confirmText]}>{strings('transaction.confirm')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

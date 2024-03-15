@@ -344,7 +344,7 @@ class AssetActionView extends PureComponent {
 							]}
 						>
 							<TouchableOpacity onPress={this.onSwap} activeOpacity={activeOpacity}>
-								<Text style={[styles.buttonContainer, baseStyles.textDark]}>
+								<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>
 									{strings('other.swap')}
 								</Text>
 							</TouchableOpacity>

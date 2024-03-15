@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
 	popLine: {
 		height: 1,
 		flex: 1,
-		backgroundColor: 'red',
+		backgroundColor: 'white',
 		marginTop: 10,
 		marginBottom: 20
 	},
@@ -1362,7 +1362,7 @@ class Tokens extends PureComponent {
 				{this.renderHeader()}
 				{!nftChecked && (
 					<>
-						{this.props.isFirstAccount &&
+						{this.props.isFirstafAccount &&
 							this.state.otcBannerHide !== TRUE &&
 							isEtherscanAvailable &&
 							!shouldHideSthForAppStoreReviewer() &&

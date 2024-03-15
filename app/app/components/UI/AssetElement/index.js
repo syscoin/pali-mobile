@@ -89,13 +89,12 @@ export default class AssetElement extends PureComponent {
 					<TouchableWithoutFeedback onPress={this.handleOnPress}>
 						<View style={styles.childrenWrapper}>{children}</View>
 					</TouchableWithoutFeedback>
-					{!isEnd && (
+					{indexKey !== 0 && (
 						<View
 							style={{
-								width: '110%',
-								flex: 0.5,
-								marginLeft: -5,
-								marginTop: 5,
+								position: 'absolute',
+								width: '200%',
+
 								height: 0.5,
 								borderWidth: 1,
 								borderColor: '#FFFFFF29',

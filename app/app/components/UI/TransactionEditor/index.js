@@ -417,13 +417,11 @@ class TransactionEditor extends PureComponent {
 									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.confirm, isDarkMode && baseStyles.darkConfirmButton]}
+									style={[styles.confirm]}
 									onPress={this.onConfirm}
 									disabled={!ready || loading}
 								>
-									<Text style={[styles.confirmText, isDarkMode && baseStyles.darkConfirmText]}>
-										{strings('transaction.confirm')}
-									</Text>
+									<Text style={[styles.confirmText]}>{strings('transaction.confirm')}</Text>
 								</TouchableOpacity>
 							</View>
 						)}

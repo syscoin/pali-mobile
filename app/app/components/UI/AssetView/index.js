@@ -742,7 +742,7 @@ class AssetView extends PureComponent {
 						source={
 							Device.isAndroid()
 								? isDarkMode
-									? { uri: 'dark800_card' }
+									? require('../../../images/dark800_card.png')
 									: { uri: 'default_card' }
 								: isDarkMode
 								? require('../../../images/dark800_card.png')
@@ -754,7 +754,8 @@ class AssetView extends PureComponent {
 							{!!ticker && !!tvHtmlContent ? (
 								<WebView
 									source={{ html: this.state.tvHtmlContent }}
-									style={[styles.chart, isDarkMode && baseStyles.darkActionBackground]}
+									containerStyle={isDarkMode && baseStyles.darkBackground600}
+									style={[styles.chart, isDarkMode && baseStyles.darkBackground600]}
 									ref={WebView => {
 										this.tradingViewChart = WebView;
 									}}

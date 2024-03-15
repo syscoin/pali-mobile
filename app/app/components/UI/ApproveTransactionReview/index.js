@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { getActiveUrl, getHost } from '../../../util/browser';
 import { renderShortAddress } from '../../../util/address';
 import { strings } from '../../../../locales/i18n';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import {
 	toTokenMinimalUnit,
 	isDecimal,
@@ -169,6 +170,7 @@ const styles = StyleSheet.create({
  * PureComponent that manages ERC20 approve from the dapp browser
  */
 class ApproveTransactionReview extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Transaction state
@@ -387,9 +389,11 @@ class ApproveTransactionReview extends PureComponent {
 				? strings('spend_limit_edition.titleCancel', { tokenSymbol })
 				: strings('spend_limit_edition.title', { tokenSymbol });
 		const approveLimitText = originalAmount === 0 ? strings('other.amend_limit') : strings('other.approve_limit');
+		const { isDarkMode } = this.context;
+
 		return (
 			<View style={styles.root} testID={'approve-screen'}>
-				<Text style={styles.title} allowFontScaling={false}>
+				<Text style={[styles.title, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 					{title}
 				</Text>
 				<TransactionHeader
@@ -397,22 +401,22 @@ class ApproveTransactionReview extends PureComponent {
 				/>
 				{this.renderSecurityPanel()}
 				<View style={styles.fromWrapper}>
-					<Text style={styles.addressTitle} allowFontScaling={false}>
+					<Text style={[styles.addressTitle, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{strings('other.from')}
 					</Text>
-					<Text style={styles.address} allowFontScaling={false}>
+					<Text style={[styles.address, isDarkMode && baseStyles.subTextDark]} allowFontScaling={false}>
 						{renderShortAddress(transaction.from, 16)}
 					</Text>
 				</View>
 				<View style={styles.toWrapper}>
-					<Text style={styles.addressTitle} allowFontScaling={false}>
+					<Text style={[styles.addressTitle, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{strings('other.to')}
 					</Text>
-					<Text style={styles.address} allowFontScaling={false}>
+					<Text style={[styles.address, isDarkMode && baseStyles.subTextDark]} allowFontScaling={false}>
 						{renderShortAddress(transaction.to, 16)}
 					</Text>
 				</View>
-				<Text style={styles.limitTitle} allowFontScaling={false}>
+				<Text style={[styles.limitTitle, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 					{approveLimitText}
 				</Text>
 				<View style={styles.limitWrapper}>
@@ -422,7 +426,7 @@ class ApproveTransactionReview extends PureComponent {
 						disabled={!ready}
 					>
 						<View style={[styles.selectBox, !isInfiniteLimit && styles.unselectBox]} />
-						<Text style={styles.infinite} allowFontScaling={false}>
+						<Text style={[styles.infinite, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 							{strings('other.infinite')}
 						</Text>
 					</TouchableOpacity>
