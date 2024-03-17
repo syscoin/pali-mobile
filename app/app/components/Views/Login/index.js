@@ -30,6 +30,7 @@ import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'paliwallet-core';
 import { updateLockScreen } from '../../../actions/settings';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { isDate } from 'lodash';
 
 const paliLogo = require('../../../images/pali.png');
 
@@ -397,6 +398,7 @@ class Login extends PureComponent {
 
 	renderSwitch = () => {
 		const { biometryType, rememberMe, biometryChoice, invalidBiometry } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.biometrics}>
 				{invalidBiometry ? (
@@ -426,7 +428,9 @@ class Login extends PureComponent {
 					</>
 				) : (
 					<>
-						<Text style={styles.biometryLabel}>{strings(`choose_password.remember_me`)}</Text>
+						<Text style={[styles.biometryLabel, isDarkMode && baseStyles.textDark]}>
+							{strings(`choose_password.remember_me`)}
+						</Text>
 						<View style={styles.flex} />
 						<Switch
 							onValueChange={rememberMe => this.setState({ rememberMe })}

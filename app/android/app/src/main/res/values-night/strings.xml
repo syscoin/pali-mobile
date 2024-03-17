@@ -1,0 +1,4 @@
+<resources>
+	<string name="app_name">Pali Wallet</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">WYjNfoQiWyFCUGjLVxChK3u4BSm2BCb25Gerw</string>
+</resources>
