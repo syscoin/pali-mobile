@@ -19,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { getChainIdByType, renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
+import { isSecureAddress } from '../../../util/security';
+
 import TokenImage from '../TokenImage';
 import LinearGradient from 'react-native-linear-gradient';
 import Engine from '../../../core/Engine';
@@ -580,7 +582,12 @@ class TokenList extends PureComponent {
 			return;
 		}
 		const { normalLength, notice, noticeLength, risk, riskLength } = asset.securityData;
-		//未检测显示申请提交按钮
+		const { isDarkMode } = this.context;
+
+		if (isSecureAddress(asset)) {
+			return <></>;
+		}
+
 		if (normalLength === 0 && noticeLength === 0 && riskLength === 0) {
 			return (
 				<TouchableWithoutFeedback style={styles.flexOne}>
@@ -607,7 +614,7 @@ class TokenList extends PureComponent {
 					{risk &&
 						risk.map((data, index) => (
 							<TouchableOpacity
-								style={styles.dangerTouch}
+								style={[styles.dangerTouch, isDarkMode && baseStyles.darkCardBackground]}
 								key={'element_risk_' + index}
 								onPress={() => {
 									this.showDescModal(data, asset);
@@ -621,7 +628,7 @@ class TokenList extends PureComponent {
 					{notice &&
 						notice.map((data, index) => (
 							<TouchableOpacity
-								style={styles.warningTouch}
+								style={[styles.warningTouch, isDarkMode && baseStyles.darkCardBackground]}
 								key={'element_notice_' + index}
 								onPress={() => {
 									this.showDescModal(data, asset);
@@ -638,7 +645,8 @@ class TokenList extends PureComponent {
 
 	renderSecurityTag = asset => {
 		const flagStyle = styles.tagPosition;
-		if (asset.nativeCurrency) {
+
+		if (asset.nativeCurrency || isSecureAddress(asset)) {
 			return <Image source={require('../../../images/tag_safe.png')} style={flagStyle} />;
 		}
 		const { normalLength, noticeLength, riskLength, isTrust } = asset.securityData;

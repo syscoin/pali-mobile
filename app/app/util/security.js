@@ -3,6 +3,34 @@ import { EngineContext } from './ControllerUtils';
 import { toLowerCaseEquals } from './general';
 import { getChainIdByType } from './number';
 
+const ASSET_TYPES = {
+	SYSCOIN: 256,
+	ROLLUX: 512
+};
+
+const secureAddresses = {
+	[ASSET_TYPES.SYSCOIN]: [
+		'0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
+		'0x2bF9b864cdc97b08B6D79ad4663e71B8aB65c45c',
+		'0xE18c200A70908c89fFA18C628fE1B83aC0065EA4',
+		'0xd3e822f3ef011Ca5f17D82C956D952D8d7C3A1BB',
+		'0x6b7a87899490EcE95443e979cA9485CBE7E71522'
+	],
+	[ASSET_TYPES.ROLLUX]: [
+		'0xaA1c53AFd099E415208F47FCFA2C880f659E6904',
+		'0x6AaEE51366F8435e1Ad527F5Ecdc276bF1dc0b86',
+		'0x368433CaC2A0B8D76E64681a9835502a1f2A8A30',
+		'0x28c9c7Fb3fE3104d2116Af26cC8eF7905547349c',
+		'0x48023b16c3e81AA7F6eFFbdEB35Bb83f4f31a8fd',
+		'0x4200000000000000000000000000000000000006'
+	]
+};
+
+export function isSecureAddress(asset) {
+	const addressesForType = secureAddresses[asset.type];
+	return addressesForType && addressesForType.includes(asset.address);
+}
+
 export const key2Warn = key => {
 	if (key === 'is_open_source') {
 		return strings('security.not_open_source');

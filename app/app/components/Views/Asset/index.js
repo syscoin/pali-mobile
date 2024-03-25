@@ -30,7 +30,7 @@ import { strings } from '../../../../locales/i18n';
 import { iosShake } from '../../../util/NativeUtils';
 import { onEvent } from '../../../util/statistics';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getSecurityData } from '../../../util/security';
+import { getSecurityData, isSecureAddress } from '../../../util/security';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const activeOpacity = 0.8;
@@ -255,15 +255,23 @@ class Asset extends PureComponent {
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
+		let hideSecurityView = false;
+
+		if (isSecureAddress(asset)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
-		} else if (checked && riskNum > 0) {
-			riskText = strings('security.security_risk_high');
-			riskImg = require('../../../images/img_defi_danger.png');
-		} else if (checked && noticeNum > 0) {
-			riskText = strings('security.security_risk_medium');
-			riskImg = require('../../../images/img_defi_warning.png');
+			hideSecurityView = true;
+		} else {
+			if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
+				riskText = strings('security.security_risk_low');
+				riskImg = require('../../../images/img_defi_safe.png');
+			} else if (checked && riskNum > 0) {
+				riskText = strings('security.security_risk_high');
+				riskImg = require('../../../images/img_defi_danger.png');
+			} else if (checked && noticeNum > 0) {
+				riskText = strings('security.security_risk_medium');
+				riskImg = require('../../../images/img_defi_warning.png');
+			}
 		}
 		const { isDarkMode } = this.context;
 		return (
@@ -271,7 +279,7 @@ class Asset extends PureComponent {
 				disabled={unFoldOpacity.__getValue() < 0.2}
 				activeOpacity={0.6}
 				onPress={() => {
-					if (!this.state.isSecurityViewShowed) {
+					if (!this.state.isSecurityViewShowed && !hideSecurityView) {
 						this.openSecurityView(moveHeight);
 					}
 				}}
@@ -288,14 +296,16 @@ class Asset extends PureComponent {
 						>
 							{riskText}
 						</Text>
-						<Text
-							style={[styles.titleUnfoldSecurityDesc, isDarkMode && baseStyles.subTextDark]}
-							allowFontScaling={false}
-						>
-							{strings('fold_security.tap_to_check')}
-						</Text>
+						{!hideSecurityView && (
+							<Text
+								style={[styles.titleUnfoldSecurityDesc, isDarkMode && baseStyles.subTextDark]}
+								allowFontScaling={false}
+							>
+								{strings('fold_security.tap_to_check')}
+							</Text>
+						)}
 					</View>
-					<Image source={require('../../../images/ic_unfold.png')} />
+					{!hideSecurityView && <Image source={require('../../../images/ic_unfold.png')} />}
 				</Animated.View>
 			</TouchableOpacity>
 		);

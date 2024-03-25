@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 import Modal from 'react-native-modal';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { key2Warn, key2WarnDesc } from '../../../util/security';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	modalNoBorder: {
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
 });
 
 class SecurityDesc extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		isVisible: PropTypes.bool,
 		data: PropTypes.object,
@@ -65,6 +67,7 @@ class SecurityDesc extends PureComponent {
 	render() {
 		const { isVisible, data, onDismiss, isLockScreen } = this.props;
 		const { name, type } = data || {};
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={isVisible && !isLockScreen}
@@ -77,7 +80,7 @@ class SecurityDesc extends PureComponent {
 				animationOut="fadeOut"
 				useNativeDriver
 			>
-				<View style={styles.detailModal}>
+				<View style={[styles.detailModal, isDarkMode && baseStyles.darkBackground]}>
 					<View style={styles.titleRow}>
 						{type > 0 && (
 							<Image
@@ -91,10 +94,10 @@ class SecurityDesc extends PureComponent {
 								}
 							/>
 						)}
-						<Text style={styles.detailTitle}>{key2Warn(name)}</Text>
+						<Text style={[styles.detailTitle, isDarkMode && baseStyles.textDark]}>{key2Warn(name)}</Text>
 					</View>
 					<View style={styles.flexRow}>
-						<Text style={styles.detailText} numberOfLines={10}>
+						<Text style={[styles.detailText, isDarkMode && baseStyles.subTextDark]} numberOfLines={10}>
 							{key2WarnDesc(name)}
 						</Text>
 					</View>
