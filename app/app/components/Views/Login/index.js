@@ -411,7 +411,7 @@ class Login extends PureComponent {
 					)
 				) : biometryType ? (
 					<>
-						<Text style={styles.biometryLabel}>
+						<Text style={[styles.biometryLabel, isDarkMode && baseStyles.textDark]}>
 							{strings(`biometrics.enable_${biometryType.toLowerCase()}`)}
 						</Text>
 						<View style={styles.flex} />

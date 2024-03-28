@@ -4,12 +4,19 @@ import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
 import { ThemeContext } from '../../../theme/ThemeProvider';
-import { baseStyles } from '../../../styles/common';
+import { baseStyles, colors } from '../../../styles/common';
 
 const styles = StyleSheet.create({
 	itemWrapper: {
 		flex: 1,
 		flexDirection: 'row'
+	},
+	shadowDark: {
+		shadowColor: colors.paliBlue100,
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.02,
+		shadowRadius: 1,
+		elevation: 4
 	},
 	capInsetWrapper: {
 		flex: 1,
@@ -72,7 +79,7 @@ export default class AssetElement extends PureComponent {
 		const { isDarkMode } = this.context;
 		const { children, indexKey, isEnd } = this.props;
 		return (
-			<View style={styles.itemWrapper} key={'element' + indexKey}>
+			<View style={[styles.itemWrapper, isDarkMode && styles.shadowDark]} key={'element' + indexKey}>
 				<ImageCapInset
 					style={isEnd ? styles.capInsetWrapper2 : styles.capInsetWrapper}
 					source={
@@ -89,19 +96,6 @@ export default class AssetElement extends PureComponent {
 					<TouchableWithoutFeedback onPress={this.handleOnPress}>
 						<View style={styles.childrenWrapper}>{children}</View>
 					</TouchableWithoutFeedback>
-					{indexKey !== 0 && (
-						<View
-							style={{
-								position: 'absolute',
-								width: '200%',
-
-								height: 0.5,
-								borderWidth: 1,
-								borderColor: '#FFFFFF29',
-								borderStyle: 'dotted'
-							}}
-						/>
-					)}
 				</ImageCapInset>
 			</View>
 		);
