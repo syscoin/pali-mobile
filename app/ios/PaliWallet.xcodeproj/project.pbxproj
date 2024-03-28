@@ -155,8 +155,7 @@
 		FF1F2CCB2A99342400E0C6A4 /* splash_screen.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splash_screen.json; path = PaliWallet/splash_screen.json; sourceTree = "<group>"; };
 		FF1F2CCE2A99349800E0C6A4 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
 		FF1F2CD02A9934CF00E0C6A4 /* splash_screen.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splash_screen.json; path = PaliWallet/splash_screen.json; sourceTree = "<group>"; };
-		FF52E9F42BA69D68008EAE22 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		FF52E9F62BA69D69008EAE22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		FFB49EBA2BA889A9009A86F8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		FFF38F092A1D5E68009E6B8F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -373,6 +372,7 @@
 				en,
 				Base,
 				"zh-Hans",
+				es,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -622,8 +622,7 @@
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
 				1D068314269FDA3800D0FB02 /* zh-Hans */,
-				FF52E9F42BA69D68008EAE22 /* English */,
-				FF52E9F62BA69D69008EAE22 /* en */,
+				FFB49EBA2BA889A9009A86F8 /* es */,
 			);
 			name = LaunchScreen.xib;
 			path = PaliWallet;
