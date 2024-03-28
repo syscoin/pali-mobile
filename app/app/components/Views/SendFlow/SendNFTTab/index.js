@@ -884,13 +884,23 @@ class SendNFTTab extends PureComponent {
 							<NFTImage style={styles.stepTwoImage} imageUrl={asset.image_url} />
 							<View>
 								<View style={styles.labelNet}>
-									<Text style={styles.labelTitle}>{strings('other.to')}</Text>
-									<Text style={styles.labelNetContent}>{getChainTypeName(asset.type)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.to')}
+									</Text>
+									<Text style={[styles.labelNetContent, isDarkMode && baseStyles.subTextDark]}>
+										{getChainTypeName(asset.type)}
+									</Text>
 								</View>
-								<Text style={styles.toAddress}>{toSelectedAddress}</Text>
+								<Text style={[styles.toAddress, isDarkMode && baseStyles.subTextDark]}>
+									{toSelectedAddress}
+								</Text>
 								<View style={styles.labelAmount}>
-									<Text style={styles.labelTitle}>{strings('other.amount')}</Text>
-									<Text style={styles.labelAmountContent}>{revertAmount(amountFormat)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.amount')}
+									</Text>
+									<Text style={[styles.labelAmountContent, isDarkMode && baseStyles.subTextDark]}>
+										{revertAmount(amountFormat)}
+									</Text>
 								</View>
 							</View>
 
@@ -960,14 +970,19 @@ class SendNFTTab extends PureComponent {
 		);
 	};
 
-	render = () =>
-		Device.isIos() ? (
-			<KeyboardAvoidingView style={styles.wrapper} behavior={'padding'}>
+	render = () => {
+		const { isDarkMode } = this.context;
+		return Device.isIos() ? (
+			<KeyboardAvoidingView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}
+				behavior={'padding'}
+			>
 				{this.renderView()}
 			</KeyboardAvoidingView>
 		) : (
-			<View style={styles.wrapper}>{this.renderView()}</View>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>{this.renderView()}</View>
 		);
+	};
 }
 
 const mapStateToProps = state => ({

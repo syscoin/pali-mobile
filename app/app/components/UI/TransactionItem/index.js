@@ -242,10 +242,15 @@ const TransactionItem = props => {
 			<TouchableOpacity style={styles.cardBody} onPress={navToBrowser} activeOpacity={activeOpacity}>
 				<View style={styles.txRow}>
 					<Image style={styles.tokenIcon} source={imgFire} />
-					<Text style={styles.tokenSymbol}>{strings('other.gas_fee')}</Text>
+					<Text style={[styles.tokenSymbol, isDarkMode && baseStyles.textDark]}>
+						{strings('other.gas_fee')}
+					</Text>
 					<View style={baseStyles.flexGrow} />
-					<Text style={styles.tokenExpendAmount}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
-					<Image style={styles.networkIcon} source={getIcTagByChainType(item.type)} />
+					<Text style={styles.expendText}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
+					<Image
+						style={styles.networkIcon}
+						source={isDarkMode ? getIcLogoByChainType(item.type) : getIcTagByChainType(item.type)}
+					/>
 				</View>
 				<View style={[styles.txRow, styles.txBeginMargin]}>
 					<TxItem.TxItemStatus style={styles.stateWrapper} tx={item} />

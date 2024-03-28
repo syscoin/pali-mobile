@@ -523,14 +523,14 @@ class NetworkFee extends PureComponent {
 								>
 									{selectGas ? (
 										<AntIcon
-											color={isDarkMode ? colors.paliGrey200 : colors.$8F92A13D}
+											color={isDarkMode ? colors.paliGrey200 : colors.paliGrey300}
 											size={14}
 											name={'edit'}
 											style={styles.customIcon}
 										/>
 									) : (
 										<FontAwesome
-											color={isDarkMode ? colors.paliGrey200 : colors.$8F92A13D}
+											color={isDarkMode ? colors.paliGrey200 : colors.paliGrey300}
 											size={14}
 											name={'sliders'}
 											style={styles.customIcon}

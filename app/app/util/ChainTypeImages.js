@@ -137,7 +137,7 @@ export function getAssetNetworkBarColor(type) {
 		: type === ChainType.Syscoin
 		? '#1F5EFF'
 		: type === ChainType.Rollux
-		? '#000000'
+		? '#DBEF88'
 		: util.isRpcChainType(type)
 		? getTagColor(type)
 		: '#627EEA';

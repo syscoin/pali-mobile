@@ -5,6 +5,8 @@ import { colors, fontStyles } from '../../../styles/common';
 import { toggleHideHint } from '../../../actions/hint';
 import Icon from '../../UI/Icon';
 import { connect } from 'react-redux';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import { strings } from '../../../../locales/i18n';
 
 const bgColor = '#00000094';
 
@@ -107,12 +109,15 @@ class HintView extends PureComponent {
 							backgroundColor: colors.greenModal200,
 							alignItems: 'center',
 							justifyContent: 'center',
-
 							borderTopLeftRadius: 10,
 							borderBottomLeftRadius: 10
 						}}
 					>
-						<Icon width="24" height="24" color={colors.white} name="checkCircle" />
+						{hintText === strings('other.not_migration') ? (
+							<AntIcon color={colors.white} size={24} name={'infocirlceo'} />
+						) : (
+							<Icon width="24" height="24" color={colors.white} name="checkCircle" />
+						)}
 					</View>
 					<View
 						style={{

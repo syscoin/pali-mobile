@@ -16,6 +16,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from '../../UI/Icon';
 import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import AssetOverview from '../../UI/AssetOverview';
 import iconBackWhite from '../../../images/ic_back_white.png';
@@ -494,7 +495,11 @@ class Asset extends PureComponent {
 									onPress={this.goBack}
 									activeOpacity={activeOpacity}
 								>
-									<Image source={backImg} />
+									{isDarkMode ? (
+										<Icon name={'back'} color={colors.white} width="26" height="26" />
+									) : (
+										<Image source={require('../../../images/back.png')} />
+									)}
 								</TouchableOpacity>
 								{scrollEnabled && this.renderUnfold(unFoldOpacity, moveHeight)}
 							</Animated.View>

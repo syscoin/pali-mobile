@@ -998,10 +998,12 @@ class SendTab extends PureComponent {
 			>
 				<Image style={styles.suggestionIcon} source={require('../../../../images/ic_ens.png')} />
 				{formattedText.length > 0 ? (
-					<View style={styles.suggestionTextWrapper}>{formattedText}</View>
+					<View style={[styles.suggestionTextWrapper, isDarkMode && baseStyles.textDark]}>
+						{formattedText}
+					</View>
 				) : (
 					<Text
-						style={[styles.suggestionText, styles.suggestionTextWrapper]}
+						style={[styles.suggestionText, styles.suggestionTextWrapper, isDarkMode && baseStyles.textDark]}
 						numberOfLines={1}
 						ellipsizeMode={'middle'}
 					>

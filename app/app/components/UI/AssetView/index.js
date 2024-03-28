@@ -761,8 +761,11 @@ class AssetView extends PureComponent {
 							{!!ticker && !!tvHtmlContent ? (
 								<WebView
 									source={{ html: this.state.tvHtmlContent }}
-									containerStyle={isDarkMode && baseStyles.darkBackground600}
-									style={[styles.chart, isDarkMode && baseStyles.darkBackground600]}
+									containerStyle={isDarkMode}
+									style={[
+										styles.chart,
+										isDarkMode && [baseStyles.darkInputBackground, { borderRadius: 0 }]
+									]}
 									ref={WebView => {
 										this.tradingViewChart = WebView;
 									}}
@@ -850,7 +853,7 @@ class AssetView extends PureComponent {
 						}
 						capInsets={baseStyles.capInsets}
 					>
-						<View style={styles.otherBody}>
+						<View style={[styles.otherBody]}>
 							<Locked asset={asset} onClose={this.goBack} />
 						</View>
 					</ImageCapInset>

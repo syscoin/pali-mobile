@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 		height: 22,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.06)',
+
 		borderRadius: 100,
 		paddingTop: 2,
 		paddingRight: 8,
@@ -408,7 +408,7 @@ class AmountSection extends PureComponent {
 					editable={canInputDollar}
 					placeholderTextColor={inputBorderColor}
 				/>
-				<Text style={styles.currencyText}>{currencyCode}</Text>
+				<Text style={[styles.currencyText, isDarkMode && baseStyles.subTextDark]}>{currencyCode}</Text>
 			</View>
 		);
 	};

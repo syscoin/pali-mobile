@@ -1445,7 +1445,12 @@ class Tokens extends PureComponent {
 				visible={isVisible && !isLockScreen}
 				onRequestClose={this.closePop}
 			>
-				<Popover isVisible={isVisible} fromRect={buttonRect} onClose={this.closePop}>
+				<Popover
+					arrowBgColor={isDarkMode ? colors.deepBlue800 : ''}
+					isVisible={isVisible}
+					fromRect={buttonRect}
+					onClose={this.closePop}
+				>
 					<View style={[styles.popLayout, isDarkMode && baseStyles.darkBackground]}>
 						<TouchableOpacity
 							onPress={() => {
@@ -1514,7 +1519,7 @@ class Tokens extends PureComponent {
 								{strings('other.sort_by_network')}
 							</Text>
 						</TouchableOpacity>
-						<View style={styles.popLine} />
+						<View style={[styles.popLine, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 						<View style={styles.flexDir}>
 							<TouchableOpacity
 								onPress={() => {
@@ -1772,6 +1777,7 @@ class Tokens extends PureComponent {
 			return;
 		}
 		const portfolios = selectedDefiToken.portfolios;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={!this.props.isLockScreen}
@@ -1783,16 +1789,20 @@ class Tokens extends PureComponent {
 				animationType="fade"
 				useNativeDriver
 			>
-				<TouchableOpacity style={styles.flexOne} activeOpacity={1.0} onPress={this.hideDefiModal}>
+				<TouchableOpacity
+					style={[styles.flexOne, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1.0}
+					onPress={this.hideDefiModal}
+				>
 					<View style={styles.flexSpace} />
 					<ScrollView
-						style={styles.defiModalWrapper}
+						style={[styles.defiModalWrapper, isDarkMode && baseStyles.darkModalBackground]}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={styles.flexGrowOne}
 					>
 						<TouchableOpacity style={styles.defiModalMargin} activeOpacity={1}>
-							<View style={styles.defiModalTitle}>
+							<View style={[styles.defiModalTitle, isDarkMode && baseStyles.textDark]}>
 								<TouchableOpacity
 									activeOpacity={0.8}
 									style={styles.defiTouch}
@@ -1819,7 +1829,10 @@ class Tokens extends PureComponent {
 								</TouchableOpacity>
 
 								<View style={styles.flexOne} />
-								<Text style={[styles.defiTitleBalance]} allowFontScaling={false}>
+								<Text
+									style={[styles.defiTitleBalance, isDarkMode && baseStyles.textDark]}
+									allowFontScaling={false}
+								>
 									{this.props.isAmountHide ? '***' : selectedDefiToken.balanceFiat}
 								</Text>
 							</View>
@@ -1854,18 +1867,30 @@ class Tokens extends PureComponent {
 											</View>
 
 											<View style={styles.defiSupply}>
-												<Text style={styles.defiSupplySambol} allowFontScaling={false}>
+												<Text
+													style={[styles.defiSupplySambol, isDarkMode && baseStyles.textDark]}
+													allowFontScaling={false}
+												>
 													{appendSymbol}
 												</Text>
 												<View style={styles.flexOne} />
-												<Text style={styles.defiSupplyBalance} allowFontScaling={false}>
+												<Text
+													style={[
+														styles.defiSupplyBalance,
+														isDarkMode && baseStyles.textDark
+													]}
+													allowFontScaling={false}
+												>
 													{balanceFiat}
 												</Text>
 											</View>
 
 											{rewardTokens?.length > 0 && (
 												<View style={styles.defiReward}>
-													<Text style={styles.rewardText} allowFontScaling={false}>
+													<Text
+														style={[styles.rewardText, isDarkMode && baseStyles.textDark]}
+														allowFontScaling={false}
+													>
 														{strings('other.reward')}
 													</Text>
 													<View style={styles.rewardMargin}>
@@ -1885,13 +1910,21 @@ class Tokens extends PureComponent {
 																	key={'reward-item-' + index}
 																>
 																	<Text
-																		style={styles.rewardItemSambol}
+																		style={[
+																			styles.rewardItemSambol,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
 																		numberOfLines={1}
 																	>
 																		{token.amount?.toFixed(2) + ' ' + token.symbol}
 																	</Text>
 																	<View style={styles.flexOne} />
-																	<Text style={styles.rewardItemBalance}>
+																	<Text
+																		style={[
+																			styles.rewardItemBalance,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
+																	>
 																		{balanceFiat}
 																	</Text>
 																</View>

@@ -387,7 +387,13 @@ class CardSwiper extends PureComponent {
 				visible={popModalVisible && !isLockScreen}
 			>
 				{/*<View style={{width: 200, height: 100, backgroundColor: colors.blue}}></View>*/}
-				<Popover isVisible={popModalVisible} fromRect={iconRect} onClose={this.hidePopModal} disX={-20}>
+				<Popover
+					arrowBgColor={isDarkMode ? colors.deepBlue800 : ''}
+					isVisible={popModalVisible}
+					fromRect={iconRect}
+					onClose={this.hidePopModal}
+					disX={-20}
+				>
 					<ScrollView style={[styles.scrollViewMaxHeight, isDarkMode && baseStyles.darkActionBackground]}>
 						<View style={{ width: deviceWidth - 40 }} />
 						<View style={styles.paddingVertical14}>

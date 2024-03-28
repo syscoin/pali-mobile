@@ -673,6 +673,7 @@ class AddAsset extends PureComponent {
 			return;
 		}
 		const portfolios = selectedDefiToken.portfolios;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={!this.props.isLockScreen}
@@ -684,10 +685,14 @@ class AddAsset extends PureComponent {
 				animationType="fade"
 				useNativeDriver
 			>
-				<TouchableOpacity style={styles.flexOne} activeOpacity={1.0} onPress={this.hideDefiModal}>
+				<TouchableOpacity
+					style={[styles.flexOne, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1.0}
+					onPress={this.hideDefiModal}
+				>
 					<View style={styles.flexSpace} />
 					<ScrollView
-						style={styles.defiModalWrapper}
+						style={[styles.defiModalWrapper, isDarkMode && baseStyles.darkModalBackground]}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={styles.flexGrowOne}
@@ -720,7 +725,10 @@ class AddAsset extends PureComponent {
 								</TouchableOpacity>
 
 								<View style={styles.flexOne} />
-								<Text style={[styles.defiTitleBalance]} allowFontScaling={false}>
+								<Text
+									style={[styles.defiTitleBalance, isDarkMode && baseStyles.textDark]}
+									allowFontScaling={false}
+								>
 									{this.props.isAmountHide ? '***' : selectedDefiToken.balanceFiat}
 								</Text>
 							</View>
@@ -755,18 +763,30 @@ class AddAsset extends PureComponent {
 											</View>
 
 											<View style={styles.defiSupply}>
-												<Text style={styles.defiSupplySambol} allowFontScaling={false}>
+												<Text
+													style={[styles.defiSupplySambol, isDarkMode && baseStyles.textDark]}
+													allowFontScaling={false}
+												>
 													{appendSymbol}
 												</Text>
 												<View style={styles.flexOne} />
-												<Text style={styles.defiSupplyBalance} allowFontScaling={false}>
+												<Text
+													style={[
+														styles.defiSupplyBalance,
+														isDarkMode && baseStyles.textDark
+													]}
+													allowFontScaling={false}
+												>
 													{balanceFiat}
 												</Text>
 											</View>
 
 											{rewardTokens?.length > 0 && (
 												<View style={styles.defiReward}>
-													<Text style={styles.rewardText} allowFontScaling={false}>
+													<Text
+														style={[styles.rewardText, isDarkMode && baseStyles.textDark]}
+														allowFontScaling={false}
+													>
 														{strings('other.reward')}
 													</Text>
 													<View style={styles.rewardMargin}>
@@ -786,13 +806,21 @@ class AddAsset extends PureComponent {
 																	key={'reward-item-' + index}
 																>
 																	<Text
-																		style={styles.rewardItemSambol}
+																		style={[
+																			styles.rewardItemSambol,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
 																		numberOfLines={1}
 																	>
 																		{token.amount?.toFixed(2) + ' ' + token.symbol}
 																	</Text>
 																	<View style={styles.flexOne} />
-																	<Text style={styles.rewardItemBalance}>
+																	<Text
+																		style={[
+																			styles.rewardItemBalance,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
+																	>
 																		{balanceFiat}
 																	</Text>
 																</View>
