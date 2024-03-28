@@ -384,11 +384,13 @@ class AssetOverview extends PureComponent {
 					onRequestClose={this.hideContractModal}
 				>
 					<TouchableOpacity style={styles.modalArea} onPress={this.hideContractModal}>
-						<View style={styles.contractBar}>
-							<View style={styles.contractWrapper}>
-								<Text style={styles.contractTitle}>{strings('other.contract_address')}</Text>
+						<View style={[styles.contractBar]}>
+							<View style={[styles.contractWrapper, isDarkMode && baseStyles.darkCardBackground]}>
+								<Text style={[styles.contractTitle, isDarkMode && baseStyles.textDark]}>
+									{strings('other.contract_address')}
+								</Text>
 								<TouchableOpacity style={styles.contractAddr} onPress={this.copyContractAddress}>
-									<Text>
+									<Text style={{ color: colors.paliGrey200 }}>
 										{address ? address.substring(0, 13) + '...' + address.substring(30) : ''}
 									</Text>
 									<Image style={styles.iconContractCopy} source={iconCopy} />

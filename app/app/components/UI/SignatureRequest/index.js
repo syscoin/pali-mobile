@@ -122,14 +122,16 @@ class SignatureRequest extends PureComponent {
 
 	renderActionViewChildren = () => {
 		const { children } = this.props;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.actionViewChild}>
 				<View style={styles.accountInfoCardWrapper}>
 					<AccountInfoCard operation="signing" />
 				</View>
 				<View style={styles.messageColumn}>
-					<Text style={styles.messageLabelText}>{strings('signature_request.message')}</Text>
+					<Text style={[styles.messageLabelText, isDarkMode && baseStyles.textDark]}>
+						{strings('signature_request.message')}
+					</Text>
 					<View style={styles.stub} />
 					<View style={styles.view2}>{children}</View>
 				</View>
@@ -141,9 +143,11 @@ class SignatureRequest extends PureComponent {
 		const { currentPageInformation, type } = this.props;
 		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.root}>
+			<View style={[styles.root, isDarkMode && baseStyles.darkModalBackground]}>
 				<View>
-					<Text style={styles.signText}>{strings('signature_request.signing')}</Text>
+					<Text style={[styles.signText, isDarkMode && baseStyles.textDark]}>
+						{strings('signature_request.signing')}
+					</Text>
 					<TransactionHeader currentPageInformation={currentPageInformation} type={type} />
 					{this.renderActionViewChildren()}
 				</View>

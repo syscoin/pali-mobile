@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
 	sendNotationText: {
 		fontSize: 13,
 		lineHeight: 15,
+		marginTop: 8,
 		textAlign: 'center',
 		color: lightGrey,
 		...fontStyles.normal
@@ -256,7 +257,9 @@ class ReceiveTab extends PureComponent {
 							<View style={styles.qrCode}>
 								<QRCode value={`ethereum:${this.props.selectedAddress}`} size={215} />
 							</View>
-							<Text style={styles.walletTitle}>{strings('other.my_wallet_address')}</Text>
+							<Text style={[styles.walletTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('other.my_wallet_address')}
+							</Text>
 							<TouchableOpacity style={styles.addrWrapper} onPress={this.copyAccountToClipboard}>
 								<Text style={[styles.addrText, isDarkMode && baseStyles.subTextDark]}>
 									{this.props.selectedAddress.substring(0, 15) +

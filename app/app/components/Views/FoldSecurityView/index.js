@@ -35,6 +35,7 @@ import { getSecurityData } from '../../../util/security';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { ThemeContext } from '../../../theme/ThemeProvider';
+import { isDate } from 'lodash';
 
 const options = {
 	enableVibrateFallback: true,
@@ -1201,52 +1202,66 @@ class FoldSecurityView extends PureComponent {
 		this.setState({ infiniteDescVisible: false });
 	};
 
-	renderInfiniteDesc = () => (
-		<Modal
-			isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			onSwipeComplete={this.hideInfiniteDesc}
-			onBackButtonPress={this.hideInfiniteDesc}
-			onBackdropPress={this.hideInfiniteDesc}
-			backdropOpacity={0.7}
-			animationIn={'fadeIn'}
-			animationOut={'fadeOut'}
-			useNativeDriver
-		>
-			<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
-				<View style={styles.modalContainer}>
-					<View>
-						<Text style={styles.modalTitle}>{strings('approval_management.intro_title')}</Text>
-						<Text style={styles.modalDesc}>{strings('approval_management.intro_text')}</Text>
+	renderInfiniteDesc = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				onSwipeComplete={this.hideInfiniteDesc}
+				onBackButtonPress={this.hideInfiniteDesc}
+				onBackdropPress={this.hideInfiniteDesc}
+				backdropOpacity={0.7}
+				animationIn={'fadeIn'}
+				animationOut={'fadeOut'}
+				useNativeDriver
+			>
+				<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
+					<View style={[styles.modalContainer, isDarkMode && baseStyles.darkBackground]}>
+						<View>
+							<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_title')}
+							</Text>
+							<Text style={[styles.modalDesc, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_text')}
+							</Text>
+						</View>
 					</View>
-				</View>
-			</TouchableWithoutFeedback>
-		</Modal>
-	);
+				</TouchableWithoutFeedback>
+			</Modal>
+		);
+	};
 
-	renderNoDetectedModal = () => (
-		<Modal
-			isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			backdropOpacity={0.7}
-			animationIn="fadeIn"
-			animationOut="fadeOut"
-			useNativeDriver
-		>
-			<View style={styles.detailModal}>
-				<Text style={styles.noDetectedTitle}>{strings('security.detect_no_security')}</Text>
-				<View style={styles.noDetectedLine} />
-				<TouchableOpacity
-					style={styles.noDetectedTouch}
-					onPress={() => {
-						this.setState({ showNoDetectedModal: false });
-					}}
-				>
-					<Text style={styles.tryLaterText}>{strings('security.try_it_later')}</Text>
-				</TouchableOpacity>
-			</View>
-		</Modal>
-	);
+	renderNoDetectedModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				backdropOpacity={0.7}
+				animationIn="fadeIn"
+				animationOut="fadeOut"
+				useNativeDriver
+			>
+				<View style={[styles.detailModal, isDarkMode && baseStyles.darkBackground]}>
+					<Text style={[styles.noDetectedTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('security.detect_no_security')}
+					</Text>
+					<View style={styles.noDetectedLine} />
+					<TouchableOpacity
+						style={styles.noDetectedTouch}
+						onPress={() => {
+							this.setState({ showNoDetectedModal: false });
+						}}
+					>
+						<Text style={[styles.tryLaterText, isDarkMode && baseStyles.textDark]}>
+							{strings('security.try_it_later')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+		);
+	};
 
 	renderApprovalView = () => {
 		const { selectedAddress, allEvents, asset } = this.props;

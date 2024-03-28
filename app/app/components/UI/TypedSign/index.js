@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import SignatureRequest from '../SignatureRequest';
 import PromptView from '../PromptView';
@@ -95,12 +95,12 @@ export default class TypedSign extends PureComponent {
 			<View style={styles.message} key={key}>
 				{obj[key] && typeof obj[key] === 'object' ? (
 					<View>
-						<Text style={[styles.messageText, styles.msgKey]}>{key}:</Text>
+						<Text style={[styles.messageText, styles.msgKey, baseStyles.subTextDark]}>{key}:</Text>
 						<View>{this.renderTypedMessageV3(obj[key])}</View>
 					</View>
 				) : (
-					<Text style={styles.messageText}>
-						<Text style={styles.msgKey}>{key}:</Text>
+					<Text style={[styles.messageText, baseStyles.subTextDark]}>
+						<Text style={[styles.msgKey, baseStyles.subTextDark]}>{key}:</Text>
 						{obj[key].length > 20
 							? obj[key].substring(0, 5) + '...' + obj[key].substring(obj[key].length - 5)
 							: obj[key]}
@@ -116,8 +116,8 @@ export default class TypedSign extends PureComponent {
 				<View style={styles.message}>
 					{messageParams.data.map((obj, i) => (
 						<View key={`${obj.name}_${i}`}>
-							<Text style={[styles.messageText, styles.msgKey]}>{obj.name}:</Text>
-							<Text style={styles.messageText} key={obj.name}>
+							<Text style={[styles.messageText, styles.msgKey, baseStyles.subTextDark]}>{obj.name}:</Text>
+							<Text style={[styles.messageText, baseStyles.subTextDark]} key={obj.name}>
 								{` ${obj.value}`}
 							</Text>
 						</View>

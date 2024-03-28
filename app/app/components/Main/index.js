@@ -589,7 +589,7 @@ const Main = props => {
 			isVisible={signMessage && !props.isLockScreen}
 			animationIn="slideInUp"
 			animationOut="slideOutDown"
-			style={styles.bottomModal}
+			style={[styles.bottomModal]}
 			backdropOpacity={0.7}
 			animationInTiming={600}
 			animationOutTiming={600}
@@ -1264,10 +1264,12 @@ const Main = props => {
 
 	const renderNotificationsModal = () => (
 		<Modal statusBarTranslucent isVisible={showNotificationModal && !props.isLockScreen}>
-			<View style={styles.notifyModalContainer}>
+			<View style={[styles.notifyModalContainer, isDarkMode && baseStyles.darkModalBackground]}>
 				<View style={styles.flex}>
-					{notificationTitle !== '' && <Text style={styles.notifyTitle}>{notificationTitle}</Text>}
-					<Text style={styles.notifyDesc}>{notificationMessage}</Text>
+					{notificationTitle !== '' && (
+						<Text style={[styles.notifyTitle, isDarkMode && baseStyles.textDark]}>{notificationTitle}</Text>
+					)}
+					<Text style={[styles.notifyDesc, isDarkMode && baseStyles.subTextDark]}>{notificationMessage}</Text>
 					<TouchableOpacity
 						style={styles.notifyTouchOk}
 						onPress={() => {
@@ -1277,7 +1279,9 @@ const Main = props => {
 							}
 						}}
 					>
-						<Text style={styles.notifyOkLabel}>{strings('other.i_know')}</Text>
+						<Text style={[styles.notifyOkLabel, isDarkMode && baseStyles.textDark]}>
+							{strings('other.i_know')}
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

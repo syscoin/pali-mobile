@@ -7,6 +7,7 @@ import PromptView from '../PromptView';
 import { strings } from '../../../../locales/i18n';
 import { renderError } from '../../../util/error';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { baseStyles } from '../../../styles/common';
 
 const options = {
 	enableVibrateFallback: true,
@@ -83,11 +84,13 @@ export default class MessageSign extends PureComponent {
 		const { truncateMessage } = this.state;
 
 		return truncateMessage ? (
-			<Text numberOfLines={5} ellipsizeMode={'tail'}>
+			<Text style={baseStyles.subTextDark} numberOfLines={5} ellipsizeMode={'tail'}>
 				{messageParams.data}
 			</Text>
 		) : (
-			<Text onTextLayout={this.shouldTruncateMessage}>{messageParams.data}</Text>
+			<Text style={baseStyles.subTextDark} onTextLayout={this.shouldTruncateMessage}>
+				{messageParams.data}
+			</Text>
 		);
 	};
 

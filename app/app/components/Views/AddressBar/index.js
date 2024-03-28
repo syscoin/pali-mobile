@@ -240,7 +240,7 @@ export default class AddressBar extends PureComponent {
 
 	setSecurityInfo = (safeLevel, safeHostUrl, safeDesc) => {
 		this.setState({ safeLevel, safeHostUrl, safeDesc });
-		if (safeLevel === 0 && !this.state.hasShownTip) {
+		if (safeLevel === 0) {
 			const { current } = this.moreButtonRef;
 			current?.measure((ox, oy, width, height, px, py) => {
 				const statusBarHeight = StatusBar.currentHeight;

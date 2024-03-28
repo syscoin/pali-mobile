@@ -239,7 +239,9 @@ class BiometricSecurity extends PureComponent {
 								<ActivityIndicator size="small" color="white" />
 							) : (
 								<>
-									<Text style={styles.createButtonText}>{this.getEnableBiometricStr()}</Text>
+									<Text style={[styles.createButtonText, isDarkMode && baseStyles.textDark]}>
+										{this.getEnableBiometricStr()}
+									</Text>
 									<Image style={styles.biometricsLogo} source={this.getBiometricLogo()} />
 								</>
 							)}

@@ -550,28 +550,35 @@ class AssetView extends PureComponent {
 		);
 	};
 
-	renderInfiniteDesc = () => (
-		<Modal
-			isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			onSwipeComplete={this.hideInfiniteDesc}
-			onBackButtonPress={this.hideInfiniteDesc}
-			onBackdropPress={this.hideInfiniteDesc}
-			backdropOpacity={0.7}
-			animationIn={'fadeIn'}
-			animationOut={'fadeOut'}
-			useNativeDriver
-		>
-			<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
-				<View style={styles.modalContainer}>
-					<View>
-						<Text style={styles.faqTitle}>{strings('approval_management.intro_title')}</Text>
-						<Text style={styles.faqDesc}>{strings('approval_management.intro_text')}</Text>
+	renderInfiniteDesc = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				onSwipeComplete={this.hideInfiniteDesc}
+				onBackButtonPress={this.hideInfiniteDesc}
+				onBackdropPress={this.hideInfiniteDesc}
+				backdropOpacity={0.7}
+				animationIn={'fadeIn'}
+				animationOut={'fadeOut'}
+				useNativeDriver
+			>
+				<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
+					<View style={[styles.modalContainer, isDarkMode && baseStyles.darkBackground]}>
+						<View>
+							<Text style={[styles.faqTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_title')}
+							</Text>
+							<Text style={[styles.faqDesc, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_text')}
+							</Text>
+						</View>
 					</View>
-				</View>
-			</TouchableWithoutFeedback>
-		</Modal>
-	);
+				</TouchableWithoutFeedback>
+			</Modal>
+		);
+	};
 
 	getCoinIntro = (assetType, defaultIntro) => {
 		switch (assetType) {
