@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import TokenImage from '../TokenImage';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { renderAmount, calcAssetPrices } from '../../../util/number';
 import Clipboard from '@react-native-community/clipboard';
@@ -17,6 +17,7 @@ import { CURRENCIES } from '../../../util/currencies';
 import txTodo from '../../../images/ic_coin_history_back.png';
 import txHistory from '../../../images/ic_coin_history.png';
 import { getAssetNetworkBarColor, getChainTypeName } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const activeOpacity = 0.8;
 const darkBlack = '#030319';
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
  * including the overview (Amount, Balance, Symbol, Logo)
  */
 class AssetOverview extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		/**
@@ -289,6 +291,7 @@ class AssetOverview extends PureComponent {
 		});
 		const secondaryBalance = `${balanceFiat}`;
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.wrapper}>
@@ -297,7 +300,7 @@ class AssetOverview extends PureComponent {
 						<View style={styles.originLogo}>{this.renderLogo()}</View>
 						<View style={styles.symbolBase}>
 							<View style={styles.symbol}>
-								<Text style={styles.symbolText} numberOfLines={1}>
+								<Text style={[styles.symbolText, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 									{symbol}
 								</Text>
 								{address && (
@@ -315,7 +318,7 @@ class AssetOverview extends PureComponent {
 					</View>
 
 					<View style={styles.assetTrans}>
-						<Text style={styles.assetTransTotal}>
+						<Text style={[styles.assetTransTotal, isDarkMode && baseStyles.textDark]}>
 							{amountSymbol}
 							{renderAmount(price && price > 10000 ? new BigNumber(price).toFixed(2) : price)}
 						</Text>
@@ -333,6 +336,7 @@ class AssetOverview extends PureComponent {
 							<Text
 								style={[
 									styles.assetWave,
+
 									{
 										color:
 											!priceChange || priceChange.toFixed(2) === 0
@@ -348,11 +352,19 @@ class AssetOverview extends PureComponent {
 						</View>
 					</View>
 				</View>
-				<Text style={styles.balanceTitle}>{strings('watch_asset_request.balance')}</Text>
-				<Text style={styles.balance}>{hideAmount ? '***' : renderAmount(balance)}</Text>
-				<Text style={styles.networthTitle}>{strings('other.networth')}</Text>
+				<Text style={[styles.balanceTitle, isDarkMode && baseStyles.subTextDark]}>
+					{strings('watch_asset_request.balance')}
+				</Text>
+				<Text style={[styles.balance, isDarkMode && baseStyles.textDark]}>
+					{hideAmount ? '***' : renderAmount(balance)}
+				</Text>
+				<Text style={[styles.networthTitle, isDarkMode && baseStyles.subTextDark]}>
+					{strings('other.networth')}
+				</Text>
 				<View style={styles.networkWrapper}>
-					<Text style={styles.balance}>{hideAmount ? '***' : renderAmount(secondaryBalance)}</Text>
+					<Text style={[styles.balance, isDarkMode && baseStyles.textDark]}>
+						{hideAmount ? '***' : renderAmount(secondaryBalance)}
+					</Text>
 					{!asset.lockType && (
 						<TouchableOpacity
 							style={styles.txWrapper}
@@ -372,11 +384,13 @@ class AssetOverview extends PureComponent {
 					onRequestClose={this.hideContractModal}
 				>
 					<TouchableOpacity style={styles.modalArea} onPress={this.hideContractModal}>
-						<View style={styles.contractBar}>
-							<View style={styles.contractWrapper}>
-								<Text style={styles.contractTitle}>{strings('other.contract_address')}</Text>
+						<View style={[styles.contractBar]}>
+							<View style={[styles.contractWrapper, isDarkMode && baseStyles.darkCardBackground]}>
+								<Text style={[styles.contractTitle, isDarkMode && baseStyles.textDark]}>
+									{strings('other.contract_address')}
+								</Text>
 								<TouchableOpacity style={styles.contractAddr} onPress={this.copyContractAddress}>
-									<Text>
+									<Text style={{ color: colors.paliGrey200 }}>
 										{address ? address.substring(0, 13) + '...' + address.substring(30) : ''}
 									</Text>
 									<Image style={styles.iconContractCopy} source={iconCopy} />

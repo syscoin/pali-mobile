@@ -12,13 +12,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n, { setLocale } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import { toggleTestnetVisible } from '../../../actions/settings';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = {
 	wrapper: {
-		flex: 1,
-		backgroundColor: colors.white,
-		paddingLeft: 20,
-		paddingRight: 20
+		backgroundColor: colors.$F9F9F9,
+		marginLeft: 20,
+		marginRight: 20,
+		paddingHorizontal: 24,
+		borderRadius: 20,
+		paddingBottom: 20,
+		marginTop: 24
+	},
+	txTitle: {
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold,
+		color: colors.white
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
 	},
 	flex: {
 		flex: 1
@@ -77,6 +96,7 @@ class LanguageSelector extends PureComponent {
 	static propTypes = {
 		navigation: PropTypes.object
 	};
+	static contextType = ThemeContext;
 
 	constructor(props) {
 		super(props);
@@ -85,8 +105,9 @@ class LanguageSelector extends PureComponent {
 		};
 	}
 
-	renderCurrencyItem = () =>
-		languageArray.map(language => {
+	renderCurrencyItem = () => {
+		const { isDarkMode } = this.context;
+		return languageArray.map(language => {
 			const selected = language.locale === i18n.locale ? <Image source={checkIcon} /> : null;
 			return (
 				<View key={language.name}>
@@ -102,28 +123,38 @@ class LanguageSelector extends PureComponent {
 						}}
 					>
 						<View style={styles.languageInfo}>
-							<Text style={styles.languageLabel}>{language.name}</Text>
+							<Text style={[styles.languageLabel, isDarkMode && baseStyles.textDark]}>
+								{language.name}
+							</Text>
 						</View>
 						<View>{selected}</View>
 					</TouchableOpacity>
-					<View style={styles.line} />
+					<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 				</View>
 			);
 		});
+	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+			>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.language')}
 					onBack={() => {
 						this.props.navigation.pop();
 					}}
+					titleStyle={styles.txTitle}
+					withBackground
 				/>
-				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
-					<View>{this.renderCurrencyItem()}</View>
-				</ScrollView>
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>
+					{this.renderCurrencyItem()}
+				</View>
 			</SafeAreaView>
 		);
 	}

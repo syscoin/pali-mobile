@@ -6,8 +6,9 @@ import { clearWebViewIOSCache } from 'react-native-webview-ios-cache-clear';
 import Modal from 'react-native-modal';
 import { WebView } from 'react-native-webview';
 import { util } from 'paliwallet-core';
+import { useTheme } from '../../../theme/ThemeProvider';
 
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { SvgUri } from 'react-native-svg';
 
 import { strings } from '../../../../locales/i18n';
@@ -32,7 +33,9 @@ const styles = StyleSheet.create({
 	titleLayout: {
 		flexDirection: 'row',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20
 	},
 	checkboxWrapper: {
 		flexDirection: 'column',
@@ -181,7 +184,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -197,7 +200,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1.5,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
 	},
 	okText: {
 		fontSize: 14,
-		fontWeight: 'bold',
+		...fontStyles.bold,
 		color: colors.white
 	},
 	bottomModal: {
@@ -214,9 +217,7 @@ const styles = StyleSheet.create({
 	},
 	moreModalWrapper: {
 		minHeight: 406,
-		backgroundColor: colors.$F6F6F6,
-		borderTopLeftRadius: 20,
-		borderTopRightRadius: 20
+		backgroundColor: colors.$F6F6F6
 	},
 	moreModalContainer: {
 		flex: 1,
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
 const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 	const scaleAnim = useRef(new Animated.Value(1)).current;
 	const [favicon, setFavicon] = useState(null);
-
+	const { isDarkMode } = useTheme();
 	const handlePress = () => {
 		onPress();
 		Animated.timing(scaleAnim, {
@@ -265,7 +266,15 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 		<Animated.View
 			style={[
 				styles.animatedView,
-				{ backgroundColor: isActive ? colors.brandPink500 : colors.grey100 },
+				{
+					backgroundColor: isActive
+						? isDarkMode
+							? colors.$4CA1CF
+							: colors.brandPink500
+						: isDarkMode
+						? colors.brandBlue500
+						: colors.grey100
+				},
 				{ transform: [{ scale: scaleAnim }] }
 			]}
 		>
@@ -282,7 +291,10 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 						</View>
 					)}
 					<Text
-						style={[styles.text, { color: index === activeTab ? 'white' : colors.black }]}
+						style={[
+							styles.text,
+							{ color: index === activeTab ? 'white' : isDarkMode ? colors.white : colors.black }
+						]}
 						numberOfLines={1}
 						ellipsizeMode="tail"
 					>
@@ -294,11 +306,15 @@ const TabItem = ({ tab, isActive, activeTab, onPress, closeTab, index }) => {
 						closeTab(tab.id);
 					}}
 				>
-					<AntIcon color={index === activeTab ? colors.white : colors.black} name="close" size={16} />
+					<AntIcon
+						color={index === activeTab ? colors.white : isDarkMode ? colors.white : colors.black}
+						name="close"
+						size={16}
+					/>
 				</TouchableOpacity>
 			</View>
 			<TouchableOpacity activeOpacity={1} style={styles.touchableOpacity} onPress={handlePress}>
-				<Image source={{ uri: tab.uri }} style={styles.image} />
+				<Image source={{ uri: tab.uri }} style={[styles.image, isDarkMode && baseStyles.darkCardBackground]} />
 			</TouchableOpacity>
 		</Animated.View>
 	);
@@ -311,6 +327,8 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 	const [toggleCheckBoxCache, setToggleCheckBoxCache] = useState(false);
 	const [toggleCheckBoxCookies, setToggleCheckBoxCookies] = useState(false);
 	const webviewCacheRef = useRef(null);
+
+	const { isDarkMode } = useTheme();
 
 	const clearBrowserData = async () => {
 		const useWebKit = true;
@@ -357,26 +375,31 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 				animationType="fade"
 				useNativeDriver
 			>
-				<View style={styles.root}>
+				<View style={[styles.root, isDarkMode && baseStyles.darkModalBackground]}>
 					<WebView style={{ width: 0, height: 0 }} ref={webviewCacheRef} />
 
-					<View style={styles.titleLayout}>
-						<Text style={styles.intro}>{strings('browser.clearData')}</Text>
+					<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+						<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>
+							{strings('browser.clearData')}
+						</Text>
 					</View>
-					<View style={styles.moreModalWrapper}>
+					<View style={[styles.moreModalWrapper, isDarkMode && baseStyles.darkModalBackground]}>
 						<View style={styles.moreModalContainer}>
 							<View style={styles.checkboxWrapper}>
 								<View style={styles.checkboxStyle}>
 									<CheckBox
 										disabled={false}
 										boxType="square"
-										onCheckColor={colors.brandPink300}
+										onCheckColor={isDarkMode ? colors.$4CA1CF : colors.brandPink300}
 										onTintColor="#aaaaaa"
 										value={toggleCheckBoxHistory}
 										onValueChange={newValue => setToggleCheckBoxHistory(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}> {strings('browser.browserHistory')}</Text>
+										<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+											{' '}
+											{strings('browser.browserHistory')}
+										</Text>
 										<Text style={styles.subTitle}>{strings('browser.clearBrowserHistory')}</Text>
 									</View>
 								</View>
@@ -385,13 +408,15 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 									<CheckBox
 										disabled={false}
 										boxType="square"
-										onCheckColor={colors.brandPink300}
+										onCheckColor={isDarkMode ? colors.$4CA1CF : colors.brandPink300}
 										onTintColor="#aaaaaa"
 										value={toggleCheckBoxCookies}
 										onValueChange={newValue => setToggleCheckBoxCookies(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}>{strings('browser.cookiesHistory')}</Text>
+										<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+											{strings('browser.cookiesHistory')}
+										</Text>
 										<Text style={styles.subTitle}>{strings('browser.clearCookiesHistory')}</Text>
 									</View>
 								</View>
@@ -400,13 +425,15 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 									<CheckBox
 										disabled={false}
 										boxType="square"
-										onCheckColor={colors.brandPink300}
+										onCheckColor={isDarkMode ? colors.$4CA1CF : colors.brandPink300}
 										onTintColor="#aaaaaa"
 										value={toggleCheckBoxCache}
 										onValueChange={newValue => setToggleCheckBoxCache(newValue)}
 									/>
 									<View style={{ flexDirection: 'column', marginLeft: 12, marginTop: 16 }}>
-										<Text style={styles.title}>{strings('browser.cacheHistory')}</Text>
+										<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+											{strings('browser.cacheHistory')}
+										</Text>
 										<Text style={styles.subTitle}>{strings('browser.clearCacheHistory')}</Text>
 									</View>
 								</View>
@@ -414,15 +441,26 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 							</View>
 
 							<View style={styles.pwModalButtons}>
-								<TouchableOpacity style={styles.cancelButton} onPress={hideMoreModal}>
-									<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+								<TouchableOpacity
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+									onPress={hideMoreModal}
+								>
+									<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+										{strings('action_view.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.okButton, isButtonDisabled ? styles.disabledButton : null]}
+									style={[
+										styles.okButton,
+										isDarkMode && baseStyles.darkConfirmButton,
+										isButtonDisabled ? styles.disabledButton : null
+									]}
 									disabled={isButtonDisabled}
 									onPress={clearBrowserData}
 								>
-									<Text style={styles.okText}>{strings('browser.clear')}</Text>
+									<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+										{strings('browser.clear')}
+									</Text>
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -436,7 +474,7 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 		<View style={styles.flexOne}>
 			{moreModalVisible && renderCleanDataModal()}
 			{showOptions && (
-				<View style={styles.optionsContainer}>
+				<View style={[styles.optionsContainer, isDarkMode && baseStyles.darkCardBackground]}>
 					<TouchableOpacity
 						style={styles.closeTabsButton}
 						onPress={() => {
@@ -444,8 +482,10 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 							setMoreModalVisible(true);
 						}}
 					>
-						<Icon name="broom" color={colors.black} width="18" height="18" />
-						<Text style={styles.closeTabsButtonText}>{strings('browser.clearData')}</Text>
+						<Icon name="broom" color={isDarkMode ? colors.white : colors.black} width="18" height="18" />
+						<Text style={[styles.closeTabsButtonText, isDarkMode && baseStyles.textDark]}>
+							{strings('browser.clearData')}
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.closeTabsButtonWithMargin}
@@ -454,18 +494,25 @@ const OpenedTabs = ({ tabs, newTab, activeTab, openOpenedTab, closeTab, closeAll
 							setShowOptions(false);
 						}}
 					>
-						<AntIcon color={colors.black} name="closecircleo" size={18} />
-						<Text style={styles.closeTabsButtonText}>{strings('browser.closeAll')}</Text>
+						<AntIcon color={isDarkMode ? colors.white : colors.black} name="closecircleo" size={18} />
+						<Text style={[styles.closeTabsButtonText, isDarkMode && baseStyles.textDark]}>
+							{strings('browser.closeAll')}
+						</Text>
 					</TouchableOpacity>
 				</View>
 			)}
-			<View style={styles.header}>
-				<TouchableOpacity style={styles.addButton} onPress={() => newTab()}>
-					<Entypo color={colors.brandPink300} name="plus" size={22} />
-					<Text style={styles.addButtonText}>{strings('browser.addTab')}</Text>
+			<View style={[styles.header, isDarkMode && baseStyles.darkBackground]}>
+				<TouchableOpacity
+					style={[styles.addButton, { backgroundColor: isDarkMode && colors.paliBlue100 }]}
+					onPress={() => newTab()}
+				>
+					<Entypo color={isDarkMode ? colors.$4CA1CF : colors.brandPink300} name="plus" size={22} />
+					<Text style={[styles.addButtonText, isDarkMode && baseStyles.darkConfirmText]}>
+						{strings('browser.addTab')}
+					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.optionsButton} onPress={() => setShowOptions(!showOptions)}>
-					<Entypo color={colors.grey600} name="dots-three-vertical" size={24} />
+					<Entypo color={isDarkMode ? colors.white : colors.grey600} name="dots-three-vertical" size={24} />
 				</TouchableOpacity>
 			</View>
 			<ScrollView contentContainerStyle={styles.scrollView}>

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import SignatureRequest from '../SignatureRequest';
 import { util } from 'paliwallet-core';
@@ -91,11 +91,13 @@ export default class PersonalSign extends PureComponent {
 		const { truncateMessage } = this.state;
 
 		return truncateMessage ? (
-			<Text numberOfLines={5} ellipsizeMode={'tail'}>
+			<Text style={baseStyles.subTextDark} numberOfLines={5} ellipsizeMode={'tail'}>
 				{messageParams.data}
 			</Text>
 		) : (
-			<Text onTextLayout={this.shouldTruncateMessage}>{messageParams.data}</Text>
+			<Text style={baseStyles.subTextDark} onTextLayout={this.shouldTruncateMessage}>
+				{messageParams.data}
+			</Text>
 		);
 	};
 

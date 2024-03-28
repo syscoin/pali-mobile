@@ -51,25 +51,33 @@ static void InitializeFlipper(UIApplication *application) {
   UInt64 native_start_time = [[NSDate date] timeIntervalSince1970] * 1000;
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"PaliWallet" initialProperties:@{@"native_start_time": [NSString stringWithFormat:@"%llu", native_start_time]}];
 
-  if (@available(iOS 13.0, *)) {
-      rootView.backgroundColor = [UIColor systemBackgroundColor];
-  } else {
-      rootView.backgroundColor = [UIColor whiteColor];
-  }
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-
-
-
-
+  
+  
+  
 
   Dynamic *t = [Dynamic new];
-  UIView *animationUIView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"splash_screen"]; // change lottieName to your lottie files name
-  animationUIView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
+  UIView *animationUIView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"splash_screen"];
+ 
+  
+  if (@available(iOS 12.0, *)) {
+    
+    if( self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ){
+      rootView.backgroundColor = [UIColor colorWithRed:17/255.0 green:30/255.0 blue:51/255.0 alpha:1.0];
+      animationUIView.backgroundColor = [UIColor colorWithRed:17/255.0 green:30/255.0 blue:51/255.0 alpha:1.0];
+    } else {
+      rootView.backgroundColor = [UIColor whiteColor];
+      animationUIView.backgroundColor = [UIColor whiteColor];
+    }
+  } else {
+    rootView.backgroundColor = [UIColor whiteColor];
+    animationUIView.backgroundColor = [UIColor whiteColor];
+  }
 
   // register LottieSplashScreen to RNSplashScreen
   [RNSplashScreen showLottieSplash:animationUIView inRootView:rootView];

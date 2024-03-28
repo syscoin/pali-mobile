@@ -13,15 +13,17 @@ import {
 	TouchableWithoutFeedback,
 	View
 } from 'react-native';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FastImage from 'react-native-fast-image';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import Engine from '../../../core/Engine';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import { getChainIdByType, getEip155Url } from '../../../util/number';
 import NFTImage from '../NFTImage';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	hitSlop: {
@@ -29,6 +31,9 @@ const styles = StyleSheet.create({
 		left: 10,
 		bottom: 10,
 		right: 10
+	},
+	backIcon: {
+		color: colors.black
 	},
 	borderRadius10: {
 		borderRadius: 10,
@@ -322,6 +327,7 @@ const itemTextHeight = 26;
  * Account access approval component
  */
 class EnsSettingView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		allCollectibleContracts: PropTypes.object,
 		allCollectibles: PropTypes.object,
@@ -400,6 +406,7 @@ class EnsSettingView extends PureComponent {
 		const itemWidth = itemSize;
 		const left = index % columnCount > 0 ? itemSpace : 0;
 		const top = itemSpace; //Math.floor(index / columnCount) > 0 ? itemSpace : 0;
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				key={'two-key-' + index}
@@ -449,6 +456,7 @@ class EnsSettingView extends PureComponent {
 						allowFontScaling={false}
 						style={[
 							styles.detailName,
+							isDarkMode && baseStyles.textDark,
 							{
 								width: itemWidth
 							}
@@ -467,11 +475,13 @@ class EnsSettingView extends PureComponent {
 		const height = (width * 158.0) / 362;
 		const smallHeight = (width * 118.0) / 363;
 		const hasAvatarUrl = ensEntry.avatarUrl;
+		const { isDarkMode } = this.context;
+
 		return (
 			<View style={styles.alignItemCenter}>
 				<View style={styles.homeTop}>
 					<Image source={require('../../../images/ic_ens_big.png')} />
-					<Text style={styles.homeTitle} allowFontScaling={false}>
+					<Text style={[styles.homeTitle, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{strings('ens_setting.ens_avatar')}
 					</Text>
 					<TouchableOpacity
@@ -590,7 +600,7 @@ class EnsSettingView extends PureComponent {
 			);
 			allItems.push({ ...token, asset_contract: contract });
 		});
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.itemBaseLayout}>
 				<View style={styles.titleLayout}>
@@ -601,9 +611,13 @@ class EnsSettingView extends PureComponent {
 						}}
 						style={styles.backPaddingLeft}
 					>
-						<Image source={require('../../../images/back.png')} />
+						<EvilIcons
+							name="chevron-left"
+							size={32}
+							style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+						/>
 					</TouchableOpacity>
-					<Text style={styles.titleText} allowFontScaling={false}>
+					<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{' '}
 						{strings('ens_setting.select_an_nft')}
 					</Text>
@@ -620,7 +634,7 @@ class EnsSettingView extends PureComponent {
 									numColumns={3}
 									horizontal={false}
 									ListHeaderComponent={() => (
-										<Text style={styles.listHeaderText}>
+										<Text style={[styles.listHeaderText, isDarkMode && baseStyles.textDark]}>
 											{strings('ens_setting.ens_accepts_nfts')}
 										</Text>
 									)}
@@ -635,10 +649,16 @@ class EnsSettingView extends PureComponent {
 								source={require('../../../images/img_ens_nft_no.png')}
 								style={styles.alignSelfCenter}
 							/>
-							<Text style={styles.noAnyNftText} allowFontScaling={false}>
+							<Text
+								style={[styles.noAnyNftText, isDarkMode && baseStyles.textDark]}
+								allowFontScaling={false}
+							>
 								{strings('ens_setting.not_any_nft')}
 							</Text>
-							<Text style={styles.canBuyOnText} allowFontScaling={false}>
+							<Text
+								style={[styles.canBuyOnText, isDarkMode && baseStyles.textDark]}
+								allowFontScaling={false}
+							>
 								{strings('ens_setting.your_can_buy_on')}
 							</Text>
 							<TouchableOpacity
@@ -667,7 +687,7 @@ class EnsSettingView extends PureComponent {
 	renderSetUrl = () => {
 		const { ensEntry, setAvatarData } = this.props;
 		const { urlValue, requestUrl, avatarLoading, avatarLoadSuccess, avatarLoadError } = this.state;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.itemBaseLayout}>
 				<View style={styles.titleLayout}>
@@ -678,9 +698,13 @@ class EnsSettingView extends PureComponent {
 						}}
 						style={styles.backPaddingLeft}
 					>
-						<Image source={require('../../../images/back.png')} />
+						<EvilIcons
+							name="chevron-left"
+							size={32}
+							style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+						/>
 					</TouchableOpacity>
-					<Text style={styles.titleText} allowFontScaling={false}>
+					<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{strings('ens_setting.set_url')}
 					</Text>
 					<View style={styles.width44} />
@@ -724,12 +748,12 @@ class EnsSettingView extends PureComponent {
 							)}
 						</View>
 
-						<Text style={styles.setUrlName} allowFontScaling={false}>
+						<Text style={[styles.setUrlName, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 							{ensEntry.ensName}
 						</Text>
 						<TextInput
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[styles.textInput, isDarkMode && baseStyles.textDark]}
 							value={urlValue}
 							placeholder={strings('ens_setting.enter_http_ipfs')}
 							placeholderTextColor={colors.$8F92A1}
@@ -746,7 +770,13 @@ class EnsSettingView extends PureComponent {
 						<View style={styles.flexOne} />
 						<TouchableOpacity
 							disabled={!avatarLoadSuccess}
-							style={[styles.urlDoneTouch, avatarLoadSuccess && { backgroundColor: colors.brandPink300 }]}
+							style={[
+								styles.urlDoneTouch,
+								avatarLoadSuccess &&
+									(isDarkMode
+										? baseStyles.darkConfirmButton
+										: { backgroundColor: colors.brandPink300 })
+							]}
 							onPress={() => {
 								const data = {
 									address: ensEntry.address,
@@ -758,7 +788,11 @@ class EnsSettingView extends PureComponent {
 							}}
 						>
 							<Text
-								style={[styles.urlDoneText, avatarLoadSuccess && { color: colors.white }]}
+								style={[
+									styles.urlDoneText,
+									avatarLoadSuccess &&
+										(isDarkMode ? baseStyles.darkConfirmText : { color: colors.white })
+								]}
 								allowFontScaling={false}
 							>
 								{strings('navigation.ok')}
@@ -771,6 +805,7 @@ class EnsSettingView extends PureComponent {
 	};
 
 	renderAbountAvatar = () => {
+		const { isDarkMode } = this.context;
 		const icons = [
 			require('../../../images/ic_ens_about_what.png'),
 			require('../../../images/ic_ens_about_format.png'),
@@ -801,9 +836,13 @@ class EnsSettingView extends PureComponent {
 							this.props.setCurrentPage(HomePage);
 						}}
 					>
-						<Image source={require('../../../images/back.png')} />
+						<EvilIcons
+							name="chevron-left"
+							size={32}
+							style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+						/>
 					</TouchableOpacity>
-					<Text style={styles.titleText} allowFontScaling={false}>
+					<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 						{strings('ens_setting.about_ens_avatar')}
 					</Text>
 					<View style={styles.width44} />
@@ -816,10 +855,13 @@ class EnsSettingView extends PureComponent {
 						<View style={styles.aboutInfoLayout} key={'about-index-' + index}>
 							<Image source={icon} />
 							<View style={styles.aboutConent}>
-								<Text style={styles.abountItemTitle} allowFontScaling={false}>
+								<Text
+									style={[styles.abountItemTitle, isDarkMode && baseStyles.textDark]}
+									allowFontScaling={false}
+								>
 									{titles[index]}
 								</Text>
-								<Text style={styles.aboutItemDesc} allowFontScaling={false}>
+								<Text style={[styles.aboutItemDesc]} allowFontScaling={false}>
 									{descs[index]}
 								</Text>
 							</View>
@@ -842,8 +884,10 @@ class EnsSettingView extends PureComponent {
 			const smallHeight = (width * 118.0) / 363;
 			height = smallHeight * 2 + 350;
 		}
+		const { isDarkMode } = this.context;
+
 		return (
-			<View style={[styles.rootView, { height }]}>
+			<View style={[styles.rootView, isDarkMode && baseStyles.darkBackground, { height }]}>
 				{page === SelectNftPage
 					? this.renderSelectNft()
 					: page === SetUrlPage

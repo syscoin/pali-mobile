@@ -1,7 +1,7 @@
 import { ChainType, util } from 'paliwallet-core';
 import { strings } from '../../locales/i18n';
 import { RPC } from './networks';
-import { getIcTagResource, getTagColor } from './rpcUtil';
+import { getIcTagResource, getTagColor, getIcLogoResource } from './rpcUtil';
 import { getRpcNickname } from './ControllerUtils';
 
 export const ChainTypes = [
@@ -137,7 +137,7 @@ export function getAssetNetworkBarColor(type) {
 		: type === ChainType.Syscoin
 		? '#1F5EFF'
 		: type === ChainType.Rollux
-		? '#000000'
+		? '#DBEF88'
 		: util.isRpcChainType(type)
 		? getTagColor(type)
 		: '#627EEA';
@@ -162,6 +162,51 @@ export function getShareImage(type) {
 	}
 	return require('../images/ic_share_eth.png');
 }
+
+export function getIcLogoByChainType(type) {
+	return type === ChainType.Bsc
+		? require('../images/ic_logo_bsc.png')
+		: type === ChainType.Polygon
+		? require('../images/ic_logo_polygon.png')
+		: type === ChainType.Arbitrum
+		? require('../images/ic_logo_arb.png')
+		: type === ChainType.Heco
+		? require('../images/ic_logo_heco.png')
+		: type === ChainType.Optimism
+		? require('../images/ic_logo_op.png')
+		: type === ChainType.Avax
+		? require('../images/ic_logo_avax.png')
+		: type === ChainType.Syscoin
+		? require('../images/ic_logo_syscoin.png')
+		: type === ChainType.Rollux
+		? require('../images/ic_logo_rollux.png')
+		: util.isRpcChainType(type)
+		? getIcLogoResource(type)
+		: require('../images/ic_logo_eth.png');
+}
+
+export function getIcCardByChainType(type) {
+	return type === ChainType.Bsc
+		? require('../images/ic_card_bsc.png')
+		: type === ChainType.Polygon
+		? require('../images/ic_card_polygon.png')
+		: type === ChainType.Arbitrum
+		? require('../images/ic_card_arb.png')
+		: type === ChainType.Heco
+		? require('../images/ic_card_heco.png')
+		: type === ChainType.Optimism
+		? require('../images/ic_card_op.png')
+		: type === ChainType.Avax
+		? require('../images/ic_card_avax.png')
+		: type === ChainType.Syscoin
+		? require('../images/ic_card_syscoin.png')
+		: type === ChainType.Rollux
+		? require('../images/ic_card_rollux.png')
+		: util.isRpcChainType(type)
+		? getIcTagResource(type)
+		: require('../images/ic_card_eth.png');
+}
+
 export function getIcTagByChainType(type) {
 	return type === ChainType.Bsc
 		? require('../images/ic_bsc_tag.png')

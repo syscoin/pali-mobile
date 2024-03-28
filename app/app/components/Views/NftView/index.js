@@ -42,6 +42,7 @@ import { isSvgFile } from '../../../util/general';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
 import { ChainTypeBgDefi, ChainTypes } from '../../../util/ChainTypeImages';
 import { ChainType } from 'paliwallet-core';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const screenWidth = Device.getDeviceWidth();
 
@@ -59,6 +60,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		zIndex: 10
+	},
+	buttonContainer: {
+		color: colors.brandPink300,
+		fontSize: 16,
+		lineHeight: 24,
+		...fontStyles.semibold
 	},
 	draggerButton: {
 		padding: 10,
@@ -310,8 +317,17 @@ const styles = StyleSheet.create({
 	},
 	actionView: {
 		marginHorizontal: -7,
+
+		height: 40,
+		backgroundColor: 'white',
+		borderWidth: 1,
+		borderColor: colors.brandPink300,
+		borderRadius: 100,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		marginTop: 15,
+		marginLeft: 12,
+		paddingHorizontal: 15
 	}
 });
 
@@ -321,6 +337,7 @@ const styles = StyleSheet.create({
  * and also the transaction list
  */
 class NftView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		favoriteCollectibles: PropTypes.array,
@@ -419,11 +436,19 @@ class NftView extends PureComponent {
 		}
 		// const hasExtra = traits % 2 === 1;
 		// const rowNum = Math.floor(traits / 2);
-
+		const { isDarkMode } = this.context;
 		return (
 			<ImageCapInset
 				style={styles.cardWrapper}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'dark800_card' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/dark800_card.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 			>
 				<View style={[styles.childrenWrapper]}>
@@ -529,9 +554,10 @@ class NftView extends PureComponent {
 		const { nftToken } = this.state;
 		const isAndroid = Device.isAndroid();
 		const isZh = strings('other.accept_language') === 'zh';
-		let buttonWidth = Device.getDeviceWidth() - 30;
+		let buttonWidth = Device.getDeviceWidth() - 70;
 		buttonWidth /= 3;
 		buttonWidth += 14;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView
 				style={styles.actionScroll}
@@ -541,10 +567,12 @@ class NftView extends PureComponent {
 				contentContainerStyle={styles.actionContainer}
 			>
 				{(nftToken.type === ChainType.Ethereum || nftToken.type === ChainType.Polygon) && (
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+					<View
+						style={[
+							styles.actionView,
+							{ width: buttonWidth },
+							isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+						]}
 					>
 						<TouchableOpacity
 							onPress={() => {
@@ -557,19 +585,17 @@ class NftView extends PureComponent {
 							}}
 							activeOpacity={activeOpacity}
 						>
-							<Image
-								style={{ width: buttonWidth }}
-								source={require('../../../images/img_opensea.png')}
-								resizeMode={'contain'}
-							/>
+							<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>OpenSea</Text>
 						</TouchableOpacity>
-					</ImageCapInset>
+					</View>
 				)}
 				{nftToken.type === ChainType.Ethereum && (
-					<ImageCapInset
-						style={[styles.actionView, { width: buttonWidth }]}
-						source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-						capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+					<View
+						style={[
+							styles.actionView,
+							{ width: buttonWidth },
+							isDarkMode && { borderColor: 'white', backgroundColor: 'transparent' }
+						]}
 					>
 						<TouchableOpacity
 							onPress={() => {
@@ -582,32 +608,23 @@ class NftView extends PureComponent {
 							}}
 							activeOpacity={activeOpacity}
 						>
-							<Image
-								style={{ width: buttonWidth }}
-								source={require('../../../images/img_looksrare.png')}
-								resizeMode={'contain'}
-							/>
+							<Text style={[styles.buttonContainer, isDarkMode && baseStyles.textDark]}>LooksRare</Text>
 						</TouchableOpacity>
-					</ImageCapInset>
+					</View>
 				)}
-
-				<ImageCapInset
-					style={[styles.actionView, { width: buttonWidth }]}
-					source={isAndroid ? { uri: 'img_btn_bg' } : require('../../../images/img_btn_bg.png')}
-					capInsets={{ top: 0, left: 40, bottom: 0, right: 40 }}
+				<View
+					style={[
+						styles.actionView,
+						{ width: buttonWidth },
+						isDarkMode && { borderColor: 'white', backgroundColor: 'white' }
+					]}
 				>
 					<TouchableOpacity onPress={this.showSendModal} activeOpacity={activeOpacity}>
-						<Image
-							style={{ width: buttonWidth }}
-							source={
-								isZh
-									? require('../../../images/img_send_cn.png')
-									: require('../../../images/img_send_en.png')
-							}
-							resizeMode={'contain'}
-						/>
+						<Text style={[styles.buttonContainer, isDarkMode && { color: colors.paliBlue400 }]}>
+							{strings('other.send')}
+						</Text>
 					</TouchableOpacity>
-				</ImageCapInset>
+				</View>
 			</ScrollView>
 		);
 	};
@@ -644,16 +661,19 @@ class NftView extends PureComponent {
 			);
 		const isFavorite = filterFavorite && filterFavorite.length > 0;
 		const securityData = nftToken.securityData;
+
+		const { isDarkMode } = this.context;
+
 		return (
 			<React.Fragment>
-				<View style={styles.flexOne}>
+				<View style={[styles.flexOne, isDarkMode && baseStyles.darkBackground]}>
 					<MStatusBar
 						navigation={navigation}
 						barStyle={barStyle}
 						fixPadding={false}
 						backgroundColor={colors.transparent}
 					/>
-					<View style={styles.flexOne}>
+					<View style={[styles.flexOne, isDarkMode && baseStyles.darkBackground]}>
 						<LinearGradient
 							start={{ x: 0, y: 0 }}
 							end={{ x: 0, y: 1 }}
@@ -664,7 +684,8 @@ class NftView extends PureComponent {
 						<Animated.View
 							style={[
 								styles.draggerWrapper,
-								{ backgroundColor, height: headerHeight, paddingTop: barHeight }
+								{ backgroundColor, height: headerHeight, paddingTop: barHeight },
+								isDarkMode && baseStyles.darkBackground
 							]}
 						>
 							<TouchableOpacity
@@ -672,7 +693,7 @@ class NftView extends PureComponent {
 								onPress={this.goBack}
 								activeOpacity={activeOpacity}
 							>
-								<Image source={backImg} />
+								<Image source={isDarkMode ? iconBackWhite : backImg} />
 							</TouchableOpacity>
 							<TouchableOpacity
 								style={styles.draggerButton}
@@ -695,13 +716,19 @@ class NftView extends PureComponent {
 								activeOpacity={activeOpacity}
 							>
 								<Image
-									source={isFavorite ? require('../../../images/ic_favorites_y.png') : favoriteImg}
+									source={
+										isFavorite
+											? require('../../../images/ic_favorites_y.png')
+											: isDarkMode
+											? iconFavoriteWhite
+											: favoriteImg
+									}
 								/>
 							</TouchableOpacity>
 						</Animated.View>
 
 						<ScrollView
-							style={styles.scroll_wrapper}
+							style={[styles.scroll_wrapper, isDarkMode && baseStyles.darkBackground]}
 							keyboardShouldPersistTaps="handled"
 							onScroll={this.onScroll.bind(this)}
 							scrollEventThrottle={1}
@@ -709,7 +736,7 @@ class NftView extends PureComponent {
 						>
 							<View>
 								{!isSvgFile(nftToken.image_url) && (
-									<View style={styles.blurLayout}>
+									<View style={[styles.blurLayout]}>
 										<NFTImage
 											style={{ width: screenWidth, height: screenWidth }}
 											imageUrl={nftToken.image_url}
@@ -717,10 +744,14 @@ class NftView extends PureComponent {
 										/>
 
 										<BlurView
-											style={[styles.blurView, { width: screenWidth, height: screenWidth }]}
+											style={[
+												styles.blurView,
+												{ width: screenWidth, height: screenWidth },
+												isDarkMode && baseStyles.darkBackground
+											]}
 											blurType="light"
 											blurAmount={10}
-											reducedTransparencyFallbackColor="white"
+											reducedTransparencyFallbackColor={isDarkMode ? '#111E33' : 'white'}
 										/>
 									</View>
 								)}
@@ -728,7 +759,11 @@ class NftView extends PureComponent {
 									style={[styles.cardWrapper, { marginTop: headerHeight }]}
 									source={
 										Device.isAndroid()
-											? { uri: 'default_card' }
+											? isDarkMode
+												? null
+												: { uri: 'default_card' }
+											: isDarkMode
+											? null
 											: require('../../../images/default_card.png')
 									}
 									capInsets={baseStyles.capInsets}
@@ -782,7 +817,9 @@ class NftView extends PureComponent {
 												svgUseWebView
 											/>
 										)}
-										<Text style={styles.tokenName}>{nftToken.name}</Text>
+										<Text style={[styles.tokenName, isDarkMode && baseStyles.textDark]}>
+											{nftToken.name}
+										</Text>
 									</View>
 								</ImageCapInset>
 
@@ -790,7 +827,11 @@ class NftView extends PureComponent {
 									style={styles.cardWrapper}
 									source={
 										Device.isAndroid()
-											? { uri: 'default_card' }
+											? isDarkMode
+												? { uri: 'dark800_card' }
+												: { uri: 'default_card' }
+											: isDarkMode
+											? require('../../../images/dark800_card.png')
 											: require('../../../images/default_card.png')
 									}
 									capInsets={baseStyles.capInsets}
@@ -798,7 +839,10 @@ class NftView extends PureComponent {
 									<View style={[styles.childrenWrapper]}>
 										<View style={styles.rowFlex}>
 											<View style={styles.centerVerticalFlex}>
-												<Text style={styles.textKey1} allowFontScaling={false}>
+												<Text
+													style={[styles.textKey1, isDarkMode && baseStyles.textDark]}
+													allowFontScaling={false}
+												>
 													{nftToken.balanceOf.toString()}
 												</Text>
 												<Text style={styles.textValue1}>{strings('nft.amount')}</Text>
@@ -806,7 +850,10 @@ class NftView extends PureComponent {
 											<View style={styles.centerVerticalFlex}>
 												<View style={styles.layoutKey2}>
 													<Image source={require('../../../images/ic_eth_price.png')} />
-													<Text style={styles.textPrice} allowFontScaling={false}>
+													<Text
+														style={[styles.textPrice, , isDarkMode && baseStyles.textDark]}
+														allowFontScaling={false}
+													>
 														{nftToken.last_sale?.total_price
 															? fromWei(nftToken.last_sale.total_price || '0')
 															: '-'}
@@ -836,8 +883,15 @@ class NftView extends PureComponent {
 										</View>
 										{securityData && this.renderSecurityPanel(securityData)}
 										{nftToken.description && (
-											<View style={styles.tokenDescLayout}>
-												<Text style={styles.tokenDesc}>{nftToken.description}</Text>
+											<View
+												style={[
+													styles.tokenDescLayout,
+													isDarkMode && baseStyles.darkInputBackground
+												]}
+											>
+												<Text style={[styles.tokenDesc, isDarkMode && baseStyles.textDark]}>
+													{nftToken.description}
+												</Text>
 											</View>
 										)}
 										{nftToken.creator && nftToken.creator.address && (
@@ -855,7 +909,9 @@ class NftView extends PureComponent {
 														style={styles.createdByIcon}
 													/>
 												)}
-												<Text style={styles.createdByText}>{strings('nft.created_by')}</Text>
+												<Text style={[styles.createdByText, isDarkMode && baseStyles.textDark]}>
+													{strings('nft.created_by')}
+												</Text>
 												<TouchableOpacity
 													activeOpacity={0.8}
 													onPress={() => {
@@ -882,13 +938,19 @@ class NftView extends PureComponent {
 										style={styles.cardWrapper}
 										source={
 											Device.isAndroid()
-												? { uri: 'default_card' }
+												? isDarkMode
+													? { uri: 'dark800_card' }
+													: { uri: 'default_card' }
+												: isDarkMode
+												? require('../../../images/dark800_card.png')
 												: require('../../../images/default_card.png')
 										}
 										capInsets={baseStyles.capInsets}
 									>
 										<View style={[styles.childrenWrapper]}>
-											<Text style={styles.itemTitle}>{strings('nft.collection_intro')}</Text>
+											<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>
+												{strings('nft.collection_intro')}
+											</Text>
 											<TouchableOpacity
 												onPress={() => {
 													let url =
@@ -907,7 +969,9 @@ class NftView extends PureComponent {
 												source={{ uri: nftToken.collection.image_url }}
 												style={styles.collectionImg}
 											/>
-											<Text style={styles.collectionDesc}>{nftToken.collection.description}</Text>
+											<Text style={[styles.collectionDesc, isDarkMode && baseStyles.textDark]}>
+												{nftToken.collection.description}
+											</Text>
 										</View>
 									</ImageCapInset>
 								)}
@@ -915,13 +979,19 @@ class NftView extends PureComponent {
 									style={styles.cardWrapper}
 									source={
 										Device.isAndroid()
-											? { uri: 'default_card' }
+											? isDarkMode
+												? { uri: 'dark800_card' }
+												: { uri: 'default_card' }
+											: isDarkMode
+											? require('../../../images/dark800_card.png')
 											: require('../../../images/default_card.png')
 									}
 									capInsets={baseStyles.capInsets}
 								>
 									<View style={[styles.childrenWrapper]}>
-										<Text style={styles.itemTitle}>{strings('nft.technical_info')}</Text>
+										<Text style={[styles.itemTitle, isDarkMode && baseStyles.textDark]}>
+											{strings('nft.technical_info')}
+										</Text>
 										{nftToken.asset_contract && nftToken.asset_contract.address && (
 											<View>
 												<TouchableOpacity
@@ -931,7 +1001,10 @@ class NftView extends PureComponent {
 														this.copyAddressToClipboard(nftToken.asset_contract.address);
 													}}
 												>
-													<Text style={styles.contractAddr} numberOfLines={1}>
+													<Text
+														style={[styles.contractAddr, isDarkMode && baseStyles.textDark]}
+														numberOfLines={1}
+													>
 														{nftToken.asset_contract.address.substring(0, 13) +
 															'...' +
 															nftToken.asset_contract.address.substring(30)}
@@ -955,7 +1028,7 @@ class NftView extends PureComponent {
 													}}
 												>
 													<Text
-														style={styles.contractAddr}
+														style={[styles.contractAddr, isDarkMode && baseStyles.textDark]}
 														numberOfLines={1}
 														ellipsizeMode={'tail'}
 													>
@@ -975,7 +1048,7 @@ class NftView extends PureComponent {
 													}}
 												>
 													<Text
-														style={styles.contractAddr}
+														style={[styles.contractAddr, isDarkMode && baseStyles.textDark]}
 														numberOfLines={1}
 														ellipsizeMode={'tail'}
 													>
@@ -991,7 +1064,7 @@ class NftView extends PureComponent {
 						</ScrollView>
 					</View>
 				</View>
-				<SafeAreaView style={styles.bottomBg} />
+				<SafeAreaView style={[styles.bottomBg, isDarkMode && baseStyles.darkBackground]} />
 				{this.renderActionView()}
 				{this.renderSendModal()}
 			</React.Fragment>

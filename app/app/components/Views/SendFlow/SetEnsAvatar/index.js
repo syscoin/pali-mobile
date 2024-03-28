@@ -29,6 +29,7 @@ import TransactionTypes from '../../../../core/TransactionTypes';
 import { BNToHex } from '../../../../util/number';
 import Device from '../../../../util/Device';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -109,7 +110,8 @@ const styles = StyleSheet.create({
 	},
 	confirmButtonText: {
 		fontSize: 14,
-		color: colors.$A6A6A6
+		color: colors.$A6A6A6,
+		fontWeight: 'bold'
 	},
 	confirmButtonTextEnable: {
 		color: colors.white
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -130,6 +132,7 @@ const styles = StyleSheet.create({
 });
 
 class SetEnsAvatar extends Component {
+	static contextType = ThemeContext;
 	static propTypes = {
 		address: PropTypes.string,
 		name: PropTypes.string,
@@ -297,24 +300,29 @@ class SetEnsAvatar extends Component {
 		const { avatarUrl, name, onClose, address, avatarText } = this.props;
 		const { transaction, stepCommit, loading, error, checkPassword } = this.state;
 		const isReady = transaction?.gas && transaction?.gasPrice && name && address && avatarText;
+		const { isDarkMode } = this.context;
+
 		return (
 			<>
 				<ScrollView
 					showsVerticalScrollIndicator={false}
 					keyboardShouldPersistTaps="handled"
 					onPress={dismissKeyboard}
+					style={isDarkMode && baseStyles.darkModalBackground}
 				>
 					<TouchableOpacity style={styles.container} activeOpacity={1}>
 						<View style={styles.labelWrapper}>
 							<Image style={styles.labelIcon} source={iconEns} />
-							<Text style={styles.labelText}>
+							<Text style={[styles.labelText, isDarkMode && baseStyles.textDark]}>
 								{stepCommit ? strings('other.tx_submitted') : strings('other.set_ens_avatar')}
 							</Text>
 						</View>
 						<NFTImage style={styles.avatar} imageUrl={avatarUrl} />
-						<Text style={styles.name}>{name}</Text>
+						<Text style={[styles.name, isDarkMode && baseStyles.textDark]}>{name}</Text>
 						{stepCommit ? (
-							<Text style={styles.commitText}>{strings('other.avatar_updated')}</Text>
+							<Text style={[styles.commitText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.avatar_updated')}
+							</Text>
 						) : (
 							<View style={styles.feeWrapper}>
 								{transaction && (
@@ -333,37 +341,56 @@ class SetEnsAvatar extends Component {
 						<View style={styles.confirmActionWrapper}>
 							{stepCommit ? (
 								<TouchableOpacity
-									style={[styles.confirmButton, styles.confirmButtonEnabled]}
+									style={[
+										styles.confirmButton,
+										isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled
+									]}
 									onPress={onClose}
 									activeOpacity={activeOpacity}
 								>
-									<Text style={[styles.confirmButtonText, styles.confirmButtonTextEnable]}>
+									<Text
+										style={[
+											styles.confirmButtonText,
+											isDarkMode ? baseStyles.darkConfirmText : styles.confirmButtonTextEnable
+										]}
+									>
 										{strings('other.i_know')}
 									</Text>
 								</TouchableOpacity>
 							) : (
 								<>
 									<TouchableOpacity
-										style={styles.cancelButton}
+										style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 										onPress={onClose}
 										activeOpacity={activeOpacity}
 										disabled={loading}
 									>
-										<Text style={styles.cancelButtonText}>{strings('action_view.cancel')}</Text>
+										<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+											{strings('action_view.cancel')}
+										</Text>
 									</TouchableOpacity>
 									<TouchableOpacity
-										style={[styles.confirmButton, isReady && styles.confirmButtonEnabled]}
+										style={[
+											styles.confirmButton,
+											isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled
+										]}
 										onPress={this.onConfirmClick}
 										activeOpacity={activeOpacity}
 										disabled={!isReady || loading}
 									>
 										{loading ? (
-											<ActivityIndicator size="small" color="white" />
+											<ActivityIndicator
+												size="small"
+												color={isDarkMode ? colors.$4CA1CF : 'white'}
+											/>
 										) : (
 											<Text
 												style={[
 													styles.confirmButtonText,
-													isReady && styles.confirmButtonTextEnable
+													isReady &&
+														(isDarkMode
+															? baseStyles.darkConfirmText
+															: styles.confirmButtonTextEnable)
 												]}
 											>
 												{strings('action_view.confirm')}

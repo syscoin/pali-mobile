@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { colors, fontStyles } from '../../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../../styles/common';
 import PropTypes from 'prop-types';
 import { renderShortAddress } from '../../../../util/address';
 import { strings } from '../../../../../locales/i18n';
 import { isValidAddress } from 'paliwallet-core';
 import NFTImage from '../../../UI/NFTImage';
+import { useTheme } from '../../../../theme/ThemeProvider';
 
 const holderGrey = '#8F92A1';
 const labelTextColor = '#030319';
@@ -73,9 +74,10 @@ const styles = StyleSheet.create({
 		color: colors.$030319,
 		...fontStyles.normal,
 		paddingTop: 14,
-		paddingBottom: 12,
+		paddingBottom: 4,
 		paddingLeft: 0,
 		paddingRight: 8,
+
 		width: '100%'
 	},
 	scanIcon: {
@@ -94,6 +96,28 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginLeft: 6
 	},
+	inputActionContainer: {
+		flexDirection: 'row',
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		top: 14,
+		paddingBottom: 12,
+		paddingLeft: 12,
+		alignItems: 'center'
+	},
+	touchPaste: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.06)',
+		borderRadius: 100,
+		height: 22,
+		paddingTop: 2,
+		paddingRight: 8,
+		paddingBottom: 2,
+		paddingLeft: 8
+	},
+
 	touchSelectDelete: {
 		position: 'absolute',
 		bottom: 0,
@@ -113,12 +137,13 @@ const styles = StyleSheet.create({
 		paddingLeft: 12
 	},
 	pasteLabel: {
-		color: colors.$09C285,
+		color: colors.paliGrey300,
 		fontSize: 11
 	}
 });
 
 export const AddressTo = props => {
+	const { isDarkMode } = useTheme();
 	const {
 		addressToReady,
 		inputRef,
@@ -139,12 +164,7 @@ export const AddressTo = props => {
 	return (
 		<View style={styles.wrapper}>
 			<View style={styles.label}>
-				<Text style={styles.labelText}>{title}</Text>
-				{!!onScan && (
-					<TouchableOpacity onPress={onScan} style={styles.iconWrapper}>
-						<Image source={require('../../../../images/scan_icon_small.png')} style={styles.scanIcon} />
-					</TouchableOpacity>
-				)}
+				<Text style={[styles.labelText, isDarkMode && baseStyles.textDark]}>{title}</Text>
 			</View>
 			{!addressToReady ? (
 				<View style={styles.selectWrapper}>
@@ -156,9 +176,9 @@ export const AddressTo = props => {
 							autoCorrect={false}
 							onChangeText={onToSelectedAddressChange}
 							placeholder={placeholder}
-							placeholderTextColor={holderGrey}
+							placeholderTextColor={isDarkMode ? colors.paliGrey200 : holderGrey}
 							spellCheck={false}
-							style={[styles.textInput, inputWidth]}
+							style={[styles.textInput, inputWidth, isDarkMode && baseStyles.textDark]}
 							numberOfLines={1}
 							onFocus={onInputFocus}
 							onBlur={onInputBlur}
@@ -171,9 +191,21 @@ export const AddressTo = props => {
 							<Image source={require('../../../../images/search_clear.png')} />
 						</TouchableOpacity>
 					) : (
-						<TouchableOpacity style={styles.touchSelectDelete} onPress={onPastedAddress}>
-							<Text style={styles.pasteLabel}>{strings('other.paste')}</Text>
-						</TouchableOpacity>
+						<View style={styles.inputActionContainer}>
+							<TouchableOpacity style={styles.touchPaste} onPress={onPastedAddress}>
+								<Text style={[styles.pasteLabel, isDarkMode && baseStyles.subTextDark]}>
+									{strings('other.paste')}
+								</Text>
+							</TouchableOpacity>
+							{!!onScan && (
+								<TouchableOpacity onPress={onScan} style={styles.iconWrapper}>
+									<Image
+										source={require('../../../../images/scan_icon_small.png')}
+										style={styles.scanIcon}
+									/>
+								</TouchableOpacity>
+							)}
+						</View>
 					)}
 				</View>
 			) : (
@@ -190,7 +222,7 @@ export const AddressTo = props => {
 								<Image style={styles.ensIcon} source={require('../../../../images/ic_ens.png')} />
 							))}
 						<Text
-							style={styles.textAddress}
+							style={[styles.textAddress, isDarkMode && baseStyles.textDark]}
 							numberOfLines={1}
 							allowFontScaling={false}
 							ellipsizeMode={'middle'}

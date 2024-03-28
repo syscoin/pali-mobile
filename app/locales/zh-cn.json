@@ -763,11 +763,11 @@
 		"custom_network": "＋ 自定义网络",
 		"custom_rpc": "自定义RPC",
 		"custom_rpc_desc": "仅支持EVM兼容网络.",
-		"network_name": "网络\n名称",
-		"rpc_url": "RPC\nURL",
-		"chain_id": "链\nID",
-		"currency_symbol": "主货币\n符号",
-		"explorer_url": "区块\n浏览器",
+		"network_name": "网络 名称",
+		"rpc_url": "RPC URL",
+		"chain_id": "链 ID",
+		"currency_symbol": "主货币 符号",
+		"explorer_url": "区块 浏览器",
 		"network_name_placeholder": "要添加的网络的名称",
 		"rpc_url_placeholder": "一般开头为https://",
 		"chain_id_placeholder": "应该为数字",
@@ -777,7 +777,7 @@
 		"choose_from_rpc_List": "从RPC列表中选择",
 		"rpc_list": "RPC列表",
 		"currency": "主币种",
-		"chain_id_item": "链ID",
+		"chain_id_item": "链ID:",
 		"custom_network_added": "自定义网络添加成功",
 		"delete_rpc": "{{networkName}}在所有账户下均会被删除",
 		"cancel": "取消",
@@ -844,7 +844,7 @@
 		"opensea": "OpenSea"
 	},
 	"token_search": {
-		"token_address_hint": "代币或合约地址",
+		"token_address_hint": "符号或合约地址",
 		"add": "添加"
 	}
 }

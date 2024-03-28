@@ -13,6 +13,7 @@ import {
 	renderFromTokenMinimalUnit,
 	renderFromWei
 } from '../../../util/number';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { safeToChecksumAddress } from '../../../util/address';
 import iconNotx from '../../../images/notx.png';
 import { strings } from '../../../../locales/i18n';
@@ -22,7 +23,7 @@ import { store } from '../../../store';
 import { showAlert } from '../../../actions/alert';
 import TransactionItem from '../TransactionItem';
 import { connect } from 'react-redux';
-import { colors } from '../../../styles/common';
+import { baseStyles, colors } from '../../../styles/common';
 import { APPROVE_FUNCTION_SIGNATURE, getSymbol } from '../../../util/transactions';
 import { toDateFormatMonthDayYear } from '../../../util/date';
 import { callSqlite } from '../../../util/ControllerUtils';
@@ -40,8 +41,8 @@ const styles = StyleSheet.create({
 		color: noTxColor
 	},
 	loadMore: {
-		height: 50,
-		paddingBottom: 10,
+		height: 60,
+		paddingTop: 40,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
@@ -57,6 +58,7 @@ const LOAD_COUNT = 20;
  * View that renders a list of transactions for a specific asset
  */
 class Transactions extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
@@ -802,15 +804,19 @@ class Transactions extends PureComponent {
 		return nowTransactions;
 	};
 
-	renderNoTx = () =>
-		this.state.flatListHeight && this.state.loadEnd ? (
+	renderNoTx = () => {
+		const { isDarkMode } = this.context;
+		return this.state.flatListHeight && this.state.loadEnd ? (
 			<View style={[styles.noTxView, { height: this.state.flatListHeight - 100 }]}>
 				<Image source={iconNotx} />
-				<Text style={styles.noTxText}>{strings('other.no_transaction_history')}</Text>
+				<Text style={[styles.noTxText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.no_transaction_history')}
+				</Text>
 			</View>
 		) : (
 			<></>
 		);
+	};
 
 	keyExtractor = (item, index) => `${item.id}_${index}`;
 
@@ -847,19 +853,24 @@ class Transactions extends PureComponent {
 		}, 100);
 	};
 
-	renderLoadMoreView = () => (
-		<View style={styles.loadMore}>
-			{this.state.loadEnd ? (
-				this.state.transactions.length > 0 ? (
-					<Text style={styles.noMoreText}>{strings('transactions.no_more_transactions')}</Text>
+	renderLoadMoreView = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.loadMore}>
+				{this.state.loadEnd ? (
+					this.state.transactions.length > 0 ? (
+						<Text style={[styles.noMoreText, isDarkMode && baseStyles.subTextDark]}>
+							{strings('transactions.no_more_transactions')}
+						</Text>
+					) : (
+						<></>
+					)
 				) : (
-					<></>
-				)
-			) : (
-				<ActivityIndicator size={'small'} color={colors.brandPink300} />
-			)}
-		</View>
-	);
+					<ActivityIndicator size={'small'} color={colors.brandPink300} />
+				)}
+			</View>
+		);
+	};
 
 	render = () => {
 		const { transactions } = this.state;

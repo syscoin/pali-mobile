@@ -23,7 +23,8 @@ import { getChainIdByType, getChainTypeByChainId } from '../../../util/number';
 import Engine from '../../../core/Engine';
 import ImageCapInset from '../ImageCapInset';
 import { getRpcChainTypeByChainId, isRpcChainId } from '../../../util/ControllerUtils';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { getIcLogoByChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const favoriteAddr = '0xfavorite';
 
@@ -51,7 +52,9 @@ const styles = StyleSheet.create({
 	tagView: {
 		position: 'absolute',
 		left: 30,
-		top: 20
+		top: 20,
+		width: 20,
+		height: 20
 	},
 	itemLayout: {
 		flexDirection: 'row',
@@ -150,6 +153,7 @@ const LOAD_COUNT = 15;
 
 class Nft extends PureComponent {
 	lottieAnim = true;
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
@@ -467,11 +471,20 @@ class Nft extends PureComponent {
 			rowCount * itemSize + itemSpace * (rowCount - 1) + this.getItemTextHeight(columnCount) * rowCount;
 
 		this.lottieAnim = items.length < 10;
+		const { isDarkMode } = this.context;
 
 		return (
 			<ImageCapInset
 				style={styles.cardWrapper}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'dark500_card' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/dark500_card.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 			>
 				<View style={styles.childrenWrapper}>
@@ -492,12 +505,20 @@ class Nft extends PureComponent {
 						{!isFavorite && (
 							<Image
 								style={styles.tagView}
-								source={getIcTagByChainType(getChainTypeByChainId(item.chainId))}
+								source={
+									isDarkMode
+										? getIcLogoByChainType(getChainTypeByChainId(item.chainId))
+										: getIcTagByChainType(getChainTypeByChainId(item.chainId))
+								}
 							/>
 						)}
 
 						<Text
-							style={[styles.contractName, isFavorite && styles.contractNameMargin]}
+							style={[
+								styles.contractName,
+								isFavorite && styles.contractNameMargin,
+								isDarkMode && baseStyles.textDark
+							]}
 							numberOfLines={1}
 							allowFontScaling={false}
 						>
@@ -509,7 +530,9 @@ class Nft extends PureComponent {
 								updateGridArray(this.props.selectedAddress, item.address, (columnCount % 3) + 1);
 							}}
 						>
-							<Text style={styles.numberItemToken}>{items.length}</Text>
+							<Text style={[styles.numberItemToken, isDarkMode && baseStyles.textDark]}>
+								{items.length}
+							</Text>
 
 							<Image
 								source={
@@ -564,6 +587,7 @@ class Nft extends PureComponent {
 				? data.image_url
 				: data.image_thumbnail_url;
 
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				activeOpacity={1.0}
@@ -584,7 +608,8 @@ class Nft extends PureComponent {
 							{
 								width: itemWidth,
 								height: itemWidth
-							}
+							},
+							isDarkMode && baseStyles.darkBackground
 						]}
 					>
 						{this.lottieAnim ? (
@@ -607,6 +632,7 @@ class Nft extends PureComponent {
 				<NFTImage
 					style={[
 						styles.borderRadius10,
+
 						{
 							width: itemWidth,
 							height: itemWidth
@@ -637,6 +663,7 @@ class Nft extends PureComponent {
 							allowFontScaling={false}
 							style={[
 								styles.detailName,
+								isDarkMode && baseStyles.textDark,
 								{
 									width: itemWidth
 								}
@@ -678,18 +705,21 @@ class Nft extends PureComponent {
 		return 0;
 	};
 
-	renderLoading = () => (
-		<View>
-			<View style={styles.animLayout}>
-				<LottieView
-					style={styles.animation}
-					autoPlay
-					loop
-					source={require('../../../animations/tokens_loading.json')}
-				/>
+	renderLoading = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View>
+				<View style={[styles.animLayout, isDarkMode && baseStyles.darkBackground]}>
+					<LottieView
+						style={styles.animation}
+						autoPlay
+						loop
+						source={require('../../../animations/tokens_loading.json')}
+					/>
+				</View>
 			</View>
-		</View>
-	);
+		);
+	};
 
 	renderLoadMoreView() {
 		return (
@@ -703,15 +733,23 @@ class Nft extends PureComponent {
 		if (!this.state.isEtherscanAvailableWaited || this.state.isLoading) {
 			return this.renderLoading();
 		}
-
+		const { isDarkMode } = this.context;
 		const { dataContracts } = this.state;
 
 		if (dataContracts.length === 0) {
 			return (
 				<View style={styles.noNftLayout}>
 					<View style={styles.noNftLayout}>
-						<Image source={require('../../../images/no_nft_img.png')} />
-						<Text style={styles.noNftText}>{strings('nft.no_nft_found')}</Text>
+						<Image
+							source={
+								isDarkMode
+									? require('../../../images/no_nft_img_dark.png')
+									: require('../../../images/no_nft_img.png')
+							}
+						/>
+						<Text style={[styles.noNftText, isDarkMode && baseStyles.textDark]}>
+							{strings('nft.no_nft_found')}
+						</Text>
 					</View>
 				</View>
 			);

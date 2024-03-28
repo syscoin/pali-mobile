@@ -282,7 +282,7 @@
 		"enable_touchid": "Enable Touch ID",
 		"enable_faceid": "Enable Face ID",
 		"enable_biometrics": "Enable Bio Auth",
-		"rejectBiometry": "FaceID or fingerprint has exceeded max retry limits. Please lock your phone screen and open again, or go to Settings > Pali Wallet to enable FaceID or fingerprint."
+		"rejectBiometry": "Max FaceID/fingerprint attempts reached. Lock and unlock your phone, or enable FaceID/fingerprint in Settings > Pali Wallet."
 	},
 	"authentication": {
 		"auth_prompt_title": "Authentication required",
@@ -763,11 +763,11 @@
 		"custom_network": "＋ Custom Network",
 		"custom_rpc": "Custom RPC",
 		"custom_rpc_desc": "Only EVM-compatible  networks can be added.",
-		"network_name": "Network\nName",
-		"rpc_url": "RPC\nURL",
-		"chain_id": "Chain\nID",
-		"currency_symbol": "Currency\nSymbol",
-		"explorer_url": "Explorer\nURL",
+		"network_name": "Network Name",
+		"rpc_url": "RPC URL",
+		"chain_id": "Chain ID",
+		"currency_symbol": "Currency Symbol (Optional)",
+		"explorer_url": "Explorer URL",
 		"network_name_placeholder": "Name of the network",
 		"rpc_url_placeholder": "Normally starts with https://",
 		"chain_id_placeholder": "It should be a number",
@@ -777,12 +777,12 @@
 		"choose_from_rpc_List": "Choose from RPC List",
 		"rpc_list": "RPC List",
 		"currency": "Currency",
-		"chain_id_item": "Chain Id",
+		"chain_id_item": "Chain Id:",
 		"custom_network_added": "Custom network added",
 		"delete_rpc": "{{networkName}} will be deleted for all accounts.",
 		"cancel": "Cancel",
 		"delete": "Delete",
-		"info": "info"
+		"info": "Info"
 	},
 	"observer": {
 		"observe_only_ccounts": "Observe-only Accounts",
@@ -844,7 +844,7 @@
 		"opensea": "OpenSea"
 	},
 	"token_search": {
-		"token_address_hint": "Token or contract address",
+		"token_address_hint": "Symbol or contract address",
 		"add": "Add"
 	}
 }

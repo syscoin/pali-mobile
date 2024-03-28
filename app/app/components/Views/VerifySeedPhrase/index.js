@@ -14,6 +14,7 @@ import { tryVerifyPassword } from '../../../core/Vault';
 import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '../../../util/validators';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -115,7 +116,7 @@ class VerifySeedPhrase extends PureComponent {
 		seed: '',
 		errorState: -1 //-1：初始状态， 0：成功；  1：失败,
 	};
-
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to push new views
@@ -188,12 +189,13 @@ class VerifySeedPhrase extends PureComponent {
 
 	renderVerifyView = originSeed => {
 		const { seed, errorState } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<TextInput
 					value={seed}
 					numberOfLines={3}
-					style={styles.seedPhrase}
+					style={[styles.seedPhrase, , isDarkMode && [baseStyles.textDark, baseStyles.darkInputBackground]]}
 					multiline
 					placeholder={strings('import_from_seed.seed_phrase_placeholder')}
 					placeholderTextColor={colors.$8F92A1}
@@ -230,7 +232,7 @@ class VerifySeedPhrase extends PureComponent {
 										: require('../../../images/ic_verify_error.png')
 								}
 							/>
-							<Text style={styles.errorText}>
+							<Text style={[styles.errorText, isDarkMode && baseStyles.textDark]}>
 								{errorState === 0
 									? strings('wallet_management.keep_them_safe_place')
 									: strings('wallet_management.wrong_seed_phrase')}
@@ -256,8 +258,12 @@ class VerifySeedPhrase extends PureComponent {
 
 	render = () => {
 		const { unlocked, password, privateCredential, matchSeed } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'reveal-private-credential-screen'}>
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				testID={'reveal-private-credential-screen'}
+			>
 				<MStatusBar navigation={this.props.navigation} />
 				<TitleBar
 					title={strings('wallet_management.verify_seed_phrase_title', {
@@ -272,10 +278,12 @@ class VerifySeedPhrase extends PureComponent {
 						{unlocked ? (
 							this.renderVerifyView(matchSeed || privateCredential.seed)
 						) : (
-							<View style={styles.columnWrapper}>
-								<Text style={styles.enterPassword}>{strings('reveal_credential.enter_password')}</Text>
+							<View style={[styles.columnWrapper]}>
+								<Text style={[styles.enterPassword, isDarkMode && baseStyles.textDark]}>
+									{strings('reveal_credential.enter_password')}
+								</Text>
 								<TextInput
-									style={baseStyles.input}
+									style={[baseStyles.input, isDarkMode && baseStyles.textDark]}
 									testID={'private-credential-password-text-input'}
 									placeholder={strings('choose_password.enter_password')}
 									placeholderTextColor={colors.$8F92A1}

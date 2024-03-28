@@ -35,6 +35,7 @@ import GlobeIcon from '../UI/GlobeIcon';
 import WalletIcon from '../UI/WalletIcon';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LanguageSelector from '../Views/LanguageSelector';
+import { ThemeContext } from '../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -52,6 +53,8 @@ const SlideFromLeft = (index, position, width) => {
 		transform: [{ translateX }]
 	};
 };
+
+const contextType = ThemeContext;
 
 export default createStackNavigator(
 	{
@@ -135,11 +138,12 @@ export default createStackNavigator(
 							}
 						),
 						navigationOptions: {
-							tabBarLabel: () => (
+							tabBarLabel: props => (
 								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
 										{
+											color: props.tintColor,
 											textAlign: 'center',
 											fontSize: 11,
 											...fontStyles.bold
@@ -171,11 +175,12 @@ export default createStackNavigator(
 							}
 						}),
 						navigationOptions: {
-							tabBarLabel: () => (
+							tabBarLabel: props => (
 								<Text
 									style={[
 										// eslint-disable-next-line react-native/no-inline-styles
 										{
+											color: props.tintColor,
 											textAlign: 'center',
 											fontSize: 11,
 											...fontStyles.bold
@@ -197,20 +202,29 @@ export default createStackNavigator(
 					}
 				},
 				{
-					defaultNavigationOptions: () => ({
-						tabBarVisible: true,
-						animationEnabled: true,
-						tabBarOptions: {
-							style: {
-								backgroundColor: colors.white,
-								height: 50,
-								borderTopColor: colors.$F0F0F0
-							},
-							tabStyle: {
-								height: 50
+					defaultNavigationOptions: props => {
+						return {
+							tabBarVisible: true,
+							animationEnabled: true,
+
+							tabBarOptions: {
+								activeTintColor: props.theme === 'light' ? colors.paliGrey300 : colors.white,
+								inactiveTintColor: props.theme === 'light' ? colors.paliGrey300 : colors.white,
+								tabStyle: {
+									height: 50
+								},
+								style: {
+									backgroundColor: props.theme === 'light' ? colors.white : colors.brandBlue500,
+									height: 50,
+									borderTopColor: 'rgba(0, 0, 0, 0.1)',
+									borderLeftColor: 'rgba(0, 0, 0, 0.1)',
+									borderRightColor: 'rgba(0, 0, 0, 0.1)',
+									borderBottomColor: 'transparent',
+									borderWidth: 1
+								}
 							}
-						}
-					})
+						};
+					}
 				}
 			)
 		},
@@ -422,6 +436,7 @@ export default createStackNavigator(
 	},
 	{
 		mode: 'card',
+
 		headerMode: 'none',
 		lazy: true,
 		transitionConfig: () => ({

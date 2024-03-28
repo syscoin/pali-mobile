@@ -13,13 +13,31 @@ import MStatusBar from '../../UI/MStatusBar';
 import { CURRENCIES } from '../../../util/currencies';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = {
 	wrapper: {
 		flex: 1,
-		backgroundColor: colors.white,
-		paddingLeft: 20,
-		paddingRight: 20
+		backgroundColor: colors.$F9F9F9,
+		marginLeft: 20,
+		marginRight: 20,
+		paddingHorizontal: 24,
+		borderRadius: 20
+	},
+	txTitle: {
+		fontSize: 20,
+		lineHeight: 24,
+		...fontStyles.semibold,
+		color: colors.white
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
 	},
 	flex: {
 		flex: 1
@@ -71,13 +89,16 @@ const styles = {
 const currencyArray = Object.keys(CURRENCIES);
 
 class CurrencyUnit extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		navigation: PropTypes.object,
 		currencyCode: PropTypes.string
 	};
 
-	renderCurrencyItem = () =>
-		currencyArray.map((currency, i) => {
+	renderCurrencyItem = () => {
+		const { isDarkMode } = this.context;
+		return currencyArray.map((currency, i) => {
 			const selected = currency === this.props.currencyCode ? <Image source={checkIcon} /> : null;
 			return (
 				<View key={`currency-${i}`}>
@@ -89,26 +110,37 @@ class CurrencyUnit extends PureComponent {
 					>
 						<View style={styles.currencyInfo}>
 							<Image source={CURRENCIES[currency].icon} />
-							<Text style={styles.currencyLabel}>{currency}</Text>
+							<Text style={[styles.currencyLabel, isDarkMode && baseStyles.textDark]}>{currency}</Text>
 						</View>
 						<View>{selected}</View>
 					</TouchableOpacity>
-					<View style={styles.line} />
+					<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 				</View>
 			);
 		});
+	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+			>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
 					title={strings('app_settings.currency_unit')}
 					onBack={() => {
 						this.props.navigation.pop();
 					}}
+					titleStyle={styles.txTitle}
+					withBackground
 				/>
-				<ScrollView style={styles.wrapper} keyboardShouldPersistTaps="handled">
+				<ScrollView
+					style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}
+					keyboardShouldPersistTaps="handled"
+				>
 					<View>{this.renderCurrencyItem()}</View>
 				</ScrollView>
 			</SafeAreaView>

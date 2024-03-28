@@ -4,13 +4,14 @@ import { Switch, Text, View, TextInput, StyleSheet, TouchableOpacity, ActivityIn
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { activeOpacity, colors, fontStyles } from '../../../styles/common';
+import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import SecureKeychain from '../../../core/SecureKeychain';
 import { passwordRequirementsMet } from '../../../util/password';
 import { TRUE, BIOMETRY_CHOICE_DISABLED } from '../../../constants/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PromptView from '../../UI/PromptView';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import Device from '../../../util/Device';
 
 import TitleBar from '../../UI/TitleBar';
@@ -123,6 +124,7 @@ export const ChooseTypeImportPrivateKey = 'IMPORT_PRIVATE_KEY';
  * View where users can set their password for the first time
  */
 class ChoosePassword extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * The navigator object
@@ -275,9 +277,10 @@ class ChoosePassword extends PureComponent {
 		const showMatchLength = password && password.length > 0 && password.length < 6;
 		const showMatchPwd =
 			!passwordsMatch && password && password.length > 0 && confirmPassword && confirmPassword.length > 0;
+		const { isDarkMode } = this.context;
 
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View style={styles.wrapper}>
 					<MStatusBar navigation={this.props.navigation} />
 					<TitleBar
@@ -292,12 +295,18 @@ class ChoosePassword extends PureComponent {
 						resetScrollToCoords={{ x: 0, y: 0 }}
 						keyboardShouldPersistTaps="handled"
 					>
-						<Text style={styles.title}>{strings('choose_password.title')}</Text>
-						<Text style={styles.secondaryTitle}>{strings('choose_password.secondary_title')}</Text>
+						<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+							{strings('choose_password.title')}
+						</Text>
+						<Text style={[styles.secondaryTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('choose_password.secondary_title')}
+						</Text>
 						<View style={styles.newPwdContent}>
-							<Text style={styles.hintLabel}>{strings('choose_password.password')}</Text>
+							<Text style={[styles.hintLabel, isDarkMode && baseStyles.textDark]}>
+								{strings('choose_password.password')}
+							</Text>
 							<TextInput
-								style={styles.input}
+								style={[styles.input, isDarkMode && baseStyles.textDark]}
 								value={password}
 								onChangeText={this.onPasswordChange}
 								secureTextEntry
@@ -312,10 +321,12 @@ class ChoosePassword extends PureComponent {
 							</Text>
 						</View>
 						<View style={styles.confirmPwdContent}>
-							<Text style={styles.hintLabel}>{strings('choose_password.confirm_password')}</Text>
+							<Text style={[styles.hintLabel, isDarkMode && baseStyles.textDark]}>
+								{strings('choose_password.confirm_password')}
+							</Text>
 							<TextInput
 								ref={this.confirmPasswordInput}
-								style={styles.input}
+								style={[styles.input, isDarkMode && baseStyles.textDark]}
 								value={confirmPassword}
 								onChangeText={this.setConfirmPassword}
 								secureTextEntry

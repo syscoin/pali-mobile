@@ -15,9 +15,10 @@ import _ from 'lodash';
 import Block from './block';
 import { iosShake } from '../../../../app/util/NativeUtils';
 import { getIsRpc, getRpcName } from '../../../util/rpcUtil';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import Modal from 'react-native-modal';
 import { strings } from '../../../../locales/i18n';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const ITEMS_PER_ROW = 4;
 const DRAG_ACTIVATION_TRESHOLD = 100; // 激活item的时间
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.transparent,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.transparent,
 		alignItems: 'center',
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
 });
 
 export default class DragGridView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		itemWidth: PropTypes.number,
 		itemHeight: PropTypes.number,
@@ -576,6 +578,7 @@ export default class DragGridView extends PureComponent {
 
 	renderDeleteNetworkModal = () => {
 		const chainType = this.itemOrder[this.state.tempDeleteBlock]?.key;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible
@@ -596,17 +599,24 @@ export default class DragGridView extends PureComponent {
 						</Text>
 
 						<View style={styles.modalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.hideDeleteNetworkModal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.hideDeleteNetworkModal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
-								style={styles.okButton}
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
 								onPress={() => {
 									this.hideDeleteNetworkModal();
 									this.rpcCloseBlock(this.state.tempDeleteBlock);
 								}}
 							>
-								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.confirm_delete')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>

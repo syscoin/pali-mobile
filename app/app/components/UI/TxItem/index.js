@@ -14,6 +14,7 @@ import iconDefault from '../../../images/img_default.png';
 import { strings } from '../../../../locales/i18n';
 import { CrossChainType } from 'paliwallet-core';
 import NFTImage from '../NFTImage';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 const defaultAmountColor = '#34C738';
 const pendingBgColor = '#FF7952';
@@ -207,6 +208,7 @@ TxItemTokenInfo.propTypes = {
 	symbol: PropTypes.string
 };
 const TxItemStatus = ({ style, ...props }) => {
+	const { isDarkMode } = useTheme();
 	const status = props.tx.status;
 	switch (status) {
 		case 'submitted':
@@ -249,7 +251,9 @@ const TxItemStatus = ({ style, ...props }) => {
 				if (props.tx.extraInfo.tryCancelHash) {
 					return (
 						<View style={[style]}>
-							<Text style={styles.cancelText}>{strings('other.tx_cancel_failed')}</Text>
+							<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.tx_cancel_failed')}
+							</Text>
 						</View>
 					);
 				}
@@ -262,7 +266,9 @@ const TxItemStatus = ({ style, ...props }) => {
 		case 'cancelled':
 			return (
 				<View style={[style]}>
-					<Text style={styles.cancelText}>{strings('transactions.cancelled')}</Text>
+					<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+						{strings('transactions.cancelled')}
+					</Text>
 				</View>
 			);
 		case 'approved':

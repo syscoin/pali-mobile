@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { strings } from '../../../../locales/i18n';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 import {
 	AutoCompleteController,
 	AutoCompleteResult,
@@ -16,7 +18,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import NFTImage from '../NFTImage';
 import AppConstants from '../../../core/AppConstants';
-import { chainToChainType, getIcTagByChainType, getShareImage } from '../../../util/ChainTypeImages';
+import {
+	chainToChainType,
+	getIcTagByChainType,
+	getShareImage,
+	getIcLogoByChainType
+} from '../../../util/ChainTypeImages';
 
 const styles = {
 	root: {
@@ -116,6 +123,7 @@ const styles = {
 };
 
 class SuggestPage extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		openUrl: PropTypes.func,
 		searchText: PropTypes.string,
@@ -173,7 +181,7 @@ class SuggestPage extends PureComponent {
 		}
 		return (
 			<View>
-				<Text style={styles.suggest}>{strings('other.dApp')}</Text>
+				<Text style={[styles.suggest, isDarkMode && baseStyles.textDark]}>{strings('other.dApp')}</Text>
 				{results.map((result, index) => {
 					const filterResults = results.filter(res => result.title === res.title);
 					return this.renderItem(result, index, filterResults?.length > 1);
@@ -186,15 +194,17 @@ class SuggestPage extends PureComponent {
 		if (!results?.length) {
 			return;
 		}
+		const { isDarkMode } = this.context;
 		return (
 			<View>
-				<Text style={styles.suggest}>{strings('other.recent')}</Text>
+				<Text style={[styles.suggest, isDarkMode && baseStyles.textDark]}>{strings('other.recent')}</Text>
 				{results.map((result, index) => this.renderItem(result, index))}
 			</View>
 		);
 	}
 
 	renderItem(item, index, showChain = false) {
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				style={styles.item}
@@ -206,8 +216,18 @@ class SuggestPage extends PureComponent {
 			>
 				{item.type === AutoCompleteType_URL || item.type === AutoCompleteType_SEARCH ? (
 					<>
-						<Image style={styles.itemIcon} source={item.img} />
-						<Text style={styles.itemText} numberOfLines={1} ellipsizeMode={'tail'}>
+						<AntIcon
+							size={18}
+							color={isDarkMode ? colors.white : colors.paliGrey600}
+							name="search1"
+							style={styles.itemIcon}
+						/>
+
+						<Text
+							style={[styles.itemText, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							ellipsizeMode={'tail'}
+						>
 							{item.title}
 						</Text>
 					</>
@@ -220,7 +240,11 @@ class SuggestPage extends PureComponent {
 						/>
 						<View style={styles.itemContent}>
 							<View style={styles.itemTitle}>
-								<Text style={styles.itemTitleText} numberOfLines={1} ellipsizeMode={'tail'}>
+								<Text
+									style={[styles.itemTitleText, isDarkMode && baseStyles.textDark]}
+									numberOfLines={1}
+									ellipsizeMode={'tail'}
+								>
 									{item.title}
 								</Text>
 								{showChain && item.chain && (
@@ -245,8 +269,10 @@ class SuggestPage extends PureComponent {
 		const imageUri =
 			item?.logo ||
 			'https://pali-images.s3.amazonaws.com/files/' + item?.name.replace(/\s/g, '') + 'logo' + '.png';
-
-		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
+		const { isDarkMode } = this.context;
+		const tagIcon = isDarkMode
+			? getIcLogoByChainType(chainToChainType(item?.chain))
+			: getIcTagByChainType(chainToChainType(item?.chain));
 		return (
 			<TouchableOpacity
 				style={styles.favoriteItem}
@@ -261,7 +287,11 @@ class SuggestPage extends PureComponent {
 				}}
 			>
 				<NFTImage style={styles.favoriteIcon} imageUrl={imageUri} />
-				<Text numberOfLines={1} style={styles.favoriteLable} ellipsizeMode={'middle'}>
+				<Text
+					numberOfLines={1}
+					style={[styles.favoriteLable, isDarkMode && baseStyles.textDark]}
+					ellipsizeMode={'middle'}
+				>
 					{item?.name}
 				</Text>
 				{tagIcon && <Image style={styles.itemTag} source={tagIcon} />}
@@ -280,6 +310,7 @@ class SuggestPage extends PureComponent {
 				favourites = favourites.sort((dappA, dappB) => dappB.pos <= dappA.pos);
 			}
 		}
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={'always'}>
@@ -296,7 +327,11 @@ class SuggestPage extends PureComponent {
 							}}
 						>
 							<Image style={styles.favoriteIcon} source={require('../../../images/ic_dapp_home.png')} />
-							<Text numberOfLines={1} style={styles.favoriteLable} ellipsizeMode={'middle'}>
+							<Text
+								numberOfLines={1}
+								style={[styles.favoriteLable, isDarkMode && baseStyles.textDark]}
+								ellipsizeMode={'middle'}
+							>
 								{strings('browser.home')}
 							</Text>
 						</TouchableOpacity>
@@ -311,6 +346,7 @@ class SuggestPage extends PureComponent {
 
 	render() {
 		const { searchResults } = this.state;
+		const { isDarkMode } = this.context;
 		const search = searchResults?.filter(
 			result =>
 				result.type === AutoCompleteType_URL ||
@@ -321,7 +357,7 @@ class SuggestPage extends PureComponent {
 		const recent = searchResults?.filter(result => result.type === AutoCompleteType_RECENT);
 		return (
 			<KeyboardAwareScrollView
-				style={[styles.root, this.props.style]}
+				style={[styles.root, this.props.style, isDarkMode && baseStyles.darkBackground]}
 				resetScrollToCoords={{ x: 0, y: 0 }}
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"

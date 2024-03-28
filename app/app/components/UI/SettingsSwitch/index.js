@@ -6,10 +6,8 @@ import Device from '../../../util/Device';
 
 const styles = StyleSheet.create({
 	root: {
-		backgroundColor: colors.white,
-		borderBottomColor: colors.$F0F0F0,
-		borderBottomWidth: 1,
-		minHeight: 75
+		minHeight: 75,
+		paddingHorizontal: 24
 	},
 	content: {
 		flexDirection: 'row',
@@ -50,11 +48,11 @@ const defaultProps = {
 	onValueChange: undefined
 };
 
-const SettingsSwitch = ({ image, title, message, value, onValueChange }) => (
+const SettingsSwitch = ({ image, title, message, value, onValueChange, isDarkMode }) => (
 	<View style={styles.root}>
 		<View style={styles.content}>
 			{image && <Image style={styles.image} source={image} />}
-			<Text style={styles.title}>{title}</Text>
+			<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>{title}</Text>
 			<View style={baseStyles.flexGrow} />
 			<View>
 				<Switch

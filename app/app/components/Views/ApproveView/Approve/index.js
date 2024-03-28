@@ -28,7 +28,7 @@ import {
 } from '../../../../util/number';
 import { getNormalizedTxState, getTicker, generateApproveData, decodeApproveData } from '../../../../util/transactions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { colors } from '../../../../styles/common';
+import { colors, baseStyles } from '../../../../styles/common';
 import PromptView from '../../../UI/PromptView';
 import { renderError } from '../../../../util/error';
 import { TransactionStatus, util, BN } from 'paliwallet-core';
@@ -38,6 +38,7 @@ import CheckPassword from '../../../UI/CheckPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import Device from '../../../../util/Device';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	keyboardAwareWrapper: {
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
  * PureComponent that manages ERC20 approve from the dapp browser
  */
 class Approve extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		allContractBalances: PropTypes.object,
 		/**
@@ -387,7 +389,7 @@ class Approve extends PureComponent {
 		const { gasError, ready, loading, checkPassword, isScam } = this.state;
 		const { transaction } = this.props;
 		if (!transaction.id) return null;
-
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={this.props.modalVisible}
@@ -407,7 +409,7 @@ class Approve extends PureComponent {
 					contentContainerStyle={styles.keyboardAwareWrapper}
 					keyboardShouldPersistTaps="handled"
 				>
-					<View style={styles.container}>
+					<View style={[styles.container, isDarkMode && baseStyles.darkModalBackground]}>
 						<ApproveTransactionReview
 							isScam={isScam}
 							showCommonRisk={this.showCommonRisk}
@@ -420,11 +422,16 @@ class Approve extends PureComponent {
 							</View>
 						) : (
 							<View style={styles.actionContainer}>
-								<TouchableOpacity style={styles.cancel} onPress={this.onCancel}>
-									<Text style={styles.cancelText}>{strings('transaction.reject')}</Text>
+								<TouchableOpacity
+									style={[styles.cancel, isDarkMode && baseStyles.darkCancelButton]}
+									onPress={this.onCancel}
+								>
+									<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+										{strings('transaction.reject')}
+									</Text>
 								</TouchableOpacity>
-								<TouchableOpacity style={styles.confirm} onPress={this.onConfirm} disabled={!ready}>
-									<Text style={styles.confirmText}>{strings('transaction.confirm')}</Text>
+								<TouchableOpacity style={[styles.confirm]} onPress={this.onConfirm} disabled={!ready}>
+									<Text style={[styles.confirmText]}>{strings('transaction.confirm')}</Text>
 								</TouchableOpacity>
 							</View>
 						)}

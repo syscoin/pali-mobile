@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { activeOpacity, colors, fontStyles } from '../../../styles/common';
+import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
 import { getIsRpc, getDefiIcon, getRpcName } from '../../../util/rpcUtil';
 import { ChainTypeBgDefi, ChainTypes, getChainTypeName } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	dappNetLayout: {
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
 });
 
 class AccountNetworkView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 
@@ -120,12 +122,15 @@ class AccountNetworkView extends PureComponent {
 				contactEntrys.push(value);
 			}
 		});
+		const { isDarkMode } = this.context;
 
 		return (
 			<View>
 				<View style={styles.dappAccountLayout}>
 					<View>
-						<Text style={styles.dappTitle}>{strings('accountApproval.account')}</Text>
+						<Text style={[styles.dappTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('accountApproval.account')}
+						</Text>
 						<ScrollView
 							ref={this.accountScrollRef}
 							horizontal
@@ -147,18 +152,32 @@ class AccountNetworkView extends PureComponent {
 										style={[
 											styles.dappAccountTouchItem,
 											styles.itemSpace,
-											styles.dappAccountTouchItemSeleted
+											styles.dappAccountTouchItemSeleted,
+											{
+												backgroundColor: isDarkMode
+													? colors.brandPink300Alpha3
+													: colors.brandPink3001A
+											}
 										]}
 									>
 										<Text
-											style={[styles.dappAccountName, styles.dappAccountNameSeleted]}
+											style={[
+												styles.dappAccountName,
+
+												styles.dappAccountNameSeleted,
+												isDarkMode && baseStyles.textDark
+											]}
 											allowFontScaling={false}
 											numberOfLines={1}
 										>
 											{item.name}
 										</Text>
 										<Text
-											style={[styles.dappAccountAddress, styles.dappAccountAddressSeleted]}
+											style={[
+												styles.dappAccountAddress,
+												styles.dappAccountAddressSeleted,
+												isDarkMode && baseStyles.subTextDark
+											]}
 											allowFontScaling={false}
 											numberOfLines={1}
 											ellipsizeMode={'middle'}
@@ -174,7 +193,9 @@ class AccountNetworkView extends PureComponent {
 
 				<View style={styles.dappNetLayout}>
 					<View>
-						<Text style={styles.dappTitle}>{strings('accountApproval.network')}</Text>
+						<Text style={[styles.dappTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('accountApproval.network')}
+						</Text>
 						<ScrollView
 							ref={this.networkScrollRef}
 							horizontal
@@ -191,7 +212,12 @@ class AccountNetworkView extends PureComponent {
 											style={[
 												styles.dappNetTouchItem,
 												styles.itemSpace,
-												styles.dappNetTouchItemSeleted
+												styles.dappNetTouchItemSeleted,
+												{
+													backgroundColor: isDarkMode
+														? colors.brandPink300Alpha3
+														: colors.brandPink3001A
+												}
 											]}
 										>
 											{isRpc ? (
@@ -202,7 +228,11 @@ class AccountNetworkView extends PureComponent {
 											<Text
 												allowFontScaling={false}
 												numberOfLines={1}
-												style={[styles.dappNetName, styles.dappNetNameSeleted]}
+												style={[
+													styles.dappNetName,
+													styles.dappNetNameSeleted,
+													isDarkMode && baseStyles.textDark
+												]}
 											>
 												{isRpc ? getRpcName(item) : getChainTypeName(item)}
 											</Text>

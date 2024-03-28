@@ -4,6 +4,8 @@
  */
 export function onEvent(eventId) {}
 
+export function reportError(error) {}
+
 /**
  * onEventWithLabel
  * @param eventId string

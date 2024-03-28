@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { colors, fontStyles, activeOpacity } from '../../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../../styles/common';
 import {
 	StyleSheet,
 	Text,
@@ -36,12 +36,12 @@ import { strings } from '../../../../../locales/i18n';
 import { BN, util } from 'paliwallet-core';
 import { CURRENCIES } from '../../../../util/currencies';
 import { getEstimatedTotalGas, validateAmount } from '../../../../util/Amount';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const titleBlack = '#030319';
 const amountGray = '#60657D';
 const approxiColor = '#333333';
 const inputBorderColor = '#8F92A1';
-const maxColor = '#09C285';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -95,10 +95,15 @@ const styles = StyleSheet.create({
 		padding: 0
 	},
 	btnMax: {
-		height: 24,
-		paddingLeft: 8,
+		height: 22,
+		justifyContent: 'center',
 		alignItems: 'center',
-		justifyContent: 'center'
+
+		borderRadius: 100,
+		paddingTop: 2,
+		paddingRight: 8,
+		paddingBottom: 2,
+		paddingLeft: 8
 	},
 	inputTokenLogo: {
 		width: 24,
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
 	maxText: {
 		lineHeight: 13,
 		fontSize: 11,
-		color: maxColor
+		color: '#09C285'
 	},
 	currencyText: {
 		color: colors.$030319,
@@ -138,6 +143,7 @@ const styles = StyleSheet.create({
  * View that wraps the wraps the "Send" screen
  */
 class AmountSection extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		allContractBalances: PropTypes.object,
 		allCurrencyPrice: PropTypes.object,
@@ -345,13 +351,18 @@ class AmountSection extends PureComponent {
 	renderTokenInput = () => {
 		const { amountFormat, inputTextWidth, loadEstimatedTotalGasMax } = this.state;
 		const { asset } = this.props;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.valueInput}>
 				<TokenImage asset={asset} containerStyle={styles.inputTokenLogo} iconStyle={styles.inputIconStyle} />
 
 				<TextInput
-					style={[styles.inputAmount, inputTextWidth && { width: inputTextWidth }]}
+					style={[
+						styles.inputAmount,
+						isDarkMode && baseStyles.textDark,
+						inputTextWidth && { width: inputTextWidth }
+					]}
 					ref={this.props.amountInputRef}
 					value={amountFormat}
 					onLayout={this.onTextInputLayout}
@@ -361,13 +372,13 @@ class AmountSection extends PureComponent {
 					placeholderTextColor={inputBorderColor}
 				/>
 
-				<TouchableOpacity style={styles.btnMax} onPress={this.useMax} activeOpacity={activeOpacity}>
-					{loadEstimatedTotalGasMax ? (
-						<ActivityIndicator size="small" color={maxColor} />
-					) : (
+				{loadEstimatedTotalGasMax ? (
+					<ActivityIndicator size="small" color={colors.brandPink300} />
+				) : (
+					<TouchableOpacity style={styles.btnMax} onPress={this.useMax}>
 						<Text style={styles.maxText}>{strings('other.max')}</Text>
-					)}
-				</TouchableOpacity>
+					</TouchableOpacity>
+				)}
 			</View>
 		);
 	};
@@ -382,13 +393,13 @@ class AmountSection extends PureComponent {
 		} else {
 			exchangeRate = this.getTokenRate();
 		}
-
+		const { isDarkMode } = this.context;
 		const canInputDollar = exchangeRate !== undefined && exchangeRate !== 0;
 		return (
 			<View style={styles.dollarInput}>
 				<Image style={styles.coinIcon} source={CURRENCIES[currencyCode].icon} />
 				<TextInput
-					style={styles.inputAmount}
+					style={[styles.inputAmount, isDarkMode && baseStyles.textDark]}
 					ref={this.props.dollarInputRef}
 					value={inputValueConversion}
 					onChangeText={this.onDollarInputChange}
@@ -397,25 +408,28 @@ class AmountSection extends PureComponent {
 					editable={canInputDollar}
 					placeholderTextColor={inputBorderColor}
 				/>
-				<Text style={styles.currencyText}>{currencyCode}</Text>
+				<Text style={[styles.currencyText, isDarkMode && baseStyles.subTextDark]}>{currencyCode}</Text>
 			</View>
 		);
 	};
 
 	render = () => {
 		const { mainBalance } = this.props;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.wrapper}>
 				<KeyboardAvoidingView style={styles.scrollWrapper} behavior={'padding'}>
 					<View style={styles.title}>
-						<Text style={styles.titleText}>{strings('other.amount')}</Text>
-						<Text style={styles.amountText}>
+						<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]}>
+							{strings('other.amount')}
+						</Text>
+						<Text style={[styles.amountText, isDarkMode && baseStyles.subTextDark]}>
 							{strings('other.amount_available', { amount: renderAmount(mainBalance) })}
 						</Text>
 					</View>
 					{this.renderTokenInput()}
-					<Text style={styles.approxi}>≈</Text>
+					<Text style={[styles.approxi, isDarkMode && baseStyles.subTextDark]}>≈</Text>
 					{this.renderDollarInput()}
 				</KeyboardAvoidingView>
 			</View>

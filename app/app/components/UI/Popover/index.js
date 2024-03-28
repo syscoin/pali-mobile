@@ -78,6 +78,7 @@ export default class Popover extends PureComponent {
 		onClose: PropTypes.func,
 		displayArea: PropTypes.object,
 		arrowSize: PropTypes.object,
+		arrowBgColor: PropTypes.string,
 		placement: PropTypes.string,
 		fromRect: PropTypes.object,
 		children: PropTypes.any,
@@ -255,7 +256,9 @@ export default class Popover extends PureComponent {
 		const { popoverOrigin, placement } = this.state;
 
 		const contentStyle = [styles.content];
-		const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
+		const arrowColor = this.props.arrowBgColor
+			? this.props.arrowBgColor
+			: StyleSheet.flatten(contentStyle).backgroundColor;
 		const arrowColorStyle = this.getArrowColorStyle(arrowColor);
 		const arrowDynamicStyle = this.getArrowDynamicStyle();
 		const contentSizeAvailable = this.state.contentSize.width;

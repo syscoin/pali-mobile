@@ -21,10 +21,11 @@ import {
 	ScrollView
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Octicons from 'react-native-vector-icons/Octicons';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import Icon from '../Icon';
 import TokenImage from '../TokenImage';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { addCurrencySymbol, balanceToFiatNumber, renderAmount } from '../../../util/number';
 import AssetElement from '../AssetElement';
@@ -47,8 +48,8 @@ import { EasingNode } from 'react-native-reanimated';
 import AssetSearch from '../AssetSearch';
 import { setHideRiskTokens, updateSortType } from '../../../actions/settings';
 import { getSecurityData } from '../../../util/security';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
-
+import { getIcLogoByChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 const { width, height } = Dimensions.get('window');
 
 const hideItemWidth = 70;
@@ -87,8 +88,13 @@ const styles = StyleSheet.create({
 		position: 'relative',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: 46,
-		height: 52
+		width: 35,
+		height: 35,
+		borderRadius: 100,
+		backgroundColor: colors.white
+	},
+	shadowDark: {
+		shadowColor: colors.paliBlue100
 	},
 	header: {
 		flex: 1,
@@ -96,10 +102,16 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginHorizontal: headerMarginHorizontal,
 		marginTop: -bottomShadow / 2,
-		marginBottom: 3
+		marginBottom: 10,
+		zIndex: 1
 	},
 	header_add: {
-		marginLeft: 8
+		marginLeft: 8,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4,
+		alignSelf: 'center'
 	},
 	balances: {
 		flex: 1,
@@ -167,7 +179,8 @@ const styles = StyleSheet.create({
 		marginRight: 10,
 		width: 50,
 		height: 40,
-		alignSelf: 'center'
+		alignSelf: 'center',
+		position: 'relative'
 	},
 	tagView: {
 		position: 'absolute',
@@ -299,7 +312,7 @@ const styles = StyleSheet.create({
 	tnLayout: {
 		width: 70,
 		height: 35,
-		marginTop: 8,
+
 		flexDirection: 'row',
 		borderRadius: 100,
 		shadowColor: '#000',
@@ -307,7 +320,6 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.1,
 		shadowRadius: 4,
 		elevation: 4,
-		backgroundColor: '#FFFFFF',
 		padding: 4
 	},
 	nftTouch: {
@@ -321,8 +333,9 @@ const styles = StyleSheet.create({
 	tnChecked: {
 		borderWidth: 0,
 		borderRadius: 50,
-		backgroundColor: colors.$8F92A1
+		backgroundColor: colors.deepBlue400
 	},
+	buyModal: { width: '100%', borderTopLeftRadius: 15, borderTopRightRadius: 15 },
 	buyBtn: {
 		width: '100%',
 		height: 44,
@@ -398,6 +411,7 @@ const styles = StyleSheet.create({
 	animCover: {
 		position: 'absolute',
 		left: 0,
+		right: 0,
 		top: 0,
 		bottom: 0,
 		width,
@@ -406,6 +420,21 @@ const styles = StyleSheet.create({
 	},
 	loadMorePadding: {
 		paddingTop: 5
+	},
+	defiCard: {
+		width: 20,
+		height: 20,
+		borderRadius: 100,
+		backgroundColor: colors.white,
+		position: 'absolute',
+		bottom: 0,
+		right: 0
+	},
+	defiImageCard: {
+		width: 15,
+		height: 15,
+		alignSelf: 'center',
+		marginLeft: 2.65
 	},
 	defiModalWrapper: {
 		backgroundColor: colors.white,
@@ -557,7 +586,8 @@ const styles = StyleSheet.create({
 	},
 	popLine: {
 		height: 1,
-		backgroundColor: colors.$F0F0F0,
+		flex: 1,
+		backgroundColor: 'white',
 		marginTop: 10,
 		marginBottom: 20
 	},
@@ -589,6 +619,7 @@ const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpaci
  * View that renders a list of ERC-20 Tokens
  */
 class Tokens extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		tokens: PropTypes.array,
@@ -724,19 +755,22 @@ class Tokens extends PureComponent {
 		this.setState({ addAssetModalVisible: false });
 	};
 
-	renderLoading = () => (
-		<View>
-			{this.renderHeader()}
-			<View style={styles.animLayout}>
-				<LottieView
-					style={styles.animation}
-					autoPlay
-					loop
-					source={require('../../../animations/tokens_loading.json')}
-				/>
+	renderLoading = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View>
+				{this.renderHeader()}
+				<View style={[styles.animLayout, isDarkMode && baseStyles.darkBackground]}>
+					<LottieView
+						style={styles.animation}
+						autoPlay
+						loop
+						source={require('../../../animations/tokens_loading.json')}
+					/>
+				</View>
 			</View>
-		</View>
-	);
+		);
+	};
 
 	onItemPress = token => {
 		if (token.isDefi) {
@@ -779,11 +813,13 @@ class Tokens extends PureComponent {
 	renderHeader = () => {
 		const { selectedAddress, toggleSearchEditing, nftChecked, updateNftChecked } = this.props;
 		const { isEtherscanAvailable, searchEditing, searchViewAnimed } = this.state;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.header}>
 				{!nftChecked && (
 					<TouchableOpacity
+						style={[styles.header_add, isDarkMode && styles.shadowDark]}
 						onPress={() => {
 							if (searchViewAnimed) {
 								this.disableSearch();
@@ -799,14 +835,25 @@ class Tokens extends PureComponent {
 							name="onboarding6"
 						>
 							<CopilotView>
-								<Image
-									source={
-										searchEditing
-											? require('../../../images/ic_asset_back.png')
-											: require('../../../images/ic_asset_sorting.png')
-									}
+								<View
+									style={[styles.backgroundImage, isDarkMode && baseStyles.darkActionBackground]}
 									ref={this.buttonRef}
-								/>
+								>
+									{!searchEditing ? (
+										<Icon
+											color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+											size={22}
+											name="order"
+										/>
+									) : (
+										<Icon
+											style={{ marginRight: 2 }}
+											color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+											size={22}
+											name="back"
+										/>
+									)}
+								</View>
 							</CopilotView>
 						</CopilotStep>
 					</TouchableOpacity>
@@ -816,7 +863,7 @@ class Tokens extends PureComponent {
 						<View style={styles.headerRight}>
 							{!nftChecked && (
 								<TouchableOpacity
-									style={styles.header_add}
+									style={[styles.header_add, isDarkMode && styles.shadowDark]}
 									onPress={() => {
 										this.setState({ searchEditing: true });
 										// this.toggleAnim();
@@ -839,22 +886,56 @@ class Tokens extends PureComponent {
 										name="onboarding7"
 									>
 										<CopilotView>
-											<Image source={require('../../../images/ic_asset_search.png')} />
+											<View
+												style={[
+													styles.backgroundImage,
+													isDarkMode && baseStyles.darkActionBackground
+												]}
+											>
+												<AntIcon
+													size={20}
+													color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+													name="search1"
+												/>
+											</View>
 										</CopilotView>
 									</CopilotStep>
 								</TouchableOpacity>
 							)}
 							{isEtherscanAvailable && !shouldHideSthForAppStoreReviewer() && (
-								<TouchableOpacity style={styles.header_add} onPress={this.showOtcModal}>
-									<Image source={require('../../../images/ic_asset_buy.png')} />
+								<TouchableOpacity
+									style={[styles.header_add, isDarkMode && styles.shadowDark]}
+									onPress={this.showOtcModal}
+								>
+									<View
+										style={[styles.backgroundImage, isDarkMode && baseStyles.darkActionBackground]}
+									>
+										<MaterialIcons
+											color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+											size={22}
+											name="attach-money"
+										/>
+									</View>
 								</TouchableOpacity>
 							)}
 
-							<TouchableOpacity style={styles.header_add} onPress={this.showTxView}>
-								<Image source={require('../../../images/ic_asset_history.png')} />
+							<TouchableOpacity
+								style={[styles.header_add, isDarkMode && styles.shadowDark]}
+								onPress={this.showTxView}
+							>
+								<View style={[styles.backgroundImage, isDarkMode && baseStyles.darkActionBackground]}>
+									<Octicons
+										color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+										size={22}
+										name="clock"
+									/>
+								</View>
 							</TouchableOpacity>
 
-							<TouchableOpacity style={styles.header_add} onPress={this.onSecurityClick}>
+							<TouchableOpacity
+								style={[styles.header_add, isDarkMode && styles.shadowDark]}
+								onPress={this.onSecurityClick}
+							>
 								<CopilotStep
 									active={!searchEditing}
 									text={strings('onboarding_wallet.onboarding8')}
@@ -862,12 +943,18 @@ class Tokens extends PureComponent {
 									name="onboarding8"
 								>
 									<CopilotView>
-										<ImageBackground
-											source={require('../../../images/ic_asset_security.png')}
-											style={styles.backgroundImage}
+										<View
+											style={[
+												styles.backgroundImage,
+												isDarkMode && baseStyles.darkActionBackground
+											]}
 										>
-											<MaterialIcons color={colors.$8F92A1} size={22} name="security" />
-										</ImageBackground>
+											<MaterialIcons
+												color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+												size={22}
+												name="security"
+											/>
+										</View>
 									</CopilotView>
 								</CopilotStep>
 							</TouchableOpacity>
@@ -882,7 +969,11 @@ class Tokens extends PureComponent {
 									style={{ flex: 1, marginLeft: 8 }}
 									source={
 										Device.isAndroid()
-											? { uri: 'token_search_bg' }
+											? isDarkMode
+												? { uri: 'token_search_bg_dark' }
+												: { uri: 'token_search_bg' }
+											: isDarkMode
+											? require('../../../images/token_search_bg_dark.png')
 											: require('../../../images/token_search_bg.png')
 									}
 									capInsets={{
@@ -909,6 +1000,7 @@ class Tokens extends PureComponent {
 							<Animated.View
 								style={[
 									styles.animCover,
+									isDarkMode && baseStyles.darkBackground,
 									{
 										transform: [
 											{
@@ -929,7 +1021,13 @@ class Tokens extends PureComponent {
 						name="onboarding9"
 					>
 						<CopilotView>
-							<View style={[styles.tnLayout]}>
+							<View
+								style={[
+									styles.tnLayout,
+									isDarkMode && styles.shadowDark,
+									{ backgroundColor: isDarkMode ? colors.deepBlue800 : colors.white }
+								]}
+							>
 								<AnimatedTouchableOpacity
 									hitSlop={styles.hitSlop}
 									activeOpacity={1.0}
@@ -957,7 +1055,13 @@ class Tokens extends PureComponent {
 								>
 									<Icon
 										name="coin"
-										color={!nftChecked ? colors.white : colors.$8F92A1}
+										color={
+											!nftChecked
+												? colors.white
+												: isDarkMode
+												? colors.paliBlue100
+												: colors.$8F92A1
+										}
 										width="22"
 										height="20"
 									/>
@@ -989,7 +1093,9 @@ class Tokens extends PureComponent {
 								>
 									<Icon
 										name="nft"
-										color={nftChecked ? colors.white : colors.$8F92A1}
+										color={
+											nftChecked ? colors.white : isDarkMode ? colors.paliBlue100 : colors.$8F92A1
+										}
 										width="17"
 										height="17"
 									/>
@@ -1020,6 +1126,7 @@ class Tokens extends PureComponent {
 	renderItem = (rowData, rowMap, allLength) => {
 		const asset = rowData.item;
 		const index = rowData.index;
+		const { isDarkMode } = this.context;
 		const { isAmountHide } = this.props;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
 		const { price, priceChange, done, balanceFiat, balance } = asset;
@@ -1044,12 +1151,28 @@ class Tokens extends PureComponent {
 			>
 				<View style={styles.iconLayout}>
 					<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-					<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
+					{!util.isRpcChainType(asset.type) ? (
+						<Image
+							style={styles.tagView}
+							height={20}
+							width={20}
+							source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
+						/>
+					) : (
+						<View style={styles.defiCard}>
+							<Image
+								style={styles.defiImageCard}
+								height={15}
+								width={15}
+								source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
+							/>
+						</View>
+					)}
 				</View>
 
 				<View style={styles.balances}>
 					<View style={styles.titleItem}>
-						<Text style={styles.textItemName} numberOfLines={1}>
+						<Text style={[styles.textItemName, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 							{asset.symbol}
 						</Text>
 						{done ? (
@@ -1058,7 +1181,11 @@ class Tokens extends PureComponent {
 							asset.lockType && <Image source={require('../../../images/lock_icon.png')} />
 						)}
 						<Text
-							style={[styles.textItemBalance, isRisk && !isAmountHide ? styles.strikethrough : {}]}
+							style={[
+								styles.textItemBalance,
+								isDarkMode && baseStyles.textDark,
+								isRisk && !isAmountHide ? styles.strikethrough : {}
+							]}
 							numberOfLines={1}
 						>
 							{isAmountHide ? '***' : balanceFiat}
@@ -1236,7 +1363,7 @@ class Tokens extends PureComponent {
 				{this.renderHeader()}
 				{!nftChecked && (
 					<>
-						{this.props.isFirstAccount &&
+						{this.props.isFirstafAccount &&
 							this.state.otcBannerHide !== TRUE &&
 							isEtherscanAvailable &&
 							!shouldHideSthForAppStoreReviewer() &&
@@ -1309,6 +1436,7 @@ class Tokens extends PureComponent {
 
 	renderSortMenu = () => {
 		const { isVisible, buttonRect } = this.state;
+		const { isDarkMode } = this.context;
 		const { isLockScreen, currentSortType, hideRiskTokens, hideNormalTokens, hideDefiPortfolio } = this.props;
 		return (
 			<Modal
@@ -1317,8 +1445,13 @@ class Tokens extends PureComponent {
 				visible={isVisible && !isLockScreen}
 				onRequestClose={this.closePop}
 			>
-				<Popover isVisible={isVisible} fromRect={buttonRect} onClose={this.closePop}>
-					<View style={styles.popLayout}>
+				<Popover
+					arrowBgColor={isDarkMode ? colors.deepBlue800 : ''}
+					isVisible={isVisible}
+					fromRect={buttonRect}
+					onClose={this.closePop}
+				>
+					<View style={[styles.popLayout, isDarkMode && baseStyles.darkBackground]}>
 						<TouchableOpacity
 							onPress={() => {
 								this.props.updateSortType(SORT_NETWORTH);
@@ -1329,7 +1462,12 @@ class Tokens extends PureComponent {
 								style={[
 									styles.popItem,
 									{
-										color: currentSortType === SORT_NETWORTH ? colors.brandPink300 : colors.$666666
+										color:
+											currentSortType === SORT_NETWORTH
+												? colors.brandPink300
+												: isDarkMode
+												? colors.white
+												: colors.$666666
 									}
 								]}
 							>
@@ -1345,7 +1483,14 @@ class Tokens extends PureComponent {
 							<Text
 								style={[
 									styles.popItem,
-									{ color: currentSortType === SORT_NAME ? colors.brandPink300 : colors.$666666 }
+									{
+										color:
+											currentSortType === SORT_NAME
+												? colors.brandPink300
+												: isDarkMode
+												? colors.white
+												: colors.$666666
+									}
 								]}
 							>
 								{strings('other.sort_by_name')}
@@ -1360,15 +1505,21 @@ class Tokens extends PureComponent {
 							<Text
 								style={[
 									styles.popItem,
+
 									{
-										color: currentSortType === SORT_NETWORK ? colors.brandPink300 : colors.$666666
+										color:
+											currentSortType === SORT_NETWORK
+												? colors.brandPink300
+												: isDarkMode
+												? colors.white
+												: colors.$666666
 									}
 								]}
 							>
 								{strings('other.sort_by_network')}
 							</Text>
 						</TouchableOpacity>
-						<View style={styles.popLine} />
+						<View style={[styles.popLine, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 						<View style={styles.flexDir}>
 							<TouchableOpacity
 								onPress={() => {
@@ -1542,32 +1693,40 @@ class Tokens extends PureComponent {
 		this.props.navigation.navigate('TransactionsView', { chainType: this.props.currentChainType });
 	};
 
-	renderOtcModal = () => (
-		<Modal
-			isVisible
-			onBackdropPress={this.hideOtcModal}
-			onBackButtonPress={this.hideOtcModal}
-			onSwipeComplete={this.hideOtcModal}
-			swipeDirection={'down'}
-			propagateSwipe
-			style={styles.otcModal}
-			statusBarTranslucent
-		>
-			<View style={styles.otcModalRoot}>
-				<Image
-					style={{ width: '100%', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
-					resizeMode="cover"
-					source={require('../../../images/coinifyBanner.png')}
-				/>
-				<TouchableOpacity onPress={this.hideOtcModal} style={styles.otcCloseBtn} hitSlop={styles.hitSlop}>
-					<AntIcon color={colors.white} name="close" size={16} />
-				</TouchableOpacity>
-				<View style={styles.otcInterLayout}>
-					<View>
-						<Text style={styles.otcContent1}>{strings('otc.content1')}</Text>
-						<Text style={styles.otcContent2}>{strings('otc.content2')}</Text>
-						<Text style={styles.otcContent2}>{strings('otc.content3')}</Text>
-						{/* 
+	renderOtcModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible
+				onBackdropPress={this.hideOtcModal}
+				onBackButtonPress={this.hideOtcModal}
+				onSwipeComplete={this.hideOtcModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.otcModal}
+				statusBarTranslucent
+			>
+				<View style={[styles.otcModalRoot, isDarkMode && { backgroundColor: colors.brandBlue600 }]}>
+					<Image
+						style={styles.buyModal}
+						resizeMode="cover"
+						source={require('../../../images/coinifyBanner.png')}
+					/>
+					<TouchableOpacity onPress={this.hideOtcModal} style={styles.otcCloseBtn} hitSlop={styles.hitSlop}>
+						<AntIcon color={colors.white} name="close" size={16} />
+					</TouchableOpacity>
+					<View style={[styles.otcInterLayout]}>
+						<View>
+							<Text style={[styles.otcContent1, isDarkMode && baseStyles.textDark]}>
+								{strings('otc.content1')}
+							</Text>
+							<Text style={[styles.otcContent2, isDarkMode && baseStyles.textDark]}>
+								{strings('otc.content2')}
+							</Text>
+							<Text style={[styles.otcContent2, isDarkMode && baseStyles.textDark]}>
+								{strings('otc.content3')}
+							</Text>
+							{/* 
 
 						<View>
 							<Text style={styles.otcContent2}>
@@ -1586,22 +1745,23 @@ class Tokens extends PureComponent {
 							
 						</View>
 						*/}
-					</View>
+						</View>
 
-					<TouchableOpacity
-						activeOpacity={0.6}
-						style={styles.buyBtn}
-						onPress={() => {
-							this.hideOtcModal();
-							this.goWeb(this.props.buyCryptoAffiliate);
-						}}
-					>
-						<Text style={styles.otcBuyLabel}>{strings('otc.buy_now')}</Text>
-					</TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.6}
+							style={styles.buyBtn}
+							onPress={() => {
+								this.hideOtcModal();
+								this.goWeb(this.props.buyCryptoAffiliate);
+							}}
+						>
+							<Text style={styles.otcBuyLabel}>{strings('otc.buy_now')}</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
-		</Modal>
-	);
+			</Modal>
+		);
+	};
 
 	hideDefiModal = () => {
 		this.setState({ defiModalVisible: false });
@@ -1617,6 +1777,7 @@ class Tokens extends PureComponent {
 			return;
 		}
 		const portfolios = selectedDefiToken.portfolios;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={!this.props.isLockScreen}
@@ -1628,16 +1789,20 @@ class Tokens extends PureComponent {
 				animationType="fade"
 				useNativeDriver
 			>
-				<TouchableOpacity style={styles.flexOne} activeOpacity={1.0} onPress={this.hideDefiModal}>
+				<TouchableOpacity
+					style={[styles.flexOne, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1.0}
+					onPress={this.hideDefiModal}
+				>
 					<View style={styles.flexSpace} />
 					<ScrollView
-						style={styles.defiModalWrapper}
+						style={[styles.defiModalWrapper, isDarkMode && baseStyles.darkModalBackground]}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={styles.flexGrowOne}
 					>
 						<TouchableOpacity style={styles.defiModalMargin} activeOpacity={1}>
-							<View style={styles.defiModalTitle}>
+							<View style={[styles.defiModalTitle, isDarkMode && baseStyles.textDark]}>
 								<TouchableOpacity
 									activeOpacity={0.8}
 									style={styles.defiTouch}
@@ -1664,7 +1829,10 @@ class Tokens extends PureComponent {
 								</TouchableOpacity>
 
 								<View style={styles.flexOne} />
-								<Text style={[styles.defiTitleBalance]} allowFontScaling={false}>
+								<Text
+									style={[styles.defiTitleBalance, isDarkMode && baseStyles.textDark]}
+									allowFontScaling={false}
+								>
 									{this.props.isAmountHide ? '***' : selectedDefiToken.balanceFiat}
 								</Text>
 							</View>
@@ -1699,18 +1867,30 @@ class Tokens extends PureComponent {
 											</View>
 
 											<View style={styles.defiSupply}>
-												<Text style={styles.defiSupplySambol} allowFontScaling={false}>
+												<Text
+													style={[styles.defiSupplySambol, isDarkMode && baseStyles.textDark]}
+													allowFontScaling={false}
+												>
 													{appendSymbol}
 												</Text>
 												<View style={styles.flexOne} />
-												<Text style={styles.defiSupplyBalance} allowFontScaling={false}>
+												<Text
+													style={[
+														styles.defiSupplyBalance,
+														isDarkMode && baseStyles.textDark
+													]}
+													allowFontScaling={false}
+												>
 													{balanceFiat}
 												</Text>
 											</View>
 
 											{rewardTokens?.length > 0 && (
 												<View style={styles.defiReward}>
-													<Text style={styles.rewardText} allowFontScaling={false}>
+													<Text
+														style={[styles.rewardText, isDarkMode && baseStyles.textDark]}
+														allowFontScaling={false}
+													>
 														{strings('other.reward')}
 													</Text>
 													<View style={styles.rewardMargin}>
@@ -1730,13 +1910,21 @@ class Tokens extends PureComponent {
 																	key={'reward-item-' + index}
 																>
 																	<Text
-																		style={styles.rewardItemSambol}
+																		style={[
+																			styles.rewardItemSambol,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
 																		numberOfLines={1}
 																	>
 																		{token.amount?.toFixed(2) + ' ' + token.symbol}
 																	</Text>
 																	<View style={styles.flexOne} />
-																	<Text style={styles.rewardItemBalance}>
+																	<Text
+																		style={[
+																			styles.rewardItemBalance,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
+																	>
 																		{balanceFiat}
 																	</Text>
 																</View>
@@ -1758,11 +1946,12 @@ class Tokens extends PureComponent {
 	};
 
 	render = () => {
+		const { isDarkMode } = this.context;
 		const { currentAddress } = this.props;
 		const { tokenData } = this.state;
 		const loading = !tokenData || tokenData.length === 0 || currentAddress;
 		return (
-			<View style={styles.wrapper}>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 				{loading ? this.renderLoading() : this.renderList()}
 				{this.renderAddAssetModal()}
 				{this.renderSortMenu()}

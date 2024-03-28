@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useContext } from 'react';
 import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import { compose } from 'redux';
 import { OTC_ONBOARDING_TOUR, TRUE } from '../../../constants/storage';
 
 import {
 	RefreshControl,
+	Appearance,
 	ScrollView,
 	FlatList,
 	ActivityIndicator,
@@ -49,6 +50,7 @@ import SetEnsAvatar from '../SendFlow/SetEnsAvatar';
 import EnsSettingView, { HomePage } from '../../UI/EnsSettingView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -85,6 +87,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.white
 	},
+	wrapperDark: {
+		backgroundColor: colors.brandBlue700
+	},
 	loader: {
 		backgroundColor: colors.white,
 		flex: 1,
@@ -110,11 +115,10 @@ const styles = StyleSheet.create({
 		aspectRatio: 3.66
 	},
 	scannerButton: {
-		paddingRight: 20
+		paddingLeft: 20
 	},
 	walletConnectButton: {
-		paddingLeft: 20,
-		paddingRight: 14
+		paddingRight: 20
 	},
 	buttonImg: {
 		width: 24,
@@ -159,7 +163,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -172,7 +176,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1.5,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -217,6 +221,8 @@ class Wallet extends PureComponent {
 		isLockScreen: PropTypes.bool,
 		famousAccounts: PropTypes.array
 	};
+
+	static contextType = ThemeContext;
 
 	state = {
 		refreshing: false,
@@ -482,8 +488,10 @@ class Wallet extends PureComponent {
 			currentContactEntry = contactEntrys[0];
 		}
 
+		const { isDarkMode } = this.context;
+
 		return (
-			<View style={styles.wrapper}>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View>
 					<Carousel
 						keyboardShouldPersistTaps={'always'}
@@ -620,46 +628,52 @@ class Wallet extends PureComponent {
 		}
 	};
 
-	renderNotifyPermissionModal = () => (
-		<Modal isVisible={this.state.showNotifypermissionModal && !this.props.isLockScreen} statusBarTranslucent>
-			<View style={styles.notifyModalContainer}>
-				<View style={styles.flexOne}>
-					<Text style={styles.notifyTitle}>{strings('other.enable_notification')}</Text>
-					<Text style={styles.notifyDesc}>{strings('other.enable_notification_message')}</Text>
-					<View style={styles.modalButtons}>
-						<TouchableOpacity
-							style={styles.cancelButton}
-							onPress={() => {
-								this.setState({ showNotifypermissionModal: false });
-								setTimeout(() => {
-									this.onOnboarding(), 300;
-								});
-							}}
-						>
-							<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={styles.okButton}
-							onPress={() => {
-								this.setState({ showNotifypermissionModal: false });
+	renderNotifyPermissionModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal isVisible={this.state.showNotifypermissionModal && !this.props.isLockScreen} statusBarTranslucent>
+				<View style={styles.notifyModalContainer}>
+					<View style={styles.flexOne}>
+						<Text style={styles.notifyTitle}>{strings('other.enable_notification')}</Text>
+						<Text style={styles.notifyDesc}>{strings('other.enable_notification_message')}</Text>
+						<View style={styles.modalButtons}>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={() => {
+									this.setState({ showNotifypermissionModal: false });
+									setTimeout(() => {
+										this.onOnboarding(), 300;
+									});
+								}}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={() => {
+									this.setState({ showNotifypermissionModal: false });
 
-								setTimeout(() => {
-									NativeModules.RNToolsManager.gotoSetNotification();
-								}, 50);
+									setTimeout(() => {
+										NativeModules.RNToolsManager.gotoSetNotification();
+									}, 50);
 
-								setTimeout(() => {
-									this.onOnboarding();
-								}, 300);
-							}}
-						>
-							<Text style={styles.okText}>{strings('navigation.ok')}</Text>
-						</TouchableOpacity>
+									setTimeout(() => {
+										this.onOnboarding();
+									}, 300);
+								}}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('navigation.ok')}
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
-			</View>
-		</Modal>
-	);
-
+			</Modal>
+		);
+	};
 	_onStartShouldSetResponderCapture = () => hideRiskPop();
 
 	showEnsSettingModal = async ensEntry => {
@@ -737,75 +751,88 @@ class Wallet extends PureComponent {
 		}
 	};
 
-	render = () => (
-		<SafeAreaView
-			style={baseStyles.flexGrow}
-			testID={'wallet-screen'}
-			onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
-		>
-			<MStatusBar navigation={this.props.navigation} />
-			<View style={styles.header}>
-				<CopilotStep text={strings('onboarding_wallet.onboarding1')} order={1} name="onboarding1">
-					<CopilotView style={{ width: 25 }}>
-						<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
-							<Icon name="settings" width="24" height="24" />
-						</TouchableOpacity>
-					</CopilotView>
-				</CopilotStep>
-				<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
-					<Image style={styles.imageTitle} source={require('../../../images/header_logo.png')} />
-				</View>
-				{this.props.walletConnectIconVisible && (
-					<TouchableOpacity
-						style={styles.walletConnectButton}
-						hitSlop={styles.hitSlop}
-						onPress={() => {
-							this.props.showWalletConnectList();
-						}}
-					>
-						<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
-					</TouchableOpacity>
-				)}
-
-				<TouchableOpacity style={styles.scannerButton} hitSlop={styles.hitSlop} onPress={this.openQRScanner}>
-					<CopilotStep
-						active={true}
-						text={strings('onboarding_wallet.onboarding2')}
-						order={2}
-						name="onboarding2"
-					>
-						<CopilotView>
-							<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+	render = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+				onStartShouldSetResponderCapture={this._onStartShouldSetResponderCapture}
+			>
+				<MStatusBar navigation={this.props.navigation} />
+				<View style={[styles.header, isDarkMode && baseStyles.darkBackground]}>
+					<CopilotStep text={strings('onboarding_wallet.onboarding1')} order={1} name="onboarding1">
+						<CopilotView style={{ width: 25 }}>
+							<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.openSettings}>
+								<Icon name="settings" width="24" height="24" color={colors.paliGrey200} />
+							</TouchableOpacity>
 						</CopilotView>
 					</CopilotStep>
-				</TouchableOpacity>
-			</View>
+					<View style={[styles.title, this.props.walletConnectIconVisible && styles.marginLeftForBtn]}>
+						<Image style={styles.imageTitle} source={require('../../../images/pali_wallet_blue.png')} />
+					</View>
+					<TouchableOpacity
+						style={[styles.scannerButton, { paddingRight: !this.props.walletConnectIconVisible ? 20 : 14 }]}
+						hitSlop={styles.hitSlop}
+						onPress={this.openQRScanner}
+					>
+						<CopilotStep
+							active={true}
+							text={strings('onboarding_wallet.onboarding2')}
+							order={2}
+							name="onboarding2"
+						>
+							<CopilotView>
+								<Image style={styles.buttonImg} source={require('../../../images/scan_icon.png')} />
+							</CopilotView>
+						</CopilotStep>
+					</TouchableOpacity>
 
-			<View style={styles.wrapper}>
-				<FlatList
-					style={styles.wrapper}
-					data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
-					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
-					scrollEnabled={!this.state.chainItemDraging}
-					onMomentumScrollEnd={this.contentViewScroll}
-					refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+					{this.props.walletConnectIconVisible && (
+						<TouchableOpacity
+							style={styles.walletConnectButton}
+							hitSlop={styles.hitSlop}
+							onPress={() => {
+								this.props.showWalletConnectList();
+							}}
+						>
+							<Image style={styles.buttonImg} source={require('../../../images/ic_walletconnect.png')} />
+						</TouchableOpacity>
+					)}
+				</View>
+
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
+					<FlatList
+						style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+						data={[this.props.selectedAddress ? this.renderContent() : this.renderLoader()]}
+						keyExtractor={(item, index) => index.toString()}
+						renderItem={({ item }) => <View style={styles.wrapper}>{item}</View>}
+						scrollEnabled={!this.state.chainItemDraging}
+						onMomentumScrollEnd={this.contentViewScroll}
+						refreshControl={
+							<RefreshControl
+								refreshing={this.state.refreshing}
+								onRefresh={this.onRefresh}
+								tintColor={isDarkMode ? colors.white : colors.black}
+							/>
+						}
+					/>
+				</View>
+				<CopyView
+					isVisible={this.state.isCopyViewVisible}
+					title={this.state.copyViewText}
+					onCancel={async () => this.setState({ isCopyViewVisible: false })}
+					onOK={async () => {
+						this.setState({ isCopyViewVisible: false });
+						Clipboard.setString(this.state.copyViewText);
+					}}
 				/>
-			</View>
-			<CopyView
-				isVisible={this.state.isCopyViewVisible}
-				title={this.state.copyViewText}
-				onCancel={async () => this.setState({ isCopyViewVisible: false })}
-				onOK={async () => {
-					this.setState({ isCopyViewVisible: false });
-					Clipboard.setString(this.state.copyViewText);
-				}}
-			/>
-			{this.state.showNotifypermissionModal && this.renderNotifyPermissionModal()}
-			{this.renderSetEnsAvatarModal()}
-			{this.renderEnsSettingModal()}
-		</SafeAreaView>
-	);
+				{this.state.showNotifypermissionModal && this.renderNotifyPermissionModal()}
+				{this.renderSetEnsAvatarModal()}
+				{this.renderEnsSettingModal()}
+			</SafeAreaView>
+		);
+	};
 }
 
 const mapStateToProps = state => ({

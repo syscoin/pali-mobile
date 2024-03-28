@@ -21,46 +21,91 @@ import { strings } from '../../../../locales/i18n';
 import SecureKeychain from '../../../core/SecureKeychain';
 import FadeOutOverlay from '../../UI/FadeOutOverlay';
 import { connect } from 'react-redux';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { TRUE, BIOMETRY_CHOICE_DISABLED, BIOMETRY_CHOICE, BACKUP_VAULT } from '../../../constants/storage';
 import { passwordRequirementsMet } from '../../../util/password';
 import Device from '../../../util/Device';
+import Icon from '../../UI/Icon';
 import BiometryButton from '../../UI/BiometryButton';
 import { util } from 'paliwallet-core';
 import { updateLockScreen } from '../../../actions/settings';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { isDate } from 'lodash';
+
+const paliLogo = require('../../../images/pali.png');
+
+const deviceWidth = Device.getDeviceWidth();
+const deviceHeight = Device.getDeviceHeight();
 
 const styles = StyleSheet.create({
 	flex: {
 		flex: 1
 	},
 	mainWrapper: {
-		backgroundColor: colors.white,
 		flex: 1
 	},
 	wrapper: {
-		flex: 1,
-		paddingHorizontal: 20
+		flex: 1
 	},
 	image: {
-		alignSelf: 'center'
+		width: '100%',
+		height: deviceHeight * 0.4,
+		position: 'absolute'
 	},
 	field: {
-		marginTop: 56,
+		marginTop: 45,
 		flexDirection: 'column'
+	},
+	imagesWrapper: {
+		position: 'relative',
+		marginTop: 20,
+		height: deviceHeight * 0.4,
+		alignItems: 'flex-start'
+	},
+	logoImage: {
+		width: 350,
+		height: deviceHeight * 0.4,
+		resizeMode: 'contain',
+		position: 'absolute',
+		left: -100,
+		top: 0
+	},
+	wavesImage: {
+		width: '100%',
+		height: deviceHeight * 0.45,
+		resizeMode: 'stretch',
+		zIndex: -1,
+		position: 'absolute',
+		bottom: -deviceHeight * 0.09
+	},
+	titleImage: {
+		width: 200,
+		height: 70,
+		resizeMode: 'contain',
+		alignSelf: 'center',
+		top: 30
 	},
 	label: {
 		fontSize: 18,
 		...fontStyles.semibold
 	},
 	ctaWrapper: {
-		marginTop: 60
+		marginTop: 20
 	},
 	errorMsg: {
 		minHeight: 15,
 		fontSize: 13,
 		color: colors.$FC6564,
 		lineHeight: 15,
-		marginTop: 8
+		marginTop: 10
+	},
+	hitSlopLeft: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 5,
+		paddingTop: 2,
+		alignSelf: 'center'
 	},
 	biometrics: {
 		flexDirection: 'row',
@@ -80,13 +125,13 @@ const styles = StyleSheet.create({
 	createButtonWrapper: {
 		backgroundColor: colors.brandPink300,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	incompleteButtonWrapper: {
-		backgroundColor: colors.$E6E6E6,
-		borderColor: colors.$DCDCDC,
+		backgroundColor: colors.buttonDisabled,
+		borderColor: colors.buttonDisabled,
 		borderWidth: 0.5
 	},
 	createButtonText: {
@@ -95,7 +140,7 @@ const styles = StyleSheet.create({
 		...fontStyles.normal
 	},
 	incompleteButtonText: {
-		color: colors.$A6A6A6
+		color: colors.white05
 	},
 	footerImage: {
 		marginTop: 20,
@@ -104,22 +149,22 @@ const styles = StyleSheet.create({
 		width: 85
 	},
 	biometryButton: {
-		paddingTop: 2,
 		alignSelf: 'center'
 	},
 	inputWrapper: {
 		flex: 1,
 		flexDirection: 'row',
-		marginTop: 2,
-		borderBottomWidth: 1,
-		borderColor: colors.$F0F0F0
+		paddingVertical: Device.isIos() ? 16 : 0,
+		paddingHorizontal: 20,
+
+		borderRadius: 100,
+		borderWidth: 1,
+		alignItems: 'center'
 	},
 	input: {
 		flex: 1,
 		fontSize: 13,
-		paddingVertical: 12,
-		paddingHorizontal: 0,
-		color: colors.$030319
+		color: colors.paliGrey300
 	}
 });
 
@@ -142,6 +187,7 @@ class Login extends PureComponent {
 		navigation: PropTypes.object,
 		updateLockScreen: PropTypes.func
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		password: '',
@@ -152,7 +198,8 @@ class Login extends PureComponent {
 		biometryChoice: false,
 		invalidBiometry: false,
 		hasCredentials: false,
-		isBackgroundMode: this.props.navigation.getParam('path') === 'Main'
+		isBackgroundMode: this.props.navigation.getParam('path') === 'Main',
+		shouldHidePassword: true
 	};
 
 	fieldRef = React.createRef();
@@ -177,6 +224,10 @@ class Login extends PureComponent {
 		}
 		return false;
 	};
+
+	hidePassword() {
+		this.setState({ shouldHidePassword: !this.state.shouldHidePassword });
+	}
 
 	async tryAgainBiometric(mode) {
 		if (!mode) {
@@ -347,6 +398,7 @@ class Login extends PureComponent {
 
 	renderSwitch = () => {
 		const { biometryType, rememberMe, biometryChoice, invalidBiometry } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.biometrics}>
 				{invalidBiometry ? (
@@ -359,7 +411,7 @@ class Login extends PureComponent {
 					)
 				) : biometryType ? (
 					<>
-						<Text style={styles.biometryLabel}>
+						<Text style={[styles.biometryLabel, isDarkMode && baseStyles.textDark]}>
 							{strings(`biometrics.enable_${biometryType.toLowerCase()}`)}
 						</Text>
 						<View style={styles.flex} />
@@ -376,7 +428,9 @@ class Login extends PureComponent {
 					</>
 				) : (
 					<>
-						<Text style={styles.biometryLabel}>{strings(`choose_password.remember_me`)}</Text>
+						<Text style={[styles.biometryLabel, isDarkMode && baseStyles.textDark]}>
+							{strings(`choose_password.remember_me`)}
+						</Text>
 						<View style={styles.flex} />
 						<Switch
 							onValueChange={rememberMe => this.setState({ rememberMe })}
@@ -394,88 +448,134 @@ class Login extends PureComponent {
 
 	setPassword = val => this.setState({ password: val, error: null });
 
-	render = () => (
-		<SafeAreaView style={styles.mainWrapper}>
-			<KeyboardAwareScrollView
-				style={styles.wrapper}
-				contentContainerStyle={styles.keyboardScrollableWrapper}
-				resetScrollToCoords={{ x: 0, y: 0 }}
-				keyboardShouldPersistTaps="handled"
+	render = () => {
+		const { isDarkMode } = this.context;
+
+		const shouldShowBiometrics = this.state.biometryChoice && this.state.biometryType && this.state.hasCredentials;
+		return (
+			<SafeAreaView
+				style={[styles.mainWrapper, { backgroundColor: isDarkMode ? colors.brandBlue700 : colors.white }]}
 			>
-				<View testID={'login'} style={baseStyles.flexGrow}>
-					<View style={baseStyles.flexGrow} />
-					<Image source={require('../../../images/logo_about.png')} style={styles.image} />
-					<View style={styles.field}>
-						<Text style={styles.label}>{strings('login.password')}</Text>
-						<View style={styles.inputWrapper}>
-							<TextInput
-								ref={this.fieldRef}
-								style={styles.input}
-								value={this.state.password}
-								onChangeText={this.setPassword}
-								secureTextEntry
-								placeholder={strings('login.password')}
-								placeholderTextColor={colors.$8F92A1}
-								onSubmitEditing={this.onLoginClick}
-								returnKeyType={'done'}
-								autoCapitalize="none"
-							/>
-							<View style={styles.biometryButton}>
-								<BiometryButton
-									onPress={this.tryBiometric}
-									hidden={
-										!(
-											this.state.biometryChoice &&
-											this.state.biometryType &&
-											this.state.hasCredentials
-										)
+				<KeyboardAwareScrollView
+					style={styles.wrapper}
+					contentContainerStyle={styles.keyboardScrollableWrapper}
+					resetScrollToCoords={{ x: 0, y: 0 }}
+					keyboardShouldPersistTaps="handled"
+				>
+					<View style={styles.imagesWrapper}>
+						<Image source={paliLogo} style={styles.logoImage} />
+						<Image
+							source={
+								isDarkMode
+									? require('../../../images/wave_login_dark.png')
+									: require('../../../images/wave_login.png')
+							}
+							style={styles.wavesImage}
+						/>
+					</View>
+					<View testID={'login'} style={[baseStyles.flexGrow, { paddingHorizontal: 40 }]}>
+						<Image
+							source={
+								isDarkMode
+									? require('../../../images/login_title_dark.png')
+									: require('../../../images/login_title.png')
+							}
+							style={styles.titleImage}
+						/>
+						<View style={baseStyles.flexGrow} />
+
+						<View style={styles.field}>
+							<View
+								style={[
+									styles.inputWrapper,
+									{
+										backgroundColor: isDarkMode ? colors.brandBlue800 : colors.white,
+										borderColor: this.state.error
+											? colors.$FC6564
+											: isDarkMode
+											? 'rgba(255, 255, 255, 0.16)'
+											: 'rgba(0, 0, 0, 0.16)'
 									}
-									type={this.state.biometryType}
+								]}
+							>
+								<TextInput
+									ref={this.fieldRef}
+									style={[styles.input]}
+									value={this.state.password}
+									onChangeText={this.setPassword}
+									secureTextEntry={this.state.shouldHidePassword}
+									placeholder={strings('login.password')}
+									placeholderTextColor={colors.$8F92A1}
+									onSubmitEditing={this.onLoginClick}
+									returnKeyType={'done'}
+									autoCapitalize="none"
 								/>
+
+								<TouchableOpacity
+									hitSlop={styles.hitSlopLeft}
+									onPress={() => {
+										this.hidePassword();
+									}}
+									style={{
+										marginRight: shouldShowBiometrics ? 16 : 0
+									}}
+								>
+									<Icon
+										name={this.state.shouldHidePassword ? 'visibilityOff' : 'visibility'}
+										color={colors.paliGrey200}
+										width="20"
+										height="20"
+									/>
+								</TouchableOpacity>
+								<View style={styles.biometryButton}>
+									<BiometryButton
+										onPress={this.tryBiometric}
+										hidden={!shouldShowBiometrics}
+										type={this.state.biometryType}
+									/>
+								</View>
 							</View>
 						</View>
+
+						<Text style={styles.errorMsg} testID={'invalid-password-error'}>
+							{!!this.state.error && this.state.error}
+						</Text>
+
+						{this.renderSwitch()}
+
+						<View style={styles.ctaWrapper}>
+							<TouchableOpacity
+								style={[
+									styles.createButtonWrapper,
+									this.state.password.length <= 0 && styles.incompleteButtonWrapper
+								]}
+								onPress={this.onLoginClick}
+								disabled={this.state.loading || this.state.password.length <= 0}
+								activeOpacity={activeOpacity}
+							>
+								{this.state.loading ? (
+									<ActivityIndicator size="small" color="white" />
+								) : (
+									<Text
+										style={[
+											styles.createButtonText,
+											this.state.password.length <= 0 && styles.incompleteButtonText
+										]}
+									>
+										{strings('login.login')}
+									</Text>
+								)}
+							</TouchableOpacity>
+						</View>
+
+						{/* eslint-disable-next-line react-native/no-inline-styles */}
+						<View style={{ flex: 2 }} />
 					</View>
-
-					<Text style={styles.errorMsg} testID={'invalid-password-error'}>
-						{!!this.state.error && this.state.error}
-					</Text>
-
-					{this.renderSwitch()}
-
-					<View style={styles.ctaWrapper}>
-						<TouchableOpacity
-							style={[
-								styles.createButtonWrapper,
-								this.state.password.length <= 0 && styles.incompleteButtonWrapper
-							]}
-							onPress={this.onLoginClick}
-							disabled={this.state.loading || this.state.password.length <= 0}
-							activeOpacity={activeOpacity}
-						>
-							{this.state.loading ? (
-								<ActivityIndicator size="small" color="white" />
-							) : (
-								<Text
-									style={[
-										styles.createButtonText,
-										this.state.password.length <= 0 && styles.incompleteButtonText
-									]}
-								>
-									{strings('login.login')}
-								</Text>
-							)}
-						</TouchableOpacity>
-					</View>
-
-					{/* eslint-disable-next-line react-native/no-inline-styles */}
-					<View style={{ flex: 2 }} />
-
-					<Image style={styles.footerImage} source={require('../../../images/footer_logo.png')} />
-				</View>
-			</KeyboardAwareScrollView>
-			<FadeOutOverlay />
-		</SafeAreaView>
-	);
+				</KeyboardAwareScrollView>
+				<FadeOutOverlay />
+			</SafeAreaView>
+		);
+	};
 }
 
 const mapStateToProps = state => ({});

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { TextInput, View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import { queryContractMap } from '../../../data/ContractData';
@@ -10,6 +10,8 @@ import { ChainType, isValidAddress, util } from 'paliwallet-core';
 import { getAssetLogo } from '../../../util/number';
 import { logDebug } from 'paliwallet-core/dist/util';
 import { getSecurityData } from '../../../util/security';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 
 const styles = StyleSheet.create({
 	searchSection: {
@@ -23,6 +25,9 @@ const styles = StyleSheet.create({
 		borderRadius: 6,
 		borderColor: colors.transparent,
 		backgroundColor: colors.$F5F5F5
+	},
+	shadowDark: {
+		shadowColor: colors.paliBlue100
 	},
 	textInput: {
 		flex: 1,
@@ -46,6 +51,7 @@ export default class SearchView extends PureComponent {
 	state = {
 		searchQuery: ''
 	};
+	static contextType = ThemeContext;
 
 	static propTypes = {
 		/**
@@ -277,18 +283,33 @@ export default class SearchView extends PureComponent {
 
 	render = () => {
 		const { searchQuery } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.searchSection} testID={'add-searched-token-screen'}>
-				<Image style={styles.searchIcon} source={require('../../../images/search.png')} />
+			<View
+				style={[
+					styles.searchSection,
+					isDarkMode && baseStyles.subTextDark,
+					isDarkMode && baseStyles.darkInputBackground,
+					isDarkMode && { borderColor: colors.white016 },
+					isDarkMode && styles.shadowDark
+				]}
+				testID={'add-searched-token-screen'}
+			>
+				<AntIcon
+					size={18}
+					color={isDarkMode ? colors.paliBlue100 : colors.paliGrey200}
+					name="search1"
+					style={styles.searchIcon}
+				/>
 				<TextInput
 					style={styles.textInput}
 					value={searchQuery}
 					placeholder={strings('token.search_tokens_or_contract')}
-					placeholderTextColor={colors.$80000000}
+					placeholderTextColor={isDarkMode ? colors.paliGrey200 : colors.$80000000}
 					onChangeText={newText => this.updateNum(newText)}
 					testID={'input-search-asset'}
 					fontSize={13}
-					color={colors.black}
+					color={isDarkMode ? colors.white : colors.black}
 				/>
 
 				<Text>{this.input && this.input.current && this.input.current.value}</Text>

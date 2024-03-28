@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 import Modal from 'react-native-modal';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	modal: {
@@ -53,6 +54,8 @@ const styles = StyleSheet.create({
 });
 
 class CopyView extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		isVisible: PropTypes.bool,
 
@@ -67,6 +70,7 @@ class CopyView extends PureComponent {
 
 	render() {
 		const { isVisible, title, onCancel, onOK, isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={isVisible && !isLockScreen}
@@ -87,20 +91,24 @@ class CopyView extends PureComponent {
 					{title && <Text style={styles.title}>{title}</Text>}
 					<View style={styles.buttonWrapper}>
 						<TouchableOpacity
-							style={styles.cancelButton}
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 							onPress={() => {
 								onCancel();
 							}}
 						>
-							<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+							<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.cancel')}
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={styles.okButton}
+							style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
 							onPress={() => {
 								onOK();
 							}}
 						>
-							<Text style={styles.okButtonText}>{strings('other.copy')}</Text>
+							<Text style={[styles.okButtonText, isDarkMode && baseStyles.darkConfirmText]}>
+								{strings('other.copy')}
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</View>

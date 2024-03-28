@@ -12,6 +12,7 @@ import {
 	Keyboard
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { createNewTab, createNewTabLast, closeAllTabs, closeTab, updateTab, saveTabs } from '../../../actions/browser';
 import BrowserTab from '../BrowserTab';
 import AppConstants from '../../../core/AppConstants';
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
  * individual tabs and the tabs view
  */
 class Browser extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * react-navigation object used to switch between screens
@@ -672,9 +674,12 @@ class Browser extends PureComponent {
 				this.addressBarRefs[tab.id] = addressBarRef;
 			}
 		});
-
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.wrapper} {...(Device.isAndroid() ? { collapsable: false } : {})}>
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				{...(Device.isAndroid() ? { collapsable: false } : {})}
+			>
 				<MStatusBar navigation={this.props.navigation} />
 				<View style={styles.flexOne}>
 					{this.state.showSuggestPage && (

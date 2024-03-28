@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { colors } from '../../../styles/common';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	dashLine: {
@@ -17,12 +18,16 @@ const styles = StyleSheet.create({
 });
 
 export default class DashSecondLine extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		lineWidth: PropTypes.number,
 		style: PropTypes.any
 	};
 
 	render = () => {
+		const { isDarkMode } = this.context;
+
 		const len = this.props.lineWidth / 6;
 		const arr = [];
 		for (let i = 0; i < len; i++) {
@@ -31,7 +36,10 @@ export default class DashSecondLine extends PureComponent {
 		return (
 			<View style={[styles.dashLine, this.props.style]}>
 				{arr.map((item, index) => (
-					<View style={styles.dashItem} key={'dash' + index} />
+					<View
+						style={[styles.dashItem, isDarkMode && { backgroundColor: '#FFFFFF29' }]}
+						key={'dash' + index}
+					/>
 				))}
 			</View>
 		);

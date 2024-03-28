@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { renderAmount } from '../../../util/number';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
@@ -14,7 +14,6 @@ import Engine from '../../../core/Engine';
 import Modal from 'react-native-modal';
 import Popover from '../Popover';
 import Device from '../../../util/Device';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
 	ChainTypeBg,
 	ChainTypeIcons,
@@ -24,6 +23,7 @@ import {
 } from '../../../util/ChainTypeImages';
 import NFTImage from '../NFTImage';
 import { getIcCardResource, getIsRpc, getRpcName, getMoreIcon } from '../../../util/rpcUtil';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const { width } = Dimensions.get('window');
 const cardWidth = width;
@@ -58,6 +58,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		marginRight: 17
+	},
+	networkNormalIcon: {
+		width: 16,
+		height: 16
 	},
 	parentView: {
 		width,
@@ -163,7 +167,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginLeft: 20,
 		width: cardWidth - 40,
-		height: cardHeight - 60,
+
 		borderRadius: 15
 	},
 	tnLayout: {
@@ -315,6 +319,7 @@ class CardSwiper extends PureComponent {
 		allChains: PropTypes.array,
 		nftChecked: PropTypes.bool
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		popMoreChains: [],
@@ -370,8 +375,10 @@ class CardSwiper extends PureComponent {
 	renderPopModal = () => {
 		const { popModalVisible, iconRect, popMoreChains } = this.state;
 		const { contactEntry, toggleChainEditing, swipeChange, isLockScreen, allChains } = this.props;
+		const { isDarkMode } = this.context;
 		const enabledChains = contactEntry.enabledChains || defaultEnabledChains;
 		const disabledChains = allChains.filter(chainType => !enabledChains.includes(chainType)) || [];
+		const deviceWidth = Device.getDeviceWidth();
 		return (
 			<Modal
 				style={styles.margin0}
@@ -380,8 +387,15 @@ class CardSwiper extends PureComponent {
 				visible={popModalVisible && !isLockScreen}
 			>
 				{/*<View style={{width: 200, height: 100, backgroundColor: colors.blue}}></View>*/}
-				<Popover isVisible={popModalVisible} fromRect={iconRect} onClose={this.hidePopModal} disX={-10}>
-					<ScrollView style={styles.scrollViewMaxHeight}>
+				<Popover
+					arrowBgColor={isDarkMode ? colors.deepBlue800 : ''}
+					isVisible={popModalVisible}
+					fromRect={iconRect}
+					onClose={this.hidePopModal}
+					disX={-20}
+				>
+					<ScrollView style={[styles.scrollViewMaxHeight, isDarkMode && baseStyles.darkActionBackground]}>
+						<View style={{ width: deviceWidth - 40 }} />
 						<View style={styles.paddingVertical14}>
 							{popMoreChains.map((chainType, index) => {
 								const isRpc = util.isRpcChainType(chainType);
@@ -398,17 +412,27 @@ class CardSwiper extends PureComponent {
 										}}
 									>
 										{isRpc ? (
-											getMoreIcon(chainType)
+											getMoreIcon(chainType, isDarkMode)
 										) : (
-											<Image source={ChainTypeMoreIcons[translateIndex]} />
+											<Image
+												style={styles.networkNormalIcon}
+												source={ChainTypeIcons[translateIndex]}
+											/>
 										)}
-										<Text style={styles.popText} numberOfLines={1} allowFontScaling={false}>
+										<Text
+											style={[
+												styles.popText,
+												{ color: isDarkMode ? colors.white : colors.$333333 }
+											]}
+											numberOfLines={1}
+											allowFontScaling={false}
+										>
 											{isRpc ? getRpcName(chainType) : ChainTypeNames[translateIndex]}
 										</Text>
 									</TouchableOpacity>
 								);
 							})}
-							<View style={styles.popLine} />
+							<View style={[styles.popLine, { backgroundColor: isDarkMode && colors.white016 }]} />
 							<TouchableOpacity
 								style={styles.popItem}
 								onPress={() => {
@@ -416,8 +440,17 @@ class CardSwiper extends PureComponent {
 									toggleChainEditing && toggleChainEditing();
 								}}
 							>
-								<Image source={require('../../../images/ic_more_pop_setting.png')} />
-								<Text style={styles.popText} allowFontScaling={false}>
+								<Icon
+									name="settings"
+									width="16"
+									height="16"
+									color={isDarkMode ? colors.white : colors.$333333}
+								/>
+
+								<Text
+									style={[styles.popText, { color: isDarkMode ? colors.white : colors.$333333 }]}
+									allowFontScaling={false}
+								>
 									{strings('chainSetting.preferences')}
 								</Text>
 							</TouchableOpacity>
@@ -491,7 +524,16 @@ class CardSwiper extends PureComponent {
 							) : (
 								<View style={{ position: 'relative' }}>
 									<Image
-										style={[styles.absoluteStart, styles.cardSizePosition]}
+										style={[
+											styles.absoluteStart,
+											styles.cardSizePosition,
+											{
+												height:
+													Device.getDeviceHeight() < 700 && !hasEns
+														? cardHeight - 50
+														: cardHeight - 60
+											}
+										]}
 										source={
 											isRpc ? require('../../../images/pali-bg.png') : ChainTypeBg[currentIndex]
 										}

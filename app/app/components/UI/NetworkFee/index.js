@@ -31,11 +31,13 @@ import {
 } from '../../../util/number';
 import { ChainType, BN, util } from 'paliwallet-core';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
-import customIcon from '../../../images/ic_custom.png';
-import customIcon2 from '../../../images/ic_custom2.png';
+
 import sliderThumb from '../../../images/img_slider.png';
 import Slider from '@react-native-community/slider';
 import fire from '../../../images/ic_fire.png';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
 	root: {
@@ -140,6 +142,7 @@ const MAX_SLIDER = 10;
  * PureComponent that renders a selector to choose either fast, average or slow gas fee
  */
 class NetworkFee extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		allCurrencyPrice: PropTypes.object,
 		onChange: PropTypes.func,
@@ -494,13 +497,14 @@ class NetworkFee extends PureComponent {
 		const customGasLimitBN = new BN(customGasLimit);
 
 		const middleSpeed = type === ChainType.Bsc ? 0 : MAX_SLIDER / 2;
+		const { isDarkMode } = this.context;
 
 		return (
 			<View style={styles.root}>
 				{ready ? (
 					<>
 						<View style={styles.titleWrapper}>
-							<Text style={styles.title} allowFontScaling={false}>
+							<Text style={[styles.title, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 								{strings('transaction.network_fee')}
 							</Text>
 							<View style={styles.titleRight}>
@@ -517,7 +521,21 @@ class NetworkFee extends PureComponent {
 									onPress={this.onCustomChange}
 									hitSlop={styles.customButtonHit}
 								>
-									<Image style={styles.customIcon} source={selectGas ? customIcon : customIcon2} />
+									{selectGas ? (
+										<AntIcon
+											color={isDarkMode ? colors.paliGrey200 : colors.paliGrey300}
+											size={14}
+											name={'edit'}
+											style={styles.customIcon}
+										/>
+									) : (
+										<FontAwesome
+											color={isDarkMode ? colors.paliGrey200 : colors.paliGrey300}
+											size={14}
+											name={'sliders'}
+											style={styles.customIcon}
+										/>
+									)}
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -525,11 +543,17 @@ class NetworkFee extends PureComponent {
 							<ScrollableTabView renderTabBar={() => <></>} page={selectGas ? 0 : 1} locked>
 								<Animated.View style={[baseStyles.flexGrow, { opacity: this.state.fadeAnim }]}>
 									<View style={styles.sliderTitle}>
-										<Text style={styles.recommend} allowFontScaling={false}>
+										<Text
+											style={[styles.recommend, isDarkMode && baseStyles.textDark]}
+											allowFontScaling={false}
+										>
 											{this.getGweiText()}
 										</Text>
 										<Image style={styles.icFire} source={fire} />
-										<Text style={styles.recommend} allowFontScaling={false}>
+										<Text
+											style={[styles.recommend, isDarkMode && baseStyles.textDark]}
+											allowFontScaling={false}
+										>
 											{gasSpeedSelected > middleSpeed
 												? strings('transaction.fast')
 												: gasSpeedSelected === middleSpeed
@@ -537,7 +561,10 @@ class NetworkFee extends PureComponent {
 												: strings('transaction.safe_low')}
 										</Text>
 									</View>
-									<Text style={styles.amountText} allowFontScaling={false}>
+									<Text
+										style={[styles.amountText, isDarkMode && baseStyles.subTextDark]}
+										allowFontScaling={false}
+									>
 										{renderAmount(
 											getEthGasFee(selectTotalGas, transaction.gas, suggestedGasFees?.l1Fee)
 										) +
@@ -568,13 +595,16 @@ class NetworkFee extends PureComponent {
 								<View style={baseStyles.flexGrow}>
 									<View style={styles.customItem}>
 										<View style={styles.gasPrice}>
-											<Text style={styles.gasText} allowFontScaling={false}>
+											<Text
+												style={[styles.gasText, isDarkMode && baseStyles.textDark]}
+												allowFontScaling={false}
+											>
 												{isEIP1559Transaction
 													? strings('other.tip')
 													: strings('custom_gas.gas_price')}
 											</Text>
 											<TextInput
-												style={styles.gasInputText}
+												style={[styles.gasInputText, isDarkMode && baseStyles.subTextDark]}
 												ref={gasPriceInputRef}
 												value={customGasPrice}
 												onChangeText={this.onCustomGasPriceChange}
@@ -588,11 +618,14 @@ class NetworkFee extends PureComponent {
 											/>
 										</View>
 										<View style={[styles.gasPrice, { marginLeft: 28 }]}>
-											<Text style={styles.gasText} allowFontScaling={false}>
+											<Text
+												style={[styles.gasText, isDarkMode && baseStyles.textDark]}
+												allowFontScaling={false}
+											>
 												{strings('custom_gas.gas_limit')}
 											</Text>
 											<TextInput
-												style={styles.gasInputText}
+												style={[styles.gasInputText, isDarkMode && baseStyles.subTextDark]}
 												ref={gasInputRef}
 												value={customGasLimit}
 												onChangeText={this.onCustomGasLimitChange}
@@ -607,7 +640,10 @@ class NetworkFee extends PureComponent {
 											/>
 										</View>
 									</View>
-									<Text style={styles.amountText} allowFontScaling={false}>
+									<Text
+										style={[styles.amountText, isDarkMode && baseStyles.subTextDark]}
+										allowFontScaling={false}
+									>
 										{renderAmount(
 											getEthGasFee(customTotalGas, customGasLimitBN, suggestedGasFees?.l1Fee)
 										) +

@@ -1,6 +1,7 @@
 // react-native.config.js
 // eslint-disable-next-line import/no-commonjs
 module.exports = {
+	assets: ['./assets/fonts'],
 	dependencies: {
 		'react-native-gesture-handler': {
 			platforms: {

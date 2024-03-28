@@ -11,6 +11,7 @@ import TransactionHeader from '../TransactionHeader';
 import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
 import NetworkFee from '../NetworkFee';
 import { getActiveUrl } from '../../../util/browser';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	root: {
@@ -18,6 +19,22 @@ const styles = StyleSheet.create({
 		paddingLeft: 30,
 		paddingRight: 30,
 		paddingTop: 30
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	},
 	title: {
 		...fontStyles.bold,
@@ -71,6 +88,7 @@ const styles = StyleSheet.create({
  * PureComponent that supports reviewing a transaction
  */
 class TransactionReview extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Transaction object associated with this transaction
@@ -111,6 +129,7 @@ class TransactionReview extends PureComponent {
 	};
 
 	render = () => {
+		const { isDarkMode } = this.context;
 		const {
 			transaction,
 			transaction: { value, origin }
@@ -124,21 +143,28 @@ class TransactionReview extends PureComponent {
 
 		return (
 			<View style={styles.root} testID={'approve-screen'}>
-				<Text style={styles.title}>{strings('transaction.request')}</Text>
 				<TransactionHeader currentPageInformation={currentPageInformation} />
 				<View style={styles.fromWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.from')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.from, 17)}</Text>
+					<Text style={[styles.addressTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('other.from')}
+					</Text>
+					<Text style={[styles.address, isDarkMode && baseStyles.subTextDark]}>
+						{renderShortAddress(transaction.from, 17)}
+					</Text>
 				</View>
 				<View style={styles.toWrapper}>
-					<Text style={styles.addressTitle}>{strings('other.to')}</Text>
-					<Text style={styles.address}>{renderShortAddress(transaction.to, 17)}</Text>
+					<Text style={[styles.addressTitle, isDarkMode && baseStyles.textDark]}>{strings('other.to')}</Text>
+					<Text style={[styles.address, isDarkMode && baseStyles.subTextDark]}>
+						{renderShortAddress(transaction.to, 17)}
+					</Text>
 				</View>
 				{amount && amount > 0 && (
 					<View style={styles.amountWrapper}>
-						<Text style={styles.amountTitle}>{strings('other.amount')}</Text>
+						<Text style={[styles.amountTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('other.amount')}
+						</Text>
 						<View style={baseStyles.flexGrow} />
-						<Text style={styles.amount}>
+						<Text style={[styles.amount, isDarkMode && baseStyles.textDark]}>
 							{renderAmount(amount)} {this.getType()}
 						</Text>
 					</View>

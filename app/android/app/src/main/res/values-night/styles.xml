@@ -1,0 +1,9 @@
+<resources>
+
+	<!-- Base application theme. -->
+	<style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Use light theme splash background -->
+        <item name="splashBackground">@color/splash_background</item>
+		<item name="android:windowBackground">@color/app_background_dark</item>
+    </style>
+</resources>

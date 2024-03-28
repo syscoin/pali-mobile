@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import AccountInfoCard from '../AccountInfoCard';
 import TransactionHeader from '../TransactionHeader';
 import Device from '../../../util/Device';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	root: {
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
  * PureComponent that renders scrollable content inside signature request user interface
  */
 class SignatureRequest extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Callback triggered when this message signature is rejected
@@ -120,14 +122,16 @@ class SignatureRequest extends PureComponent {
 
 	renderActionViewChildren = () => {
 		const { children } = this.props;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.actionViewChild}>
 				<View style={styles.accountInfoCardWrapper}>
 					<AccountInfoCard operation="signing" />
 				</View>
 				<View style={styles.messageColumn}>
-					<Text style={styles.messageLabelText}>{strings('signature_request.message')}</Text>
+					<Text style={[styles.messageLabelText, isDarkMode && baseStyles.textDark]}>
+						{strings('signature_request.message')}
+					</Text>
 					<View style={styles.stub} />
 					<View style={styles.view2}>{children}</View>
 				</View>
@@ -137,20 +141,28 @@ class SignatureRequest extends PureComponent {
 
 	render() {
 		const { currentPageInformation, type } = this.props;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.root}>
+			<View style={[styles.root, isDarkMode && baseStyles.darkModalBackground]}>
 				<View>
-					<Text style={styles.signText}>{strings('signature_request.signing')}</Text>
+					<Text style={[styles.signText, isDarkMode && baseStyles.textDark]}>
+						{strings('signature_request.signing')}
+					</Text>
 					<TransactionHeader currentPageInformation={currentPageInformation} type={type} />
 					{this.renderActionViewChildren()}
 				</View>
 
 				<View style={styles.actionContainer}>
-					<TouchableOpacity style={styles.cancel} onPress={this.onCancel}>
-						<Text style={styles.cancelText}>{strings('transaction.reject')}</Text>
+					<TouchableOpacity
+						style={[styles.cancel, isDarkMode && baseStyles.darkCancelButton]}
+						onPress={this.onCancel}
+					>
+						<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+							{strings('transaction.reject')}
+						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.confirm} onPress={this.onConfirm}>
-						<Text style={styles.confirmText}>{strings('transaction.confirm')}</Text>
+					<TouchableOpacity style={[styles.confirm]} onPress={this.onConfirm}>
+						<Text style={[styles.confirmText]}>{strings('transaction.confirm')}</Text>
 					</TouchableOpacity>
 				</View>
 			</View>

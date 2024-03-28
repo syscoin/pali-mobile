@@ -17,13 +17,15 @@ import Clipboard from '@react-native-community/clipboard';
 import Share from 'react-native-share';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import iconCopy from '../../../images/copy.png';
-import iconShar from '../../../images/share.png';
+
 import iconReceiveActive from '../../../images/receive_hl.png';
 import { ChainType, util } from 'paliwallet-core';
 import GlobalAlert from '../GlobalAlert';
 import { getTokenName } from '../../../util/number';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const darkBlack = '#030319';
 const grey = '#60657D';
@@ -38,8 +40,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20
 	},
 	iconShar: {
-		width: 24,
-		height: 24
+		width: 31,
+		height: 31
 	},
 	bodyRow: {
 		alignItems: 'center'
@@ -78,6 +80,7 @@ const styles = StyleSheet.create({
 	sendNotationText: {
 		fontSize: 13,
 		lineHeight: 15,
+		marginTop: 8,
 		textAlign: 'center',
 		color: lightGrey,
 		...fontStyles.normal
@@ -96,7 +99,7 @@ const styles = StyleSheet.create({
 	},
 	cancelButton: {
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderColor: colors.brandPink300,
 		borderWidth: 1,
 		marginHorizontal: 48,
@@ -116,8 +119,8 @@ const styles = StyleSheet.create({
 	wrapper: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
-		borderRadius: 20,
-		margin: 8
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	labelWrapper: {
 		alignSelf: 'center',
@@ -136,10 +139,27 @@ const styles = StyleSheet.create({
 		marginLeft: 12,
 		color: colors.$030319,
 		...fontStyles.bold
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	}
 });
 
 class ReceiveTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Selected address as string
@@ -207,29 +227,41 @@ class ReceiveTab extends PureComponent {
 	render() {
 		const { asset } = this.props;
 		const { shareLoading } = this.state;
+		const { isDarkMode } = this.context;
 
 		return (
-			<View style={styles.wrapper}>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.receive')}</Text>
+				</View>
 				<ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 					<TouchableOpacity activeOpacity={1} style={styles.containStyle}>
 						<View style={styles.labelWrapper}>
 							<Image style={styles.labelIcon} source={iconReceiveActive} />
-							<Text style={styles.labelText}>{strings('other.receive')}</Text>
+							<Text style={[styles.labelText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.receive')}
+							</Text>
 						</View>
 						<TouchableOpacity style={styles.shareRow} onPress={this.onShare} disabled={shareLoading}>
 							{shareLoading ? (
 								<ActivityIndicator style={styles.iconShar} color={colors.brandPink300} />
 							) : (
-								<Image style={styles.iconShar} source={iconShar} />
+								<EvilIcons
+									name={'share-apple'}
+									color={isDarkMode ? colors.white : colors.paliGrey300}
+									size={40}
+								/>
 							)}
 						</TouchableOpacity>
 						<View style={styles.bodyRow}>
 							<View style={styles.qrCode}>
 								<QRCode value={`ethereum:${this.props.selectedAddress}`} size={215} />
 							</View>
-							<Text style={styles.walletTitle}>{strings('other.my_wallet_address')}</Text>
+							<Text style={[styles.walletTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('other.my_wallet_address')}
+							</Text>
 							<TouchableOpacity style={styles.addrWrapper} onPress={this.copyAccountToClipboard}>
-								<Text style={styles.addrText}>
+								<Text style={[styles.addrText, isDarkMode && baseStyles.subTextDark]}>
 									{this.props.selectedAddress.substring(0, 15) +
 										'...' +
 										this.props.selectedAddress.substring(24)}
@@ -250,11 +282,13 @@ class ReceiveTab extends PureComponent {
 						</View>
 						<View style={baseStyles.flexGrow} />
 						<TouchableOpacity
-							style={styles.cancelButton}
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 							onPress={this.onCancel}
 							activeOpacity={activeOpacity}
 						>
-							<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+							<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.cancel')}
+							</Text>
 						</TouchableOpacity>
 					</TouchableOpacity>
 				</ScrollView>

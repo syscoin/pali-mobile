@@ -20,7 +20,7 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import { AutoCompleteType_HOMEPAGE } from '../../../core/AutoCompleteController';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { shouldHideSthForAppStoreReviewer } from '../../../util/ApiClient';
 import NFTImage from '../NFTImage';
 import NetworkTabBar from './NetworkTabBar';
@@ -29,9 +29,10 @@ import { addFavouriteDapp, removeFavouriteDapp, updateFavouriteDapps } from '../
 import { toggleShowHint } from '../../../actions/hint';
 import notFavourites from '../../../images/ic_favourites_gray.png';
 import favourites from '../../../images/ic_favourites_y.png';
-import { chainToChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { chainToChainType, getIcTagByChainType, getIcLogoByChainType } from '../../../util/ChainTypeImages';
 import Device from '../../../util/Device';
 import DraggableGrid from '../DraggableGrid';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const screenWidth = Dimensions.get('window').width;
 const dragParentWidth = screenWidth - (20 + 20);
@@ -126,6 +127,7 @@ const styles = {
 	},
 	itemTag: {
 		height: 20,
+		width: 20,
 		minWidth: 20,
 		position: 'absolute',
 		top: 40,
@@ -166,6 +168,7 @@ let loadBannerHeight;
 const HOMEPAGE_TAB_INDEX = 'HOMEPAGE_TAB_INDEX';
 
 class HomePage extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		dappPageAll: PropTypes.object,
@@ -328,7 +331,10 @@ class HomePage extends PureComponent {
 		}
 	}
 
-	renderTabBar = () => <NetworkTabBar backgroundColor={colors.white} />;
+	renderTabBar = () => {
+		const { isDarkMode } = this.context;
+		return <NetworkTabBar backgroundColor={isDarkMode ? colors.brandBlue700 : colors.white} />;
+	};
 
 	renderBanner(dappPage) {
 		if (!dappPage.banners?.length) {
@@ -390,15 +396,17 @@ class HomePage extends PureComponent {
 	}
 
 	renderContent(content, chain) {
+		const { isDarkMode } = this.context;
 		return content?.map((items, index) => (
 			<View key={`network_${index}`}>
-				<Text style={styles.contentName}>{items.name}</Text>
+				<Text style={[styles.contentName, isDarkMode && baseStyles.textDark]}>{items.name}</Text>
 				{this.renderSingleItems(items.items, chain)}
 			</View>
 		));
 	}
 
 	renderSingleItems(items, chain) {
+		const { isDarkMode } = this.context;
 		return items?.map((item, index) => {
 			const imageUri =
 				item?.logo ||
@@ -425,10 +433,18 @@ class HomePage extends PureComponent {
 					>
 						<NFTImage style={styles.itemIcon} imageUrl={imageUri} />
 						<View style={styles.singleItemContent}>
-							<Text style={styles.singleItemName} numberOfLines={1} ellipsizeMode={'tail'}>
+							<Text
+								style={[styles.singleItemName, isDarkMode && baseStyles.textDark]}
+								numberOfLines={1}
+								ellipsizeMode={'tail'}
+							>
 								{item.name}
 							</Text>
-							<Text style={styles.singleItemDesc} numberOfLines={1} ellipsizeMode={'tail'}>
+							<Text
+								style={[styles.singleItemDesc, isDarkMode && baseStyles.subTextDark]}
+								numberOfLines={1}
+								ellipsizeMode={'tail'}
+							>
 								{item.desc}
 							</Text>
 						</View>
@@ -537,17 +553,25 @@ class HomePage extends PureComponent {
 	}
 
 	renderDragItem(item) {
+		const { isDarkMode } = this.context;
 		const imageUri =
 			item?.logo ||
 			'https://pali-images.s3.amazonaws.com/files/' + item?.name.replace(/\s/g, '') + 'logo' + '.png';
 
-		const tagIcon = getIcTagByChainType(chainToChainType(item?.chain));
+		const tagIcon = isDarkMode
+			? getIcLogoByChainType(chainToChainType(item?.chain))
+			: getIcTagByChainType(chainToChainType(item?.chain));
 		const key = JSON.stringify({ url: item.url, chain: item.chain });
+
 		return (
 			<View style={styles.item} key={key}>
 				<NFTImage style={styles.itemIcon} imageUrl={imageUri} />
 				{tagIcon && <Image style={styles.itemTag} source={tagIcon} />}
-				<Text style={styles.itemName} numberOfLines={1} ellipsizeMode={'tail'}>
+				<Text
+					style={[styles.itemName, isDarkMode && baseStyles.textDark]}
+					numberOfLines={1}
+					ellipsizeMode={'tail'}
+				>
 					{item.name}
 				</Text>
 			</View>
@@ -609,8 +633,9 @@ class HomePage extends PureComponent {
 
 	render() {
 		const { dappPage, shouldHideSth, initialPage, onDrag } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={[styles.root, this.props.style]}>
+			<View style={[styles.root, isDarkMode && baseStyles.darkBackground, this.props.style]}>
 				{dappPage ? (
 					<ScrollView
 						showsVerticalScrollIndicator={false}
@@ -639,7 +664,7 @@ class HomePage extends PureComponent {
 					</ScrollView>
 				) : (
 					<View style={styles.loader}>
-						<ActivityIndicator size="large" color={colors.brandPink300} />
+						<ActivityIndicator size="large" color={isDarkMode ? colors.paliBlue400 : colors.brandPink300} />
 					</View>
 				)}
 			</View>

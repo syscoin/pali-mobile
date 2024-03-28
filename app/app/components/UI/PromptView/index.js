@@ -2,9 +2,10 @@ import React, { PureComponent } from 'react';
 import Modal from 'react-native-modal';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { strings } from '../../../../locales/i18n';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	errorModal: {
@@ -45,6 +46,8 @@ const styles = StyleSheet.create({
 });
 
 class PromptView extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		isVisible: PropTypes.bool,
 
@@ -60,6 +63,7 @@ class PromptView extends PureComponent {
 	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		const { isVisible, title, message, onRequestClose, buttonText, isLockScreen } = this.props;
 		return (
 			<Modal
@@ -77,9 +81,9 @@ class PromptView extends PureComponent {
 				}}
 				swipeDirection={'down'}
 			>
-				<View style={styles.errorModal}>
-					{title && <Text style={styles.errorTitle}>{title}</Text>}
-					<Text style={styles.errorText} numberOfLines={10}>
+				<View style={[styles.errorModal, isDarkMode && baseStyles.darkModalBackground]}>
+					{title && <Text style={[styles.errorTitle, isDarkMode && baseStyles.textDark]}>{title}</Text>}
+					<Text style={[styles.errorText, isDarkMode && baseStyles.subTextDark]} numberOfLines={10}>
 						{message}
 					</Text>
 					<TouchableOpacity

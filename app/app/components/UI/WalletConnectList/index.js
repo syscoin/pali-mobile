@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import { strings } from '../../../../locales/i18n';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import AccountNetworkView from '../../Views/AccountNetworkView';
 import WebsiteIcon from '../WebsiteIcon';
@@ -12,6 +12,7 @@ import Engine from '../../../core/Engine';
 import DashSecondLine from '../../Views/DashSecondLine';
 import { getChainTypeByChainId } from '../../../util/number';
 import WC2Manager from '../../../core/WalletConnect/WalletConnectV2';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	root: {
@@ -113,6 +114,7 @@ const screenWidth = Device.getDeviceWidth();
  * Account access approval component
  */
 class WalletConnectList extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * Object containing current page title, url, and icon href
@@ -141,17 +143,25 @@ class WalletConnectList extends PureComponent {
 		}
 
 		const AllWCSessions = Object.values(allSession);
+		const { isDarkMode } = this.context;
 		return (
-			<ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-				<View style={styles.root}>
-					<View style={styles.titleLayout}>
+			<ScrollView
+				style={[styles.scrollView, isDarkMode && baseStyles.darkModalBackground]}
+				showsVerticalScrollIndicator={false}
+			>
+				<View style={[styles.root, isDarkMode && baseStyles.darkModalBackground]}>
+					<View style={[styles.titleLayout]}>
 						<Image source={require('../../../images/ic_walletconnect.png')} />
 						<View style={styles.titleLeft}>
-							<Text style={styles.titleLabel}>{strings('accountApproval.dapps_connected_with')}</Text>
-							<Text style={styles.titleDesc}>{strings('accountApproval.walletconnect')}</Text>
+							<Text style={[styles.titleLabel, isDarkMode && baseStyles.subTextDark]}>
+								{strings('accountApproval.dapps_connected_with')}
+							</Text>
+							<Text style={[styles.titleDesc, isDarkMode && baseStyles.textDark]}>
+								{strings('accountApproval.walletconnect')}
+							</Text>
 						</View>
 					</View>
-					<View style={styles.lineView} />
+					<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 
 					{AllWCSessions.map((item, index) => {
 						const selectedAddress =
@@ -184,7 +194,9 @@ class WalletConnectList extends PureComponent {
 											icon={typeof icon === 'string' ? icon : ''}
 										/>
 										<View style={styles.itemContent}>
-											<Text style={styles.itemTitleLabel}>{title}</Text>
+											<Text style={[styles.itemTitleLabel, isDarkMode && baseStyles.textDark]}>
+												{title}
+											</Text>
 											<TouchableOpacity
 												style={styles.disconnectBtn}
 												hitSlop={styles.hitSlop}
@@ -211,7 +223,7 @@ class WalletConnectList extends PureComponent {
 
 									<View style={styles.bottomHeight} />
 									{allSession.length > index + 1 && (
-										<DashSecondLine lineWidth={screenWidth - 20} style={styles.dashline} />
+										<DashSecondLine lineWidth={screenWidth - 20} style={[styles.dashline]} />
 									)}
 								</View>
 							</TouchableWithoutFeedback>

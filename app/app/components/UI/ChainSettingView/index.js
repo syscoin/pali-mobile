@@ -6,6 +6,7 @@ import {
 	FlatList,
 	Image,
 	ImageBackground,
+	KeyboardAvoidingView,
 	Platform,
 	StyleSheet,
 	Text,
@@ -17,6 +18,7 @@ import { ChainType, defaultEnabledChains } from 'paliwallet-core';
 import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import DragGridView from '../../Views/DragGridView';
 import Engine from '../../../core/Engine';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
@@ -26,6 +28,7 @@ import { getRpcName, getIsRpc, getAssetIcon } from '../../../util/rpcUtil';
 import PromptView from '../PromptView';
 import { toggleShowHint } from '../../../actions/hint';
 import { ChainTypeSettingsItems } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const { width: viewportWidth } = Dimensions.get('window');
 const dragParentWidth = viewportWidth - (20 + 20) * 2;
@@ -42,6 +45,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginHorizontal: 40,
 		marginVertical: 40
+	},
+	backIcon: {
+		color: colors.black
+	},
+	alignRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+	icon: {
+		width: 18,
+		height: 18
 	},
 	doneButton: {
 		flex: 1,
@@ -80,7 +91,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	accountName: {
-		color: colors.$030319,
+		color: colors.paliGrey200,
 		fontSize: 12,
 		marginLeft: 6
 	},
@@ -130,7 +141,7 @@ const styles = StyleSheet.create({
 	},
 	customNetwork: {
 		fontSize: 13,
-		color: colors.$5092FF
+		color: colors.brandPink300
 	},
 	hitSlop: {
 		top: 10,
@@ -145,12 +156,16 @@ const styles = StyleSheet.create({
 	textInput: {
 		fontSize: 14,
 		color: colors.$030319,
+		backgroundColor: colors.white,
+		borderRadius: 100,
 		paddingVertical: 10,
-		paddingHorizontal: 0
+		paddingHorizontal: 20,
+		borderWidth: 1,
+		borderColor: colors.paliGrey200
 	},
 	rpcRow: {
 		flexDirection: 'row',
-		marginBottom: 20,
+		marginBottom: 8,
 		alignItems: 'center'
 	},
 	rpcName: {
@@ -160,7 +175,7 @@ const styles = StyleSheet.create({
 	},
 	addButton: {
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6, //brandPink300,
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -168,17 +183,16 @@ const styles = StyleSheet.create({
 	},
 	addText: {
 		color: colors.$A6A6A6,
-		fontSize: 16
+		fontSize: 16,
+		...fontStyles.bold
 	},
 	rpcList: {
 		fontSize: 13,
 		color: colors.brandPink300
 	},
 	rpcItem: {
-		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 7,
-		marginBottom: 7
+		width: '100%'
 	},
 	marginRight6: {
 		marginRight: 6
@@ -187,19 +201,19 @@ const styles = StyleSheet.create({
 		marginLeft: 6
 	},
 	rpcItemContent: {
-		marginHorizontal: 14,
-		alignSelf: 'stretch',
+		alignItems: 'center',
+		flexDirection: 'row',
+		paddingBottom: 8,
 		flex: 1,
-		justifyContent: 'center'
+		justifyContent: 'space-between'
 	},
 	rpcItemTitle: {
-		color: colors.brandPink300,
-		fontSize: 18,
+		color: colors.black,
+		fontSize: 14,
 		...fontStyles.semibold
 	},
 	rpcItemRow: {
-		flexDirection: 'row',
-		marginTop: 10
+		flexDirection: 'row'
 	},
 	rpcItemCurrency: {
 		color: colors.$030319,
@@ -208,22 +222,38 @@ const styles = StyleSheet.create({
 	rpcItemChainId: {
 		color: colors.$030319,
 		fontSize: 12,
+		...fontStyles.semibold,
 		marginTop: 6
 	},
 	rpcItemData: {
-		marginLeft: 10
+		marginLeft: 4
 	},
 	rpcItemDataCurrency: {
-		color: colors.$60657D,
-		fontSize: 12
+		color: colors.brandPink300,
+		fontSize: 14
 	},
 	rpcItemDataChainId: {
 		color: colors.$60657D,
 		fontSize: 12,
 		marginTop: 6
 	},
+	line: {
+		backgroundColor: colors.$F0F0F0,
+		width: '100%',
+		height: 0.5
+	},
 	rpcMarginTop: {
 		marginTop: 14
+	},
+	searchContainer: {
+		flexDirection: 'row',
+		height: 50,
+		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: colors.$ccc,
+		borderRadius: 100,
+		paddingHorizontal: 20,
+		marginBottom: 24
 	},
 	customRpcInfoTilte: {
 		flexDirection: 'row',
@@ -239,6 +269,7 @@ const styles = StyleSheet.create({
 });
 
 class ChainSettingView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		selectedAddress: PropTypes.string,
@@ -260,7 +291,9 @@ class ChainSettingView extends PureComponent {
 		explorerValue: '',
 		rpcBtnEnalbe: false,
 		loading: false,
-		error: null
+		error: null,
+		searchTerm: '',
+		filteredRpcList: []
 	};
 
 	dragFavorityRef = React.createRef();
@@ -298,22 +331,31 @@ class ChainSettingView extends PureComponent {
 		return false;
 	};
 
-	renderItemView = (item, index) => (
-		<View style={styles.itemView} key={item.chainType}>
-			{item.isRpc ? getAssetIcon(item.chainType) : <Image source={item.icon} />}
-			<Text style={styles.itemText} numberOfLines={1} allowFontScaling={false}>
-				{item.text}
-			</Text>
-		</View>
-	);
+	renderItemView = (item, index) => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.itemView} key={item.chainType}>
+				{item.isRpc ? getAssetIcon(item.chainType) : <Image source={item.icon} />}
+				<Text
+					style={[styles.itemText, isDarkMode && baseStyles.textDark]}
+					numberOfLines={1}
+					allowFontScaling={false}
+				>
+					{item.text}
+				</Text>
+			</View>
+		);
+	};
 
 	renderCustomRPC = () => {
 		const { nameValue, rpcValue, chainValue, currencyValue, explorerValue, rpcBtnEnalbe, loading } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<View style={styles.customRpcInfoTilte}>
-					<Image source={require('../../../images/ic_rpc_info.png')} />
-					<Text style={styles.curstomRpcLabel}>{strings('chainSetting.info')}</Text>
+					<Text style={[styles.curstomRpcLabel, isDarkMode && baseStyles.textDark]}>
+						{strings('chainSetting.info')}
+					</Text>
 					<View style={styles.flexOne} />
 					<TouchableOpacity
 						activeOpacity={0.5}
@@ -326,15 +368,16 @@ class ChainSettingView extends PureComponent {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.rpcRow}>
-					<Text style={styles.rpcName} allowFontScaling={false}>
-						{strings('chainSetting.network_name')}
-					</Text>
 					<View style={styles.flexOne}>
 						<TextInput
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={nameValue}
-							placeholder={strings('chainSetting.network_name_placeholder')}
+							placeholder={strings('chainSetting.network_name')}
 							placeholderTextColor={colors.$8F92A1}
 							onChangeText={value => {
 								this.setState({ nameValue: value, rpcBtnEnalbe: value && rpcValue && chainValue });
@@ -345,20 +388,20 @@ class ChainSettingView extends PureComponent {
 							}}
 							blurOnSubmit={false}
 						/>
-						<View style={styles.underline} />
 					</View>
 				</View>
 				<View style={styles.rpcRow}>
-					<Text style={styles.rpcName} allowFontScaling={false}>
-						{strings('chainSetting.rpc_url')}
-					</Text>
 					<View style={styles.flexOne}>
 						<TextInput
 							ref={this.rpcTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={rpcValue}
-							placeholder={strings('chainSetting.rpc_url_placeholder')}
+							placeholder={strings('chainSetting.rpc_url')}
 							placeholderTextColor={colors.$8F92A1}
 							onChangeText={value => {
 								this.setState({ rpcValue: value, rpcBtnEnalbe: nameValue && value && chainValue });
@@ -369,20 +412,20 @@ class ChainSettingView extends PureComponent {
 							}}
 							blurOnSubmit={false}
 						/>
-						<View style={styles.underline} />
 					</View>
 				</View>
 				<View style={styles.rpcRow}>
-					<Text style={styles.rpcName} allowFontScaling={false}>
-						{strings('chainSetting.chain_id')}
-					</Text>
 					<View style={styles.flexOne}>
 						<TextInput
 							ref={this.chainTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={chainValue}
-							placeholder={strings('chainSetting.chain_id_placeholder')}
+							placeholder={strings('chainSetting.chain_id')}
 							placeholderTextColor={colors.$8F92A1}
 							onChangeText={value => {
 								this.setState({ chainValue: value, rpcBtnEnalbe: nameValue && rpcValue && value });
@@ -393,20 +436,20 @@ class ChainSettingView extends PureComponent {
 							}}
 							blurOnSubmit={false}
 						/>
-						<View style={styles.underline} />
 					</View>
 				</View>
 				<View style={styles.rpcRow}>
-					<Text style={styles.rpcName} allowFontScaling={false}>
-						{strings('chainSetting.currency_symbol')}
-					</Text>
 					<View style={styles.flexOne}>
 						<TextInput
 							ref={this.currencyTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={currencyValue}
-							placeholder={strings('chainSetting.currency_symbol_placeholder')}
+							placeholder={strings('chainSetting.currency_symbol')}
 							placeholderTextColor={colors.$8F92A1}
 							onChangeText={value => {
 								this.setState({ currencyValue: value });
@@ -417,27 +460,26 @@ class ChainSettingView extends PureComponent {
 							}}
 							blurOnSubmit={false}
 						/>
-						<View style={styles.underline} />
 					</View>
 				</View>
 				<View style={styles.rpcRow}>
-					<Text style={styles.rpcName} allowFontScaling={false}>
-						{strings('chainSetting.explorer_url')}
-					</Text>
 					<View style={styles.flexOne}>
 						<TextInput
 							ref={this.explorerTextInputRef}
 							allowFontScaling={false}
-							style={styles.textInput}
+							style={[
+								styles.textInput,
+								isDarkMode && { color: 'white', borderColor: colors.white016 },
+								isDarkMode && baseStyles.darkBackground600
+							]}
 							value={explorerValue}
-							placeholder={strings('chainSetting.explorer_url_placeholder')}
+							placeholder={strings('chainSetting.explorer_url')}
 							placeholderTextColor={colors.$8F92A1}
 							onChangeText={value => {
 								this.setState({ explorerValue: value });
 							}}
 							returnKeyType={'done'}
 						/>
-						<View style={styles.underline} />
 					</View>
 				</View>
 				<TouchableOpacity
@@ -459,10 +501,10 @@ class ChainSettingView extends PureComponent {
 	};
 
 	renderRpcListItem = (item, index) => {
-		const isLeft = index % 2 === 0;
 		//图片142， 93
-		const itemWidth = (viewportWidth - 80 - 12) / 2;
-		const itemHeight = (itemWidth * 1.0 * 93) / 142;
+		const itemWidth = '100%';
+		const itemHeight = 44;
+		const { isDarkMode } = this.context;
 		return (
 			<View
 				style={[
@@ -470,12 +512,12 @@ class ChainSettingView extends PureComponent {
 					{
 						width: itemWidth,
 						height: itemHeight
-					},
-					isLeft ? styles.marginRight6 : styles.marginLeft6
+					}
 				]}
 			>
 				<TouchableOpacity
-					activeOpacity={0.8}
+					activeOpacity={0.5}
+					style={styles.alignRow}
 					onPress={() => {
 						this.setState({
 							currentPage: PAGE_INPUT_RPC,
@@ -488,60 +530,111 @@ class ChainSettingView extends PureComponent {
 						});
 					}}
 				>
-					<ImageBackground
-						style={{ width: itemWidth, height: itemHeight }}
-						source={require('../../../images/img_rpc_bg.png')}
-						resizeMode={'stretch'}
-					>
-						<View style={styles.rpcItemContent}>
-							<Text style={styles.rpcItemTitle} numberOfLines={1} allowFontScaling={false}>
-								{item.name}
+					<View style={styles.rpcItemContent}>
+						<View style={styles.alignRow}>
+							<Text
+								style={[styles.rpcItemTitle, isDarkMode && baseStyles.textDark]}
+								numberOfLines={1}
+								allowFontScaling={false}
+							>
+								{item.name.length > 15 ? `${item.name.substring(0, 12)}...` : item.name}{' '}
 							</Text>
-							<View style={styles.rpcItemRow}>
-								<View>
-									<Text style={styles.rpcItemCurrency} numberOfLines={1} allowFontScaling={false}>
-										{strings('chainSetting.currency')}
-									</Text>
-									<Text style={styles.rpcItemChainId} numberOfLines={1} allowFontScaling={false}>
-										{strings('chainSetting.chain_id_item')}
-									</Text>
-								</View>
 
-								<View style={styles.rpcItemData}>
-									<Text style={styles.rpcItemDataCurrency} numberOfLines={1} allowFontScaling={false}>
-										{item.nativeCurrency?.symbol}
-									</Text>
-									<Text style={styles.rpcItemDataChainId} numberOfLines={1} allowFontScaling={false}>
-										{item.chainId}
-									</Text>
-								</View>
+							<Text style={styles.rpcItemDataCurrency} numberOfLines={1} allowFontScaling={false}>
+								{item.nativeCurrency?.symbol}
+							</Text>
+						</View>
+						<View style={styles.rpcItemRow}>
+							<View>
+								<Text
+									style={[styles.rpcItemChainId, isDarkMode && baseStyles.textDark]}
+									numberOfLines={1}
+									allowFontScaling={false}
+								>
+									{strings('chainSetting.chain_id_item')}
+								</Text>
+							</View>
+
+							<View style={styles.rpcItemData}>
+								<Text style={styles.rpcItemDataChainId} numberOfLines={1} allowFontScaling={false}>
+									{item.chainId}
+								</Text>
 							</View>
 						</View>
-					</ImageBackground>
+					</View>
 				</TouchableOpacity>
+				<View style={styles.line} />
 			</View>
 		);
 	};
 
+	debounce = (func, delay) => {
+		let inDebounce;
+		return function() {
+			const context = this;
+			const args = arguments;
+			clearTimeout(inDebounce);
+			inDebounce = setTimeout(() => func.apply(context, args), delay);
+		};
+	};
+
+	searchInArray = searchTerm => {
+		const filteredData = this.rpcListData.filter(item => {
+			const itemName = item.name ? item.name.toLowerCase() : '';
+			const itemChain = item.chain ? item.chain.toLowerCase() : '';
+			const itemSymbol =
+				item.nativeCurrency && item.nativeCurrency.symbol ? item.nativeCurrency.symbol.toLowerCase() : '';
+
+			return (
+				itemName.includes(searchTerm.toLowerCase()) ||
+				itemChain.includes(searchTerm.toLowerCase()) ||
+				itemSymbol.includes(searchTerm.toLowerCase())
+			);
+		});
+
+		this.setState({ filteredRpcList: filteredData });
+	};
+
+	// Call the debounced search function
+	handleSearchChange = searchTerm => {
+		this.setState({ searchTerm });
+		this.debouncedSearch(searchTerm);
+	};
+
+	debouncedSearch = this.debounce(this.searchInArray, 100);
+
 	renderRpcList = () => {
-		const rpcList = this.rpcListData.filter(
-			item =>
-				item.name &&
-				item.chainId &&
-				item.chainId &&
-				item.rpc &&
-				item.rpc.length > 0 &&
-				item.nativeCurrency &&
-				item.nativeCurrency.symbol
-		);
+		const { searchTerm, filteredRpcList } = this.state;
+		const rpcList = searchTerm ? filteredRpcList : this.rpcListData;
+
 		rpcList.sort((x, y) => x.name.toUpperCase().localeCompare(y.name.toUpperCase()));
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.rpcMarginTop}>
+				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+					<View
+						style={[
+							styles.searchContainer,
+							isDarkMode && { color: 'white', borderColor: colors.white016 },
+							isDarkMode && baseStyles.darkBackground600
+						]}
+					>
+						<TextInput
+							placeholder="Search..."
+							style={[{ flex: 1 }, isDarkMode && { color: 'white' }]}
+							value={searchTerm}
+							placeholderTextColor={colors.paliGrey200}
+							onChangeText={this.handleSearchChange}
+						/>
+
+						<Image source={require('../../../images/ic_search_blue.png')} style={styles.icon} />
+					</View>
+				</KeyboardAvoidingView>
 				<FlatList
 					renderItem={({ item, index }) => this.renderRpcListItem(item, index)}
 					data={rpcList}
 					keyExtractor={(item, index) => 'rpc-detail-' + index}
-					numColumns={2}
+					numColumns={1}
 					horizontal={false}
 					showsVerticalScrollIndicator={false}
 				/>
@@ -621,12 +714,20 @@ class ChainSettingView extends PureComponent {
 				}
 			});
 		}
-
+		const { isDarkMode } = this.context;
 		return (
 			<View>
 				<ImageCapInset
 					style={styles.cardWrapper}
-					source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+					source={
+						Device.isAndroid()
+							? isDarkMode
+								? { uri: 'dark500_card' }
+								: { uri: 'default_card' }
+							: isDarkMode
+							? require('../../../images/dark500_card.png')
+							: require('../../../images/default_card.png')
+					}
 					capInsets={baseStyles.capInsets}
 				>
 					<View style={[styles.childrenWrapper, baseStyle]} showsVerticalScrollIndicator={false}>
@@ -643,10 +744,14 @@ class ChainSettingView extends PureComponent {
 											}
 										}}
 									>
-										<Image source={require('../../../images/ic_back_rpc.png')} />
+										<EvilIcons
+											name="chevron-left"
+											size={32}
+											style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+										/>
 									</TouchableOpacity>
 								)}
-								<Text style={styles.titleText}>
+								<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]}>
 									{currentPage === PAGE_HOME
 										? strings('chainSetting.title')
 										: currentPage === PAGE_INPUT_RPC
@@ -665,14 +770,17 @@ class ChainSettingView extends PureComponent {
 								</Text>
 							)}
 
-							{currentPage !== PAGE_RPC_LIST && <View style={styles.lineView} />}
+							{currentPage !== PAGE_RPC_LIST && (
+								<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+							)}
 							{currentPage === PAGE_INPUT_RPC && this.renderCustomRPC()}
 							{currentPage === PAGE_RPC_LIST && this.renderRpcList()}
 							{currentPage === PAGE_HOME && (
 								<View>
 									<View style={styles.enableLayout}>
-										<Image source={require('../../../images/ic_chain_enable.png')} />
-										<Text style={styles.enableText}>{strings('chainSetting.enable')}</Text>
+										<Text style={[styles.enableText, isDarkMode && baseStyles.textDark]}>
+											{strings('chainSetting.enable')}
+										</Text>
 										<View style={styles.flexOne} />
 										<TouchableOpacity
 											hitSlop={styles.hitSlop}
@@ -739,10 +847,11 @@ class ChainSettingView extends PureComponent {
 										{favouriteChainItems.map((item, index) => this.renderItemView(item, index))}
 									</DragGridView>
 
-									<View style={styles.lineView} />
+									<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 									<View style={styles.enableLayout}>
-										<Image source={require('../../../images/ic_chain_disabled.png')} />
-										<Text style={styles.enableText}>{strings('chainSetting.disable')}</Text>
+										<Text style={[styles.enableText, isDarkMode && baseStyles.textDark]}>
+											{strings('chainSetting.disable')}
+										</Text>
 									</View>
 									<View style={styles.minHeight}>
 										{disabledChains.length > 0 ? (
@@ -795,13 +904,13 @@ class ChainSettingView extends PureComponent {
 											</DragGridView>
 										) : (
 											<View style={styles.noDisableLayout}>
-												<Text style={styles.noDisableText}>
+												<Text style={[styles.noDisableText, isDarkMode && baseStyles.textDark]}>
 													{strings('chainSetting.no_disabled_chains')}
 												</Text>
 											</View>
 										)}
 									</View>
-									<View style={styles.lineView} />
+									<View style={[styles.lineView, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 
 									<TouchableOpacity
 										style={styles.doneButton}

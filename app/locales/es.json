@@ -282,7 +282,7 @@
 		"enable_touchid": "Habilitar Touch ID",
 		"enable_faceid": "Habilitar Face ID",
 		"enable_biometrics": "Habilitar Bio Autenticación",
-		"rejectBiometry": "Face ID o huella digital ha excedido el límite máximo de intentos. Bloquea la pantalla de tu teléfono y vuelve a abrirlo, o ve a Configuración > Pali Wallet para habilitar Face ID o huella digital."
+		"rejectBiometry": "Face ID/huella digital: Límite de intentos superado. Bloquea y desbloquea tu teléfono o activa estas opciones en Configuración > Pali Wallet."
 	},
 	"authentication": {
 		"auth_prompt_title": "Autenticación requerida",
@@ -764,7 +764,7 @@
 		"network_name": "Nombre de la Red",
 		"rpc_url": "URL de RPC",
 		"chain_id": "ID de Cadena",
-		"currency_symbol": "Símbolo de Moneda",
+		"currency_symbol": "Símbolo de Moneda (Optional)",
 		"explorer_url": "URL del Explorador",
 		"network_name_placeholder": "Nombre de la red",
 		"rpc_url_placeholder": "Normalmente comienza con https://",
@@ -775,12 +775,12 @@
 		"choose_from_rpc_List": "Elegir de la Lista de RPC",
 		"rpc_list": "Lista de RPC",
 		"currency": "Moneda",
-		"chain_id_item": "ID de Cadena",
+		"chain_id_item": "ID de Cadena:",
 		"custom_network_added": "Red personalizada agregada",
 		"delete_rpc": "{{networkName}} se eliminará para todas las cuentas.",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
-		"info": "info"
+		"info": "Info"
 	},
 	"observer": {
 		"observe_only_ccounts": "Cuentas de Solo Observación",
@@ -842,7 +842,7 @@
 		"opensea": "OpenSea"
 	},
 	"token_search": {
-		"token_address_hint": "Dirección del token o contrato",
+		"token_address_hint": "Símbolo o dirección del contrato",
 		"add": "Agregar"
 	}
 }

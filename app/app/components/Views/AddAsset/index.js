@@ -10,6 +10,7 @@ import {
 	TouchableWithoutFeedback,
 	View
 } from 'react-native';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import Engine from '../../../core/Engine';
 import { connect } from 'react-redux';
 import TokenImage from '../../UI/TokenImage';
@@ -28,10 +29,10 @@ import {
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { CURRENCIES } from '../../../util/currencies';
 import AssetElement from '../../UI/AssetElement';
-import { fontStyles, colors } from '../../../styles/common';
+import { fontStyles, colors, baseStyles } from '../../../styles/common';
 import { getIsRpc, getIcTagResource } from '../../../util/rpcUtil';
 import { getSecurityData } from '../../../util/security';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { getIcTagByChainType, getIcLogoByChainType } from '../../../util/ChainTypeImages';
 
 const { width, height } = Dimensions.get('window');
 const hideItemWidth = 70;
@@ -148,7 +149,9 @@ const styles = StyleSheet.create({
 	tagView: {
 		position: 'absolute',
 		left: 30,
-		top: 20
+		top: 20,
+		width: 20,
+		height: 20
 	},
 	animationParent: {
 		height: '100%',
@@ -351,7 +354,7 @@ class AddAsset extends PureComponent {
 		toastShowing: false,
 		defiModalVisible: false
 	};
-
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		isLockScreen: PropTypes.bool,
@@ -484,6 +487,7 @@ class AddAsset extends PureComponent {
 			? asset.address.substring(0, 6) + '...' + asset.address.substring(asset.address.length - 6)
 			: '';
 		const isRpc = getIsRpc(asset.type);
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.flexOneDir} key={'renderSearchItem' + index}>
 				<AssetElement
@@ -495,23 +499,28 @@ class AddAsset extends PureComponent {
 				>
 					<View style={styles.iconLayout}>
 						<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-						<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
+						<Image
+							style={styles.tagView}
+							source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
+						/>
 					</View>
 					<View style={styles.balances}>
 						<View style={styles.titleItem}>
-							<Text style={styles.textItemName} numberOfLines={1}>
+							<Text style={[styles.textItemName, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 								{asset.symbol}
 							</Text>
 						</View>
 						<View style={styles.flexDir}>
-							<Text style={styles.textItemAmount}>{addressLabel}</Text>
+							<Text style={[styles.textItemAmount, isDarkMode && baseStyles.subTextDark]}>
+								{addressLabel}
+							</Text>
 							<View style={styles.flexOne} />
 						</View>
 					</View>
 				</AssetElement>
 
 				{isLoading ? (
-					<View style={styles.animationParent}>
+					<View style={[styles.animationParent, isDarkMode && baseStyles.darkBackground]}>
 						<LottieView
 							style={styles.animation}
 							autoPlay
@@ -545,6 +554,7 @@ class AddAsset extends PureComponent {
 		const isRpc = getIsRpc(asset.type);
 		const isDefi = asset.isDefi;
 		const isRisk = securityData?.risk?.length > 0 && !securityData?.isTrust;
+		const { isDarkMode } = this.context;
 		return (
 			<AssetElement
 				key={'renderItem' + index}
@@ -556,12 +566,15 @@ class AddAsset extends PureComponent {
 			>
 				<View style={styles.iconLayout}>
 					<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
-					<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
+					<Image
+						style={styles.tagView}
+						source={isDarkMode ? getIcLogoByChainType(asset.type) : getIcTagByChainType(asset.type)}
+					/>
 				</View>
 
 				<View style={styles.balances}>
 					<View style={styles.titleItem}>
-						<Text style={styles.textItemName} numberOfLines={1}>
+						<Text style={[styles.textItemName, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 							{asset.symbol}
 						</Text>
 						{done ? (
@@ -570,7 +583,13 @@ class AddAsset extends PureComponent {
 							asset.lockType && <Image source={require('../../../images/lock_icon.png')} />
 						)}
 						<View style={styles.flexOne} />
-						<Text style={[styles.textItemBalance, isRisk && !isAmountHide ? styles.strikethrough : {}]}>
+						<Text
+							style={[
+								styles.textItemBalance,
+								isDarkMode && baseStyles.textDark,
+								isRisk && !isAmountHide ? styles.strikethrough : {}
+							]}
+						>
 							{isAmountHide ? '***' : balanceFiat}
 						</Text>
 					</View>
@@ -654,6 +673,7 @@ class AddAsset extends PureComponent {
 			return;
 		}
 		const portfolios = selectedDefiToken.portfolios;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={!this.props.isLockScreen}
@@ -665,10 +685,14 @@ class AddAsset extends PureComponent {
 				animationType="fade"
 				useNativeDriver
 			>
-				<TouchableOpacity style={styles.flexOne} activeOpacity={1.0} onPress={this.hideDefiModal}>
+				<TouchableOpacity
+					style={[styles.flexOne, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1.0}
+					onPress={this.hideDefiModal}
+				>
 					<View style={styles.flexSpace} />
 					<ScrollView
-						style={styles.defiModalWrapper}
+						style={[styles.defiModalWrapper, isDarkMode && baseStyles.darkModalBackground]}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={styles.flexGrowOne}
@@ -701,7 +725,10 @@ class AddAsset extends PureComponent {
 								</TouchableOpacity>
 
 								<View style={styles.flexOne} />
-								<Text style={[styles.defiTitleBalance]} allowFontScaling={false}>
+								<Text
+									style={[styles.defiTitleBalance, isDarkMode && baseStyles.textDark]}
+									allowFontScaling={false}
+								>
 									{this.props.isAmountHide ? '***' : selectedDefiToken.balanceFiat}
 								</Text>
 							</View>
@@ -736,18 +763,30 @@ class AddAsset extends PureComponent {
 											</View>
 
 											<View style={styles.defiSupply}>
-												<Text style={styles.defiSupplySambol} allowFontScaling={false}>
+												<Text
+													style={[styles.defiSupplySambol, isDarkMode && baseStyles.textDark]}
+													allowFontScaling={false}
+												>
 													{appendSymbol}
 												</Text>
 												<View style={styles.flexOne} />
-												<Text style={styles.defiSupplyBalance} allowFontScaling={false}>
+												<Text
+													style={[
+														styles.defiSupplyBalance,
+														isDarkMode && baseStyles.textDark
+													]}
+													allowFontScaling={false}
+												>
 													{balanceFiat}
 												</Text>
 											</View>
 
 											{rewardTokens?.length > 0 && (
 												<View style={styles.defiReward}>
-													<Text style={styles.rewardText} allowFontScaling={false}>
+													<Text
+														style={[styles.rewardText, isDarkMode && baseStyles.textDark]}
+														allowFontScaling={false}
+													>
 														{strings('other.reward')}
 													</Text>
 													<View style={styles.rewardMargin}>
@@ -767,13 +806,21 @@ class AddAsset extends PureComponent {
 																	key={'reward-item-' + index}
 																>
 																	<Text
-																		style={styles.rewardItemSambol}
+																		style={[
+																			styles.rewardItemSambol,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
 																		numberOfLines={1}
 																	>
 																		{token.amount?.toFixed(2) + ' ' + token.symbol}
 																	</Text>
 																	<View style={styles.flexOne} />
-																	<Text style={styles.rewardItemBalance}>
+																	<Text
+																		style={[
+																			styles.rewardItemBalance,
+																			isDarkMode && baseStyles.subTextDark
+																		]}
+																	>
 																		{balanceFiat}
 																	</Text>
 																</View>
@@ -846,13 +893,15 @@ class AddAsset extends PureComponent {
 			}
 			newResults = [...newAlreadyTokens, ...fileterSearchResult];
 		}
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.flexOne}>
 				{newResults.length === 0 && (
 					<View style={styles.noFoundLayout}>
 						<Image source={require('../../../images/search_no_found.png')} />
-						<Text style={styles.noFoundText}>{strings('other.no_token_found')}</Text>
+						<Text style={[styles.noFoundText, isDarkMode && baseStyles.textDark]}>
+							{strings('other.no_token_found')}
+						</Text>
 					</View>
 				)}
 				{newResults.map((item, index) => {

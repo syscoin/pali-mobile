@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/Device';
 import TokenImage from '../../UI/TokenImage';
 import { util } from 'paliwallet-core';
@@ -33,6 +33,9 @@ import PercentageCircle from '../../UI/PercentageCircle';
 import LottieView from 'lottie-react-native';
 import { getSecurityData } from '../../../util/security';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import { isDate } from 'lodash';
 
 const options = {
 	enableVibrateFallback: true,
@@ -491,6 +494,7 @@ const styles = StyleSheet.create({
 });
 
 class FoldSecurityView extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to access the props
@@ -594,145 +598,168 @@ class FoldSecurityView extends PureComponent {
 		}, delayTime);
 	};
 
-	renderUnDetected = () => (
-		<View style={styles.unDetectedWrap}>
-			{this.state.showFastCheck ? (
-				<View style={styles.fastCheckWrap}>
-					<Text style={styles.fastCheckTitle}>{strings('security.detecting')}</Text>
-					<LottieView
-						style={styles.animation}
-						autoPlay
-						loop
-						source={require('../../../animations/detecting.json')}
-					/>
-					<Text style={styles.fastCheckDesc}>{strings('security.take_seconds')}</Text>
-				</View>
-			) : (
-				<View style={styles.flexOne}>
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_contract_security')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
+	renderUnDetected = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.unDetectedWrap}>
+				{this.state.showFastCheck ? (
+					<View style={[styles.fastCheckWrap, isDarkMode && baseStyles.darkBackground]}>
+						<Text style={[styles.fastCheckTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('security.detecting')}
+						</Text>
+						<LottieView
+							style={styles.animation}
+							autoPlay
+							loop
+							source={require('../../../animations/detecting.json')}
 						/>
+						<Text style={[styles.fastCheckDesc, isDarkMode && baseStyles.textDark]}>
+							{strings('security.take_seconds')}
+						</Text>
 					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_holders_status')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_liqudity_providers')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
-					<View style={styles.securityItemView}>
-						<Text style={styles.unkownItemText}>{strings('security.detect_trading_tax')}</Text>
-						<Image
-							style={styles.securityIconLargeSize}
-							source={require('../../../images/img_defi_unknown.png')}
-						/>
-					</View>
-					<View style={styles.fullLine} />
-					<View style={styles.flexGrowOne} />
+				) : (
+					<View style={[styles.flexOne, isDarkMode && baseStyles.darkInputBackground]}>
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_contract_security')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_holders_status')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_liqudity_providers')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<DashSecondLine lineWidth={width - 88} style={styles.lineMargin} />
+						<View style={styles.securityItemView}>
+							<Text style={[styles.unkownItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('security.detect_trading_tax')}
+							</Text>
+							<Image
+								style={styles.securityIconLargeSize}
+								source={require('../../../images/img_defi_unknown.png')}
+							/>
+						</View>
+						<View style={[styles.fullLine, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+						<View style={styles.flexGrowOne} />
 
-					<TouchableOpacity
-						activeOpacity={0.6}
-						style={styles.applyCheckTouch}
-						onPress={() => {
-							ReactNativeHapticFeedback.trigger('impactMedium', options);
-							this.setState({ showFastCheck: true });
-							onEvent('request_detection');
-							this.fastCheckCount = 0;
-							this.timeoutFastCheck(0);
-						}}
-					>
-						<Image source={require('../../../images/ic_gplus_white.png')} />
-						<Text style={[styles.applyCheckText]}>{strings('fold_security.apply_check')}</Text>
-					</TouchableOpacity>
-				</View>
-			)}
-		</View>
-	);
-
-	renderCheckedItem = (title, desc, checked, addLine) => (
-		<TouchableOpacity
-			style={styles.flexOne}
-			activeOpacity={1.0}
-			onPress={() => {
-				this.showInfoModal(title, desc);
-			}}
-		>
-			<View style={styles.checkItemContent}>
-				<Text style={styles.checkItemTitle} allowFontScaling={false}>
-					{title}
-				</Text>
-				<Image
-					source={
-						checked
-							? require('../../../images/ic_security_checked.png')
-							: require('../../../images/ic_security_unchecked.png')
-					}
-				/>
+						<TouchableOpacity
+							activeOpacity={0.6}
+							style={styles.applyCheckTouch}
+							onPress={() => {
+								ReactNativeHapticFeedback.trigger('impactMedium', options);
+								this.setState({ showFastCheck: true });
+								onEvent('request_detection');
+								this.fastCheckCount = 0;
+								this.timeoutFastCheck(0);
+							}}
+						>
+							<Image source={require('../../../images/ic_gplus_white.png')} />
+							<Text style={[styles.applyCheckText]}>{strings('fold_security.apply_check')}</Text>
+						</TouchableOpacity>
+					</View>
+				)}
 			</View>
-			{addLine && <DashSecondLine lineWidth={width - 108} style={styles.heightOne} />}
-		</TouchableOpacity>
-	);
+		);
+	};
 
-	renderHorderItem = (holder, index) => (
-		<View style={styles.holderItemWrap} key={'holder-index-' + index}>
-			<View
-				style={[
-					styles.holderItemContent,
-					{
-						backgroundColor:
-							index === 1
-								? colors.$FFB00030
-								: index === 2
-								? colors.$DADFE3A8
-								: index === 3
-								? colors.$F1D3C29E
-								: colors.$F6F6F6
-					}
-				]}
+	renderCheckedItem = (title, desc, checked, addLine) => {
+		const { isDarkMode } = this.context;
+		return (
+			<TouchableOpacity
+				style={styles.flexOne}
+				activeOpacity={1.0}
+				onPress={() => {
+					this.showInfoModal(title, desc);
+				}}
 			>
-				<Text
-					allowFontScaling={false}
+				<View style={styles.checkItemContent}>
+					<Text style={[styles.checkItemTitle, baseStyles.textDark]} allowFontScaling={false}>
+						{title}
+					</Text>
+					<Image
+						source={
+							checked
+								? require('../../../images/ic_security_checked.png')
+								: require('../../../images/ic_security_unchecked.png')
+						}
+					/>
+				</View>
+				{addLine && <DashSecondLine lineWidth={width - 108} style={styles.heightOne} />}
+			</TouchableOpacity>
+		);
+	};
+
+	renderHorderItem = (holder, index) => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.holderItemWrap} key={'holder-index-' + index}>
+				<View
 					style={[
-						styles.holderNum,
+						styles.holderItemContent,
 						{
-							color:
+							backgroundColor:
 								index === 1
-									? colors.$FFB000
+									? colors.$FFB00030
 									: index === 2
-									? colors.$60657D
+									? colors.$DADFE3A8
 									: index === 3
-									? colors.$D38D69
-									: colors.$8F92A1
-						},
-						index === 1 || index === 2 || (index === 3 && { ...fontStyles.semibold })
+									? colors.$F1D3C29E
+									: colors.$F6F6F6
+						}
 					]}
 				>
-					{index}
-				</Text>
+					<Text
+						allowFontScaling={false}
+						style={[
+							styles.holderNum,
+							{
+								color:
+									index === 1
+										? colors.$FFB000
+										: index === 2
+										? colors.$60657D
+										: index === 3
+										? colors.$D38D69
+										: colors.$8F92A1
+							},
+							index === 1 || index === 2 || (index === 3 && { ...fontStyles.semibold })
+						]}
+					>
+						{index}
+					</Text>
+				</View>
+				<View style={styles.marginLeft14}>
+					<Text allowFontScaling={false} style={[styles.holderPercent, isDarkMode && baseStyles.textDark]}>
+						{(holder.percent * 100).toFixed(2)}%
+					</Text>
+					<Text style={styles.holderAddr} allowFontScaling={false}>
+						{holder.address?.substring(0, 4) +
+							'...' +
+							holder.address?.substring(holder.address?.length - 4)}
+					</Text>
+				</View>
 			</View>
-			<View style={styles.marginLeft14}>
-				<Text allowFontScaling={false} style={styles.holderPercent}>
-					{(holder.percent * 100).toFixed(2)}%
-				</Text>
-				<Text style={styles.holderAddr} allowFontScaling={false}>
-					{holder.address?.substring(0, 4) + '...' + holder.address?.substring(holder.address?.length - 4)}
-				</Text>
-			</View>
-		</View>
-	);
+		);
+	};
 
 	renderChecked = () => {
 		const securityData = this.state.securityData;
@@ -800,11 +827,11 @@ class FoldSecurityView extends PureComponent {
 		} else if (is_open_source) {
 			noLineKey = 'is_open_source';
 		}
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.flexOne}>
 				{!!noLineKey && (
-					<View style={styles.checkItemWrap}>
+					<View style={[styles.checkItemWrap, isDarkMode && baseStyles.darkInputBackground]}>
 						{is_open_source &&
 							this.renderCheckedItem(
 								strings('security.open_source'),
@@ -887,7 +914,10 @@ class FoldSecurityView extends PureComponent {
 								}}
 							>
 								<View style={styles.ownerItemContent}>
-									<Text style={styles.ownerItemTitle} allowFontScaling={false}>
+									<Text
+										style={[styles.ownerItemTitle, isDarkMode && baseStyles.textDark]}
+										allowFontScaling={false}
+									>
 										{strings('security.owner_address')}
 									</Text>
 									<Text
@@ -905,20 +935,28 @@ class FoldSecurityView extends PureComponent {
 				)}
 
 				<TouchableOpacity
-					style={styles.securityItemWrap}
+					style={[styles.securityItemWrap, isDarkMode && baseStyles.darkInputBackground]}
 					activeOpacity={1.0}
 					onPress={() => {
 						this.showInfoModal(strings('security.on_chain_info'), strings('security.on_chain_info_desc'));
 					}}
 				>
 					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{holder_count ? (holder_count < 10000 ? holder_count : renderCoinValue(holder_count)) : '-'}
 						</Text>
 						<Text style={styles.securityItemDesc}>{strings('security.holders')}</Text>
 					</View>
 					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{lp_holder_count
 								? lp_holder_count < 10000
 									? lp_holder_count === '0' && dex?.length === 1
@@ -930,7 +968,11 @@ class FoldSecurityView extends PureComponent {
 						<Text style={styles.securityItemDesc}>{strings('security.lp')}</Text>
 					</View>
 					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{dex?.length || '-'}
 						</Text>
 						<Text style={styles.securityItemDesc}>{strings('security.dexs')}</Text>
@@ -938,14 +980,18 @@ class FoldSecurityView extends PureComponent {
 				</TouchableOpacity>
 
 				<TouchableOpacity
-					style={styles.securityItemWrap}
+					style={[styles.securityItemWrap, isDarkMode && baseStyles.darkInputBackground]}
 					activeOpacity={1.0}
 					onPress={() => {
 						this.showInfoModal(strings('security.trading_tax'), strings('security.trading_tax_desc'));
 					}}
 				>
 					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{sell_tax
 								? sell_tax === '0' || sell_tax === '1'
 									? sell_tax * 100 + '%'
@@ -956,8 +1002,12 @@ class FoldSecurityView extends PureComponent {
 							{strings('security.sell_tax')}
 						</Text>
 					</View>
-					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+					<View style={[styles.securityItem, isDarkMode && baseStyles.darkInputBackground]}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{buy_tax
 								? buy_tax === '0' || buy_tax === '1'
 									? buy_tax * 100 + '%'
@@ -969,7 +1019,7 @@ class FoldSecurityView extends PureComponent {
 						</Text>
 					</View>
 					{slippage_modifiable ? (
-						<View style={styles.securityItem}>
+						<View style={[styles.securityItem, isDarkMode && baseStyles.darkInputBackground]}>
 							<Image
 								style={styles.securityItemIcon}
 								source={
@@ -988,14 +1038,18 @@ class FoldSecurityView extends PureComponent {
 				</TouchableOpacity>
 
 				<TouchableOpacity
-					style={styles.securityItemWrap}
+					style={[styles.securityItemWrap, isDarkMode && baseStyles.darkInputBackground]}
 					activeOpacity={1.0}
 					onPress={() => {
 						this.showInfoModal(strings('security.total_supply'), strings('security.total_supply_desc'));
 					}}
 				>
 					<View style={styles.securityItem}>
-						<Text style={styles.securityItemTitle} numberOfLines={1} allowFontScaling={false}>
+						<Text
+							style={[styles.securityItemTitle, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							allowFontScaling={false}
+						>
 							{renderCoinValue(total_supply)}
 						</Text>
 						<Text style={styles.securityItemDesc} allowFontScaling={false}>
@@ -1023,8 +1077,8 @@ class FoldSecurityView extends PureComponent {
 				</TouchableOpacity>
 
 				{holders && holders.length > 0 && (
-					<View style={styles.holderBase}>
-						<Text style={styles.holderTitle} allowFontScaling={false}>
+					<View style={[styles.holderBase, isDarkMode && baseStyles.darkInputBackground]}>
+						<Text style={[styles.holderTitle, isDarkMode && baseStyles.textDark]} allowFontScaling={false}>
 							{strings('security.top_ten_holders')}
 						</Text>
 						<View style={styles.contentCenter}>
@@ -1069,7 +1123,7 @@ class FoldSecurityView extends PureComponent {
 
 				{checked && (
 					<TouchableOpacity
-						style={styles.shareItemWrap}
+						style={[styles.shareItemWrap, isDarkMode && baseStyles.darkInputBackground]}
 						activeOpacity={1.0}
 						onPress={() => {
 							this.shareSecurityLink();
@@ -1085,7 +1139,7 @@ class FoldSecurityView extends PureComponent {
 
 	renderSecurityView = () => {
 		const { asset } = this.props;
-
+		const { isDarkMode } = this.context;
 		const { risk, notice, normal, isTrust } = this.state.securityData;
 		const noticeNum = notice ? notice.length : 0;
 		const riskNum = risk ? risk.length : 0;
@@ -1093,7 +1147,8 @@ class FoldSecurityView extends PureComponent {
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		let riskTextColor = colors.$60657D;
+		let riskTextColor = isDarkMode ? colors.paliGrey200 : colors.$60657D;
+
 		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
@@ -1107,17 +1162,22 @@ class FoldSecurityView extends PureComponent {
 			riskImg = require('../../../images/img_defi_warning.png');
 			riskTextColor = colors.$FFB000;
 		}
+
 		return (
 			<View style={styles.flexOne}>
-				<View style={styles.securityTitle}>
+				<View style={[styles.securityTitle, isDarkMode && baseStyles.darkInputBackground]}>
 					<View style={styles.iconLayout}>
 						<TokenImage asset={asset} containerStyle={styles.ethLogo} iconStyle={styles.iconStyle} />
 					</View>
 					<View style={styles.maxSymbolWidth}>
-						<Text style={styles.symbolText} numberOfLines={1} ellipsizeMode={'middle'}>
+						<Text
+							style={[styles.symbolText, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							ellipsizeMode={'middle'}
+						>
 							{asset.symbol}
 						</Text>
-						<Text style={styles.symbolText} numberOfLines={1}>
+						<Text style={[styles.symbolText, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 							{asset.address?.toLowerCase().substring(0, 6) +
 								'...' +
 								asset.address?.toLowerCase().substring(asset.address.length - 4)}
@@ -1142,52 +1202,66 @@ class FoldSecurityView extends PureComponent {
 		this.setState({ infiniteDescVisible: false });
 	};
 
-	renderInfiniteDesc = () => (
-		<Modal
-			isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			onSwipeComplete={this.hideInfiniteDesc}
-			onBackButtonPress={this.hideInfiniteDesc}
-			onBackdropPress={this.hideInfiniteDesc}
-			backdropOpacity={0.7}
-			animationIn={'fadeIn'}
-			animationOut={'fadeOut'}
-			useNativeDriver
-		>
-			<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
-				<View style={styles.modalContainer}>
-					<View>
-						<Text style={styles.modalTitle}>{strings('approval_management.intro_title')}</Text>
-						<Text style={styles.modalDesc}>{strings('approval_management.intro_text')}</Text>
+	renderInfiniteDesc = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.infiniteDescVisible && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				onSwipeComplete={this.hideInfiniteDesc}
+				onBackButtonPress={this.hideInfiniteDesc}
+				onBackdropPress={this.hideInfiniteDesc}
+				backdropOpacity={0.7}
+				animationIn={'fadeIn'}
+				animationOut={'fadeOut'}
+				useNativeDriver
+			>
+				<TouchableWithoutFeedback onPress={this.hideInfiniteDesc}>
+					<View style={[styles.modalContainer, isDarkMode && baseStyles.darkBackground]}>
+						<View>
+							<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_title')}
+							</Text>
+							<Text style={[styles.modalDesc, isDarkMode && baseStyles.textDark]}>
+								{strings('approval_management.intro_text')}
+							</Text>
+						</View>
 					</View>
-				</View>
-			</TouchableWithoutFeedback>
-		</Modal>
-	);
+				</TouchableWithoutFeedback>
+			</Modal>
+		);
+	};
 
-	renderNoDetectedModal = () => (
-		<Modal
-			isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			backdropOpacity={0.7}
-			animationIn="fadeIn"
-			animationOut="fadeOut"
-			useNativeDriver
-		>
-			<View style={styles.detailModal}>
-				<Text style={styles.noDetectedTitle}>{strings('security.detect_no_security')}</Text>
-				<View style={styles.noDetectedLine} />
-				<TouchableOpacity
-					style={styles.noDetectedTouch}
-					onPress={() => {
-						this.setState({ showNoDetectedModal: false });
-					}}
-				>
-					<Text style={styles.tryLaterText}>{strings('security.try_it_later')}</Text>
-				</TouchableOpacity>
-			</View>
-		</Modal>
-	);
+	renderNoDetectedModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				backdropOpacity={0.7}
+				animationIn="fadeIn"
+				animationOut="fadeOut"
+				useNativeDriver
+			>
+				<View style={[styles.detailModal, isDarkMode && baseStyles.darkBackground]}>
+					<Text style={[styles.noDetectedTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('security.detect_no_security')}
+					</Text>
+					<View style={styles.noDetectedLine} />
+					<TouchableOpacity
+						style={styles.noDetectedTouch}
+						onPress={() => {
+							this.setState({ showNoDetectedModal: false });
+						}}
+					>
+						<Text style={[styles.tryLaterText, isDarkMode && baseStyles.textDark]}>
+							{strings('security.try_it_later')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+		);
+	};
 
 	renderApprovalView = () => {
 		const { selectedAddress, allEvents, asset } = this.props;
@@ -1209,9 +1283,12 @@ class FoldSecurityView extends PureComponent {
 		}
 		eventList.sort((a, b) => b.timestamp - a.timestamp);
 		const isRpc = util.isRpcChainType(asset.type);
+		const { isDarkMode } = this.context;
 		return (
 			<View>
-				<Text style={styles.approvalTitle}>{strings('approval_management.token_title')}</Text>
+				<Text style={[styles.approvalTitle, isDarkMode && baseStyles.textDark]}>
+					{strings('approval_management.token_title')}
+				</Text>
 				<Text style={styles.approvalHint}>{strings('approval_management.hint')}</Text>
 				<View style={styles.lineFull} />
 				{eventList.map((event, i) => (
@@ -1244,24 +1321,31 @@ class FoldSecurityView extends PureComponent {
 		this.setState({ infoModalVisible: false });
 	};
 
-	renderInfoModal = () => (
-		<Modal
-			isVisible={this.state.infoModalVisible && !this.props.isLockScreen}
-			onBackdropPress={this.hideInfoModal}
-			onBackButtonPress={this.hideInfoModal}
-			onSwipeComplete={this.hideInfoModal}
-			swipeDirection={'down'}
-			propagateSwipe
-			style={styles.bottomModal}
-		>
-			<View>
-				<View style={styles.infoModalWrapper}>
-					<Text style={styles.infoTitle}>{this.state.infoModalTitle}</Text>
-					<Text style={styles.infoDesc}>{this.state.infoModalDesc}</Text>
+	renderInfoModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.infoModalVisible && !this.props.isLockScreen}
+				onBackdropPress={this.hideInfoModal}
+				onBackButtonPress={this.hideInfoModal}
+				onSwipeComplete={this.hideInfoModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+			>
+				<View>
+					<View style={[styles.infoModalWrapper, isDarkMode && baseStyles.darkModalBackground]}>
+						<Text style={[styles.infoTitle, isDarkMode && baseStyles.textDark]}>
+							{this.state.infoModalTitle}
+						</Text>
+						<Text style={[styles.infoDesc, isDarkMode && baseStyles.subTextDark]}>
+							{this.state.infoModalDesc}
+						</Text>
+					</View>
 				</View>
-			</View>
-		</Modal>
-	);
+			</Modal>
+		);
+	};
 
 	shareSecurityLink = () => {
 		const chainId = getChainIdByType(this.props.asset.type);
@@ -1291,7 +1375,7 @@ class FoldSecurityView extends PureComponent {
 		}
 		const headerHeight = 56 + barHeight;
 		const moveHeight = height - 200 - headerHeight;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.wrapper}>
 				<View style={styles.padding_wrapper}>
@@ -1378,7 +1462,11 @@ class FoldSecurityView extends PureComponent {
 								<View style={styles.flexOne}>
 									{tabIndex === 0 && this.renderSecurityView()}
 									{tabIndex === 1 && (
-										<View style={styles.wrapContent}>{this.renderApprovalView()}</View>
+										<View
+											style={[styles.wrapContent, isDarkMode && baseStyles.darkInputBackground]}
+										>
+											{this.renderApprovalView()}
+										</View>
 									)}
 									<View style={styles.spaceHeight} />
 								</View>

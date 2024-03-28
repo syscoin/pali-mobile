@@ -9,10 +9,12 @@ import { util } from 'paliwallet-core';
 import Device from '../../../util/Device';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	backIcon: {
-		color: colors.black
+		color: colors.black,
+		marginTop: 4
 	},
 	shareIconIOS: {
 		marginHorizontal: -5
@@ -38,6 +40,8 @@ const styles = StyleSheet.create({
 });
 
 export default class SimpleWebview extends PureComponent {
+	static contextType = ThemeContext;
+
 	static propTypes = {
 		/**
 		 * react-navigation object used to switch between screens
@@ -64,6 +68,7 @@ export default class SimpleWebview extends PureComponent {
 
 	render() {
 		const { navigation } = this.props;
+		const { isDarkMode } = this.context;
 		const uri = navigation.getParam('url', null);
 		const title = navigation.getParam('title', '');
 		const share = navigation.getParam('dispatch', () => {
@@ -72,25 +77,37 @@ export default class SimpleWebview extends PureComponent {
 
 		if (uri) {
 			return (
-				<SafeAreaView style={baseStyles.flexGrow}>
+				<SafeAreaView style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkCardBackground]}>
 					<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 					<View style={styles.titleLayout}>
 						{Device.isAndroid() ? (
 							// eslint-disable-next-line react/jsx-no-bind
 							<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
-								<Image source={require('../../../images/back.png')} />
+								<EvilIcons
+									name="close"
+									size={24}
+									style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+								/>
 							</TouchableOpacity>
 						) : (
 							// eslint-disable-next-line react/jsx-no-bind
 							<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
-								<Image source={require('../../../images/defi_close.png')} />
+								<EvilIcons
+									name="close"
+									size={24}
+									style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+								/>
 							</TouchableOpacity>
 						)}
-						<Text style={styles.centeredTitle}>{title}</Text>
+						<Text style={[styles.centeredTitle, isDarkMode && baseStyles.textDark]}>{title}</Text>
 						{Device.isAndroid() ? (
 							// eslint-disable-next-line react/jsx-no-bind
 							<TouchableOpacity onPress={() => share()} style={styles.backButton}>
-								<Image source={require('../../../images/share.png')} />
+								<EvilIcons
+									name="share-apple"
+									size={32}
+									style={[styles.backIcon, isDarkMode && baseStyles.textDark]}
+								/>
 							</TouchableOpacity>
 						) : (
 							// eslint-disable-next-line react/jsx-no-bind
@@ -98,7 +115,7 @@ export default class SimpleWebview extends PureComponent {
 								<EvilIcons
 									name="share-apple"
 									size={32}
-									style={[styles.backIcon, styles.shareIconIOS]}
+									style={[styles.backIcon, styles.shareIconIOS, isDarkMode && baseStyles.textDark]}
 								/>
 							</TouchableOpacity>
 						)}

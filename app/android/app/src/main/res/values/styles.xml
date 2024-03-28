@@ -2,9 +2,8 @@
 
 	<!-- Base application theme. -->
 	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-		<!-- Customize your theme here. -->
-		<item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
-        <item name="android:windowIsTranslucent">true</item> 
-	</style>
-
+        <!-- Use light theme splash background -->
+        <item name="splashBackground">@color/splash_background</item>
+		<item name="android:windowBackground">@color/app_background_light</item>
+    </style>
 </resources>

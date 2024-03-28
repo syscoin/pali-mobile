@@ -15,6 +15,7 @@ import Device from '../../../util/Device';
 import { appendLanguage } from '../../../util/browser';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = {
 	wrapper: {
@@ -85,6 +86,7 @@ const styles = {
 };
 
 class UpdateCheck extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		updateConfig: PropTypes.object
@@ -126,10 +128,16 @@ class UpdateCheck extends PureComponent {
 	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={baseStyles.flexGrow} testID={'wallet-screen'}>
+			<SafeAreaView
+				style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-screen'}
+			>
 				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
 				<TitleBar
+					withBackground={isDarkMode}
+					titleStyle={{ color: isDarkMode && colors.white }}
 					title={strings('app_settings.update_check')}
 					onBack={() => {
 						this.props.navigation.pop();

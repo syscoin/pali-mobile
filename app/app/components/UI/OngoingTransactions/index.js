@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -34,6 +34,8 @@ import {
 	isRpcChainId
 } from '../../../util/ControllerUtils';
 import { ChainTypeBgOngoing, ChainTypes, getChainTypeName } from '../../../util/ChainTypeImages';
+
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -141,6 +143,7 @@ const styles = StyleSheet.create({
 const ROW_HEIGHT = 194;
 
 class OngoingTransactions extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		transactionMetas: PropTypes.array,
@@ -172,12 +175,17 @@ class OngoingTransactions extends PureComponent {
 
 	keyExtractor = item => item.id;
 
-	renderNoTx = () => (
-		<View style={styles.noTxView}>
-			<Image source={iconNotx} />
-			<Text style={styles.noTxText}>{strings('other.no_transaction_history')}</Text>
-		</View>
-	);
+	renderNoTx = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.noTxView}>
+				<Image source={iconNotx} />
+				<Text style={[styles.noTxText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.no_transaction_history')}
+				</Text>
+			</View>
+		);
+	};
 
 	exitChainId = curChainId => {
 		const { allChainId } = this.props;
@@ -350,6 +358,7 @@ class OngoingTransactions extends PureComponent {
 		const renderTo = renderFullAddress(transactionMeta.transaction.to);
 		const transactionHash = transactionMeta.transactionHash;
 		const isRpc = isRpcChainId(transactionMeta.chainId);
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity style={styles.itemWrapper} activeOpacity={1}>
 				{isRpc ? (
@@ -366,7 +375,9 @@ class OngoingTransactions extends PureComponent {
 					tx={transactionMeta}
 					selectedAddress={selectedAddress}
 				/>
-				<TxItem.Datetime style={styles.time}>{this.renderTxTime(transactionMeta)}</TxItem.Datetime>
+				<TxItem.Datetime style={[styles.time, isDarkMode && baseStyles.subTextDark]}>
+					{this.renderTxTime(transactionMeta)}
+				</TxItem.Datetime>
 				{isMigrated ? (
 					this.renderMigrated(transactionMeta)
 				) : (
@@ -374,12 +385,14 @@ class OngoingTransactions extends PureComponent {
 						originAddr={renderTo}
 						toAddr={renderTo?.substring(0, 20) + '...' + renderTo?.substring(29)}
 						showAlert={this.showCopyAlert}
+						style={isDarkMode && baseStyles.subTextDark}
 					/>
 				)}
 				<TxItem.Hash
 					originHash={transactionHash}
 					txHash={transactionHash?.substring(0, 18) + '...' + transactionHash?.substring(50)}
 					navToBrowser={() => this.navToBrowser(transactionMeta)}
+					style={isDarkMode && baseStyles.subTextDark}
 				/>
 				{this.renderAction(transactionMeta, extraInfo)}
 			</TouchableOpacity>
@@ -425,22 +438,28 @@ class OngoingTransactions extends PureComponent {
 		);
 	};
 
-	renderCancelButton = (transactionMeta, canceling) =>
-		canceling ? (
+	renderCancelButton = (transactionMeta, canceling) => {
+		const { isDarkMode } = this.context;
+		return canceling ? (
 			<View style={styles.canceling}>
-				<Text style={styles.cancelButtonText}>{strings('other.cancelling')}</Text>
+				<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.cancelling')}
+				</Text>
 			</View>
 		) : (
 			<TouchableOpacity
-				style={styles.cancelButton}
+				style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 				onPress={() => {
 					this.startCancel(transactionMeta);
 				}}
 				activeOpacity={0.8}
 			>
-				<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+				<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.cancel')}
+				</Text>
 			</TouchableOpacity>
 		);
+	};
 
 	renderMigrating = () => (
 		<>
@@ -452,6 +471,7 @@ class OngoingTransactions extends PureComponent {
 	render() {
 		const { transactionMetas } = this.props;
 		const { error, cancelTransactionMeta, cancelMessage } = this.state;
+		const { isDarkMode } = this.context;
 		const submittedTransaction = transactionMetas.filter(
 			meta =>
 				this.exitChainId(meta.chainId) &&
@@ -464,8 +484,10 @@ class OngoingTransactions extends PureComponent {
 		);
 		this.showListId = submittedTransaction.map(meta => meta.id);
 		return (
-			<View style={styles.wrapper}>
-				<Text style={styles.titleWrapper}>{strings('other.ongoing_tx')}</Text>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>
+				<Text style={[styles.titleWrapper, isDarkMode && baseStyles.textDark]}>
+					{strings('other.ongoing_tx')}
+				</Text>
 				<FlatList
 					getItemLayout={this.getItemLayout}
 					data={submittedTransaction}

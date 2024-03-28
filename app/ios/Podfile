@@ -50,6 +50,6 @@ target 'PaliWallet' do
   
   pod 'RNCharts', :path => '../node_modules/react-native-charts-wrapper'
   pod 'CryptoSwift', '~> 1.0'
-  
+  pod 'react-native-theme-switch-animation', :path => '../node_modules/react-native-theme-switch-animation'
   pod 'UMCPush'
 end

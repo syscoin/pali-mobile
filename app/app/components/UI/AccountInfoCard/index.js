@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { renderFullAddress } from '../../../util/address';
 import Device from '../../../util/Device';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	accountInformation: {
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
 });
 
 class AccountInfoCard extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * A string that represents the selected address
@@ -50,17 +52,22 @@ class AccountInfoCard extends PureComponent {
 	};
 
 	render() {
+		const { isDarkMode } = this.context;
 		const { selectedAddress } = this.props;
 		const address = renderFullAddress(selectedAddress);
 		return (
 			<View style={styles.accountInformation}>
 				<View style={styles.accountInfoRow}>
 					<View style={styles.accountNameAndAddress}>
-						<Text numberOfLines={1} style={styles.accountName}>
+						<Text numberOfLines={1} style={[styles.accountName, isDarkMode && baseStyles.textDark]}>
 							Account
 						</Text>
 						<View style={styles.view1} />
-						<Text numberOfLines={1} ellipsizeMode="middle" style={styles.accountAddress}>
+						<Text
+							numberOfLines={1}
+							ellipsizeMode="middle"
+							style={[styles.accountAddress, isDarkMode && baseStyles.subTextDark]}
+						>
 							{address}
 						</Text>
 					</View>

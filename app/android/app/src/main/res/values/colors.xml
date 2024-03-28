@@ -2,4 +2,6 @@
 <resources>
 	<color name="white">#0e223a</color>
 	<color name="lightgray">#EBEBED</color>
+	<color name="splash_background">#FFFFFF</color>
+	 <color name="app_background_light">#FFFFFF</color>
 </resources>

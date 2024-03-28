@@ -150,6 +150,15 @@ export function getIcCardResource(chainType) {
 	return require('../images/letter/card/ic_card_other.png');
 }
 
+export function getIcLogoResource(chainType) {
+	const letter = getRpcFirstLetter(chainType);
+	const index = getLetterIndex(letter);
+	if (index !== -1) {
+		return ic_tag[index];
+	}
+	return require('../images/ic_other_logo.png');
+}
+
 export function getIcTagResource(chainType) {
 	const letter = getRpcFirstLetter(chainType);
 	const index = getLetterIndex(letter);
@@ -185,7 +194,7 @@ export function getDefiIcon(chainType) {
 	);
 }
 
-export function getMoreIcon(chainType) {
+export function getMoreIcon(chainType, isDarkMode = false) {
 	const letter = getRpcFirstLetter(chainType);
 	const index = getLetterIndex(letter);
 	if (index === -1) {
@@ -197,13 +206,16 @@ export function getMoreIcon(chainType) {
 				width: 16,
 				height: 16,
 				borderWidth: 1.5,
-				borderColor: colors.$333333,
+				borderColor: isDarkMode ? colors.white : colors.$333333,
 				borderRadius: 16,
 				justifyContent: 'center',
 				alignItems: 'center'
 			}}
 		>
-			<Text style={{ fontSize: 8, color: colors.$333333, ...fontStyles.semibold }} allowFontScaling={false}>
+			<Text
+				style={{ fontSize: 8, color: isDarkMode ? colors.white : colors.$333333, ...fontStyles.semibold }}
+				allowFontScaling={false}
+			>
 				{letter.toUpperCase()}
 			</Text>
 		</View>

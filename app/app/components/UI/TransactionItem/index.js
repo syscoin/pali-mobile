@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { URL, util } from 'paliwallet-core';
 import { getEtherscanBaseUrl, getEtherscanTransactionUrl } from '../../../util/etherscan';
 import { toDateFormatSimple } from '../../../util/date';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 import iconDefault from '../../../images/img_default.png';
 import iconFire from '../../../images/ic_fire.png';
@@ -18,7 +19,7 @@ import Clipboard from '@react-native-community/clipboard';
 import { getRpcChainTypeByChainId, getRpcProviderExplorerUrl, isRpcChainId } from '../../../util/ControllerUtils';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { getIcTagByChainType, getIcLogoByChainType } from '../../../util/ChainTypeImages';
 
 const styles = StyleSheet.create({
 	txRow: {
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
 });
 
 const TransactionItem = props => {
+	const { isDarkMode } = useTheme();
 	const { style, showCopyAlert, item } = props;
 
 	const textW = (Device.getDeviceWidth() - 88 - 28 - 10) / 2;
@@ -226,20 +228,35 @@ const TransactionItem = props => {
 	const renderGasFee = () => (
 		<ImageCapInset
 			style={styles.cardWrapper}
-			source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+			source={
+				Device.isAndroid()
+					? isDarkMode
+						? { uri: 'default_card_dark' }
+						: { uri: 'default_card' }
+					: isDarkMode
+					? require('../../../images/default_card_dark.png')
+					: require('../../../images/default_card.png')
+			}
 			capInsets={baseStyles.capInsets}
 		>
 			<TouchableOpacity style={styles.cardBody} onPress={navToBrowser} activeOpacity={activeOpacity}>
 				<View style={styles.txRow}>
 					<Image style={styles.tokenIcon} source={imgFire} />
-					<Text style={styles.tokenSymbol}>{strings('other.gas_fee')}</Text>
+					<Text style={[styles.tokenSymbol, isDarkMode && baseStyles.textDark]}>
+						{strings('other.gas_fee')}
+					</Text>
 					<View style={baseStyles.flexGrow} />
-					<Text style={styles.tokenExpendAmount}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
-					<Image style={styles.networkIcon} source={getIcTagByChainType(item.type)} />
+					<Text style={styles.expendText}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
+					<Image
+						style={styles.networkIcon}
+						source={isDarkMode ? getIcLogoByChainType(item.type) : getIcTagByChainType(item.type)}
+					/>
 				</View>
 				<View style={[styles.txRow, styles.txBeginMargin]}>
 					<TxItem.TxItemStatus style={styles.stateWrapper} tx={item} />
-					<Text style={styles.hashText}>{formatText(item.transactionHash)}</Text>
+					<Text style={[styles.hashText, isDarkMode && baseStyles.textDark]}>
+						{formatText(item.transactionHash)}
+					</Text>
 					<TouchableOpacity
 						onPress={copyHash}
 						activeOpacity={activeOpacity}
@@ -249,7 +266,9 @@ const TransactionItem = props => {
 						<Image source={iconCopy} />
 					</TouchableOpacity>
 					<View style={baseStyles.flexGrow} />
-					<Text style={styles.txDatetime}>{toDateFormatSimple(item.time).toUpperCase()}</Text>
+					<Text style={[styles.txDatetime, isDarkMode && baseStyles.textDark]}>
+						{toDateFormatSimple(item.time).toUpperCase()}
+					</Text>
 				</View>
 			</TouchableOpacity>
 		</ImageCapInset>
@@ -270,7 +289,12 @@ const TransactionItem = props => {
 					/>
 				)}
 				<View style={styles.tokenSymbolLayout}>
-					<Text style={styles.tokenSymbol} numberOfLines={1} ellipsizeMode={'tail'} allowFontScaling={false}>
+					<Text
+						style={[styles.tokenSymbol, isDarkMode && baseStyles.textDark]}
+						numberOfLines={1}
+						ellipsizeMode={'tail'}
+						allowFontScaling={false}
+					>
 						{token.isApproval
 							? token.symbol + ' ' + strings('transactions.approval')
 							: token.symbol || strings('transactions.contract_executed')}
@@ -291,7 +315,7 @@ const TransactionItem = props => {
 						activeOpacity={activeOpacity}
 						hitSlop={styles.copyHashHitSlop}
 					>
-						<Text style={styles.fromText}>
+						<Text style={[styles.fromText, isDarkMode && baseStyles.textDark]}>
 							{strings(
 								token.isApproval
 									? 'other.to'
@@ -302,7 +326,11 @@ const TransactionItem = props => {
 									: 'other.from'
 							)}
 						</Text>
-						<Text style={styles.addressText} numberOfLines={1} ellipsizeMode={'tail'}>
+						<Text
+							style={[styles.addressText, isDarkMode && baseStyles.textDark]}
+							numberOfLines={1}
+							ellipsizeMode={'tail'}
+						>
 							{token.isApproval
 								? formatText(token.spender)
 								: !token.symbol
@@ -321,53 +349,74 @@ const TransactionItem = props => {
 				>
 					{token.showAmount ? token.formatAmount : ''}
 				</Text>
-				<Image style={styles.networkIcon} source={getIcTagByChainType(item.type)} />
+				<Image
+					style={styles.networkIcon}
+					source={isDarkMode ? getIcLogoByChainType(item.type) : getIcTagByChainType(item.type)}
+				/>
 			</View>
 		);
 	};
 
-	const renderNormalTx = () => (
-		<ImageCapInset
-			style={styles.cardWrapper}
-			source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
-			capInsets={baseStyles.capInsets}
-		>
-			<TouchableOpacity style={styles.cardBody} onPress={navToBrowser} activeOpacity={activeOpacity}>
-				{renderToken(item, -1)}
-				{item.tokenTxs?.map((token, index) => renderToken(token, index))}
-				{!!item.transactionHash && (
-					<View style={[styles.txRow, styles.txBeginMargin]}>
-						<TxItem.TxItemStatus style={styles.stateWrapper} tx={item} />
-						<Text style={styles.hashText}>{formatText(item.transactionHash)}</Text>
-						<TouchableOpacity
-							onPress={copyHash}
-							activeOpacity={activeOpacity}
-							hitSlop={styles.copyHashHitSlop}
-							style={styles.copyWrapper}
-						>
-							<Image source={iconCopy} />
-						</TouchableOpacity>
-						<View style={baseStyles.flexGrow} />
-						{item.gasValue === '0' && (
-							<Text style={styles.txDatetime}>{toDateFormatSimple(item.time).toUpperCase()}</Text>
-						)}
-					</View>
-				)}
-				{item.gasValue !== '0' && (
-					<View style={[styles.txRow, styles.txNormalMargin]}>
-						<Image style={styles.fireIcon} source={iconFire} />
-						<Text style={styles.hashText}>{'-' + item.gasValue + getTickerByType(item.type)}</Text>
-						<View style={baseStyles.flexGrow} />
-						<Text style={styles.txDatetime}>{toDateFormatSimple(item.time).toUpperCase()}</Text>
-					</View>
-				)}
-			</TouchableOpacity>
-		</ImageCapInset>
-	);
+	const renderNormalTx = () => {
+		return (
+			<ImageCapInset
+				style={[styles.cardWrapper]}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'default_card_dark' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/default_card_dark.png')
+						: require('../../../images/default_card.png')
+				}
+				capInsets={baseStyles.capInsets}
+			>
+				<TouchableOpacity style={styles.cardBody} onPress={navToBrowser} activeOpacity={activeOpacity}>
+					{renderToken(item, -1)}
+					{item.tokenTxs?.map((token, index) => renderToken(token, index))}
+					{!!item.transactionHash && (
+						<View style={[styles.txRow, styles.txBeginMargin]}>
+							<TxItem.TxItemStatus style={styles.stateWrapper} tx={item} />
+							<Text style={[styles.hashText, isDarkMode && baseStyles.textDark]}>
+								{formatText(item.transactionHash)}
+							</Text>
+							<TouchableOpacity
+								onPress={copyHash}
+								activeOpacity={activeOpacity}
+								hitSlop={styles.copyHashHitSlop}
+								style={styles.copyWrapper}
+							>
+								<Image source={iconCopy} />
+							</TouchableOpacity>
+							<View style={baseStyles.flexGrow} />
+							{item.gasValue === '0' && (
+								<Text style={[styles.txDatetime, isDarkMode && baseStyles.textDark]}>
+									{toDateFormatSimple(item.time).toUpperCase()}
+								</Text>
+							)}
+						</View>
+					)}
+					{item.gasValue !== '0' && (
+						<View style={[styles.txRow, styles.txNormalMargin]}>
+							<Image style={styles.fireIcon} source={iconFire} />
+							<Text style={[styles.hashText, isDarkMode && baseStyles.textDark]}>
+								{'-' + item.gasValue + getTickerByType(item.type)}
+							</Text>
+							<View style={baseStyles.flexGrow} />
+							<Text style={[styles.txDatetime, isDarkMode && baseStyles.textDark]}>
+								{toDateFormatSimple(item.time).toUpperCase()}
+							</Text>
+						</View>
+					)}
+				</TouchableOpacity>
+			</ImageCapInset>
+		);
+	};
 
 	const renderTime = () => (
 		<View style={styles.timeWrapper}>
-			<Text style={styles.timeText}>{item.formatTime}</Text>
+			<Text style={[styles.timeText, isDarkMode && baseStyles.textDark]}>{item.formatTime}</Text>
 		</View>
 	);
 

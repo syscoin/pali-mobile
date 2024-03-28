@@ -11,7 +11,8 @@ import { strings } from '../../../../locales/i18n';
 import { toLowerCaseEquals } from '../../../util/general';
 import ImageCapInset from '../ImageCapInset';
 import Device from '../../../util/Device';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { getIcLogoByChainType, getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const { width } = Dimensions.get('screen');
 
@@ -99,7 +100,9 @@ const styles = StyleSheet.create({
 	tagView: {
 		position: 'absolute',
 		left: 30,
-		top: 20
+		top: 20,
+		width: 20,
+		height: 20
 	},
 	symbol: {
 		flex: 1,
@@ -177,6 +180,7 @@ const recommendList = [
 ];
 
 class ApprovalList extends Component {
+	static contextType = ThemeContext;
 	static propTypes = {
 		updateTime: PropTypes.number,
 		tokens: PropTypes.array,
@@ -277,8 +281,14 @@ class ApprovalList extends Component {
 	};
 
 	renderChainFlag = (chainId, index) => {
+		const { isDarkMode } = this.context;
 		const chainType = getChainTypeByChainId(chainId);
-		return <Image style={styles.tagView} source={getIcTagByChainType(chainType)} />;
+		return (
+			<Image
+				style={styles.tagView}
+				source={isDarkMode ? getIcLogoByChainType(chainType) : getIcTagByChainType(chainType)}
+			/>
+		);
 	};
 
 	onItemTokenClick = token => {
@@ -289,13 +299,20 @@ class ApprovalList extends Component {
 	renderTokens() {
 		const { showInfiniteDesc } = this.props;
 		const { openIndex, tokenList } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.listWrapper}>
+			<View style={[styles.listWrapper, isDarkMode && baseStyles.darkBackground]}>
 				{tokenList.map((v, i, a) => (
 					<ImageCapInset
 						style={styles.cardWrapper}
 						source={
-							Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')
+							Device.isAndroid()
+								? isDarkMode
+									? { uri: 'dark800_card' }
+									: { uri: 'default_card' }
+								: isDarkMode
+								? require('../../../images/dark800_card.png')
+								: require('../../../images/default_card.png')
 						}
 						capInsets={baseStyles.capInsets}
 						key={i}
@@ -313,12 +330,14 @@ class ApprovalList extends Component {
 									/>
 									{this.renderChainFlag(v.chainId, i)}
 								</View>
-								<Text style={styles.symbol}>{v?.tokenInfo?.symbol}</Text>
-								<Text style={styles.approvalCount}>
+								<Text style={[styles.symbol, isDarkMode && baseStyles.textDark]}>
+									{v?.tokenInfo?.symbol}
+								</Text>
+								<Text style={[styles.approvalCount, isDarkMode && baseStyles.textDark]}>
 									{strings('approval_management.spender_count', { count: v?.approvals?.length })}
 								</Text>
 							</TouchableOpacity>
-							<View style={styles.divider} />
+							<View style={[styles.divider, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 							{openIndex !== i && (
 								<ApprovalEvent
 									chainId={v.chainId}
@@ -344,13 +363,17 @@ class ApprovalList extends Component {
 									onPress={this.openItem.bind(this, i)}
 								>
 									<Image style={styles.arrow} source={require('../../../images/more_open.png')} />
-									<Text style={styles.moreBtnText}>{strings('approval_management.view_more')}</Text>
+									<Text style={[styles.moreBtnText, isDarkMode & baseStyles.textDark]}>
+										{strings('approval_management.view_more')}
+									</Text>
 								</TouchableOpacity>
 							)}
 							{v.approvals.length > 1 && openIndex === i && (
 								<TouchableOpacity style={styles.moreBtn} activeOpacity={0.6} onPress={this.closeItem}>
 									<Image style={styles.arrow} source={require('../../../images/more_close.png')} />
-									<Text style={styles.moreBtnText}>{strings('approval_management.hide_more')}</Text>
+									<Text style={[styles.moreBtnText, isDarkMode & baseStyles.textDark]}>
+										{strings('approval_management.hide_more')}
+									</Text>
 								</TouchableOpacity>
 							)}
 						</View>
@@ -360,27 +383,36 @@ class ApprovalList extends Component {
 		);
 	}
 
-	renderEmpty = () => (
-		<View style={styles.emptyView}>
-			<Image source={require('../../../images/notx.png')} />
-			<Text style={styles.emptyText}>{strings('approval_management.empty')}</Text>
-		</View>
-	);
+	renderEmpty = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={[styles.emptyView, isDarkMode && baseStyles.darkBackground]}>
+				<Image source={require('../../../images/notx.png')} />
+				<Text style={[styles.emptyText, baseStyles.textDark]}>{strings('approval_management.empty')}</Text>
+			</View>
+		);
+	};
 
 	render() {
 		const { updateTime } = this.props;
 		const { loading, tokenList } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<TouchableOpacity style={styles.content} activeOpacity={1}>
-				<Text style={styles.listTitle}>{strings('approval_management.list_title')}</Text>
+			<TouchableOpacity style={[styles.content, isDarkMode && baseStyles.darkBackground]} activeOpacity={1}>
+				<Text style={[styles.listTitle, isDarkMode && baseStyles.textDark]}>
+					{strings('approval_management.list_title')}
+				</Text>
 				<View style={styles.hintRow}>
-					<Text style={styles.hintText}>{strings('approval_management.hint')}</Text>
+					<Text style={[styles.hintText, isDarkMode && baseStyles.subTextDark]}>
+						{strings('approval_management.hint')}
+					</Text>
 				</View>
 				{(loading || updateTime === 0) && (
 					<View style={styles.loading}>
 						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
+
 				{this.renderTokens()}
 				{!loading && updateTime !== 0 && tokenList.length === 0 && this.renderEmpty()}
 			</TouchableOpacity>

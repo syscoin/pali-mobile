@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { fontStyles, colors } from '../../../styles/common';
+import { fontStyles, colors, baseStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import MoveIndicator from '../MoveIndicator';
 import imgShadow from '../../../images/shadow.png';
@@ -15,6 +15,7 @@ import { ChainType, LockType, OutgoingMessageState, util, NetworkConfig } from '
 import { renderError } from '../../../util/error';
 import { getChainTypeName } from '../../../util/ChainTypeImages';
 import { getNetworkConfig } from '../../../util/ControllerUtils';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const activeOpacity = 0.8;
 const headerColor = '#1E1F20';
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
 });
 
 class Locked extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		asset: PropTypes.object,
 		onClose: PropTypes.func,
@@ -173,13 +175,18 @@ class Locked extends PureComponent {
 	renderAction = () => {
 		const { loading } = this.state;
 		const { type, canClaim, waitDay } = this.getClaimInfo();
+		const { isDarkMode } = this.context;
 		if (canClaim) {
 			return (
 				<View style={styles.bottomArea}>
-					<Text style={styles.inLock}>{strings('claim.lock_finished')}</Text>
+					<Text style={[styles.inLock, isDarkMode && baseStyles.textDark]}>
+						{strings('claim.lock_finished')}
+					</Text>
 					<Image style={styles.imgClock} source={imgFinished} />
-					<Text style={styles.remainTitle}>{strings('claim.time_remaining')}</Text>
-					<Text style={styles.clainHour}>
+					<Text style={[styles.remainTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('claim.time_remaining')}
+					</Text>
+					<Text style={[styles.clainHour, isDarkMode && baseStyles.textDark]}>
 						{type === ChainType.Polygon ? strings('claim.claim_minutes') : strings('claim.claim_days')}
 					</Text>
 					<TouchableOpacity
@@ -191,7 +198,9 @@ class Locked extends PureComponent {
 						{loading ? (
 							<ActivityIndicator size="small" color="white" />
 						) : (
-							<Text style={styles.claimNowText}>{strings('claim.claim_now')}</Text>
+							<Text style={[styles.claimNowText, isDarkMode && baseStyles.textDark]}>
+								{strings('claim.claim_now')}
+							</Text>
 						)}
 					</TouchableOpacity>
 				</View>
@@ -200,12 +209,16 @@ class Locked extends PureComponent {
 
 		return (
 			<View style={styles.bottomArea}>
-				<Text style={styles.inLock}>{strings('claim.still_lock')}</Text>
+				<Text style={[styles.inLock, isDarkMode && baseStyles.textDark]}>{strings('claim.still_lock')}</Text>
 				<Image style={styles.imgClock} source={imgClock} />
 				{type === ChainType.Polygon ? (
-					<Text style={styles.remainText}>{strings('claim.claim_polygon')}</Text>
+					<Text style={[styles.remainText, isDarkMode && baseStyles.textDark]}>
+						{strings('claim.claim_polygon')}
+					</Text>
 				) : (
-					<Text style={styles.remainText}>{strings('claim.claim_wait_day', { waitDay })}</Text>
+					<Text style={[styles.remainText, isDarkMode && baseStyles.textDark]}>
+						{strings('claim.claim_wait_day', { waitDay })}
+					</Text>
 				)}
 			</View>
 		);
@@ -230,14 +243,18 @@ class Locked extends PureComponent {
 		} = this.props;
 		const { error } = this.state;
 		const oldDate = timestamp && new Date(Number(timestamp) * 1000);
-
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.wrapper}>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkInputBackground]}>
 				<TouchableOpacity style={styles.scrollView} activeOpacity={1} keyboardShouldPersistTaps="handled">
-					<Text style={styles.headerText}>
+					<Text style={[styles.headerText, isDarkMode && baseStyles.textDark]}>
 						{strings('claim.migrated_to_l1', { network: this.getNetwork(chainId) })}
 					</Text>
-					{timestamp && <Text style={styles.timeText}>{oldDate.toLocaleString()}</Text>}
+					{timestamp && (
+						<Text style={[styles.timeText, isDarkMode && baseStyles.textDark]}>
+							{oldDate.toLocaleString()}
+						</Text>
+					)}
 					<MoveIndicator asset={asset} />
 					<Image style={styles.shadowImage} source={imgShadow} />
 

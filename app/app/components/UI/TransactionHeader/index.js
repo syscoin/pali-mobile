@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, Image } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import WebsiteIcon from '../WebsiteIcon';
 import { getHost } from '../../../util/browser';
@@ -9,7 +9,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AppConstants from '../../../core/AppConstants';
 import { renderShortAddress } from '../../../util/address';
 import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
-
+import { useTheme } from '../../../theme/ThemeProvider';
 import img_approve from '../../../images/img_approve.png';
 import img_claim from '../../../images/imtoken.png';
 import TransactionTypes from '../../../core/TransactionTypes';
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
  * PureComponent that renders the transaction header used for signing, granting permissions and sending
  */
 const TransactionHeader = props => {
+	const { isDarkMode } = useTheme();
 	const originIsDeeplink =
 		props.currentPageInformation.origin === ORIGIN_DEEPLINK ||
 		props.currentPageInformation.origin === ORIGIN_QR_CODE;
@@ -144,7 +145,7 @@ const TransactionHeader = props => {
 			title = strings('other.move_to_l2');
 		}
 
-		return <Text style={styles.domainUrl}>{title}</Text>;
+		return <Text style={[styles.domainUrl, isDarkMode && baseStyles.textDark]}>{title}</Text>;
 	};
 
 	return (

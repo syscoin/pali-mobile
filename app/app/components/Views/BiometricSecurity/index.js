@@ -10,6 +10,7 @@ import { ChooseTypeCreate, ChooseTypeImportPrivateKey, ChooseTypeImportSeedPhras
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Device from '../../../util/Device';
 import SecureKeychain from '../../../core/SecureKeychain';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 import contextImage from '../../../images/img_create_biometric.png';
 import imgTouchId from '../../../images/ic_touchid.png';
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
 const PASSCODE_NOT_SET_ERROR = 'Error: Passcode not set.';
 
 class BiometricSecurity extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object
 	};
@@ -199,8 +201,10 @@ class BiometricSecurity extends PureComponent {
 
 	render() {
 		const { chooseType, loading } = this.state;
+		const { isDarkMode } = this.context;
+
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View style={styles.wrapper}>
 					<MStatusBar navigation={this.props.navigation} />
 					<TitleBar
@@ -215,8 +219,10 @@ class BiometricSecurity extends PureComponent {
 						resetScrollToCoords={{ x: 0, y: 0 }}
 						keyboardShouldPersistTaps="handled"
 					>
-						<Text style={styles.title}>{strings('choose_password.biometric_security')}</Text>
-						<Text style={styles.secondaryTitle}>
+						<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+							{strings('choose_password.biometric_security')}
+						</Text>
+						<Text style={[styles.secondaryTitle, isDarkMode && baseStyles.subTextDark]}>
 							{strings('choose_password.biometric_security_hint', { biometric: this.getBiometricStr() })}
 						</Text>
 						<View style={baseStyles.flexGrow} />
@@ -233,13 +239,17 @@ class BiometricSecurity extends PureComponent {
 								<ActivityIndicator size="small" color="white" />
 							) : (
 								<>
-									<Text style={styles.createButtonText}>{this.getEnableBiometricStr()}</Text>
+									<Text style={[styles.createButtonText, isDarkMode && baseStyles.textDark]}>
+										{this.getEnableBiometricStr()}
+									</Text>
 									<Image style={styles.biometricsLogo} source={this.getBiometricLogo()} />
 								</>
 							)}
 						</TouchableOpacity>
 						<TouchableOpacity activeOpacity={1} style={styles.skipButtonWrapper} onPress={this.onSkip}>
-							<Text style={styles.skipButtonText}>{strings('other.skip')}</Text>
+							<Text style={[styles.skipButtonText, isDarkMode && baseStyles.subTextDark]}>
+								{strings('other.skip')}
+							</Text>
 						</TouchableOpacity>
 
 						<PromptView

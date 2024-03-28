@@ -16,8 +16,10 @@ import {
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { WebView } from 'react-native-webview';
+import Icon from '../../../components/UI/Icon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { useTheme } from '../../../theme/ThemeProvider';
 import Engine from '../../../core/Engine';
 import WebviewProgressBar from '../../UI/WebviewProgressBar';
 import { colors, baseStyles, fontStyles, activeOpacity } from '../../../styles/common';
@@ -28,6 +30,7 @@ import {
 	JS_WEBVIEW_URL,
 	SPA_urlChangeListener
 } from '../../../util/browserScripts';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { strings } from '../../../../locales/i18n';
 import WebviewError from '../../UI/WebviewError';
 import { addFavouriteDapp, removeFavouriteDapp, updateTab } from '../../../actions/browser';
@@ -47,6 +50,8 @@ import { resemblesAddress } from '../../../util/address';
 import { ethErrors } from 'eth-json-rpc-errors';
 import { matchDefaultChainType, matchUserSelectedChainType, matchWhitelistDapps } from '../../../util/walletconnect';
 import HomePage from '../../UI/HomePage';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+
 import Modal from 'react-native-modal';
 import Clipboard from '@react-native-community/clipboard';
 import { showAlert } from '../../../actions/alert';
@@ -74,7 +79,17 @@ const API_WHITE_LIST = [
 	'community.gopocket.xyz'
 ];
 
-const POPULAR_HOSTS = ['baidu.com', 'google.com', 'google.com.hk', 'google.com.tw', 'google.cn', ...API_WHITE_LIST];
+const POPULAR_HOSTS = [
+	'baidu.com',
+	'app.pegasys.fi',
+	'luxy.io',
+	'google.com',
+	'google.com.hk',
+	'google.com.tw',
+	'google.cn',
+	'chainge.finance',
+	...API_WHITE_LIST
+];
 
 const checkSecurityUrl = 'https://go.morpheuscommunity.net/api/v1/index/checkUrl';
 const checkSecurityUrlForTesting = 'https://go.libsss.com/api/v1/index/checkUrl';
@@ -360,6 +375,7 @@ const BrowserTab = props => {
 	const [refreshing, setRefreshing] = useState(false);
 	const [refreshEnable, setRefreshEnable] = useState(Device.isIos());
 	const [initListener, setInitListener] = useState(false);
+	const { isDarkMode } = useTheme();
 
 	const isTabActive = useCallback(() => getActiveTabId() === props.tabId, [props.tabId]);
 
@@ -1388,6 +1404,8 @@ const BrowserTab = props => {
 			require('../../../images/ic_defi_network.png'),
 			require('../../../images/ic_defi_copy.png')
 		];
+		const toolIconSource = ['home', 'staro', 'sync', 'close', 'export', 'earth', 'copy1'];
+
 		const toolName = [
 			'browser.home',
 			'browser.favourite',
@@ -1419,7 +1437,7 @@ const BrowserTab = props => {
 				useNativeDriver
 			>
 				<View>
-					<View style={styles.moreModalWrapper}>
+					<View style={[styles.moreModalWrapper, isDarkMode && baseStyles.darkBackground]}>
 						<View style={styles.moreModalContainer}>
 							<ScrollView
 								horizontal
@@ -1478,8 +1496,19 @@ const BrowserTab = props => {
 												}
 											}}
 										>
-											<Image source={toolImgSource[index]} />
-											<Text style={styles.text1} allowFontScaling={false}>
+											{isDarkMode ? (
+												<AntIcon
+													name={toolIconSource[index]}
+													color={isDarkMode ? colors.white : colors.paliGrey200}
+													size={20}
+												/>
+											) : (
+												<Image source={toolImgSource[index]} />
+											)}
+											<Text
+												style={[styles.text1, isDarkMode && baseStyles.textDark]}
+												allowFontScaling={false}
+											>
 												{strings(item)}
 											</Text>
 										</TouchableOpacity>
@@ -1489,7 +1518,9 @@ const BrowserTab = props => {
 							<View style={styles.dappLine} />
 							<View style={styles.dappNetLayout}>
 								<View>
-									<Text style={styles.dappTitle}>{strings('browser.dapp_network')}</Text>
+									<Text style={[styles.dappTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('browser.dapp_network')}
+									</Text>
 									<ScrollView
 										ref={networkScrollviewRef}
 										horizontal
@@ -1520,6 +1551,7 @@ const BrowserTab = props => {
 														style={[
 															styles.dappNetTouchItem,
 															styles.itemSpace,
+															isDarkMode && baseStyles.darkCardBackground,
 															chain_type.current === item &&
 																styles.dappNetTouchItemSeleted
 														]}
@@ -1537,6 +1569,7 @@ const BrowserTab = props => {
 															numberOfLines={1}
 															style={[
 																styles.dappNetName,
+																isDarkMode && baseStyles.textDark,
 																chain_type.current === item && styles.dappNetNameSeleted
 															]}
 														>
@@ -1553,7 +1586,9 @@ const BrowserTab = props => {
 							<View style={styles.dappLine} />
 							<View style={styles.dappAccountLayout}>
 								<View>
-									<Text style={styles.dappTitle}>{strings('browser.dapp_account')}</Text>
+									<Text style={[styles.dappTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('browser.dapp_account')}
+									</Text>
 									<ScrollView
 										ref={addressScrollviewRef}
 										horizontal
@@ -1575,6 +1610,7 @@ const BrowserTab = props => {
 													style={[
 														styles.dappAccountTouchItem,
 														styles.itemSpace,
+														isDarkMode && baseStyles.darkCardBackground,
 														index === firstItem && styles.dappAccountTouchItemSeleted
 													]}
 													onPress={() => {
@@ -1586,6 +1622,7 @@ const BrowserTab = props => {
 													<Text
 														style={[
 															styles.dappAccountName,
+															isDarkMode && baseStyles.textDark,
 															index === firstItem && styles.dappAccountNameSeleted
 														]}
 														allowFontScaling={false}
@@ -1596,6 +1633,7 @@ const BrowserTab = props => {
 													<Text
 														style={[
 															styles.dappAccountAddress,
+															isDarkMode && baseStyles.subTextDark,
 															index === firstItem && styles.dappAccountAddressSeleted
 														]}
 														allowFontScaling={false}
@@ -1644,56 +1682,80 @@ const BrowserTab = props => {
 		add_chain_request.current = null;
 	};
 
-	const renderAddChainModal = () => (
-		<Modal
-			isVisible={!props.isLockScreen}
-			statusBarTranslucent
-			style={styles.bottomModal}
-			animationType="fade"
-			useNativeDriver
-		>
-			<View style={styles.addChainModalWrapper}>
-				<Text style={styles.addChainModalTitle}>{strings('app_settings.add_custom_network_label')}</Text>
-				<View style={styles.addChainModalSubTitleWrapper}>
-					<NFTImage
-						style={styles.addChainModalSubIcon}
-						imageUrl={icon.current}
-						defaultImg={require('../../../images/browser.png')}
-					/>
-					<Text style={styles.addChainModalSubTitle}>{url}</Text>
+	const renderAddChainModal = () => {
+		return (
+			<Modal
+				isVisible={!props.isLockScreen}
+				statusBarTranslucent
+				style={styles.bottomModal}
+				animationType="fade"
+				useNativeDriver
+			>
+				<View style={[styles.addChainModalWrapper, isDarkMode && baseStyles.darkModalBackground]}>
+					<Text style={[styles.addChainModalTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('app_settings.add_custom_network_label')}
+					</Text>
+					<View style={styles.addChainModalSubTitleWrapper}>
+						<NFTImage
+							style={styles.addChainModalSubIcon}
+							imageUrl={icon.current}
+							defaultImg={require('../../../images/browser.png')}
+						/>
+						<Text style={styles.addChainModalSubTitle}>{url}</Text>
+					</View>
+					<View style={styles.addChainModalLine} />
+					<View style={styles.addChainModalItemWrapper}>
+						<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('app_settings.network_name_label')}
+						</Text>
+						<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+							{add_chain_request.current?.nickname}
+						</Text>
+					</View>
+					<View style={styles.addChainModalItemWrapper}>
+						<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('app_settings.network_rpc_url_label')}
+						</Text>
+						<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+							{add_chain_request.current?.rpcTarget}
+						</Text>
+					</View>
+					<View style={styles.addChainModalItemWrapper}>
+						<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('app_settings.network_chain_id_label')}
+						</Text>
+						<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+							{add_chain_request.current?.chainId}
+						</Text>
+					</View>
+					<View style={styles.addChainModalItemWrapper}>
+						<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('app_settings.network_symbol_label')}
+						</Text>
+						<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+							{add_chain_request.current?.ticker}
+						</Text>
+					</View>
+					<View style={styles.addChainModalItemWrapper}>
+						<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
+							{strings('app_settings.network_explorer_label')}
+						</Text>
+						<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+							{add_chain_request.current?.explorerUrl}
+						</Text>
+					</View>
+					<View style={styles.addChainModalActionWrapper}>
+						<TouchableOpacity style={styles.addChainModalCancel} onPress={onAddChainModalCancel}>
+							<Text style={styles.addChainModalCancelText}>{strings('transaction.reject')}</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.addChainModalConfirm} onPress={onAddChainModalConfirm}>
+							<Text style={styles.addChainModalConfirmText}>{strings('transaction.confirm')}</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-				<View style={styles.addChainModalLine} />
-				<View style={styles.addChainModalItemWrapper}>
-					<Text style={styles.addChainModalItemTitle}>{strings('app_settings.network_name_label')}</Text>
-					<Text style={styles.addChainModalItemContent}>{add_chain_request.current?.nickname}</Text>
-				</View>
-				<View style={styles.addChainModalItemWrapper}>
-					<Text style={styles.addChainModalItemTitle}>{strings('app_settings.network_rpc_url_label')}</Text>
-					<Text style={styles.addChainModalItemContent}>{add_chain_request.current?.rpcTarget}</Text>
-				</View>
-				<View style={styles.addChainModalItemWrapper}>
-					<Text style={styles.addChainModalItemTitle}>{strings('app_settings.network_chain_id_label')}</Text>
-					<Text style={styles.addChainModalItemContent}>{add_chain_request.current?.chainId}</Text>
-				</View>
-				<View style={styles.addChainModalItemWrapper}>
-					<Text style={styles.addChainModalItemTitle}>{strings('app_settings.network_symbol_label')}</Text>
-					<Text style={styles.addChainModalItemContent}>{add_chain_request.current?.ticker}</Text>
-				</View>
-				<View style={styles.addChainModalItemWrapper}>
-					<Text style={styles.addChainModalItemTitle}>{strings('app_settings.network_explorer_label')}</Text>
-					<Text style={styles.addChainModalItemContent}>{add_chain_request.current?.explorerUrl}</Text>
-				</View>
-				<View style={styles.addChainModalActionWrapper}>
-					<TouchableOpacity style={styles.addChainModalCancel} onPress={onAddChainModalCancel}>
-						<Text style={styles.addChainModalCancelText}>{strings('transaction.reject')}</Text>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.addChainModalConfirm} onPress={onAddChainModalConfirm}>
-						<Text style={styles.addChainModalConfirmText}>{strings('transaction.confirm')}</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
-		</Modal>
-	);
+			</Modal>
+		);
+	};
 
 	const panResponder = PanResponder.create({
 		onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -1819,8 +1881,9 @@ const BrowserTab = props => {
 	/**
 	 * Main render
 	 */
+
 	return (
-		<View style={[styles.wrapper]}>
+		<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 			<View style={styles.webview}>
 				{(!showHomepage || animToHome) && !!entryScriptWeb3 && (
 					<ScrollView
@@ -1842,7 +1905,8 @@ const BrowserTab = props => {
 							style={[
 								styles.webview,
 								// eslint-disable-next-line react-native/no-inline-styles
-								animToHome && { left: Device.getDeviceWidth(), index: 10000 }
+								animToHome && { left: Device.getDeviceWidth(), index: 10000 },
+								isDarkMode && baseStyles.darkBackground
 							]}
 							onLoadStart={onLoadStart}
 							onLoadEnd={onLoadEnd}

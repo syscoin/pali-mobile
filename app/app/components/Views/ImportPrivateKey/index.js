@@ -10,6 +10,7 @@ import { activeOpacity, baseStyles, colors, fontStyles } from '../../../styles/c
 import Engine from '../../../core/Engine';
 import { importAccountFromPrivateKey, parsePrivateKey } from '../../../util/address';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { EXISTING_USER, TRUE } from '../../../constants/storage';
 import { util } from 'paliwallet-core';
 import { toggleShowHint } from '../../../actions/hint';
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
 });
 
 class ImportPrivateKey extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * The navigator object
@@ -167,8 +169,9 @@ class ImportPrivateKey extends PureComponent {
 	render() {
 		const { privateKey, loading, wrongPrivateKey } = this.state;
 		const canSubmit = privateKey && privateKey.length > 0;
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<View style={styles.wrapper}>
 					<MStatusBar navigation={this.props.navigation} />
 					<TitleBar title={strings('onboarding.import_wallet')} onBack={this.onBack} />
@@ -179,14 +182,18 @@ class ImportPrivateKey extends PureComponent {
 						keyboardShouldPersistTaps="handled"
 						showsVerticalScrollIndicator={false}
 					>
-						<Text style={styles.title}>{strings('import_from_private_key.enter_private_key')}</Text>
-						<Text style={styles.secondaryTitle}>
+						<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+							{strings('import_from_private_key.enter_private_key')}
+						</Text>
+						<Text style={[styles.secondaryTitle, isDarkMode && baseStyles.subTextDark]}>
 							{strings('import_from_private_key.enter_private_key_tips')}
 						</Text>
 						<View style={styles.newPwdContent}>
-							<Text style={styles.hintLabel}>{strings('import_from_private_key.private_key')}</Text>
+							<Text style={[styles.hintLabel, isDarkMode && baseStyles.textDark]}>
+								{strings('import_from_private_key.private_key')}
+							</Text>
 							<TextInput
-								style={styles.input}
+								style={[styles.input, isDarkMode && baseStyles.textDark]}
 								value={privateKey}
 								onChangeText={this.onPrivateKeyChange}
 								placeholder={strings('import_from_private_key.private_key_placeholder')}

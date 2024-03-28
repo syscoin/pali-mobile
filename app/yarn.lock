@@ -12379,6 +12379,11 @@ react-native-get-random-values@^1.8.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
+react-native-global-props@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-global-props/-/react-native-global-props-1.1.5.tgz#443e0ffc89d5402fa20ebedf37bcbca6d861c34d"
+  integrity sha512-QDeAdRel6zyJfbgyFxZi9QXZe78OdlANxJae0rJn76uTqdt/A+iWBVjJy3NmaN/fpKy0uV0HhW6Hu4xM0QCisQ==
+
 react-native-haptic-feedback@1.14.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-1.14.0.tgz#b50f49dedda4980b3c37c5780823f753cf3ee717"
@@ -12677,6 +12682,11 @@ react-native-tcp@aprock/react-native-tcp#11/head:
     ip-regex "^4.1.0"
     process "^0.11.9"
     util "^0.12.1"
+
+react-native-theme-switch-animation@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-theme-switch-animation/-/react-native-theme-switch-animation-0.6.0.tgz#4fa99d572ee683dbdfc9c3b2f088f77a1ecd113b"
+  integrity sha512-XC6xb1J6Pgq4XQFsq6KdxJugRHjwsj04qTDh9rZdi1mkNOy9QKtz7wCQHoK6q8CBZtF3R/sergCw9wZhIRXK3Q==
 
 react-native-threads@^0.0.19:
   version "0.0.19"

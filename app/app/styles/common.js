@@ -15,8 +15,12 @@ export const colors = {
 	fontWarning: '#f66a0a',
 	primaryFox: '#f66a0a',
 	black: '#000000',
+
 	white: '#FFFFFF',
 	white100: '#F9FAFB',
+	paliGrey100: '#F9F9F9',
+	paliGrey200: '#A2A5AB',
+	paliGrey300: '#808795',
 	grey450: '#8E8E93',
 	grey700: '#3C3F42',
 	grey600: '#736F73',
@@ -31,6 +35,9 @@ export const colors = {
 	grey: '#333333',
 	red: '#D73A49',
 	red000: '#fcf2f3',
+	paliBlue100: '#C9DEFF',
+	paliBlue400: '#4D76B8',
+	paliBlue900: '#061120',
 	blue: '#037dd6',
 	blue000: '#eaf6ff',
 	blue200: '#75C4FD',
@@ -38,6 +45,11 @@ export const colors = {
 	blue600: '#0260A4',
 	blue700: '#0074C8',
 	deepBlue200: '#A0B1D1',
+	deepBlue400: '#677CA1',
+	deepBlue800: '#223552',
+
+	greenModal100: '#83B100',
+	greenModal200: '#83B200',
 	green600: '#1e7e34',
 	green500: '#28a745',
 	green400: '#28A745',
@@ -56,11 +68,16 @@ export const colors = {
 	brandPink300: '#ff3E92',
 	brandPink500: '#FA005D',
 	brandBlue900: '#335e84',
-	brandBlue600: '#4da2cf',
+	brandBlue800: '#07152A',
+	brandBlue700: '#111E33',
+	brandBlue600: '#162742',
+	brandBlue500: '#1E365C',
+	brandBlue400: '#4da2cf',
 	spinnerColor: '#037DD6',
 	success: '#219E37',
 	dimmed: '#00000080',
 	transparent: 'transparent',
+	buttonDisabled: 'rgba(255, 62, 145, 0.5)',
 	lightOverlay: 'rgba(0,0,0,.2)',
 	overlay: 'rgba(0,0,0,.5)',
 	darkAlert: 'rgba(0,0,0,.75)',
@@ -80,8 +97,10 @@ export const colors = {
 	$888888: '#888888',
 	$9B989B: '#9B989B',
 	$4CD964: '#4CD964',
+	$4CA1CF: '#4CA1CF',
 	$D20058: '#D20058',
-	blackAlpha300: "'rgba(0, 0, 0, 0.16)'",
+	blackAlpha200: 'rgba(0, 0, 0, 0.08)',
+	blackAlpha300: 'rgba(0, 0, 0, 0.16)',
 	brandPink300Alpha: 'rgba(254, 110, 145, 0.14)',
 	brandPink300Alpha3: 'rgba(254, 110, 145, 0.3)',
 	brandPink30026: '#FE6E9126',
@@ -151,11 +170,13 @@ export const colors = {
 	$23A1F0: '#23A1F0',
 	$F3F3F3: '#F3F3F3',
 	$999999: '#999999',
+	white05: 'rgba(255,255,255,.5)',
 	white08: 'rgba(255,255,255,.8)',
 	$EFEFEF: '#EFEFEF',
 	loaderOverlay: 'rgba(0,0,0,.3)',
 	white06: 'rgba(255,255,255,.6)',
 	white02: 'rgba(255,255,255,.2)',
+	white016: 'rgba(255, 255, 255, 0.16)',
 	black02: 'rgba(0,0,0,.2)',
 	$FEFEFE: '#FEFEFE',
 	$F9F9F9: '#F9F9F9',
@@ -164,11 +185,13 @@ export const colors = {
 	$F8B671: '#F8B671',
 	$C46A4F: '#C46A4F',
 	$3D5BFF: '#3D5BFF',
+	$4D76B8: '#4D76B8',
 	$514570: '#514570',
 	errorBg: 'rgba(252, 101, 100, .1)',
 	correctBg: 'rgba(9, 194, 133, .1)',
 	$E1E3E8: '#E1E3E8',
 	$5092FF1F: '#5092FF1F',
+	$ccc: '#ccc',
 	$5092FF: '#5092FF',
 	$F8F8F8: '#F8F8F8',
 	$3C3D40: '#3C3D40',
@@ -201,6 +224,38 @@ export const baseStyles = {
 	flexStatic: {
 		flex: 0
 	},
+	darkCancelButton: { borderColor: colors.white, color: 'white' },
+	darkConfirmButton: {
+		borderColor: colors.white,
+		backgroundColor: colors.white,
+		color: colors.$4CA1CF
+	},
+	darkConfirmText: {
+		color: colors.$4CA1CF
+	},
+	darkBackground: {
+		backgroundColor: colors.brandBlue700
+	},
+	darkInputBackground: {
+		backgroundColor: colors.brandBlue800
+	},
+	darkModalBackground: {
+		backgroundColor: colors.paliBlue900
+	},
+	darkBackground600: {
+		backgroundColor: colors.brandBlue600
+	},
+	darkCardBackground: {
+		backgroundColor: colors.brandBlue500
+	},
+	darkActionBackground: {
+		backgroundColor: colors.deepBlue800
+	},
+	lightBlueBackground: {
+		backgroundColor: colors.$4CA1CF
+	},
+	textDark: { color: 'white' },
+	subTextDark: { color: colors.paliGrey200 },
 	shadow: {
 		shadowOffset: { width: 0, height: 5 },
 		shadowOpacity: 0.08,
@@ -230,19 +285,19 @@ export const baseStyles = {
 export const fontStyles = {
 	normal: {
 		fontWeight: 'normal',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	medium: {
 		fontWeight: Device.isAndroid() ? 'bold' : '500',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	semibold: {
 		fontWeight: Device.isAndroid() ? 'bold' : '600',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	},
 	bold: {
 		fontWeight: 'bold',
-		fontFamily: 'System'
+		fontFamily: 'Poppins'
 	}
 };
 

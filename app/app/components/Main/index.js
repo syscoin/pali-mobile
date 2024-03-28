@@ -21,7 +21,7 @@ import Approval from '../Views/Approval';
 import NotificationManager from '../../core/NotificationManager';
 import Engine from '../../core/Engine';
 import AppConstants from '../../core/AppConstants';
-import { colors, fontStyles } from '../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../styles/common';
 import WC2Manager from '../../../app/core/WalletConnect/WalletConnectV2';
 import FadeOutOverlay from '../UI/FadeOutOverlay';
 import {
@@ -88,6 +88,8 @@ import { toggleShowHint } from '../../actions/hint';
 import { logDebug } from 'paliwallet-core/dist/util';
 import SecureKeychain from '../../core/SecureKeychain';
 import { isMainnetChain } from '../../util/ControllerUtils';
+import { useTheme } from '../../theme/ThemeProvider';
+import AntIcon from 'react-native-vector-icons/AntDesign';
 
 const styles = StyleSheet.create({
 	flex: {
@@ -310,6 +312,7 @@ const Main = props => {
 	const [notificationTitle, setNotificationTitle] = useState('');
 	const [notificationMessage, setNotificationMessage] = useState('');
 	const [notificationUrl, setNotificationUrl] = useState('');
+	const { isDarkMode } = useTheme();
 
 	const pollForIncomingTransactions = useCallback(async () => {
 		await Engine.refreshTransactionHistory();
@@ -586,7 +589,7 @@ const Main = props => {
 			isVisible={signMessage && !props.isLockScreen}
 			animationIn="slideInUp"
 			animationOut="slideOutDown"
-			style={styles.bottomModal}
+			style={[styles.bottomModal]}
 			backdropOpacity={0.7}
 			animationInTiming={600}
 			animationOutTiming={600}
@@ -1097,17 +1100,21 @@ const Main = props => {
 					onBackButtonPress={() => setShowUpdateModal(false)}
 					swipeDirection={'down'}
 				>
-					<View style={styles.versionModal}>
+					<View style={[styles.versionModal, isDarkMode && baseStyles.darkModalBackground]}>
 						<TouchableOpacity style={styles.closeTouch} onPress={() => setShowUpdateModal(false)}>
-							<Image source={require('../../images/ic_pop_close.png')} />
+							<AntIcon color={isDarkMode ? colors.white : colors.paliGrey300} size={16} name={'close'} />
 						</TouchableOpacity>
 						<Image
 							style={{ width: 90, height: 90, resizeMode: 'contain' }}
 							source={require('../../images/pali.png')}
 						/>
-						<Text style={styles.newVersion}>{strings('version_update.find_new_version')}</Text>
-						<Text style={styles.versionName}>{props.updateConfig.latest_version}</Text>
-						<View style={styles.line} />
+						<Text style={[styles.newVersion, isDarkMode && baseStyles.textDark]}>
+							{strings('version_update.find_new_version')}
+						</Text>
+						<Text style={[styles.versionName, isDarkMode && baseStyles.textDark]}>
+							{props.updateConfig.latest_version}
+						</Text>
+						<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 						<TouchableOpacity
 							style={styles.touchBtn}
 							onPress={async () => {
@@ -1131,7 +1138,7 @@ const Main = props => {
 						>
 							<Text style={styles.updateNow}>{strings('version_update.update_now')}</Text>
 						</TouchableOpacity>
-						<View style={styles.line} />
+						<View style={[styles.line, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 						<TouchableOpacity
 							style={styles.touchBtn}
 							onPress={async () => {
@@ -1139,7 +1146,9 @@ const Main = props => {
 								props.navigation.navigate('UpdateCheck');
 							}}
 						>
-							<Text style={styles.viewDetail}>{strings('version_update.view_details')}</Text>
+							<Text style={[styles.viewDetail, isDarkMode && baseStyles.subTextDark]}>
+								{strings('version_update.view_details')}
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</Modal>
@@ -1182,8 +1191,8 @@ const Main = props => {
 					animationType="fade"
 					useNativeDriver
 				>
-					<View style={styles.addChainModalWrapper}>
-						<Text style={styles.addChainModalTitle}>
+					<View style={[styles.addChainModalWrapper, isDarkMode && baseStyles.darkModalBackground]}>
+						<Text style={[styles.addChainModalTitle, isDarkMode && baseStyles.textDark]}>
 							{strings('app_settings.add_custom_network_label')}
 						</Text>
 						<View style={styles.addChainModalSubTitleWrapper}>
@@ -1192,38 +1201,50 @@ const Main = props => {
 								imageUrl={addChainInfo?.rpcInfo?.icon}
 								defaultImg={require('../../images/browser.png')}
 							/>
-							<Text style={styles.addChainModalSubTitle}>{addChainInfo.rpcInfo.url}</Text>
+							<Text style={[styles.addChainModalSubTitle, isDarkMode && baseStyles.subTextDark]}>
+								{addChainInfo.rpcInfo.url}
+							</Text>
 						</View>
 						<View style={styles.addChainModalLine} />
 						<View style={styles.addChainModalItemWrapper}>
-							<Text style={styles.addChainModalItemTitle}>
+							<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
 								{strings('app_settings.network_name_label')}
 							</Text>
-							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.nickname}</Text>
+							<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+								{addChainInfo.rpcInfo.nickname}
+							</Text>
 						</View>
 						<View style={styles.addChainModalItemWrapper}>
-							<Text style={styles.addChainModalItemTitle}>
+							<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
 								{strings('app_settings.network_rpc_url_label')}
 							</Text>
-							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.rpcTarget}</Text>
+							<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+								{addChainInfo.rpcInfo.rpcTarget}
+							</Text>
 						</View>
 						<View style={styles.addChainModalItemWrapper}>
-							<Text style={styles.addChainModalItemTitle}>
+							<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
 								{strings('app_settings.network_chain_id_label')}
 							</Text>
-							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.chainId}</Text>
+							<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+								{addChainInfo.rpcInfo.chainId}
+							</Text>
 						</View>
 						<View style={styles.addChainModalItemWrapper}>
-							<Text style={styles.addChainModalItemTitle}>
+							<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
 								{strings('app_settings.network_symbol_label')}
 							</Text>
-							<Text style={styles.addChainModalItemContent}>{addChainInfo.ticker}</Text>
+							<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+								{addChainInfo.ticker}
+							</Text>
 						</View>
 						<View style={styles.addChainModalItemWrapper}>
-							<Text style={styles.addChainModalItemTitle}>
+							<Text style={[styles.addChainModalItemTitle, isDarkMode && baseStyles.subTextDark]}>
 								{strings('app_settings.network_explorer_label')}
 							</Text>
-							<Text style={styles.addChainModalItemContent}>{addChainInfo.rpcInfo.explorerUrl}</Text>
+							<Text style={[styles.addChainModalItemContent, isDarkMode && baseStyles.textDark]}>
+								{addChainInfo.rpcInfo.explorerUrl}
+							</Text>
 						</View>
 						<View style={styles.addChainModalActionWrapper}>
 							<TouchableOpacity style={styles.addChainModalCancel} onPress={onAddChainModalCancel}>
@@ -1243,10 +1264,12 @@ const Main = props => {
 
 	const renderNotificationsModal = () => (
 		<Modal statusBarTranslucent isVisible={showNotificationModal && !props.isLockScreen}>
-			<View style={styles.notifyModalContainer}>
+			<View style={[styles.notifyModalContainer, isDarkMode && baseStyles.darkModalBackground]}>
 				<View style={styles.flex}>
-					{notificationTitle !== '' && <Text style={styles.notifyTitle}>{notificationTitle}</Text>}
-					<Text style={styles.notifyDesc}>{notificationMessage}</Text>
+					{notificationTitle !== '' && (
+						<Text style={[styles.notifyTitle, isDarkMode && baseStyles.textDark]}>{notificationTitle}</Text>
+					)}
+					<Text style={[styles.notifyDesc, isDarkMode && baseStyles.subTextDark]}>{notificationMessage}</Text>
 					<TouchableOpacity
 						style={styles.notifyTouchOk}
 						onPress={() => {
@@ -1256,16 +1279,55 @@ const Main = props => {
 							}
 						}}
 					>
-						<Text style={styles.notifyOkLabel}>{strings('other.i_know')}</Text>
+						<Text style={[styles.notifyOkLabel, isDarkMode && baseStyles.textDark]}>
+							{strings('other.i_know')}
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
 		</Modal>
 	);
+
+	const settingsRoutes = [
+		'WalletManagementView',
+		'RevealPrivateCredentialView',
+		'VerifySeedPhraseView',
+		'ResetPasswordView',
+		'SecuritySettingsView',
+		'AboutView',
+		'DeveloperOptionsView',
+		'CurrencyUnitView',
+		'UpdateCheckView',
+		'DrawingBoardView',
+		'DrawingGuideView',
+		'CheckEnvGuideView',
+		'ManualBackupStep1View',
+		'ManualBackupStep2View',
+		'ImportFromSeedView',
+		'ImportPrivateKeyView',
+		'LanguageSelectorView',
+		'LoginView'
+	];
+
+	const inSettings = settingsRoutes.includes(
+		props.navigation.state.routes[props.navigation.state.routes.length - 1].routeName
+	);
+
 	return (
 		<React.Fragment key={reloadCounter + 'main-screen'}>
 			<View style={styles.flex}>
-				<View style={styles.navigatorView}>
+				<View
+					style={[
+						styles.navigatorView,
+						{
+							backgroundColor: isDarkMode
+								? inSettings
+									? colors.brandBlue700
+									: colors.brandBlue500
+								: colors.white
+						}
+					]}
+				>
 					<SafeAreaProvider>
 						<MainNavigator navigation={props.navigation} />
 					</SafeAreaProvider>

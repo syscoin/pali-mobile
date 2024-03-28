@@ -55,6 +55,7 @@ import NFTImage from '../../../UI/NFTImage';
 import { getRpcNickname } from '../../../../util/ControllerUtils';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -71,12 +72,28 @@ const styles = StyleSheet.create({
 	wrapper: {
 		maxHeight: '88%',
 		backgroundColor: colors.white,
-		borderRadius: 20,
-		margin: 8
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	container: {
-		height: 590,
+		height: 500,
 		marginHorizontal: 30
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	},
 	networkWrapper: {
 		paddingTop: 9
@@ -190,7 +207,7 @@ const styles = StyleSheet.create({
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -208,7 +225,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -329,6 +346,7 @@ const styles = StyleSheet.create({
  * View that wraps the wraps the "Send" screen
  */
 class SendTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
@@ -911,6 +929,7 @@ class SendTab extends PureComponent {
 	renderSuggestItem = (item, index, match) => {
 		const name = item.name;
 		const formattedText = [];
+		const { isDarkMode } = this.context;
 		if (name.length <= 30) {
 			match = match.toLowerCase();
 			const mIndex = name.indexOf(match);
@@ -925,14 +944,20 @@ class SendTab extends PureComponent {
 				} else if (mIndex === 0) {
 					formattedText.push(mention);
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(match.length, name.length)}
 						</Text>
 					);
 					formattedText.push(other);
 				} else if (mIndex + match.length === name.length) {
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(0, mIndex)}
 						</Text>
 					);
@@ -940,14 +965,20 @@ class SendTab extends PureComponent {
 					formattedText.push(mention);
 				} else {
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(0, mIndex)}
 						</Text>
 					);
 					formattedText.push(other);
 					formattedText.push(mention);
 					const other2 = (
-						<Text key={'suggestText' + index + 2} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 2}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(mIndex + match.length, name.length)}
 						</Text>
 					);
@@ -967,10 +998,12 @@ class SendTab extends PureComponent {
 			>
 				<Image style={styles.suggestionIcon} source={require('../../../../images/ic_ens.png')} />
 				{formattedText.length > 0 ? (
-					<View style={styles.suggestionTextWrapper}>{formattedText}</View>
+					<View style={[styles.suggestionTextWrapper, isDarkMode && baseStyles.textDark]}>
+						{formattedText}
+					</View>
 				) : (
 					<Text
-						style={[styles.suggestionText, styles.suggestionTextWrapper]}
+						style={[styles.suggestionText, styles.suggestionTextWrapper, isDarkMode && baseStyles.textDark]}
 						numberOfLines={1}
 						ellipsizeMode={'middle'}
 					>
@@ -1005,6 +1038,7 @@ class SendTab extends PureComponent {
 
 		const { mainBalance, asset, onClose } = this.props;
 		const nextEnable = valueEnable && toSelectedAddressReady;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView
 				showsVerticalScrollIndicator={false}
@@ -1012,11 +1046,10 @@ class SendTab extends PureComponent {
 				onScrollBeginDrag={dismissKeyboard}
 				scrollEnabled={suggestions.length === 0}
 			>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.send')}</Text>
+				</View>
 				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
-					<View style={styles.labelWrapper}>
-						<Image style={styles.labelIcon} source={iconSendActive} />
-						<Text style={styles.labelText}>{strings('other.send')}</Text>
-					</View>
 					{txStep === 1 ? (
 						<View style={styles.stepOne}>
 							<AddressTo
@@ -1035,10 +1068,17 @@ class SendTab extends PureComponent {
 							/>
 							{!toSelectedAddressReady && inputAddress?.length > 0 ? (
 								<View style={baseStyles.flexGrow}>
-									<Text style={styles.suggestionsText}>{strings('other.suggestions')}</Text>
+									<Text style={[styles.suggestionsText, isDarkMode && baseStyles.textDark]}>
+										{strings('other.suggestions')}
+									</Text>
 									{loadSuggestions ? (
 										<View>
-											<View style={styles.animLayout}>
+											<View
+												style={[
+													styles.animLayout,
+													isDarkMode && baseStyles.darkModalBackground
+												]}
+											>
 												<LottieView
 													style={styles.animation}
 													autoPlay
@@ -1064,7 +1104,7 @@ class SendTab extends PureComponent {
 												style={styles.noSuggestionImg}
 												source={require('../../../../images/no_nft_img.png')}
 											/>
-											<Text style={styles.noSuggestionText}>
+											<Text style={[styles.noSuggestionText, isDarkMode && baseStyles.textDark]}>
 												{strings('other.no_suggestions')}
 											</Text>
 										</>
@@ -1078,9 +1118,11 @@ class SendTab extends PureComponent {
 										<View style={styles.saftyPanel} />
 									)}
 									<View style={styles.networkWrapper}>
-										<Text style={styles.toNetwork}>{strings('other.to_network')}</Text>
+										<Text style={[styles.toNetwork, isDarkMode && baseStyles.textDark]}>
+											{strings('other.to_network')}
+										</Text>
 										<View style={styles.networks}>{this.renderNetworks()}</View>
-										<Text style={styles.noteText}>
+										<Text style={[styles.noteText, isDarkMode && baseStyles.subTextDark]}>
 											{strings('other.send_note', {
 												fromToken: this.getFromToken(),
 												network: getChainTypeName(asset.type),
@@ -1101,26 +1143,35 @@ class SendTab extends PureComponent {
 							)}
 							<View style={styles.confirmActionWrapper}>
 								<TouchableOpacity
-									style={styles.cancelButton}
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 									onPress={onClose}
 									activeOpacity={activeOpacity}
 									disabled={loading}
 								>
-									<Text style={styles.cancelButtonText}>{strings('other.cancel')}</Text>
+									<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+										{strings('other.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.confirmButton, nextEnable && styles.confirmButtonEnabled]}
+									style={[
+										styles.confirmButton,
+										nextEnable &&
+											(isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+									]}
 									onPress={this.onNext}
 									activeOpacity={activeOpacity}
 									disabled={loading || !nextEnable}
 								>
 									{loading ? (
-										<ActivityIndicator size="small" color="white" />
+										<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 									) : (
 										<Text
 											style={[
 												styles.confirmButtonText,
-												nextEnable && styles.confirmButtonTextEnable
+												nextEnable &&
+													(isDarkMode
+														? baseStyles.darkConfirmText
+														: styles.confirmButtonTextEnable)
 											]}
 										>
 											{strings('other.next')}
@@ -1133,8 +1184,12 @@ class SendTab extends PureComponent {
 						<View style={styles.stepTwo}>
 							<View>
 								<View style={styles.labelNet}>
-									<Text style={styles.labelTitle}>{strings('other.to')}</Text>
-									<Text style={styles.labelNetContent}>{getChainTypeName(networkSelectType)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.to')}
+									</Text>
+									<Text style={[styles.labelNetContent, isDarkMode && baseStyles.subTextDark]}>
+										{getChainTypeName(networkSelectType)}
+									</Text>
 								</View>
 								{!isValidAddress(inputAddress) ? (
 									<>
@@ -1148,20 +1203,32 @@ class SendTab extends PureComponent {
 											) : (
 												<Image source={require('../../../../images/ic_ens.png')} />
 											)}
-											<Text style={styles.ensName}>{inputAddress}</Text>
+											<Text style={[styles.ensName, isDarkMode && baseStyles.subTextDark]}>
+												{inputAddress}
+											</Text>
 										</View>
-										<Text style={styles.endAddress} numberOfLines={1} ellipsizeMode={'middle'}>
+										<Text
+											style={[styles.endAddress, isDarkMode && baseStyles.subTextDark]}
+											numberOfLines={1}
+											ellipsizeMode={'middle'}
+										>
 											{toSelectedAddress}
 										</Text>
 									</>
 								) : (
-									<Text style={styles.toAddress} numberOfLines={1} ellipsizeMode={'middle'}>
+									<Text
+										style={[styles.toAddress, isDarkMode && baseStyles.subTextDark]}
+										numberOfLines={1}
+										ellipsizeMode={'middle'}
+									>
 										{toSelectedAddress}
 									</Text>
 								)}
 								<View style={styles.labelAmount}>
-									<Text style={styles.labelTitle}>{strings('other.amount')}</Text>
-									<Text style={styles.labelAmountContent}>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.amount')}
+									</Text>
+									<Text style={[styles.labelAmountContent, isDarkMode && baseStyles.subTextDark]}>
 										{renderAmount(renderableInputValueConversion)}
 									</Text>
 								</View>
@@ -1184,26 +1251,35 @@ class SendTab extends PureComponent {
 							<View style={baseStyles.flexGrow} />
 							<View style={styles.confirmActionWrapper}>
 								<TouchableOpacity
-									style={styles.cancelButton}
+									style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 									onPress={this.onCancel}
 									activeOpacity={activeOpacity}
 									disabled={loading}
 								>
-									<Text style={styles.cancelButtonText}>{strings('action_view.cancel')}</Text>
+									<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+										{strings('action_view.cancel')}
+									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.confirmButton, confirmEnabled && styles.confirmButtonEnabled]}
+									style={[
+										styles.confirmButton,
+										confirmEnabled &&
+											(isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+									]}
 									onPress={this.onConfirmClick}
 									activeOpacity={activeOpacity}
 									disabled={!confirmEnabled || loading}
 								>
 									{loading ? (
-										<ActivityIndicator size="small" color="white" />
+										<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 									) : (
 										<Text
 											style={[
 												styles.confirmButtonText,
-												confirmEnabled && styles.confirmButtonTextEnable
+												confirmEnabled &&
+													(isDarkMode
+														? baseStyles.darkConfirmText
+														: styles.confirmButtonTextEnable)
 											]}
 										>
 											{strings('action_view.confirm')}
@@ -1227,14 +1303,19 @@ class SendTab extends PureComponent {
 		);
 	};
 
-	render = () =>
-		Device.isIos() ? (
-			<KeyboardAvoidingView style={styles.wrapper} behavior={'padding'}>
+	render = () => {
+		const { isDarkMode } = this.context;
+		return Device.isIos() ? (
+			<KeyboardAvoidingView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}
+				behavior={'padding'}
+			>
 				{this.renderView()}
 			</KeyboardAvoidingView>
 		) : (
-			<View style={styles.wrapper}>{this.renderView()}</View>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>{this.renderView()}</View>
 		);
+	};
 }
 
 const mapStateToProps = state => ({

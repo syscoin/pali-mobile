@@ -16,7 +16,8 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
-import { colors, fontStyles } from '../../../styles/common';
+import Icon from '../../UI/Icon';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import AssetOverview from '../../UI/AssetOverview';
 import iconBackWhite from '../../../images/ic_back_white.png';
 import iconBackBlack from '../../../images/back.png';
@@ -30,7 +31,8 @@ import { strings } from '../../../../locales/i18n';
 import { iosShake } from '../../../util/NativeUtils';
 import { onEvent } from '../../../util/statistics';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getSecurityData } from '../../../util/security';
+import { getSecurityData, isSecureAddress } from '../../../util/security';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const activeOpacity = 0.8;
 const { height } = Dimensions.get('screen');
@@ -38,6 +40,15 @@ const { height } = Dimensions.get('screen');
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
 	},
 	padding_wrapper: {
 		flex: 1
@@ -75,9 +86,9 @@ const styles = StyleSheet.create({
 	},
 	bgWrapper: {
 		position: 'absolute',
-		top: 0,
+		height: 240,
+		borderRadius: 50,
 		backgroundColor: colors.brandPink300,
-		bottom: 0,
 		left: 0,
 		right: 0
 	},
@@ -113,7 +124,8 @@ const styles = StyleSheet.create({
 		zIndex: 1000
 	},
 	widthFull: {
-		width: '100%'
+		width: '100%',
+		height: 240
 	},
 	titleUnfoldLayout: {
 		backgroundColor: colors.white,
@@ -151,6 +163,7 @@ const styles = StyleSheet.create({
  * and also the transaction list
  */
 class Asset extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to access the props
@@ -243,37 +256,57 @@ class Asset extends PureComponent {
 		const checked = noticeNum > 0 || riskNum > 0 || normalNum > 0;
 		let riskText = strings('security.security_risk_unknown');
 		let riskImg = require('../../../images/img_defi_unknown.png');
-		if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
+		let hideSecurityView = false;
+
+		if (isSecureAddress(asset)) {
 			riskText = strings('security.security_risk_low');
 			riskImg = require('../../../images/img_defi_safe.png');
-		} else if (checked && riskNum > 0) {
-			riskText = strings('security.security_risk_high');
-			riskImg = require('../../../images/img_defi_danger.png');
-		} else if (checked && noticeNum > 0) {
-			riskText = strings('security.security_risk_medium');
-			riskImg = require('../../../images/img_defi_warning.png');
+			hideSecurityView = true;
+		} else {
+			if (isTrust || (checked && riskNum === 0 && noticeNum === 0)) {
+				riskText = strings('security.security_risk_low');
+				riskImg = require('../../../images/img_defi_safe.png');
+			} else if (checked && riskNum > 0) {
+				riskText = strings('security.security_risk_high');
+				riskImg = require('../../../images/img_defi_danger.png');
+			} else if (checked && noticeNum > 0) {
+				riskText = strings('security.security_risk_medium');
+				riskImg = require('../../../images/img_defi_warning.png');
+			}
 		}
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				disabled={unFoldOpacity.__getValue() < 0.2}
 				activeOpacity={0.6}
 				onPress={() => {
-					if (!this.state.isSecurityViewShowed) {
+					if (!this.state.isSecurityViewShowed && !hideSecurityView) {
 						this.openSecurityView(moveHeight);
 					}
 				}}
 			>
-				<Animated.View opacity={unFoldOpacity} style={styles.titleUnfoldLayout}>
+				<Animated.View
+					opacity={unFoldOpacity}
+					style={[styles.titleUnfoldLayout, isDarkMode && baseStyles.darkInputBackground]}
+				>
 					<Image source={riskImg} style={styles.securityIcon} />
 					<View style={styles.titleUnfoldInContent}>
-						<Text style={styles.titleUnfoldSecurityText} allowFontScaling={false}>
+						<Text
+							style={[styles.titleUnfoldSecurityText, isDarkMode && baseStyles.textDark]}
+							allowFontScaling={false}
+						>
 							{riskText}
 						</Text>
-						<Text style={styles.titleUnfoldSecurityDesc} allowFontScaling={false}>
-							{strings('fold_security.tap_to_check')}
-						</Text>
+						{!hideSecurityView && (
+							<Text
+								style={[styles.titleUnfoldSecurityDesc, isDarkMode && baseStyles.subTextDark]}
+								allowFontScaling={false}
+							>
+								{strings('fold_security.tap_to_check')}
+							</Text>
+						)}
 					</View>
-					<Image source={require('../../../images/ic_unfold.png')} />
+					{!hideSecurityView && <Image source={require('../../../images/ic_unfold.png')} />}
 				</Animated.View>
 			</TouchableOpacity>
 		);
@@ -286,7 +319,7 @@ class Asset extends PureComponent {
 
 		if (nativeCurrency) {
 			bgColor = ['#0E223A', '#284F94', '#FE0077'];
-			bgImg = require('../../../images/img_coin_bg_pali.png');
+			bgImg = require('../../../images/pali_background.png');
 		} else {
 			const securityData = getSecurityData(asset);
 			const { notice, risk, normal, isTrust } = securityData;
@@ -295,7 +328,7 @@ class Asset extends PureComponent {
 			const normalNum = normal && normal.length ? normal.length : 0;
 			if (isTrust || (risk && notice && riskNum === 0 && noticeNum === 0 && normalNum !== 0)) {
 				bgColor = ['#0E223A', '#284F94', '#FE0077'];
-				bgImg = require('../../../images/img_coin_bg_pali.png');
+				bgImg = require('../../../images/pali_background.png');
 			} else if (riskNum > 0) {
 				bgColor = ['#FF6E6E', '#FF6E6E'];
 				bgImg = require('../../../images/img_coin_bg_danger.png');
@@ -304,17 +337,7 @@ class Asset extends PureComponent {
 				bgImg = require('../../../images/img_coin_bg_warning.png');
 			}
 		}
-		return (
-			<LinearGradient
-				start={{ x: -0.2, y: 0 }}
-				end={{ x: 1.3, y: 0.3 }}
-				colors={bgColor}
-				style={styles.bgWrapper}
-			>
-				<Image source={bgImg} style={styles.widthFull} />
-				{!isSecurityViewShowed && <View style={styles.bottomSecurityBg} />}
-			</LinearGradient>
-		);
+		return <Image source={bgImg} style={styles.backgroundImage} />;
 	};
 
 	render = () => {
@@ -329,12 +352,16 @@ class Asset extends PureComponent {
 			isSecurityViewShowed,
 			immediatelyShowed
 		} = this.state;
+		const { isDarkMode } = this.context;
 		const { navigation, selectedAddress } = this.props;
 		if (!asset) return this.renderLoader();
 		const isHideAmount = hideAmount || isGlobalAmountHide;
+		const outputRangeColors = isDarkMode
+			? [colors.transparent, '#FFFFFF30', colors.brandBlue600]
+			: [colors.transparent, '#FFFFFF30', '#FFFFFFFF'];
 		const backgroundColor = navBackColorOffset.interpolate({
 			inputRange: [0, this.changeNavHeight / 2, this.changeNavHeight],
-			outputRange: [colors.transparent, '#FFFFFF30', '#FFFFFFFF'],
+			outputRange: outputRangeColors,
 			extrapolate: 'clamp',
 			useNativeDriver: true
 		});
@@ -357,7 +384,7 @@ class Asset extends PureComponent {
 
 		return (
 			<React.Fragment>
-				<View style={styles.wrapper}>
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>
 					<MStatusBar
 						navigation={navigation}
 						barStyle={barStyle}
@@ -385,9 +412,15 @@ class Asset extends PureComponent {
 								if (y >= -60) {
 									this.setState({ navBackColorOffset: new Animated.Value(y) });
 									if (y > this.changeNavHeight / 2) {
-										this.setState({ barStyle: 'dark-content', backImg: iconBackBlack });
+										this.setState({
+											barStyle: 'dark-content',
+											backImg: isDarkMode ? iconBackWhite : iconBackBlack
+										});
 									} else {
-										this.setState({ barStyle: 'light-content', backImg: iconBackWhite });
+										this.setState({
+											barStyle: 'light-content',
+											backImg: isDarkMode ? iconBackBlack : iconBackWhite
+										});
 									}
 								}
 							}}
@@ -404,14 +437,20 @@ class Asset extends PureComponent {
 								}
 							}}
 						>
-							<View style={styles.flexOne}>
-								<View style={[styles.assetTopBg, { top: 140 + headerHeight }]} />
+							<View style={[styles.flexOne]}>
+								<View
+									style={[
+										styles.assetTopBg,
+										isDarkMode && baseStyles.darkBackground600,
+										{ top: 140 + headerHeight }
+									]}
+								/>
 								<AssetView
 									ref={this.assetViewRef}
-									style={{ paddingTop: headerHeight }}
+									style={[{ paddingTop: headerHeight }]}
 									navigation={navigation}
 									header={
-										<View style={styles.assetOverviewWrapper}>
+										<View style={[styles.assetOverviewWrapper]}>
 											<AssetOverview
 												navigation={navigation}
 												selectedAddress={selectedAddress}
@@ -430,7 +469,7 @@ class Asset extends PureComponent {
 
 						{scrollEnabled && isSecurityViewShowed && (
 							<FoldSecurityView
-								style={styles.foldView}
+								style={[styles.foldView]}
 								asset={asset}
 								isSecurityViewShowed={isSecurityViewShowed}
 								securityViewOpacity={this.securityViewOpacity}
@@ -443,6 +482,7 @@ class Asset extends PureComponent {
 								opacity={this.buttonOpacity}
 								style={[
 									styles.draggerWrapper,
+
 									{
 										backgroundColor,
 										height: headerHeight,
@@ -455,15 +495,18 @@ class Asset extends PureComponent {
 									onPress={this.goBack}
 									activeOpacity={activeOpacity}
 								>
-									<Image source={backImg} />
+									{isDarkMode ? (
+										<Icon name={'back'} color={colors.white} width="26" height="26" />
+									) : (
+										<Image source={require('../../../images/back.png')} />
+									)}
 								</TouchableOpacity>
-
 								{scrollEnabled && this.renderUnfold(unFoldOpacity, moveHeight)}
 							</Animated.View>
 						)}
 					</View>
 				</View>
-				<SafeAreaView style={styles.bottomBg} />
+				<SafeAreaView style={[styles.bottomBg, isDarkMode && baseStyles.darkBackground600]} />
 				{!asset.lockType && !immediatelyShowed && (
 					<AssetActionView navigation={navigation} asset={asset} hideOtherModal={this.hideSecurityModal} />
 				)}

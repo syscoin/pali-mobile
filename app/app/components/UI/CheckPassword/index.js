@@ -11,7 +11,7 @@ import {
 	View
 } from 'react-native';
 import { strings } from '../../../../locales/i18n';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import React, { useEffect, useRef, useState } from 'react';
 import Engine from '../../../core/Engine';
 import Device from '../../../util/Device';
@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, TRUE } from '../../../constants/storage';
 import { util } from 'paliwallet-core';
 import { connect } from 'react-redux';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	centerModal: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1.5,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -114,6 +115,7 @@ const CheckPassword = ({ checkResult, needDelay, onlyCheckInputPwd, isLockScreen
 	const [visible, setVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const fieldRef = useRef();
+	const { isDarkMode } = useTheme();
 
 	const hideCheckView = () => {
 		checkResult(false);
@@ -195,9 +197,12 @@ const CheckPassword = ({ checkResult, needDelay, onlyCheckInputPwd, isLockScreen
 			propagateSwipe
 			style={styles.centerModal}
 		>
-			<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+			<KeyboardAvoidingView
+				style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+				behavior={'padding'}
+			>
 				<View style={styles.modalContainer}>
-					<Text style={styles.modalTitle}>
+					<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
 						{strings(
 							onlyCheckInputPwd
 								? 'wallet_management.confirm_password'
@@ -206,7 +211,12 @@ const CheckPassword = ({ checkResult, needDelay, onlyCheckInputPwd, isLockScreen
 					</Text>
 					<TextInput
 						ref={fieldRef}
-						style={styles.pwInput}
+						style={[
+							styles.pwInput,
+							isDarkMode && baseStyles.subTextDark,
+							isDarkMode && baseStyles.darkInputBackground,
+							isDarkMode && { borderColor: colors.white016 }
+						]}
 						value={passwordValue}
 						onChangeText={setPasswordValue}
 						secureTextEntry
@@ -224,14 +234,25 @@ const CheckPassword = ({ checkResult, needDelay, onlyCheckInputPwd, isLockScreen
 						{strings('wallet_management.wrong_password')}
 					</Text>
 					<View style={styles.pwModalButtons}>
-						<TouchableOpacity style={styles.cancelButton} onPress={hideCheckView}>
-							<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+						<TouchableOpacity
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+							onPress={hideCheckView}
+						>
+							<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+								{strings('action_view.cancel')}
+							</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.okButton} onPress={onConfirmPw} disabled={loading}>
+						<TouchableOpacity
+							style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+							onPress={onConfirmPw}
+							disabled={loading}
+						>
 							{loading ? (
-								<ActivityIndicator size="small" color="white" />
+								<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 							) : (
-								<Text style={styles.okText}>{strings('action_view.confirm')}</Text>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('action_view.confirm')}
+								</Text>
 							)}
 						</TouchableOpacity>
 					</View>

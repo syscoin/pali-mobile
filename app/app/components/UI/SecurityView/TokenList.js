@@ -4,18 +4,23 @@ import {
 	View,
 	Image,
 	Text,
+	Dimensions,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	TouchableOpacity,
 	ActivityIndicator,
 	DeviceEventEmitter
 } from 'react-native';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import DashSecondLine from '../../Views/DashSecondLine';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors, fontStyles } from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import { getChainIdByType, renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
+import { isSecureAddress } from '../../../util/security';
+
 import TokenImage from '../TokenImage';
 import LinearGradient from 'react-native-linear-gradient';
 import Engine from '../../../core/Engine';
@@ -25,8 +30,11 @@ import { toLowerCaseEquals } from '../../../util/general';
 import { key2Warn } from '../../../util/security';
 import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
-import { getIcTagByChainType } from '../../../util/ChainTypeImages';
+import { getIcTagByChainType, getIcLogoByChainType } from '../../../util/ChainTypeImages';
 import { ChainType, util } from 'paliwallet-core';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+
+const { width } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
 	emptyView: {
@@ -35,6 +43,12 @@ const styles = StyleSheet.create({
 		paddingVertical: 50,
 		backgroundColor: colors.white,
 		flex: 1
+	},
+	lineMargin: {
+		height: 1,
+		marginHorizontal: 24,
+		marginTop: 3,
+		flex: 0
 	},
 	text: {
 		fontSize: 16,
@@ -109,6 +123,8 @@ const styles = StyleSheet.create({
 	tagView: {
 		position: 'absolute',
 		left: 30,
+		width: 16,
+		height: 16,
 		top: 20
 	},
 	childView: {
@@ -254,6 +270,7 @@ const STOARGE_SORT_TYPE = 'storage_sorttype';
 const SORT_NETWORTH = 'sort_networth';
 
 class TokenList extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		tokens: PropTypes.array,
 		onItemPress: PropTypes.func,
@@ -390,16 +407,22 @@ class TokenList extends PureComponent {
 		this.setState({ tokenList: [...newTokens2, ...unknownTokens], initLoaded: true });
 	};
 
-	renderEmpty = () => (
-		<View style={styles.emptyView}>
-			<Image source={require('../../../images/notx.png')} />
-			<Text style={styles.text}>{strings('security.no_detectable_tokens')}</Text>
-		</View>
-	);
+	renderEmpty = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={[styles.emptyView, isDarkMode && baseStyles.darkBackground]}>
+				<Image source={require('../../../images/notx.png')} />
+				<Text style={[styles.text, isDarkMode && baseStyles.textDark]}>
+					{strings('security.no_detectable_tokens')}
+				</Text>
+			</View>
+		);
+	};
 
 	renderList(tokenList, isQuery) {
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.scrollViewContent}>
+			<View style={[styles.scrollViewContent, isDarkMode && baseStyles.darkBackground]}>
 				{tokenList.map((asset, index) => this.renderItem(asset, index, isQuery))}
 			</View>
 		);
@@ -428,36 +451,64 @@ class TokenList extends PureComponent {
 		const { price, balanceFiat, balance } = asset;
 		const { currencyCode } = Engine.context.TokenRatesController.state;
 		const amountSymbol = CURRENCIES[currencyCode].symbol;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.itemWrapper} key={'element-security-' + index}>
+			<View
+				style={[styles.itemWrapper, isDarkMode && baseStyles.darkBackground]}
+				key={'element-security-' + index}
+			>
 				<TouchableWithoutFeedback
 					onPress={() => {
 						this._onItemClick(asset);
 					}}
 				>
 					<View style={styles.itemWrapper}>
-						<View style={styles.childrenWrapper} activeOpacity={1}>
-							<View style={styles.flexOne}>
-								<View style={styles.childView}>
+						<View
+							style={[styles.childrenWrapper, isDarkMode && baseStyles.darkBackground]}
+							activeOpacity={1}
+						>
+							<View style={[styles.flexOne, isDarkMode && baseStyles.darkBackground]}>
+								<View style={[styles.childView, isDarkMode && baseStyles.darkBackground]}>
 									<View style={styles.iconLayout}>
 										<TokenImage
 											asset={asset}
 											containerStyle={styles.ethLogo}
 											iconStyle={styles.iconStyle}
 										/>
-										<Image style={styles.tagView} source={getIcTagByChainType(asset.type)} />
+										<Image
+											style={styles.tagView}
+											source={
+												isDarkMode
+													? getIcLogoByChainType(asset.type)
+													: getIcTagByChainType(asset.type)
+											}
+										/>
 									</View>
 
 									<View style={styles.balances} testID={'balance'}>
 										<View style={styles.titleItem}>
-											<Text style={styles.textItemName} numberOfLines={1} ellipsizeMode="tail">
+											<Text
+												style={[styles.textItemName, isDarkMode && baseStyles.textDark]}
+												numberOfLines={1}
+												ellipsizeMode="tail"
+											>
 												{asset.symbol}
 											</Text>
-											{!isQuery && <Text style={styles.textItemBalance}>{balanceFiat}</Text>}
+											{!isQuery && (
+												<Text
+													style={[styles.textItemBalance, isDarkMode && baseStyles.textDark]}
+												>
+													{balanceFiat}
+												</Text>
+											)}
 										</View>
 										{!isQuery && (
 											<View style={styles.flexDir}>
-												<Text style={styles.textItemAmount}>{renderAmount(balance)}</Text>
+												<Text
+													style={[styles.textItemAmount, isDarkMode && baseStyles.textDark]}
+												>
+													{renderAmount(balance)}
+												</Text>
 												<View style={styles.flexOne} />
 												<Text style={styles.textItemAmount}>
 													{amountSymbol}
@@ -469,7 +520,7 @@ class TokenList extends PureComponent {
 									{this.renderSecurityTag(asset)}
 								</View>
 								{this.renderSecurityItem(asset)}
-								<View style={styles.lineView} />
+								<DashSecondLine lineWidth={width - 80} style={styles.lineMargin} />
 							</View>
 						</View>
 					</View>
@@ -489,30 +540,37 @@ class TokenList extends PureComponent {
 		this.setState({ showFastCheck: false });
 	};
 
-	renderFastCheck = () => (
-		<Modal
-			isVisible={this.state.showFastCheck && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			backdropOpacity={0.7}
-			animationIn="fadeIn"
-			animationOut="fadeOut"
-			useNativeDriver
-		>
-			<View style={styles.detailModal}>
-				<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.onHideFastCheck} style={styles.touchClose}>
-					<Image source={require('../../../images/ic_pop_close.png')} />
-				</TouchableOpacity>
-				<Text style={styles.modalTitle}>{strings('security.detecting')}</Text>
-				<LottieView
-					style={styles.animation}
-					autoPlay
-					loop
-					source={require('../../../animations/detecting.json')}
-				/>
-				<Text style={styles.modalDesc}>{strings('security.take_seconds')}</Text>
-			</View>
-		</Modal>
-	);
+	renderFastCheck = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.showFastCheck && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				backdropOpacity={0.7}
+				animationIn="fadeIn"
+				animationOut="fadeOut"
+				useNativeDriver
+			>
+				<View style={[styles.detailModal, isDarkMode && baseStyles.darkBackground]}>
+					<TouchableOpacity hitSlop={styles.hitSlop} onPress={this.onHideFastCheck} style={styles.touchClose}>
+						<AntIcon color={isDarkMode ? colors.white : colors.paliGrey300} size={16} name={'close'} />
+					</TouchableOpacity>
+					<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('security.detecting')}
+					</Text>
+					<LottieView
+						style={styles.animation}
+						autoPlay
+						loop
+						source={require('../../../animations/detecting.json')}
+					/>
+					<Text style={[styles.modalDesc, isDarkMode && baseStyles.textDark]}>
+						{strings('security.take_seconds')}
+					</Text>
+				</View>
+			</Modal>
+		);
+	};
 
 	showDescModal = (item, token) => {
 		this.selectSecurityContent = item;
@@ -525,7 +583,12 @@ class TokenList extends PureComponent {
 			return;
 		}
 		const { normalLength, notice, noticeLength, risk, riskLength } = asset.securityData;
-		//未检测显示申请提交按钮
+		const { isDarkMode } = this.context;
+
+		if (isSecureAddress(asset)) {
+			return <></>;
+		}
+
 		if (normalLength === 0 && noticeLength === 0 && riskLength === 0) {
 			return (
 				<TouchableWithoutFeedback style={styles.flexOne}>
@@ -552,7 +615,7 @@ class TokenList extends PureComponent {
 					{risk &&
 						risk.map((data, index) => (
 							<TouchableOpacity
-								style={styles.dangerTouch}
+								style={[styles.dangerTouch, isDarkMode && baseStyles.darkCardBackground]}
 								key={'element_risk_' + index}
 								onPress={() => {
 									this.showDescModal(data, asset);
@@ -566,7 +629,7 @@ class TokenList extends PureComponent {
 					{notice &&
 						notice.map((data, index) => (
 							<TouchableOpacity
-								style={styles.warningTouch}
+								style={[styles.warningTouch, isDarkMode && baseStyles.darkCardBackground]}
 								key={'element_notice_' + index}
 								onPress={() => {
 									this.showDescModal(data, asset);
@@ -583,7 +646,8 @@ class TokenList extends PureComponent {
 
 	renderSecurityTag = asset => {
 		const flagStyle = styles.tagPosition;
-		if (asset.nativeCurrency) {
+
+		if (asset.nativeCurrency || isSecureAddress(asset)) {
 			return <Image source={require('../../../images/tag_safe.png')} style={flagStyle} />;
 		}
 		const { normalLength, noticeLength, riskLength, isTrust } = asset.securityData;
@@ -612,43 +676,51 @@ class TokenList extends PureComponent {
 		this.setState({ searchLoading: false, searchQuery, searchResult: results });
 	};
 
-	renderNoDetectedModal = () => (
-		<Modal
-			isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
-			actionContainerStyle={styles.modalNoBorder}
-			backdropOpacity={0.7}
-			animationIn="fadeIn"
-			animationOut="fadeOut"
-			useNativeDriver
-		>
-			<View style={styles.noDectedModal}>
-				<Text style={styles.noDetectedTitle}>{strings('security.detect_no_security')}</Text>
-				<View style={styles.noDetectedLine} />
-				<TouchableOpacity
-					style={styles.noDetectedTouch}
-					onPress={() => {
-						this.setState({ showNoDetectedModal: false });
-					}}
-				>
-					<Text style={styles.tryLaterText}>{strings('security.try_it_later')}</Text>
-				</TouchableOpacity>
-			</View>
-		</Modal>
-	);
+	renderNoDetectedModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.showNoDetectedModal && !this.props.isLockScreen}
+				actionContainerStyle={styles.modalNoBorder}
+				backdropOpacity={0.7}
+				animationIn="fadeIn"
+				animationOut="fadeOut"
+				useNativeDriver
+			>
+				<View style={[styles.noDectedModal, isDarkMode && baseStyles.darkBackground]}>
+					<Text style={[styles.noDetectedTitle, isDarkMode && baseStyles.textDark]}>
+						{strings('security.detect_no_security')}
+					</Text>
+					<View style={styles.noDetectedLine} />
+					<TouchableOpacity
+						style={styles.noDetectedTouch}
+						onPress={() => {
+							this.setState({ showNoDetectedModal: false });
+						}}
+					>
+						<Text style={[styles.tryLaterText, isDarkMode && baseStyles.textDark]}>
+							{strings('security.try_it_later')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+		);
+	};
 
 	render() {
 		const { tokenList, searchResult, searchQuery, searchLoading, showSecurityDesc, initLoaded } = this.state;
 		const { contactEntry } = this.props;
 		const isQuery = !!searchQuery;
+		const { isDarkMode } = this.context;
 		return (
-			<View style={styles.listWrapper}>
+			<View style={[styles.listWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<SearchView
 					contactEntry={contactEntry}
 					onLoading={this.onSearchLoading}
 					onSearch={this.onSearchResult}
 				/>
 				{((searchLoading && isQuery) || (!initLoaded && !isQuery)) && (
-					<View style={styles.emptyView}>
+					<View style={[styles.emptyView, isDarkMode && baseStyles.darkBackground]}>
 						<ActivityIndicator size="large" color={colors.brandPink300} />
 					</View>
 				)}
@@ -657,6 +729,7 @@ class TokenList extends PureComponent {
 				{((!isQuery && tokenList.length === 0 && initLoaded) ||
 					(isQuery && !searchLoading && searchResult.length === 0)) &&
 					this.renderEmpty()}
+
 				<SecurityDesc
 					isVisible={showSecurityDesc}
 					data={this.selectSecurityContent}

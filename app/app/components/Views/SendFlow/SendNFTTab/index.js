@@ -50,6 +50,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VERIFICATION_DISABLED } from '../../../../constants/storage';
 import { chainTypeTochain, getChainTypeName } from '../../../../util/ChainTypeImages';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -65,7 +66,9 @@ const styles = StyleSheet.create({
 		maxHeight: '88%',
 		backgroundColor: colors.white,
 		borderRadius: 20,
-		margin: 8
+		margin: 8,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	container: {
 		marginHorizontal: 30
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
 		width: 140,
 		height: 140,
 		alignSelf: 'center',
-		marginBottom: 24,
+
 		borderRadius: 5
 	},
 	stepTwoImage: {
@@ -148,7 +151,7 @@ const styles = StyleSheet.create({
 		flex: 1.4,
 		height: 44,
 		marginLeft: 19,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.$E6E6E6,
 		alignItems: 'center',
 		justifyContent: 'center'
@@ -166,7 +169,7 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -195,17 +198,34 @@ const styles = StyleSheet.create({
 		...fontStyles.bold
 	},
 	nftName: {
-		fontSize: 12,
+		fontSize: 14,
 		lineHeight: 16,
 		color: colors.$8F92A1,
-		...fontStyles.normal,
+		...fontStyles.bold,
 		textAlign: 'center',
-		marginTop: 8
+		marginTop: 12,
+		marginBottom: 24
 	},
 	amountTitle: {
 		marginTop: 30,
 		flexDirection: 'row',
 		justifyContent: 'space-between'
+	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
 	},
 	titleText: {
 		fontSize: 18,
@@ -281,6 +301,7 @@ const styles = StyleSheet.create({
  * View that wraps the wraps the "Send" screen
  */
 class SendNFTTab extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		selectedAddress: PropTypes.string,
 		onClose: PropTypes.func,
@@ -741,10 +762,15 @@ class SendNFTTab extends PureComponent {
 
 	renderTokenInput = () => {
 		const { amountFormat, inputTextWidth } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.valueInput}>
 				<TextInput
-					style={[styles.inputAmount, inputTextWidth && { width: inputTextWidth }]}
+					style={[
+						styles.inputAmount,
+						inputTextWidth && { width: inputTextWidth },
+						isDarkMode && baseStyles.textDark
+					]}
 					ref={this.amountInputRef}
 					value={amountFormat}
 					onLayout={this.onTextInputLayout}
@@ -795,22 +821,31 @@ class SendNFTTab extends PureComponent {
 		} = this.state;
 		const { asset, onClose } = this.props;
 		const { transaction, loading, error } = this.state;
+		const { isDarkMode } = this.context;
 		const isReady = txStep === 1 ? toSelectedAddressReady && amountReady : confirmEnabled;
+
 		return (
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 				onScrollBeginDrag={dismissKeyboard}
+				style={[
+					{ borderTopEndRadius: 50, borderTopStartRadius: 50 },
+					isDarkMode && baseStyles.darkModalBackground
+				]}
 			>
-				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
-					<View style={styles.labelWrapper}>
-						<Image style={styles.labelIcon} source={iconSendActive} />
-						<Text style={styles.labelText}>{strings('other.send_nft')}</Text>
-					</View>
-					<Text style={styles.nftName}>{asset.name}</Text>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.send_nft')}</Text>
+				</View>
+				<TouchableOpacity
+					style={[styles.container, isDarkMode && baseStyles.darkModalBackground]}
+					activeOpacity={1}
+					onPress={dismissKeyboard}
+				>
 					{txStep === 1 ? (
 						<View style={styles.stepOne}>
 							<NFTImage style={styles.stepOneImage} imageUrl={asset.image_url} />
+							<Text style={styles.nftName}>{asset.name}</Text>
 							<AddressTo
 								inputRef={this.addressToInputRef}
 								highlighted={toInputHighlighted}
@@ -835,7 +870,9 @@ class SendNFTTab extends PureComponent {
 								})}
 							</Text>
 							<View style={styles.amountTitle}>
-								<Text style={styles.titleText}>{strings('other.amount')}</Text>
+								<Text style={[styles.titleText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.amount')}
+								</Text>
 								<Text style={styles.amountText}>
 									{strings('other.amount_available', { amount: asset.balanceOf })}
 								</Text>
@@ -847,13 +884,23 @@ class SendNFTTab extends PureComponent {
 							<NFTImage style={styles.stepTwoImage} imageUrl={asset.image_url} />
 							<View>
 								<View style={styles.labelNet}>
-									<Text style={styles.labelTitle}>{strings('other.to')}</Text>
-									<Text style={styles.labelNetContent}>{getChainTypeName(asset.type)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.to')}
+									</Text>
+									<Text style={[styles.labelNetContent, isDarkMode && baseStyles.subTextDark]}>
+										{getChainTypeName(asset.type)}
+									</Text>
 								</View>
-								<Text style={styles.toAddress}>{toSelectedAddress}</Text>
+								<Text style={[styles.toAddress, isDarkMode && baseStyles.subTextDark]}>
+									{toSelectedAddress}
+								</Text>
 								<View style={styles.labelAmount}>
-									<Text style={styles.labelTitle}>{strings('other.amount')}</Text>
-									<Text style={styles.labelAmountContent}>{revertAmount(amountFormat)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.amount')}
+									</Text>
+									<Text style={[styles.labelAmountContent, isDarkMode && baseStyles.subTextDark]}>
+										{revertAmount(amountFormat)}
+									</Text>
 								</View>
 							</View>
 
@@ -875,23 +922,34 @@ class SendNFTTab extends PureComponent {
 					<View style={baseStyles.flexGrow} />
 					<View style={styles.confirmActionWrapper}>
 						<TouchableOpacity
-							style={styles.cancelButton}
+							style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 							onPress={txStep === 1 ? onClose : this.onCancel}
 							activeOpacity={activeOpacity}
 							disabled={loading}
 						>
-							<Text style={styles.cancelButtonText}>{strings('action_view.cancel')}</Text>
+							<Text style={[styles.cancelButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('action_view.cancel')}
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							style={[styles.confirmButton, isReady && styles.confirmButtonEnabled]}
+							style={[
+								styles.confirmButton,
+								isReady && (isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+							]}
 							onPress={txStep === 1 ? this.onNextStep : this.onConfirmClick}
 							activeOpacity={activeOpacity}
 							disabled={!isReady || loading}
 						>
 							{loading ? (
-								<ActivityIndicator size="small" color="white" />
+								<ActivityIndicator size="small" color={isDarkMode ? colors.$4CA1CF : 'white'} />
 							) : (
-								<Text style={[styles.confirmButtonText, isReady && styles.confirmButtonTextEnable]}>
+								<Text
+									style={[
+										styles.confirmButtonText,
+										isReady &&
+											(isDarkMode ? baseStyles.darkConfirmText : styles.confirmButtonTextEnable)
+									]}
+								>
 									{strings(txStep === 1 ? 'other.next' : 'action_view.confirm')}
 								</Text>
 							)}
@@ -912,14 +970,19 @@ class SendNFTTab extends PureComponent {
 		);
 	};
 
-	render = () =>
-		Device.isIos() ? (
-			<KeyboardAvoidingView style={styles.wrapper} behavior={'padding'}>
+	render = () => {
+		const { isDarkMode } = this.context;
+		return Device.isIos() ? (
+			<KeyboardAvoidingView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}
+				behavior={'padding'}
+			>
 				{this.renderView()}
 			</KeyboardAvoidingView>
 		) : (
-			<View style={styles.wrapper}>{this.renderView()}</View>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground600]}>{this.renderView()}</View>
 		);
+	};
 }
 
 const mapStateToProps = state => ({

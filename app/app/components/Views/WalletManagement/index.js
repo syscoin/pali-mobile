@@ -28,7 +28,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BIOMETRY_CHOICE_DISABLED, EXISTING_USER, TRUE } from '../../../constants/storage';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
-import Popover from '../../UI/Popover';
 import { toggleShowHint } from '../../../actions/hint';
 import { renderAmount } from '../../../util/number';
 import { CURRENCIES } from '../../../util/currencies';
@@ -39,6 +38,7 @@ import PromptView from '../../UI/PromptView';
 import { renderError } from '../../../util/error';
 import Icon from '../../UI/Icon';
 import WC2Manager from '../../../../app/core/WalletConnect/WalletConnectV2';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const cardMargin = 20;
 const cardPadding = 18;
@@ -50,6 +50,21 @@ const chainItemWidth = 40;
 const styles = StyleSheet.create({
 	flexOne: {
 		flex: 1
+	},
+	backgroundImage: {
+		width: '100%',
+		height: 240,
+		zIndex: -1,
+		position: 'absolute',
+		top: 0,
+		borderBottomRightRadius: 20,
+		borderBottomLeftRadius: 20
+	},
+	wrapperModal: {
+		maxHeight: '88%',
+		backgroundColor: colors.white,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
 	},
 	wrapper: {
 		backgroundColor: colors.white,
@@ -89,6 +104,22 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
+	titleLayout: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.blackAlpha200,
+		borderTopLeftRadius: 50,
+		borderTopRightRadius: 50
+	},
+	intro: {
+		...fontStyles.semibold,
+		color: colors.$030319,
+		fontSize: 18,
+		marginTop: 20,
+		marginBottom: 20,
+		textTransform: 'uppercase'
+	},
 	walletTitle: {
 		color: colors.$1A1A1A,
 		fontSize: 18,
@@ -111,32 +142,40 @@ const styles = StyleSheet.create({
 		paddingVertical: 16
 	},
 	importPhraseButton: {
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
-		justifyContent: 'center',
-		marginTop: 8
+		marginTop: 5,
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	importPhraseButtonText: {
 		fontSize: 14,
-		color: colors.$1A1A1A
+		color: colors.$1A1A1A,
+		marginLeft: 12
 	},
 	importPrivateKeyButton: {
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
-		justifyContent: 'center'
+		marginTop: 5,
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	importPrivateKeyButtonText: {
 		fontSize: 14,
-		color: colors.$1A1A1A
+		color: colors.$1A1A1A,
+		marginLeft: 12
 	},
 	createWalletButton: {
-		height: 40,
+		height: 44,
+		flexDirection: 'row',
+		marginTop: 5,
 		paddingLeft: 20,
-		justifyContent: 'center',
+		alignItems: 'center',
 		marginBottom: 6
 	},
 	createWalletButtonText: {
 		fontSize: 14,
+		marginLeft: 12,
 		color: colors.$1A1A1A
 	},
 	askButton: {
@@ -179,12 +218,13 @@ const styles = StyleSheet.create({
 	underline: {
 		flex: 1,
 		borderBottomWidth: 1,
+		marginHorizontal: 16,
 		borderBottomColor: colors.$8F92A1Alpha
 	},
 	cancelButton: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.brandPink300,
 		alignItems: 'center',
@@ -197,7 +237,7 @@ const styles = StyleSheet.create({
 	okButton: {
 		flex: 1.5,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.brandPink300,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -210,7 +250,7 @@ const styles = StyleSheet.create({
 	cancelButton2: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		borderWidth: 1,
 		borderColor: colors.transparent,
 		alignItems: 'center',
@@ -223,7 +263,7 @@ const styles = StyleSheet.create({
 	okButton2: {
 		flex: 1,
 		height: 44,
-		borderRadius: 10,
+		borderRadius: 100,
 		backgroundColor: colors.transparent,
 		marginLeft: 19,
 		alignItems: 'center',
@@ -326,18 +366,21 @@ const styles = StyleSheet.create({
 		marginTop: 14,
 		marginBottom: 20
 	},
+	backIcon: {
+		color: colors.white
+	},
 	headerLabelStyle: {
 		fontSize: 18,
 		flex: 1,
 		textAlign: 'center',
-		color: colors.$202020,
+		color: colors.white,
 		...fontStyles.bold
 	},
 	headerStyle: {
 		flexDirection: 'row',
 		shadowColor: colors.transparent,
 		elevation: 0,
-		backgroundColor: colors.white,
+		backgroundColor: colors.transparent,
 		borderBottomWidth: 0,
 		alignItems: 'center'
 	},
@@ -392,8 +435,9 @@ const styles = StyleSheet.create({
 		marginHorizontal: 0
 	},
 	walletPopItemButton: {
-		height: 40,
+		height: 44,
 		paddingHorizontal: 20,
+		marginTop: 5,
 		alignItems: 'center',
 		flexDirection: 'row'
 	},
@@ -430,7 +474,9 @@ const styles = StyleSheet.create({
 		height: 55
 	},
 	paddingVertical7: {
-		paddingVertical: 7
+		paddingVertical: 7,
+		backgroundColor: 'white',
+		paddingBottom: 45
 	},
 	walletMoreTouch: {
 		paddingLeft: 10,
@@ -491,6 +537,7 @@ class WalletManagement extends PureComponent {
 		wealths: PropTypes.object,
 		isLockScreen: PropTypes.bool
 	};
+	static contextType = ThemeContext;
 
 	state = {
 		deleteAccountModalVisible: false,
@@ -588,6 +635,7 @@ class WalletManagement extends PureComponent {
 	renderDeleteAccount = () => {
 		const { deleteAccountModalVisible } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={deleteAccountModalVisible && !isLockScreen}
@@ -598,21 +646,36 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer2}>
-						<Text style={styles.modalTitle}>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
 							{strings('wallet_management.delete_account', {
 								name: this.currentModalAccount?.name
 							})}
 						</Text>
 
-						<Text style={styles.modalWarn}>{strings('wallet_management.delete_warn')}</Text>
+						<Text style={[styles.modalWarn, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.delete_warn')}
+						</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onDeleteCancal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onDeleteCancal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onDeleteOk}>
-								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onDeleteOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.confirm_delete')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -673,7 +736,7 @@ class WalletManagement extends PureComponent {
 
 	renderRenameWallet = () => {
 		const { renameWalletModalVisible, walletNameValue } = this.state;
-
+		const { isDarkMode } = this.context;
 		const { isLockScreen } = this.props;
 
 		return (
@@ -686,22 +749,39 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.rename_account')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.rename_account')}
+						</Text>
 						<TextInput
-							style={styles.textInput}
+							style={[styles.textInput, isDarkMode && baseStyles.textDark]}
 							value={walletNameValue}
 							onChangeText={this.onWalletNameChange}
 						/>
 						<View style={styles.underline} />
-						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
+						<Text style={[styles.modalEg, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.rename_eg')}
+						</Text>
 						<View style={styles.modalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onRenameWalletCancel}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onRenameWalletCancel}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onRenameWalletOk}>
-								<Text style={styles.okText}>{strings('wallet_management.rename')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onRenameWalletOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.rename')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -713,6 +793,7 @@ class WalletManagement extends PureComponent {
 	renderRenameAccount = () => {
 		const { renameAccountModalVisible, accountNameValue } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={renameAccountModalVisible && !isLockScreen}
@@ -723,22 +804,39 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.rename_account')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.rename_account')}
+						</Text>
 						<TextInput
-							style={styles.textInput}
+							style={[styles.textInput, isDarkMode && baseStyles.textDark]}
 							value={accountNameValue}
 							onChangeText={this.onAccountNameChange}
 						/>
 						<View style={styles.underline} />
-						<Text style={styles.modalEg}>{strings('wallet_management.rename_eg')}</Text>
+						<Text style={[styles.modalEgisDarkMode, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.rename_eg')}
+						</Text>
 						<View style={styles.modalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.onRenameCancal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.onRenameCancal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onRenameOk}>
-								<Text style={styles.okText}>{strings('wallet_management.rename')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onRenameOk}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.rename')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -814,6 +912,7 @@ class WalletManagement extends PureComponent {
 	renderCheckPassword = () => {
 		const { checkPasswordModalVisible, passwordValue, wrongPwVisible } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={checkPasswordModalVisible && !isLockScreen}
@@ -824,12 +923,22 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{strings('wallet_management.confirm_password')}</Text>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.confirm_password')}
+						</Text>
 						<TextInput
 							ref={this.fieldRef}
-							style={styles.pwInput}
+							style={[
+								styles.pwInput,
+								isDarkMode && baseStyles.textDark,
+								isDarkMode && baseStyles.darkInputBackground,
+								isDarkMode && { borderColor: colors.white016 }
+							]}
 							value={passwordValue}
 							onChangeText={this.onPasswordValueChange}
 							secureTextEntry
@@ -843,11 +952,21 @@ class WalletManagement extends PureComponent {
 							{strings('wallet_management.wrong_password')}
 						</Text>
 						<View style={styles.pwModalButtons}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.hideCheckPasswordModal}>
-								<Text style={styles.cancelText}>{strings('action_view.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.hideCheckPasswordModal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('action_view.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onConfirmPw}>
-								<Text style={styles.okText}>{strings('action_view.confirm')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onConfirmPw}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('action_view.confirm')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -868,7 +987,9 @@ class WalletManagement extends PureComponent {
 		wallet.walletName = walletName;
 
 		this.currentModalWallet = wallet;
-		this.setState({ renameWalletModalVisible: true, walletNameValue: walletName });
+		setTimeout(() => {
+			this.setState({ renameWalletModalVisible: true, walletNameValue: walletName });
+		}, 500);
 	};
 
 	showDeleteAccountModal = account => {
@@ -1048,13 +1169,18 @@ class WalletManagement extends PureComponent {
 	};
 
 	showDeleteWalletModal = () => {
+		const { walletSelectedName } = this.state;
 		this.hideHeaderPopModal();
-		this.setState({ deleteWalletModalVisible: true });
+
+		setTimeout(() => {
+			this.setState({ deleteWalletModalVisible: true, walletSelectedName: walletSelectedName });
+		}, 500);
 	};
 
 	renderDeleteWallet = () => {
 		const { deleteWalletModalVisible, walletSelectedName } = this.state;
 		const { isLockScreen } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<Modal
 				isVisible={deleteWalletModalVisible && !isLockScreen}
@@ -1065,21 +1191,36 @@ class WalletManagement extends PureComponent {
 				propagateSwipe
 				style={styles.centerModal}
 			>
-				<KeyboardAvoidingView style={styles.modalRoot} behavior={'padding'}>
+				<KeyboardAvoidingView
+					style={[styles.modalRoot, isDarkMode && baseStyles.darkModalBackground]}
+					behavior={'padding'}
+				>
 					<View style={styles.modalContainer2}>
-						<Text style={styles.modalTitle}>
+						<Text style={[styles.modalTitle, isDarkMode && baseStyles.textDark]}>
 							{strings('wallet_management.delete_wallet', {
 								name: walletSelectedName
 							})}
 						</Text>
 
-						<Text style={styles.modalWarn}>{strings('wallet_management.delete_wallet_warn')}</Text>
+						<Text style={[styles.modalWarn, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.delete_wallet_warn')}
+						</Text>
 						<View style={styles.modalButtons2}>
-							<TouchableOpacity style={styles.cancelButton} onPress={this.hideDeleteWalletModal}>
-								<Text style={styles.cancelText}>{strings('other.cancel')}</Text>
+							<TouchableOpacity
+								style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
+								onPress={this.hideDeleteWalletModal}
+							>
+								<Text style={[styles.cancelText, isDarkMode && baseStyles.textDark]}>
+									{strings('other.cancel')}
+								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity style={styles.okButton} onPress={this.onWalletDelete}>
-								<Text style={styles.okText}>{strings('wallet_management.confirm_delete')}</Text>
+							<TouchableOpacity
+								style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
+								onPress={this.onWalletDelete}
+							>
+								<Text style={[styles.okText, isDarkMode && baseStyles.darkConfirmText]}>
+									{strings('wallet_management.confirm_delete')}
+								</Text>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -1133,6 +1274,194 @@ class WalletManagement extends PureComponent {
 		});
 	};
 
+	renderView = () => {
+		const {
+			headerPopModalVisible,
+			headerIconRect,
+			isWalletPop,
+			walletSelectedIndex,
+			walletSelectedType,
+			walletSelectedName,
+			walletMainAddress,
+			walletSelectedCanRemove,
+			renameWalletLoading
+		} = this.state;
+		const { isLockScreen, identities } = this.props;
+		const { isDarkMode } = this.context;
+		const wallet = identities[walletMainAddress];
+		return (
+			<>
+				<View style={styles.titleLayout}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>
+						{isWalletPop ? walletSelectedName : strings('other.wallet')}
+					</Text>
+				</View>
+				{isWalletPop ? (
+					<View style={[styles.paddingVertical7, isDarkMode && baseStyles.darkModalBackground]}>
+						<TouchableOpacity
+							style={styles.walletPopItemButton}
+							activeOpacity={0.5}
+							onPress={() => {
+								this.hideHeaderPopModal();
+								this.props.navigation.navigate('RevealPrivateCredential', {
+									keyringIndex: walletSelectedIndex,
+									walletName:
+										walletSelectedName.length > 10
+											? walletSelectedName.slice(0, 10) + '...'
+											: walletSelectedName
+								});
+							}}
+						>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="visibility"
+							/>
+							<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
+								{walletSelectedType === KeyringTypes.hd
+									? strings('reveal_credential.seed_phrase_title')
+									: strings('reveal_credential.private_key_title')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+
+						{walletSelectedType === KeyringTypes.hd && (
+							<TouchableOpacity
+								style={styles.walletPopItemButton}
+								activeOpacity={0.5}
+								onPress={() => {
+									this.hideHeaderPopModal();
+									this.props.navigation.navigate('VerifySeedPhrase', {
+										keyringIndex: walletSelectedIndex,
+										walletName:
+											walletSelectedName.length > 10
+												? walletSelectedName.slice(0, 10) + '...'
+												: walletSelectedName
+									});
+								}}
+							>
+								<Icon
+									width="18"
+									height="18"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="shield"
+								/>
+								<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
+									{strings('wallet_management.verify_seed_phrase')}
+								</Text>
+							</TouchableOpacity>
+						)}
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.walletPopItemButton}
+							activeOpacity={0.5}
+							onPress={() => {
+								if (!renameWalletLoading || renameWalletLoading === '') {
+									this.onRenameWallet(wallet, walletSelectedIndex);
+								}
+							}}
+						>
+							<Icon
+								width="18"
+								height="18"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="edit"
+							/>
+							<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.rename_wallet')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						{walletSelectedCanRemove && (
+							<TouchableOpacity
+								style={styles.walletPopItemButton}
+								activeOpacity={0.5}
+								onPress={() => this.showDeleteWalletModal()}
+							>
+								<Icon
+									width="18"
+									height="18"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="trash"
+								/>
+								<Text style={[styles.walletPopItemText, isDarkMode && baseStyles.textDark]}>
+									{strings('wallet_management.delete_this_wallet')}
+								</Text>
+							</TouchableOpacity>
+						)}
+					</View>
+				) : (
+					<View style={[styles.paddingVertical7, isDarkMode && baseStyles.darkModalBackground]}>
+						<TouchableOpacity
+							style={styles.importPhraseButton}
+							activeOpacity={0.5}
+							onPress={this.onImportPhrase}
+						>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="sapling"
+							/>
+							<Text style={[styles.importPhraseButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.import_seed_phrase')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.importPrivateKeyButton}
+							onPress={this.onImportPrivateKey}
+							activeOpacity={0.5}
+						>
+							<Icon
+								width="20"
+								height="20"
+								color={isDarkMode ? colors.white : colors.$1A1A1A}
+								name="privateKey"
+							/>
+							<Text style={[styles.importPrivateKeyButtonText, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.import_private_key')}
+							</Text>
+						</TouchableOpacity>
+						<View style={styles.underline} />
+						<TouchableOpacity
+							style={styles.createWalletButton}
+							onPress={this.onCreateWallet}
+							activeOpacity={0.5}
+						>
+							<View style={styles.askBaseLayout}>
+								<Icon
+									width="20"
+									height="20"
+									color={isDarkMode ? colors.white : colors.$1A1A1A}
+									name="walletOutline"
+								/>
+								<Text style={[styles.createWalletButtonText, isDarkMode && baseStyles.textDark]}>
+									{strings('wallet_management.create_new_wallet')}
+								</Text>
+								<TouchableOpacity
+									style={styles.askButton}
+									onPress={() => {
+										this.showFaqModal();
+									}}
+								>
+									<Image source={require('../../../images/ask.png')} />
+								</TouchableOpacity>
+							</View>
+						</TouchableOpacity>
+					</View>
+				)}
+			</>
+		);
+	};
+
+	hideModal = () => {
+		this.setState({
+			headerPopModalVisible: false
+		});
+	};
+
 	renderHeaderPopModal = () => {
 		const {
 			headerPopModalVisible,
@@ -1148,132 +1477,32 @@ class WalletManagement extends PureComponent {
 		const { isLockScreen, identities } = this.props;
 
 		const wallet = identities[walletMainAddress];
+		const { isDarkMode } = this.context;
 
 		return (
 			<Modal
-				style={styles.margin0}
-				transparent
-				onRequestClose={this.hideHeaderPopModal}
-				visible={headerPopModalVisible && !isLockScreen}
+				isVisible={headerPopModalVisible && !isLockScreen}
+				onBackdropPress={this.hideModal}
+				onBackButtonPress={this.hideModal}
+				onSwipeComplete={this.hideModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+				useNativeDriver={Device.isAndroid()}
+				backdropTransitionOutTiming={0}
 			>
-				{/*<View style={{width: 200, height: 100, backgroundColor: colors.blue}}></View>*/}
-				<Popover
-					isVisible={headerPopModalVisible}
-					fromRect={headerIconRect}
-					onClose={this.hideHeaderPopModal}
-					disX={-10}
-				>
-					{isWalletPop ? (
-						<View style={styles.paddingVertical7}>
-							<TouchableOpacity
-								style={styles.walletPopItemButton}
-								onPress={() => {
-									this.hideHeaderPopModal();
-									this.props.navigation.navigate('RevealPrivateCredential', {
-										keyringIndex: walletSelectedIndex,
-										walletName:
-											walletSelectedName.length > 10
-												? walletSelectedName.slice(0, 10) + '...'
-												: walletSelectedName
-									});
-								}}
-							>
-								<Icon width="19" height="19" color={colors.$1A1A1A} name="visibility" />
-								<Text style={styles.walletPopItemText}>
-									{walletSelectedType === KeyringTypes.hd
-										? strings('reveal_credential.seed_phrase_title')
-										: strings('reveal_credential.private_key_title')}
-								</Text>
-							</TouchableOpacity>
-
-							{walletSelectedType === KeyringTypes.hd && (
-								<TouchableOpacity
-									style={styles.walletPopItemButton}
-									onPress={() => {
-										this.hideHeaderPopModal();
-										this.props.navigation.navigate('VerifySeedPhrase', {
-											keyringIndex: walletSelectedIndex,
-											walletName:
-												walletSelectedName.length > 10
-													? walletSelectedName.slice(0, 10) + '...'
-													: walletSelectedName
-										});
-									}}
-								>
-									<Icon width="18" height="18" color={colors.$1A1A1A} name="shield" />
-									<Text style={styles.walletPopItemText}>
-										{strings('wallet_management.verify_seed_phrase')}
-									</Text>
-								</TouchableOpacity>
-							)}
-							<TouchableOpacity
-								style={styles.walletPopItemButton}
-								onPress={() => {
-									if (!renameWalletLoading || renameWalletLoading === '') {
-										this.onRenameWallet(wallet, walletSelectedIndex);
-									}
-								}}
-							>
-								<Icon width="18" height="18" color={colors.$1A1A1A} name="edit" />
-								<Text style={styles.walletPopItemText}>
-									{strings('wallet_management.rename_wallet')}
-								</Text>
-							</TouchableOpacity>
-							{walletSelectedCanRemove && (
-								<TouchableOpacity
-									style={styles.walletPopItemButton}
-									onPress={this.showDeleteWalletModal}
-								>
-									<Icon width="18" height="18" color={colors.$1A1A1A} name="trash" />
-									<Text style={styles.walletPopItemText}>
-										{strings('wallet_management.delete_this_wallet')}
-									</Text>
-								</TouchableOpacity>
-							)}
-						</View>
-					) : (
-						<View>
-							<TouchableOpacity
-								style={styles.importPhraseButton}
-								activeOpacity={0.7}
-								onPress={this.onImportPhrase}
-							>
-								<Text style={styles.importPhraseButtonText}>
-									{strings('wallet_management.import_seed_phrase')}
-								</Text>
-							</TouchableOpacity>
-
-							<TouchableOpacity
-								style={styles.importPrivateKeyButton}
-								onPress={this.onImportPrivateKey}
-								activeOpacity={0.5}
-							>
-								<Text style={styles.importPrivateKeyButtonText}>
-									{strings('wallet_management.import_private_key')}
-								</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={styles.createWalletButton}
-								onPress={this.onCreateWallet}
-								activeOpacity={0.5}
-							>
-								<View style={styles.askBaseLayout}>
-									<Text style={styles.createWalletButtonText}>
-										{strings('wallet_management.create_new_wallet')}
-									</Text>
-									<TouchableOpacity
-										style={styles.askButton}
-										onPress={() => {
-											this.showFaqModal();
-										}}
-									>
-										<Image source={require('../../../images/ask.png')} />
-									</TouchableOpacity>
-								</View>
-							</TouchableOpacity>
-						</View>
-					)}
-				</Popover>
+				{Device.isIos() ? (
+					<KeyboardAvoidingView
+						style={[styles.wrapperModal, isDarkMode && baseStyles.darkCardBackground]}
+						behavior={'padding'}
+					>
+						{this.renderView()}
+					</KeyboardAvoidingView>
+				) : (
+					<View style={[styles.wrapperModal && isDarkMode && baseStyles.darkCardBackground]}>
+						{this.renderView()}
+					</View>
+				)}
 			</Modal>
 		);
 	};
@@ -1282,20 +1511,29 @@ class WalletManagement extends PureComponent {
 		const { addAccountLoadingIndex } = this.state;
 		const { identities } = this.props;
 		const walletButtonRef = React.createRef();
+		const { isDarkMode } = this.context;
 
 		return (
 			<ImageCapInset
-				style={styles.cardWrapper}
-				source={Device.isAndroid() ? { uri: 'default_card' } : require('../../../images/default_card.png')}
+				style={[styles.cardWrapper, isDarkMode && baseStyles.darkCardBackground]}
+				source={
+					Device.isAndroid()
+						? isDarkMode
+							? { uri: 'default_card_dark' }
+							: { uri: 'default_card' }
+						: isDarkMode
+						? require('../../../images/default_card_dark.png')
+						: require('../../../images/default_card.png')
+				}
 				capInsets={baseStyles.capInsets}
 				key={'element-' + keyringIndex}
 			>
-				<View style={styles.childrenWrapper} activeOpacity={1}>
+				<View style={[styles.childrenWrapper, isDarkMode && baseStyles.darkCardBackground]} activeOpacity={1}>
 					<View style={styles.flexOne}>
 						<View style={styles.rowFlex}>
 							<View style={styles.rowFlex2}>
 								<Text
-									style={styles.walletTitle}
+									style={[styles.walletTitle, isDarkMode && baseStyles.textDark]}
 									allowFontScaling={false}
 									numberOfLines={1}
 									ellipsizeMode="tail"
@@ -1322,28 +1560,29 @@ class WalletManagement extends PureComponent {
 							<TouchableOpacity
 								style={styles.walletMoreTouch}
 								onPress={async () => {
-									walletButtonRef?.current?.measure((ox, oy, width, height, px, py) => {
-										const statusBarHeight = StatusBar.currentHeight;
-										const dis = Device.isAndroid() ? statusBarHeight : 0;
-										this.setState({
-											headerPopModalVisible: true,
-											isWalletPop: true,
-											walletSelectedCanRemove: canRemove,
-											walletSelectedIndex: keyringIndex,
-											walletSelectedType: keyring.type,
-											walletSelectedName: identities[keyring.accounts[0]].walletName
-												? identities[keyring.accounts[0]].walletName
-												: strings('wallet_management.wallet_index', {
-														number: keyringIndex + 1
-												  }),
+									this.setState({
+										headerPopModalVisible: true,
+										isWalletPop: true,
+										walletSelectedCanRemove: canRemove,
+										walletSelectedIndex: keyringIndex,
+										walletSelectedType: keyring.type,
+										walletSelectedName: identities[keyring.accounts[0]].walletName
+											? identities[keyring.accounts[0]].walletName
+											: strings('wallet_management.wallet_index', {
+													number: keyringIndex + 1
+											  }),
 
-											walletMainAddress: keyring.accounts[0],
-											headerIconRect: { x: px, y: py - dis, width, height }
-										});
+										walletMainAddress: keyring.accounts[0]
 									});
 								}}
 							>
-								<Image source={require('../../../images/ic_defi_more.png')} ref={walletButtonRef} />
+								<Icon
+									width="28"
+									height="28"
+									color={isDarkMode ? colors.white : colors.paliGrey200}
+									name="menu"
+									ref={walletButtonRef}
+								/>
 							</TouchableOpacity>
 						</View>
 
@@ -1460,46 +1699,67 @@ class WalletManagement extends PureComponent {
 		this.props.navigation.navigate('ImportPrivateKeyView', { fromWalletManager: true });
 	};
 
+	hideHeaderPopModalVisible = () => {
+		this.setState({ headerPopModalVisible: false });
+	};
+
 	showFaqModal = account => {
 		this.hideHeaderPopModal();
-		this.setState({ faqModalVisible: true });
+		this.hideHeaderPopModalVisible();
+		setTimeout(() => {
+			this.setState({ faqModalVisible: true });
+		}, 500);
 	};
 
 	hideFaqModal = account => {
 		this.setState({ faqModalVisible: false });
 	};
 
-	renderFaqModal = () => (
-		<Modal
-			isVisible={this.state.faqModalVisible && !this.props.isLockScreen}
-			onBackdropPress={this.hideFaqModal}
-			onBackButtonPress={this.hideFaqModal}
-			onSwipeComplete={this.hideFaqModal}
-			swipeDirection={'down'}
-			propagateSwipe
-			style={styles.bottomModal}
-		>
-			<View>
-				<View style={styles.faqWrapper}>
-					<View style={styles.faqContainer}>
-						<Text style={styles.faqTitle}>{strings('wallet_management.account_wallet_difference')}</Text>
-						<Text style={styles.faqDesc}>
-							{strings('wallet_management.account_wallet_difference_desc')}
-						</Text>
-						<Image source={require('../../../images/img_pop_wallet.png')} />
+	renderFaqModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.faqModalVisible && !this.props.isLockScreen}
+				onBackdropPress={this.hideFaqModal}
+				onBackButtonPress={this.hideFaqModal}
+				onSwipeComplete={this.hideFaqModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+			>
+				<View>
+					<View style={[styles.faqWrapper, isDarkMode && baseStyles.darkModalBackground]}>
+						<View style={styles.faqContainer}>
+							<Text style={[styles.faqTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.account_wallet_difference')}
+							</Text>
+							<Text style={[styles.faqDesc, isDarkMode && baseStyles.subTextDark]}>
+								{strings('wallet_management.account_wallet_difference_desc')}
+							</Text>
+							<Image source={require('../../../images/img_pop_wallet.png')} />
+						</View>
 					</View>
 				</View>
-			</View>
-		</Modal>
-	);
+			</Modal>
+		);
+	};
 
 	render = () => {
 		const { keyrings } = this.props;
 		const { createWalletLoading, error } = this.state;
+		const { isDarkMode } = this.context;
 
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'wallet-management-screen'}>
-				<MStatusBar navigation={this.props.navigation} fixPadding={false} />
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				testID={'wallet-management-screen'}
+			>
+				<Image source={require('../../../images/pali_background.png')} style={styles.backgroundImage} />
+				<MStatusBar
+					navigation={this.props.navigation}
+					fixPadding={false}
+					backgroundColor={colors.transparent}
+				/>
 				<View style={styles.headerStyle}>
 					<TouchableOpacity
 						onPress={() => this.props.navigation.pop()}
