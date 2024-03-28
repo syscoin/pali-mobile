@@ -9,6 +9,7 @@ import Edit from '../../../images/svg/edit.svg';
 import FaceId from '../../../images/svg/face_id.svg';
 import Fingerprint from '../../../images/svg/fingerprint.svg';
 import Globe from '../../../images/svg/globe.svg';
+import Home from '../../../images/svg/ic_home.svg';
 import NFT from '../../../images/svg/nft.svg';
 import Menu from '../../../images/svg/menu.svg';
 import Moon from '../../../images/svg/ic_moon.svg';
@@ -35,6 +36,7 @@ const icons = {
 	fingerprint: Fingerprint,
 	faceId: FaceId,
 	globe: Globe,
+	home: Home,
 	nft: NFT,
 	menu: Menu,
 	moon: Moon,

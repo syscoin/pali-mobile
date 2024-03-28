@@ -674,9 +674,12 @@ class Browser extends PureComponent {
 				this.addressBarRefs[tab.id] = addressBarRef;
 			}
 		});
-
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.wrapper} {...(Device.isAndroid() ? { collapsable: false } : {})}>
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				{...(Device.isAndroid() ? { collapsable: false } : {})}
+			>
 				<MStatusBar navigation={this.props.navigation} />
 				<View style={styles.flexOne}>
 					{this.state.showSuggestPage && (

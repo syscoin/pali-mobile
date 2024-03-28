@@ -14,7 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
 import Engine from '../../../core/Engine';
-import { activeOpacity, colors, fontStyles } from '../../../styles/common';
+import { activeOpacity, colors, fontStyles, baseStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import {
 	failedSeedPhraseRequirements,
@@ -35,6 +35,7 @@ import SafeArea from 'react-native-safe-area';
 import { toggleShowHint } from '../../../actions/hint';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
  * using a seed phrase
  */
 class ImportFromSeed extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * The navigator object
@@ -479,54 +481,80 @@ class ImportFromSeed extends PureComponent {
 		return wordsView;
 	};
 
-	renderWordView = (i, word, onEditIndex, inputWord) => (
-		<TouchableOpacity
-			key={`word_${i}`}
-			style={[styles.wordWrapper, onEditIndex === i && styles.wordInputWrapper]}
-			activeOpacity={activeOpacity}
-			disabled={onEditIndex === i}
-			onPress={() => this.onChangeEditWord(i)}
-		>
-			<View style={[styles.numberWrapper, onEditIndex === i && styles.numberInputWrapper]}>
-				<Text style={[styles.number, onEditIndex === i && styles.numberInput]}>{`${i + 1}`}</Text>
-			</View>
-			{onEditIndex === i ? (
-				<TextInput
-					style={styles.inputWord}
-					ref={this.inputRef}
-					value={inputWord}
-					onChangeText={this.onWordChange}
-					onSubmitEditing={() => {
-						this.onSubmitEditing(i, inputWord, false);
-					}}
-					autoFocus
-					autoCorrect={false}
-					returnKeyType="next"
-					autoCapitalize="none"
-					onBlur={() => {
-						this.onInputBlur(i);
-					}}
-					onKeyPress={this.onKeyPress}
-				/>
-			) : (
-				<Text style={styles.word}>{`${word}`}</Text>
-			)}
-		</TouchableOpacity>
-	);
+	renderWordView = (i, word, onEditIndex, inputWord) => {
+		const { isDarkMode } = this.context;
+		return (
+			<TouchableOpacity
+				key={`word_${i}`}
+				style={[
+					styles.wordWrapper,
+
+					onEditIndex === i && styles.wordInputWrapper,
+					isDarkMode && { borderColor: colors.$4CA1CF },
+					isDarkMode && baseStyles.darkActionBackground
+				]}
+				activeOpacity={activeOpacity}
+				disabled={onEditIndex === i}
+				onPress={() => this.onChangeEditWord(i)}
+			>
+				<View
+					style={[
+						styles.numberWrapper,
+
+						onEditIndex === i && styles.numberInputWrapper,
+						isDarkMode && baseStyles.lightBlueBackground
+					]}
+				>
+					<Text
+						style={[
+							styles.number,
+							onEditIndex === i && styles.numberInput,
+							isDarkMode && baseStyles.textDark
+						]}
+					>{`${i + 1}`}</Text>
+				</View>
+				{onEditIndex === i ? (
+					<TextInput
+						style={[styles.inputWord, isDarkMode && baseStyles.textDark]}
+						ref={this.inputRef}
+						value={inputWord}
+						onChangeText={this.onWordChange}
+						onSubmitEditing={() => {
+							this.onSubmitEditing(i, inputWord, false);
+						}}
+						autoFocus
+						autoCorrect={false}
+						returnKeyType="next"
+						autoCapitalize="none"
+						onBlur={() => {
+							this.onInputBlur(i);
+						}}
+						onKeyPress={this.onKeyPress}
+					/>
+				) : (
+					<Text style={[styles.word, isDarkMode && baseStyles.textDark]}>{`${word}`}</Text>
+				)}
+			</TouchableOpacity>
+		);
+	};
 
 	render() {
 		const { seed, loading, candidateWords, onEditIndex, keyboardHeight } = this.state;
 		const validSeed = !failedSeedPhraseRequirements(seed);
-
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<MStatusBar navigation={this.props.navigation} />
 				<TitleBar
 					title={strings('onboarding.import_wallet')}
 					onBack={this.onBack}
 					rightView={
 						<TouchableOpacity
-							style={[styles.importButtonWrapper, !validSeed && styles.incompleteButtonWrapper]}
+							style={[
+								styles.importButtonWrapper,
+								isDarkMode && baseStyles.lightBlueBackground,
+								!validSeed && styles.incompleteButtonWrapper
+							]}
 							onPress={this.onPressImport}
 							disabled={!validSeed || loading}
 							activeOpacity={activeOpacity}
@@ -550,22 +578,34 @@ class ImportFromSeed extends PureComponent {
 					onScrollBeginDrag={dismissKeyboard}
 					showsVerticalScrollIndicator={false}
 				>
-					<Text style={styles.title}>{strings('import_from_seed.title')}</Text>
-					<Text style={styles.secondaryTitle}>{strings('import_from_seed.enter_seed_phrase_tips')}</Text>
+					<Text style={[styles.title, isDarkMode && baseStyles.textDark]}>
+						{strings('import_from_seed.title')}
+					</Text>
+					<Text style={[styles.secondaryTitle, isDarkMode && baseStyles.subTextDark]}>
+						{strings('import_from_seed.enter_seed_phrase_tips')}
+					</Text>
 
 					<View style={styles.seedPhraseWrapper}>{this.renderSeedPhrase()}</View>
 
 					<View style={styles.padding} />
 				</ScrollView>
 				{onEditIndex !== -1 && (
-					<View style={[styles.candidateWrapper, { marginBottom: keyboardHeight }]}>
+					<View
+						style={[
+							styles.candidateWrapper,
+							isDarkMode && baseStyles.darkBackground,
+							{ marginBottom: keyboardHeight }
+						]}
+					>
 						<TouchableOpacity
 							style={styles.candidateBtn}
 							activeOpacity={activeOpacity}
 							onPress={() => this.onSelectWord(candidateWords[0])}
 							disabled={!candidateWords[0]}
 						>
-							<Text style={styles.candidateWord}>{candidateWords[0] || ''}</Text>
+							<Text style={[styles.candidateWord, isDarkMode && baseStyles.textDark]}>
+								{candidateWords[0] || ''}
+							</Text>
 						</TouchableOpacity>
 						<View style={styles.candidateDivider} />
 						<TouchableOpacity
@@ -574,7 +614,9 @@ class ImportFromSeed extends PureComponent {
 							onPress={() => this.onSelectWord(candidateWords[1])}
 							disabled={!candidateWords[1]}
 						>
-							<Text style={styles.candidateWord}>{candidateWords[1] || ''}</Text>
+							<Text style={[styles.candidateWord, isDarkMode && baseStyles.textDark]}>
+								{candidateWords[1] || ''}
+							</Text>
 						</TouchableOpacity>
 						<View style={styles.candidateDivider} />
 						<TouchableOpacity
@@ -583,7 +625,9 @@ class ImportFromSeed extends PureComponent {
 							onPress={() => this.onSelectWord(candidateWords[2])}
 							disabled={!candidateWords[2]}
 						>
-							<Text style={styles.candidateWord}>{candidateWords[2] || ''}</Text>
+							<Text style={[styles.candidateWord, isDarkMode && baseStyles.textDark]}>
+								{candidateWords[2] || ''}
+							</Text>
 						</TouchableOpacity>
 					</View>
 				)}

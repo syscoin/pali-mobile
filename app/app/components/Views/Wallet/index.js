@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useContext } from 'react';
 import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
 import { compose } from 'redux';
 import { OTC_ONBOARDING_TOUR, TRUE } from '../../../constants/storage';
 
 import {
 	RefreshControl,
+	Appearance,
 	ScrollView,
 	FlatList,
 	ActivityIndicator,

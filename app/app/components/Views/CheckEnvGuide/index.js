@@ -11,13 +11,14 @@ import {
 	ActivityIndicator,
 	Image
 } from 'react-native';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import MStatusBar from '../../UI/MStatusBar';
 import { getWords } from '../../../util/validators';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	flexOne: {
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
 });
 
 export default class CheckEnvGuide extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object
 	};
@@ -114,8 +116,11 @@ export default class CheckEnvGuide extends PureComponent {
 	render = () => {
 		const { navigation } = this.props;
 		const { type, fromWalletManager, mnemonic } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={[styles.flexOne, { backgroundColor: colors.white }]}>
+			<SafeAreaView
+				style={[styles.flexOne, { backgroundColor: isDarkMode ? colors.brandBlue700 : colors.white }]}
+			>
 				<MStatusBar navigation={navigation} fixPadding={false} translucent />
 				<View style={styles.panGestureBaseView}>
 					<PanGestureHandler
@@ -175,7 +180,7 @@ export default class CheckEnvGuide extends PureComponent {
 											}
 										}}
 									>
-										<Text style={styles.skipLabel}>
+										<Text style={[styles.skipLabel, isDarkMode && baseStyles.textDark]}>
 											{strings('manual_backup_step_1.backup_later')}
 										</Text>
 									</TouchableOpacity>

@@ -11,7 +11,7 @@ import {
 	ActivityIndicator
 } from 'react-native';
 import { Draw } from '@benjeau/react-native-draw';
-import { colors } from '../../../styles/common';
+import { baseStyles, colors } from '../../../styles/common';
 import Device from '../../../util/Device';
 import MStatusBar from '../../UI/MStatusBar';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ import { failedSeedPhraseRequirements, isValidMnemonic, parseSeedPhrase } from '
 import { Mutex, util } from 'paliwallet-core';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NativeThreads from '../../../threads/NativeThreads';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const { height } = Dimensions.get('window');
 
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
 const pathMaxNum = Device.isAndroid() ? 200 : 220;
 
 export default class DrawingBoard extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object
 	};
@@ -172,8 +174,9 @@ export default class DrawingBoard extends PureComponent {
 		const { drawComplete, canDraw, drawStart, loading } = this.state;
 		const statusBarHeight = StatusBar.currentHeight;
 		const spaceHeight = Device.isAndroid() ? statusBarHeight : 0;
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.flexOne}>
+			<SafeAreaView style={[styles.flexOne, isDarkMode && baseStyles.darkBackground]}>
 				<View style={styles.flexOne}>
 					<MStatusBar navigation={this.props.navigation} fixPadding={false} translucent />
 					<View style={styles.operateLayout}>
@@ -181,7 +184,9 @@ export default class DrawingBoard extends PureComponent {
 						{!drawStart && (
 							<View style={styles.centerLayout}>
 								<Image source={require('../../../images/hand_touch.png')} />
-								<Text style={styles.drawText}>{strings('drawing_board.draw_random_lines')}</Text>
+								<Text style={[styles.drawText, isDarkMode && baseStyles.textDark]}>
+									{strings('drawing_board.draw_random_lines')}
+								</Text>
 							</View>
 						)}
 						<View style={styles.flexOne} />

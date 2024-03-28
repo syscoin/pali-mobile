@@ -13,6 +13,8 @@ import { util } from 'paliwallet-core';
 import { isHDMainAddress, tryVerifyPassword } from '../../../core/Vault';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -175,6 +177,7 @@ const styles = StyleSheet.create({
  * View that displays private account information as private key or seed phrase
  */
 class RevealPrivateCredential extends PureComponent {
+	static contextType = ThemeContext;
 	state = {
 		privateCredential: null,
 		unlocked: false,
@@ -253,34 +256,42 @@ class RevealPrivateCredential extends PureComponent {
 	renderSeedphraseView = seed => {
 		const words = (seed && seed.split(' ')) || [];
 		const wordLength = words.length;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<View style={styles.columnWrapper}>
 					<View style={styles.seedPhraseWrapper}>
 						{words.slice(0, wordLength).map((word, i) => (
-							<View key={`word_${i}`} style={styles.wordWrapper}>
-								<View style={styles.numberWrapper}>
-									<Text style={styles.number}>{`${i + 1}`}</Text>
+							<View
+								key={`word_${i}`}
+								style={[styles.wordWrapper, isDarkMode && baseStyles.darkActionBackground]}
+							>
+								<View style={[styles.numberWrapper, isDarkMode && baseStyles.lightBlueBackground]}>
+									<Text style={[styles.number, isDarkMode && baseStyles.textDark]}>{`${i + 1}`}</Text>
 								</View>
-								<Text style={styles.word}>{`${word}`}</Text>
+								<Text style={[styles.word, isDarkMode && baseStyles.textDark]}>{`${word}`}</Text>
 							</View>
 						))}
 					</View>
-					<View style={styles.whatSeedPhraseView}>
+					<View style={[styles.whatSeedPhraseView, isDarkMode && baseStyles.darkActionBackground]}>
 						<View style={styles.borderTitleView}>
-							<Image source={require('../../../images/ic_wallet_doubt.png')} />
-							<Text style={styles.borderTitleText}>{strings('wallet_management.what_seed_phrase')}</Text>
+							<Text style={[styles.borderTitleText, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.what_seed_phrase')}
+							</Text>
 						</View>
-						<Text style={styles.borderDesc}>{strings('wallet_management.what_seed_phrase_desc')}</Text>
+						<Text style={[styles.borderDesc, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.what_seed_phrase_desc')}
+						</Text>
 					</View>
-					<View style={styles.keepSeedPhraseSafeView}>
+					<View style={[styles.keepSeedPhraseSafeView, isDarkMode && baseStyles.darkActionBackground]}>
 						<View style={styles.borderTitleView}>
-							<Image source={require('../../../images/ic_wallet_dengpao.png')} />
-							<Text style={styles.borderTitleText}>
+							<Text style={[styles.borderTitleText, isDarkMode && baseStyles.textDark]}>
 								{strings('wallet_management.keep_seed_phrase_safe')}
 							</Text>
 						</View>
-						<Text style={styles.borderDesc}>{strings('wallet_management.keep_seed_phrase_safe_desc')}</Text>
+						<Text style={[styles.borderDesc, isDarkMode && baseStyles.subTextDark]}>
+							{strings('wallet_management.keep_seed_phrase_safe_desc')}
+						</Text>
 					</View>
 					<TouchableOpacity
 						style={styles.varifyButton}
@@ -302,22 +313,31 @@ class RevealPrivateCredential extends PureComponent {
 		);
 	};
 
-	renderPrivateKeyView = privateKey => (
-		<View style={styles.columnWrapper}>
-			<Text style={styles.seedPhraseTitle}>{strings('reveal_credential.your_private_key')}</Text>
-			<View style={styles.privateKeyWrapper}>
-				<Text style={styles.privateKeyText}>{privateKey}</Text>
+	renderPrivateKeyView = privateKey => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.columnWrapper}>
+				<Text style={[styles.seedPhraseTitle, isDarkMode && baseStyles.textDark]}>
+					{strings('reveal_credential.your_private_key')}
+				</Text>
+				<View style={[styles.privateKeyWrapper, isDarkMode && baseStyles.darkInputBackground]}>
+					<Text style={[styles.privateKeyText, isDarkMode && baseStyles.textDark]}>{privateKey}</Text>
+				</View>
+				<TouchableOpacity style={styles.tryUnlockButton} onPress={this.cancel}>
+					<Text style={styles.tryUnlockButtonText}>{strings('reveal_credential.confirm')}</Text>
+				</TouchableOpacity>
 			</View>
-			<TouchableOpacity style={styles.tryUnlockButton} onPress={this.cancel}>
-				<Text style={styles.tryUnlockButtonText}>{strings('reveal_credential.confirm')}</Text>
-			</TouchableOpacity>
-		</View>
-	);
+		);
+	};
 
 	render = () => {
 		const { unlocked, password, privateCredential } = this.state;
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'reveal-private-credential-screen'}>
+			<SafeAreaView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}
+				testID={'reveal-private-credential-screen'}
+			>
 				<MStatusBar navigation={this.props.navigation} />
 				<TitleBar
 					title={
@@ -341,9 +361,11 @@ class RevealPrivateCredential extends PureComponent {
 						)
 					) : (
 						<View style={styles.columnWrapper}>
-							<Text style={styles.enterPassword}>{strings('reveal_credential.enter_password')}</Text>
+							<Text style={[styles.enterPassword, isDarkMode && baseStyles.textDark]}>
+								{strings('reveal_credential.enter_password')}
+							</Text>
 							<TextInput
-								style={baseStyles.input}
+								style={[baseStyles.input, isDarkMode && baseStyles.textDark]}
 								testID={'private-credential-password-text-input'}
 								placeholder={strings('choose_password.enter_password')}
 								placeholderTextColor={colors.$8F92A1}

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { colors, fontStyles } from '../../../../styles/common';
 import { EasingNode } from 'react-native-reanimated';
 import { chainToChainType, getTabIcon } from '../../../../util/ChainTypeImages';
+import { ThemeContext } from '../../../../theme/ThemeProvider';
 
 import tabFavourites from '../../../../images/ic_tab_favourites.png';
 
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
 });
 
 class NetworkTabBar extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		goToPage: PropTypes.func,
 		activeTab: PropTypes.any,
@@ -66,9 +68,10 @@ class NetworkTabBar extends PureComponent {
 
 	//fontWeight 400 - 700, fontSize 14 - 22, color: colors.$8F92A1  colors.brandPink300
 	renderTab = (name, chain, page, isTabActive, animated, onPressHandler) => {
+		const { isDarkMode } = this.context;
 		const color = animated.interpolate({
 			inputRange: [0, 1],
-			outputRange: [colors.$8F92A1, colors.brandPink500]
+			outputRange: [isDarkMode ? colors.white : colors.$8F92A1, colors.brandPink500]
 		});
 		const backgroundColor = animated.interpolate({
 			inputRange: [0, 1],

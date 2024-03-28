@@ -12,6 +12,8 @@ import {
 	Dimensions,
 	DeviceEventEmitter
 } from 'react-native';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { colors, baseStyles } from '../../../styles/common';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
@@ -24,6 +26,7 @@ import { getActiveTabId } from '../../../util/browser';
 import { captureRef, dirs } from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
 import { ThemeContext } from '../../../theme/ThemeProvider';
+import Icon from '../../../components/UI/Icon';
 
 const styles = StyleSheet.create({
 	topTabbar: {
@@ -88,6 +91,12 @@ const styles = StyleSheet.create({
 		width: 47,
 		height: 58,
 		paddingRight: 5
+	},
+	hitSlop: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 10
 	},
 	rightTabBg: {
 		justifyContent: 'center',
@@ -319,6 +328,7 @@ export default class AddressBar extends PureComponent {
 		const onlyOneTab = rightTabUrl === 'add' && leftTabUrl === 'add';
 
 		const webPageState = !isHomePage && !inputEditing;
+		const useSearchIcon = isHomePage || inputEditing || !currentTitle || currentTitle === '';
 		const { isDarkMode } = this.context;
 		return (
 			<View
@@ -336,21 +346,47 @@ export default class AddressBar extends PureComponent {
 					onPress={() => {
 						goHome(tabId);
 					}}
+					hitSlop={styles.hitSlop}
 				>
-					<ImageBackground
-						style={styles.leftTabBg}
-						source={require('../../../images/img_left_tab_bg.png')}
-						resizeMode={'stretch'}
+					<View
+						style={{
+							marginTop: 9,
+							width: 40,
+							borderTopRightRadius: 5,
+							borderBottomRightRadius: 5,
+							paddingRight: 5,
+							backgroundColor: isDarkMode ? colors.brandBlue600 : colors.white,
+							height: 40,
+							alignItems: 'center',
+							justifyContent: 'center',
+							shadowColor: '#000',
+							shadowOffset: {
+								width: 0,
+								height: 0
+							},
+							shadowOpacity: 0.13,
+							shadowRadius: 4,
+							elevation: 3
+						}}
 					>
-						<Image style={styles.iconSize} source={require('../../../images/ic_search_home.png')} />
-					</ImageBackground>
+						<Icon
+							name={'home'}
+							color={isDarkMode ? colors.white : colors.paliGrey200}
+							width="20"
+							height="20"
+						/>
+					</View>
 				</TouchableOpacity>
 				<View style={styles.baseLayout}>
 					<ImageCapInset
 						style={[styles.flexOne, inputEditing && styles.catInsertLeft]} //上下9， 左右6
 						source={
 							Device.isAndroid()
-								? { uri: 'token_search_bg' }
+								? isDarkMode
+									? { uri: 'token_search_bg_dark700' }
+									: { uri: 'token_search_bg' }
+								: isDarkMode
+								? require('../../../images/token_search_bg_dark700.png')
 								: require('../../../images/token_search_bg.png')
 						}
 						capInsets={{
@@ -407,7 +443,11 @@ export default class AddressBar extends PureComponent {
 								<View style={styles.operateLayout}>
 									{webPageState && backEnabled && (
 										<TouchableOpacity onPress={this.backPress} hitSlop={styles.hitSlop}>
-											<Image source={require('../../../images/ic_search_back.png')} />
+											<AntIcon
+												size={18}
+												color={isDarkMode ? colors.white : colors.paliGrey300}
+												name="left"
+											/>
 										</TouchableOpacity>
 									)}
 
@@ -419,24 +459,34 @@ export default class AddressBar extends PureComponent {
 										disabled={inputEditing || isHomePage || safeLevel === -1}
 										hitSlop={styles.hitSlop}
 									>
-										<Image
-											source={
-												isHomePage || inputEditing || !currentTitle || currentTitle === ''
-													? require('../../../images/ic_search.png')
-													: safeLevel === 3
-													? require('../../../images/ic_defi_danger.png')
-													: safeLevel === 2
-													? require('../../../images/ic_defi_warning.png')
-													: safeLevel === 1
-													? require('../../../images/ic_defi_safe.png')
-													: require('../../../images/ic_defi_unknown.png')
-											}
-											ref={this.securityButtonRef}
-										/>
+										{useSearchIcon ? (
+											<AntIcon
+												size={18}
+												color={isDarkMode ? colors.white : colors.paliGrey300}
+												name="search1"
+											/>
+										) : (
+											<Image
+												source={
+													safeLevel === 3
+														? require('../../../images/ic_defi_danger.png')
+														: safeLevel === 2
+														? require('../../../images/ic_defi_warning.png')
+														: safeLevel === 1
+														? require('../../../images/ic_defi_safe.png')
+														: require('../../../images/ic_defi_unknown.png')
+												}
+												ref={this.securityButtonRef}
+											/>
+										)}
 									</TouchableOpacity>
 									<TextInput
 										pointerEvents={inputEditing ? 'auto' : 'none'}
-										style={[styles.textInput, inputEditing && styles.full]}
+										style={[
+											styles.textInput,
+											inputEditing && styles.full,
+											isDarkMode && baseStyles.textDark
+										]}
 										onChangeText={text => {
 											this.setState({ inputValue: text });
 											onTextChange && onTextChange(text);
@@ -471,14 +521,21 @@ export default class AddressBar extends PureComponent {
 										}}
 										hitSlop={styles.hitSlop}
 									>
-										<Image
-											source={
-												isHomePage
-													? require('../../../images/ic_addressbar_close.png')
-													: require('../../../images/ic_defi_more.png')
-											}
-											ref={this.moreButtonRef}
-										/>
+										{isHomePage ? (
+											<AntIcon
+												color={isDarkMode ? colors.white : colors.paliGrey300}
+												ref={this.moreButtonRef}
+												size={16}
+												name={'close'}
+											/>
+										) : (
+											<Entypo
+												ref={this.moreButtonRef}
+												color={isDarkMode ? colors.white : colors.grey600}
+												name="dots-three-horizontal"
+												size={18}
+											/>
+										)}
 									</TouchableOpacity>
 
 									{inputEditing && inputValue !== '' && (
@@ -498,7 +555,9 @@ export default class AddressBar extends PureComponent {
 					</ImageCapInset>
 					{inputEditing && (
 						<TouchableOpacity style={styles.cancelLayout} onPress={this.backPress}>
-							<Text style={styles.cancelLabel}>{strings('browser.cancel')}</Text>
+							<Text style={[styles.cancelLabel, isDarkMode && baseStyles.textDark]}>
+								{strings('browser.cancel')}
+							</Text>
 						</TouchableOpacity>
 					)}
 				</View>
@@ -511,13 +570,30 @@ export default class AddressBar extends PureComponent {
 						}
 					}}
 				>
-					<ImageBackground
-						style={styles.rightTabBg}
-						source={require('../../../images/img_right_tab_bg.png')}
-						resizeMode={'stretch'}
+					<View
+						style={{
+							marginTop: 9,
+							width: 40,
+							borderTopLeftRadius: 5,
+							borderBottomLeftRadius: 5,
+							paddingRight: 5,
+							backgroundColor: isDarkMode ? colors.brandBlue600 : colors.white,
+							height: 40,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							shadowColor: '#000',
+							shadowOffset: {
+								width: 0,
+								height: 0
+							},
+							shadowOpacity: 0.13,
+							shadowRadius: 4,
+							elevation: 3
+						}}
 					>
-						<Text>{tabCount}</Text>
-					</ImageBackground>
+						<Text style={{ color: isDarkMode ? colors.white : 'black' }}>{tabCount}</Text>
+					</View>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={inputEditing && styles.hide}
@@ -525,13 +601,31 @@ export default class AddressBar extends PureComponent {
 						this.props.gotoOpenedPages(false), this.props.newTab();
 					}}
 				>
-					<ImageBackground
-						style={styles.rightTabBg}
-						source={require('../../../images/img_right_tab_bg.png')}
-						resizeMode={'stretch'}
+					<View
+						style={{
+							marginTop: 9,
+							width: 40,
+							borderTopLeftRadius: 5,
+							borderBottomLeftRadius: 5,
+							paddingRight: 5,
+							backgroundColor: isDarkMode ? colors.brandBlue600 : colors.white,
+							height: 40,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							marginLeft: 5,
+							shadowColor: '#000',
+							shadowOffset: {
+								width: 0,
+								height: 0
+							},
+							shadowOpacity: 0.13,
+							shadowRadius: 4,
+							elevation: 3
+						}}
 					>
-						<Image style={styles.iconSize} source={require('../../../images/ic_add_tab.png')} />
-					</ImageBackground>
+						<AntIcon size={18} color={isDarkMode ? colors.white : colors.paliGrey200} name="plus" />
+					</View>
 				</TouchableOpacity>
 			</View>
 		);

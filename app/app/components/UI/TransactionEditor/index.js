@@ -397,9 +397,11 @@ class TransactionEditor extends PureComponent {
 					contentContainerStyle={styles.keyboardAwareWrapper}
 					keyboardShouldPersistTaps="handled"
 				>
-					<View style={styles.container}>
-						<View style={styles.titleLayout}>
-							<Text style={styles.intro}>{strings('transaction.request')}</Text>
+					<View style={[styles.container, isDarkMode && baseStyles.darkModalBackground]}>
+						<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+							<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>
+								{strings('transaction.request')}
+							</Text>
 						</View>
 						<TransactionReview onFeesChange={this.handleSetGasFee} />
 						{loading ? (

@@ -2,8 +2,10 @@ import React, { PureComponent } from 'react';
 import { StatusBar, View } from 'react-native';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
-
+import { ThemeContext } from '../../../theme/ThemeProvider';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 class MStatusBar extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object.isRequired,
 		barStyle: PropTypes.string,
@@ -13,7 +15,7 @@ class MStatusBar extends PureComponent {
 	};
 
 	static defaultProps = {
-		barStyle: 'dark-content',
+		barStyle: 'light-content', // Changed to 'light-content' for white text in dark mode
 		translucent: true,
 		backgroundColor: 'transparent',
 		fixPadding: true
@@ -41,12 +43,18 @@ class MStatusBar extends PureComponent {
 
 	render() {
 		const { barStyle, translucent, backgroundColor, fixPadding } = this.props;
+		const { isDarkMode } = this.context;
 		return (
 			<>
 				{fixPadding && Device.isAndroid() && StatusBar.currentHeight && (
 					<View style={{ paddingTop: StatusBar.currentHeight }} />
 				)}
-				<StatusBar animated barStyle={barStyle} translucent={translucent} backgroundColor={backgroundColor} />
+				<StatusBar
+					animated
+					barStyle={isDarkMode ? 'light-content' : barStyle}
+					translucent={translucent}
+					backgroundColor={backgroundColor}
+				/>
 			</>
 		);
 	}

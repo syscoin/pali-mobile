@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
 	lineMargin: {
 		height: 1,
 		marginHorizontal: 24,
+		marginTop: 3,
 		flex: 0
 	},
 	text: {

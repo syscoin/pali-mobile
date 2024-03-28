@@ -177,9 +177,12 @@ class AccountApproval extends PureComponent {
 		const description = meta && meta.description;
 
 		return (
-			<View style={styles.root}>
-				<View style={styles.titleLayout}>
-					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
+			<View style={[styles.root, isDarkMode && baseStyles.darkModalBackground]}>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>
+						{' '}
+						{strings('accountApproval.walletconnect_request')}
+					</Text>
 				</View>
 
 				<WebsiteIcon
@@ -188,8 +191,8 @@ class AccountApproval extends PureComponent {
 					url={url}
 					icon={typeof icon === 'string' ? icon : ''}
 				/>
-				<Text style={styles.hostTitle}>{title}</Text>
-				<Text style={styles.hostDescription}>{description}</Text>
+				<Text style={[styles.hostTitle, isDarkMode && baseStyles.textDark]}>{title}</Text>
+				<Text style={(styles.hostDescription, isDarkMode && baseStyles.subTextDark)}>{description}</Text>
 
 				<View style={styles.actionContainer}>
 					<TouchableOpacity

@@ -19,6 +19,7 @@ import importKey from '../../../images/ic_import_key.png';
 import importKeyBackground from '../../../images/import_key_background.png';
 import MStatusBar from '../../UI/MStatusBar';
 import { ChooseTypeCreate, ChooseTypeImportPrivateKey, ChooseTypeImportSeedPhrase } from '../ChoosePassword';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	scroll: {
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
  * View that is displayed to first time (new) users
  */
 class Onboarding extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		 * The navigator object
@@ -174,18 +176,19 @@ class Onboarding extends PureComponent {
 	};
 
 	renderContent() {
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.ctas}>
 				<MStatusBar navigation={this.props.navigation} />
 				<View style={baseStyles.flexGrow} />
-
-				<ImageBackground
-					style={styles.backgroundImageView}
-					source={BackgroundWelcome}
-					resizeMode="stretch"
-					repeat="repeat"
-				/>
-
+				{!isDarkMode && (
+					<ImageBackground
+						style={styles.backgroundImageView}
+						source={BackgroundWelcome}
+						resizeMode="stretch"
+						repeat="repeat"
+					/>
+				)}
 				<Image resizeMode="contain" source={PaliLogo} style={styles.logo} />
 
 				<TouchableOpacity
@@ -230,16 +233,19 @@ class Onboarding extends PureComponent {
 				</TouchableOpacity>
 
 				<View style={baseStyles.flexGrow} />
-				<Text style={styles.bottomText}>{strings('onboarding.prompt_text')}</Text>
+				<Text style={[styles.bottomText, isDarkMode && baseStyles.subTextDark]}>
+					{strings('onboarding.prompt_text')}
+				</Text>
 				<Image style={styles.footerLogo} resizeMode="contain" source={Logo} />
 			</View>
 		);
 	}
 
 	render() {
+		const { isDarkMode } = this.context;
 		return (
-			<View style={baseStyles.flexGrow} testID={'onboarding-screen'}>
-				<View style={styles.wrapper}>
+			<View style={[baseStyles.flexGrow, isDarkMode && baseStyles.darkBackground]} testID={'onboarding-screen'}>
+				<View style={[styles.wrapper, isDarkMode && baseStyles.darkBackground]}>
 					<ScrollView
 						style={baseStyles.flexGrow}
 						contentContainerStyle={styles.scroll}

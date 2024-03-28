@@ -17,8 +17,9 @@ import Clipboard from '@react-native-community/clipboard';
 import Share from 'react-native-share';
 import { strings } from '../../../../locales/i18n';
 import { showAlert } from '../../../actions/alert';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import iconCopy from '../../../images/copy.png';
-import iconShar from '../../../images/share.png';
+
 import iconReceiveActive from '../../../images/receive_hl.png';
 import { ChainType, util } from 'paliwallet-core';
 import GlobalAlert from '../GlobalAlert';
@@ -39,8 +40,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20
 	},
 	iconShar: {
-		width: 24,
-		height: 24
+		width: 31,
+		height: 31
 	},
 	bodyRow: {
 		alignItems: 'center'
@@ -228,21 +229,27 @@ class ReceiveTab extends PureComponent {
 		const { isDarkMode } = this.context;
 
 		return (
-			<View style={styles.wrapper}>
-				<View style={styles.titleLayout}>
-					<Text style={styles.intro}> {strings('accountApproval.walletconnect_request')}</Text>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.receive')}</Text>
 				</View>
 				<ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 					<TouchableOpacity activeOpacity={1} style={styles.containStyle}>
 						<View style={styles.labelWrapper}>
 							<Image style={styles.labelIcon} source={iconReceiveActive} />
-							<Text style={styles.labelText}>{strings('other.receive')}</Text>
+							<Text style={[styles.labelText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.receive')}
+							</Text>
 						</View>
 						<TouchableOpacity style={styles.shareRow} onPress={this.onShare} disabled={shareLoading}>
 							{shareLoading ? (
 								<ActivityIndicator style={styles.iconShar} color={colors.brandPink300} />
 							) : (
-								<Image style={styles.iconShar} source={iconShar} />
+								<EvilIcons
+									name={'share-apple'}
+									color={isDarkMode ? colors.white : colors.paliGrey300}
+									size={40}
+								/>
 							)}
 						</TouchableOpacity>
 						<View style={styles.bodyRow}>
@@ -251,7 +258,7 @@ class ReceiveTab extends PureComponent {
 							</View>
 							<Text style={styles.walletTitle}>{strings('other.my_wallet_address')}</Text>
 							<TouchableOpacity style={styles.addrWrapper} onPress={this.copyAccountToClipboard}>
-								<Text style={styles.addrText}>
+								<Text style={[styles.addrText, isDarkMode && baseStyles.subTextDark]}>
 									{this.props.selectedAddress.substring(0, 15) +
 										'...' +
 										this.props.selectedAddress.substring(24)}

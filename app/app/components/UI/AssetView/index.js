@@ -527,7 +527,7 @@ class AssetView extends PureComponent {
 					<Text style={[styles.approvalHint, isDarkMode && baseStyles.subTextDark]}>
 						{strings('approval_management.hint')}
 					</Text>
-					<View style={styles.divider} />
+					<View style={[styles.divider, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 					{eventList.map((event, i) => (
 						<ApprovalEvent
 							key={i}

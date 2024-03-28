@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginHorizontal: headerMarginHorizontal,
 		marginTop: -bottomShadow / 2,
-		marginBottom: 10
+		marginBottom: 10,
+		zIndex: 1
 	},
 	header_add: {
 		marginLeft: 8,

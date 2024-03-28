@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import MStatusBar from '../../UI/MStatusBar';
 import TitleBar from '../../UI/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -176,6 +177,7 @@ const styles = StyleSheet.create({
  * the backup seed phrase flow
  */
 class ManualBackupStep2 extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to push and pop other views
@@ -324,6 +326,8 @@ class ManualBackupStep2 extends PureComponent {
 
 	renderWordBox = (word, i) => {
 		const { currentIndex, confirmedWords } = this.state;
+
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				key={`word_${i}`}
@@ -333,21 +337,27 @@ class ManualBackupStep2 extends PureComponent {
 				}}
 				style={[
 					styles.wordWrapper,
+					isDarkMode && baseStyles.darkActionBackground,
 					i === currentIndex && styles.currentWord,
-					confirmedWords[i].word && styles.confirmedWord
+					confirmedWords[i].word && styles.confirmedWord,
+					isDarkMode && { borderColor: colors.$4CA1CF },
+					isDarkMode && baseStyles.darkCardBackground
 				]}
 				activeOpacity={activeOpacity}
 			>
 				<View
 					style={[
 						styles.numberWrapper,
+						isDarkMode && baseStyles.lightBlueBackground,
 						i === currentIndex && styles.currentNumberWrapper,
+						isDarkMode && baseStyles.lightBlueBackground,
 						confirmedWords[i].word && styles.confirmedNumberWrapper
 					]}
 				>
 					<Text
 						style={[
 							styles.number,
+							isDarkMode && baseStyles.textDark,
 							i === currentIndex && styles.currentNumber,
 							confirmedWords[i].word && styles.confirmedNumber
 						]}
@@ -355,7 +365,7 @@ class ManualBackupStep2 extends PureComponent {
 						{i + 1}
 					</Text>
 				</View>
-				<Text style={styles.word}>{word}</Text>
+				<Text style={[styles.word, isDarkMode && baseStyles.textDark]}>{word}</Text>
 			</TouchableOpacity>
 		);
 	};
@@ -364,6 +374,7 @@ class ManualBackupStep2 extends PureComponent {
 		const { wordsDict } = this.state;
 		const [word] = key.split(',');
 		const selected = wordsDict[key].currentPosition !== undefined;
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity
 				// eslint-disable-next-line react/jsx-no-bind
@@ -372,7 +383,15 @@ class ManualBackupStep2 extends PureComponent {
 				key={`selectableWord_${i}`}
 				activeOpacity={activeOpacity}
 			>
-				<Text style={[styles.selectableWordText, selected && styles.selectedWordText]}>{word}</Text>
+				<Text
+					style={[
+						styles.selectableWordText,
+						isDarkMode && baseStyles.textDark,
+						selected && styles.selectedWordText
+					]}
+				>
+					{word}
+				</Text>
 			</TouchableOpacity>
 		);
 	};
@@ -381,8 +400,9 @@ class ManualBackupStep2 extends PureComponent {
 		const { confirmedWords, seedPhraseReady } = this.state;
 		const wordLength = confirmedWords.length;
 		const complete = seedPhraseReady && this.validateWords();
+		const { isDarkMode } = this.context;
 		return (
-			<SafeAreaView style={styles.mainWrapper}>
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
 				<MStatusBar navigation={this.props.navigation} />
 				<TitleBar title={strings('manual_backup_step_1.wallet_backup')} onBack={this.goBack} />
 				<ScrollView
@@ -391,7 +411,9 @@ class ManualBackupStep2 extends PureComponent {
 					keyboardShouldPersistTaps="handled"
 					showsVerticalScrollIndicator={false}
 				>
-					<Text style={styles.action}>{strings('manual_backup_step_1.action')}</Text>
+					<Text style={[styles.action, isDarkMode && baseStyles.textDark]}>
+						{strings('manual_backup_step_1.action')}
+					</Text>
 					<View style={styles.seedPhraseWrapper}>
 						{confirmedWords.slice(0, wordLength).map(({ word }, i) => this.renderWordBox(word, i))}
 					</View>

@@ -1715,29 +1715,34 @@ class WalletManagement extends PureComponent {
 		this.setState({ faqModalVisible: false });
 	};
 
-	renderFaqModal = () => (
-		<Modal
-			isVisible={this.state.faqModalVisible && !this.props.isLockScreen}
-			onBackdropPress={this.hideFaqModal}
-			onBackButtonPress={this.hideFaqModal}
-			onSwipeComplete={this.hideFaqModal}
-			swipeDirection={'down'}
-			propagateSwipe
-			style={styles.bottomModal}
-		>
-			<View>
-				<View style={styles.faqWrapper}>
-					<View style={styles.faqContainer}>
-						<Text style={styles.faqTitle}>{strings('wallet_management.account_wallet_difference')}</Text>
-						<Text style={styles.faqDesc}>
-							{strings('wallet_management.account_wallet_difference_desc')}
-						</Text>
-						<Image source={require('../../../images/img_pop_wallet.png')} />
+	renderFaqModal = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<Modal
+				isVisible={this.state.faqModalVisible && !this.props.isLockScreen}
+				onBackdropPress={this.hideFaqModal}
+				onBackButtonPress={this.hideFaqModal}
+				onSwipeComplete={this.hideFaqModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				style={styles.bottomModal}
+			>
+				<View>
+					<View style={[styles.faqWrapper, isDarkMode && baseStyles.darkModalBackground]}>
+						<View style={styles.faqContainer}>
+							<Text style={[styles.faqTitle, isDarkMode && baseStyles.textDark]}>
+								{strings('wallet_management.account_wallet_difference')}
+							</Text>
+							<Text style={[styles.faqDesc, isDarkMode && baseStyles.subTextDark]}>
+								{strings('wallet_management.account_wallet_difference_desc')}
+							</Text>
+							<Image source={require('../../../images/img_pop_wallet.png')} />
+						</View>
 					</View>
 				</View>
-			</View>
-		</Modal>
-	);
+			</Modal>
+		);
+	};
 
 	render = () => {
 		const { keyrings } = this.props;

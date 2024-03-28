@@ -74,20 +74,17 @@ class OperationPromptView extends PureComponent {
 					onCancel();
 				}}
 			>
-				<View style={styles.errorModal}>
-					<Text style={styles.errorText} numberOfLines={10}>
+				<View style={[styles.errorModal, isDarkMode && baseStyles.darkModalBackground]}>
+					<Text style={[styles.errorText, isDarkMode && baseStyles.textDark]} numberOfLines={10}>
 						{message}
 					</Text>
-					<View style={styles.divider} />
-					<TouchableOpacity
-						style={[styles.okButton, isDarkMode && baseStyles.darkConfirmButton]}
-						onPress={onOk}
-					>
+					<View style={[styles.divider, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
+					<TouchableOpacity style={[styles.okButton, isDarkMode && { color: colors.$4CA1CF }]} onPress={onOk}>
 						<Text style={[styles.buttonText, isDarkMode && baseStyles.darkConfirmText]}>
 							{okText || strings('navigation.ok')}
 						</Text>
 					</TouchableOpacity>
-					<View style={styles.divider} />
+					<View style={[styles.divider, isDarkMode && { backgroundColor: '#FFFFFF29' }]} />
 					<TouchableOpacity
 						style={[styles.cancelButton, isDarkMode && baseStyles.darkCancelButton]}
 						onPress={onCancel}

@@ -175,12 +175,17 @@ class OngoingTransactions extends PureComponent {
 
 	keyExtractor = item => item.id;
 
-	renderNoTx = () => (
-		<View style={styles.noTxView}>
-			<Image source={iconNotx} />
-			<Text style={styles.noTxText}>{strings('other.no_transaction_history')}</Text>
-		</View>
-	);
+	renderNoTx = () => {
+		const { isDarkMode } = this.context;
+		return (
+			<View style={styles.noTxView}>
+				<Image source={iconNotx} />
+				<Text style={[styles.noTxText, isDarkMode && baseStyles.textDark]}>
+					{strings('other.no_transaction_history')}
+				</Text>
+			</View>
+		);
+	};
 
 	exitChainId = curChainId => {
 		const { allChainId } = this.props;
@@ -353,6 +358,7 @@ class OngoingTransactions extends PureComponent {
 		const renderTo = renderFullAddress(transactionMeta.transaction.to);
 		const transactionHash = transactionMeta.transactionHash;
 		const isRpc = isRpcChainId(transactionMeta.chainId);
+		const { isDarkMode } = this.context;
 		return (
 			<TouchableOpacity style={styles.itemWrapper} activeOpacity={1}>
 				{isRpc ? (
@@ -369,7 +375,9 @@ class OngoingTransactions extends PureComponent {
 					tx={transactionMeta}
 					selectedAddress={selectedAddress}
 				/>
-				<TxItem.Datetime style={styles.time}>{this.renderTxTime(transactionMeta)}</TxItem.Datetime>
+				<TxItem.Datetime style={[styles.time, isDarkMode && baseStyles.subTextDark]}>
+					{this.renderTxTime(transactionMeta)}
+				</TxItem.Datetime>
 				{isMigrated ? (
 					this.renderMigrated(transactionMeta)
 				) : (
@@ -377,12 +385,14 @@ class OngoingTransactions extends PureComponent {
 						originAddr={renderTo}
 						toAddr={renderTo?.substring(0, 20) + '...' + renderTo?.substring(29)}
 						showAlert={this.showCopyAlert}
+						style={isDarkMode && baseStyles.subTextDark}
 					/>
 				)}
 				<TxItem.Hash
 					originHash={transactionHash}
 					txHash={transactionHash?.substring(0, 18) + '...' + transactionHash?.substring(50)}
 					navToBrowser={() => this.navToBrowser(transactionMeta)}
+					style={isDarkMode && baseStyles.subTextDark}
 				/>
 				{this.renderAction(transactionMeta, extraInfo)}
 			</TouchableOpacity>
@@ -461,6 +471,7 @@ class OngoingTransactions extends PureComponent {
 	render() {
 		const { transactionMetas } = this.props;
 		const { error, cancelTransactionMeta, cancelMessage } = this.state;
+		const { isDarkMode } = this.context;
 		const submittedTransaction = transactionMetas.filter(
 			meta =>
 				this.exitChainId(meta.chainId) &&
@@ -473,8 +484,10 @@ class OngoingTransactions extends PureComponent {
 		);
 		this.showListId = submittedTransaction.map(meta => meta.id);
 		return (
-			<View style={styles.wrapper}>
-				<Text style={styles.titleWrapper}>{strings('other.ongoing_tx')}</Text>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>
+				<Text style={[styles.titleWrapper, isDarkMode && baseStyles.textDark]}>
+					{strings('other.ongoing_tx')}
+				</Text>
 				<FlatList
 					getItemLayout={this.getItemLayout}
 					data={submittedTransaction}

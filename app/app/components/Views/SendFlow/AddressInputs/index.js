@@ -74,9 +74,10 @@ const styles = StyleSheet.create({
 		color: colors.$030319,
 		...fontStyles.normal,
 		paddingTop: 14,
-		paddingBottom: 12,
+		paddingBottom: 4,
 		paddingLeft: 0,
 		paddingRight: 8,
+
 		width: '100%'
 	},
 	scanIcon: {
@@ -175,7 +176,7 @@ export const AddressTo = props => {
 							autoCorrect={false}
 							onChangeText={onToSelectedAddressChange}
 							placeholder={placeholder}
-							placeholderTextColor={holderGrey}
+							placeholderTextColor={isDarkMode ? colors.paliGrey200 : holderGrey}
 							spellCheck={false}
 							style={[styles.textInput, inputWidth, isDarkMode && baseStyles.textDark]}
 							numberOfLines={1}
@@ -192,7 +193,9 @@ export const AddressTo = props => {
 					) : (
 						<View style={styles.inputActionContainer}>
 							<TouchableOpacity style={styles.touchPaste} onPress={onPastedAddress}>
-								<Text style={styles.pasteLabel}>{strings('other.paste')}</Text>
+								<Text style={[styles.pasteLabel, isDarkMode && baseStyles.subTextDark]}>
+									{strings('other.paste')}
+								</Text>
 							</TouchableOpacity>
 							{!!onScan && (
 								<TouchableOpacity onPress={onScan} style={styles.iconWrapper}>

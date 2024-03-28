@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
 
 class MoveTab extends PureComponent {
 	static contextType = ThemeContext;
+	static contextType = ThemeContext;
 	static propTypes = {
 		navigation: PropTypes.object,
 		asset: PropTypes.object,
@@ -1182,10 +1183,13 @@ class MoveTab extends PureComponent {
 
 	renderNetworks = () => {
 		const { supportNetworks, networkSelectType, moveStep } = this.state;
+		const { isDarkMode } = this.context;
 		if (moveStep > 2) {
 			return (
-				<View style={[styles.networkBg, styles.networkSelectBg]}>
-					<Text style={[styles.networkLabel, styles.networkSelectLabel]}>
+				<View
+					style={[styles.networkBg, { backgroundColor: isDarkMode && '#FF999966' }, styles.networkSelectBg]}
+				>
+					<Text style={[styles.networkLabel, isDarkMode && baseStyles.textDark, styles.networkSelectLabel]}>
 						{getChainTypeName(networkSelectType)}
 					</Text>
 				</View>
@@ -1193,12 +1197,22 @@ class MoveTab extends PureComponent {
 		}
 		return supportNetworks.map((net, i) => (
 			<TouchableOpacity
-				style={[styles.networkBg, networkSelectType === net.type && styles.networkSelectBg]}
+				style={[
+					styles.networkBg,
+					{ backgroundColor: isDarkMode && '#FF999966' },
+					networkSelectType === net.type && styles.networkSelectBg
+				]}
 				onPress={() => this.onNetworkSelect(net.type)}
 				disabled={networkSelectType === net.type}
 				key={`net_${i}`}
 			>
-				<Text style={[styles.networkLabel, networkSelectType === net.type && styles.networkSelectLabel]}>
+				<Text
+					style={[
+						styles.networkLabel,
+						isDarkMode && baseStyles.textDark,
+						networkSelectType === net.type && styles.networkSelectLabel
+					]}
+				>
 					{net.name}
 				</Text>
 			</TouchableOpacity>
@@ -1315,12 +1329,16 @@ class MoveTab extends PureComponent {
 	renderTokenInput = () => {
 		const { asset } = this.props;
 		const { moveAmountFormat, inputTextWidth, loadEstimatedTotalGasMax } = this.state;
-
+		const { isDarkMode } = this.context;
 		return (
 			<View style={styles.valueInput}>
 				<TokenImage asset={asset} containerStyle={styles.inputTokenLogo} iconStyle={styles.inputIconStyle} />
 				<TextInput
-					style={[styles.inputAmount, inputTextWidth && { width: inputTextWidth }]}
+					style={[
+						styles.inputAmount,
+						isDarkMode && baseStyles.textDark,
+						inputTextWidth && { width: inputTextWidth }
+					]}
 					ref={this.amountInput}
 					value={moveAmountFormat}
 					onLayout={this.onTextInputLayout}
@@ -1385,13 +1403,13 @@ class MoveTab extends PureComponent {
 		} else {
 			exchangeRate = this.getTokenRate();
 		}
-
+		const { isDarkMode } = this.context;
 		const canInputDollar = exchangeRate !== undefined && exchangeRate !== 0;
 		return (
 			<View style={styles.dollarInput}>
 				<Image style={styles.coinIcon} source={CURRENCIES[currencyCode].icon} />
 				<TextInput
-					style={styles.inputAmount}
+					style={[styles.inputAmount, isDarkMode && baseStyles.textDark]}
 					ref={this.dollarInput}
 					value={inputValueConversion}
 					onChangeText={this.onDollarInputChange}
@@ -1414,13 +1432,15 @@ class MoveTab extends PureComponent {
 			<>
 				<View style={styles.amountWrapper}>
 					<View style={styles.amountTitle}>
-						<Text style={styles.amountText}>{strings('other.amount')}</Text>
-						<Text style={styles.amountAvailable}>
+						<Text style={[styles.amountText, isDarkMode && baseStyles.textDark]}>
+							{strings('other.amount')}
+						</Text>
+						<Text style={[styles.amountAvailable, isDarkMode && baseStyles.subTextDark]}>
 							{strings('other.amount_available', { amount: renderAmount(mainBalance) })}
 						</Text>
 					</View>
 					{this.renderTokenInput()}
-					<Text style={styles.approxi}>≈</Text>
+					<Text style={[styles.approxi, isDarkMode && baseStyles.subTextDark]}>≈</Text>
 					{this.renderDollarInput()}
 				</View>
 				<View style={baseStyles.flexGrow} />
@@ -1651,7 +1671,7 @@ class MoveTab extends PureComponent {
 								source={require('../../../../animations/tokens_loading.json')}
 							/>
 						</View>
-						<Text style={styles.approveText}>
+						<Text style={[styles.approveText, isDarkMode && baseStyles.textDark]}>
 							{strings('other.approving_wait', {
 								token: asset.symbol,
 								network: getChainTypeName(asset.type)
@@ -1661,7 +1681,7 @@ class MoveTab extends PureComponent {
 				) : (
 					<>
 						<Image style={styles.approveImage} source={approveImage} />
-						<Text style={styles.approveText2}>
+						<Text style={[styles.approveText2, isDarkMode && baseStyles.textDark]}>
 							{strings('other.approve_token', {
 								token: asset.symbol,
 								network: getChainTypeName(asset.type)
@@ -1712,20 +1732,25 @@ class MoveTab extends PureComponent {
 		return (
 			<View style={styles.wrapper}>
 				<View style={styles.rowWrapper}>
-					<Text style={styles.amountText}>{strings('other.asset')}</Text>
-					<Text style={styles.rightText}>{symbol}</Text>
+					<Text style={[styles.amountText, isDarkMode && baseStyles.textDark]}>{strings('other.asset')}</Text>
+					<Text style={[styles.rightText, isDarkMode && baseStyles.subTextDark]}>{symbol}</Text>
 				</View>
 
 				<View style={styles.rowWrapper}>
-					<Text style={styles.amountText}>{strings('other.amount')}</Text>
-					<Text style={styles.rightText}>{moveAmountFormat}</Text>
+					<Text style={[styles.amountText, isDarkMode && baseStyles.textDark]}>
+						{strings('other.amount')}
+					</Text>
+					<Text style={[styles.rightText, isDarkMode && baseStyles.subTextDark]}>{moveAmountFormat}</Text>
 				</View>
 
 				<View style={styles.rowWrapper}>
-					<Text style={styles.amountText}>{strings('other.to_network')}</Text>
-					<Text style={styles.rightText}>{getChainTypeName(networkSelectType)}</Text>
+					<Text style={[styles.amountText, isDarkMode && baseStyles.textDark]}>
+						{strings('other.to_network')}
+					</Text>
+					<Text style={[styles.rightText, isDarkMode && baseStyles.subTextDark]}>
+						{getChainTypeName(networkSelectType)}
+					</Text>
 				</View>
-
 				<Image style={styles.rowShadow} source={imgShadow} />
 
 				<View style={styles.rowFee}>
@@ -1792,20 +1817,25 @@ class MoveTab extends PureComponent {
 
 	renderView = () => {
 		const { moveStep, error, checkPassword } = this.state;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 				onScrollBeginDrag={dismissKeyboard}
 			>
-				<View style={styles.titleLayout}>
-					<Text style={styles.intro}> {strings('other.migration')}</Text>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}> {strings('other.migration')}</Text>
 				</View>
 				<TouchableOpacity activeOpacity={1} style={styles.scrollViewContent} onPress={dismissKeyboard}>
-					<Text style={styles.migrateTip}>{strings('other.migrate_other_network')}</Text>
+					<Text style={[styles.migrateTip, isDarkMode && baseStyles.subTextDark]}>
+						{strings('other.migrate_other_network')}
+					</Text>
 					{moveStep !== 4 ? (
 						<View style={styles.wrapper}>
-							<Text style={styles.headerText}>{strings('other.to_network')}</Text>
+							<Text style={[styles.headerText, isDarkMode && baseStyles.textDark]}>
+								{strings('other.to_network')}
+							</Text>
 							<ScrollView
 								style={styles.networksScroll}
 								contentContainerStyle={styles.networks}
@@ -1835,14 +1865,19 @@ class MoveTab extends PureComponent {
 		);
 	};
 
-	render = () =>
-		Device.isIos() ? (
-			<KeyboardAvoidingView style={styles.moveWrapper} behavior={'padding'}>
+	render = () => {
+		const { isDarkMode } = this.context;
+		return Device.isIos() ? (
+			<KeyboardAvoidingView
+				style={[styles.moveWrapper, isDarkMode && baseStyles.darkModalBackground]}
+				behavior={'padding'}
+			>
 				{this.renderView()}
 			</KeyboardAvoidingView>
 		) : (
-			<View style={styles.moveWrapper}>{this.renderView()}</View>
+			<View style={[styles.moveWrapper, isDarkMode && baseStyles.darkModalBackground]}>{this.renderView()}</View>
 		);
+	};
 }
 
 const mapStateToProps = state => ({

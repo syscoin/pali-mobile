@@ -20,6 +20,7 @@ import {
 import { store } from '../../../store';
 import { getAllChainIdArray, isRpcChainId } from '../../../util/ControllerUtils';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const options = {
 	enableVibrateFallback: true,
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
 });
 
 class TransactionTips extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		toggleOngoingTransactionsModal: PropTypes.func,
 		polygonDeposits: PropTypes.array,
@@ -350,11 +352,18 @@ class TransactionTips extends PureComponent {
 
 	render() {
 		const { submittedIds, animateEnd } = this.state;
+		const { isDarkMode } = this.context;
 		if (submittedIds.length <= 0) {
 			if (animateEnd) {
 				return (
 					<ElevatedView style={styles.animationWrapper} elevation={100}>
-						<Animated.View style={[styles.animationHide, { opacity: this.hideView }]}>
+						<Animated.View
+							style={[
+								styles.animationHide,
+								isDarkMode && baseStyles.darkCardBackground,
+								{ opacity: this.hideView }
+							]}
+						>
 							<LottieView
 								style={styles.animation}
 								autoPlay
@@ -369,10 +378,10 @@ class TransactionTips extends PureComponent {
 			return <></>;
 		}
 		return (
-			<ElevatedView style={styles.wrapper} elevation={100}>
+			<ElevatedView style={[styles.wrapper, isDarkMode && baseStyles.darkCardBackground]} elevation={100}>
 				<Animated.View style={[styles.submittedWrapper, { minWidth: this.calWidth }]}>
 					<Animated.View style={[{ opacity: this.textOpacity }]}>
-						<Text style={styles.submittedText} numberOfLines={1}>
+						<Text style={[styles.submittedText, isDarkMode && baseStyles.textDark]} numberOfLines={1}>
 							{strings('other.transaction_submitted')}
 						</Text>
 					</Animated.View>
@@ -384,7 +393,7 @@ class TransactionTips extends PureComponent {
 						loop
 						source={require('../../../animations/ongoing_loading.json')}
 					/>
-					<Text style={styles.waitText}>{submittedIds.length}</Text>
+					<Text style={[styles.waitText, isDarkMode && baseStyles.textDark]}>{submittedIds.length}</Text>
 				</TouchableOpacity>
 			</ElevatedView>
 		);

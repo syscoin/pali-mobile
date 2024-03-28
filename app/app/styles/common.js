@@ -251,6 +251,9 @@ export const baseStyles = {
 	darkActionBackground: {
 		backgroundColor: colors.deepBlue800
 	},
+	lightBlueBackground: {
+		backgroundColor: colors.$4CA1CF
+	},
 	textDark: { color: 'white' },
 	subTextDark: { color: colors.paliGrey200 },
 	shadow: {

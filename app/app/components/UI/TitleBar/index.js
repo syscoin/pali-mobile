@@ -1,9 +1,10 @@
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
 import Device from '../../../util/Device';
-import { colors, fontStyles } from '../../../styles/common';
+import { baseStyles, colors, fontStyles } from '../../../styles/common';
 import Icon from '../Icon';
 import React from 'react';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	titleBar: {
@@ -57,6 +58,7 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 	let height = 44;
 	let paddingTop = 0;
 	const [dynamicFontSize, setDynamicFontSize] = React.useState(18); // default font size
+	const { isDarkMode } = useTheme();
 
 	React.useEffect(() => {
 		// Reset the dynamic font size when the title changes
@@ -81,14 +83,17 @@ const TitleBar = ({ title, onBack, fullScreenOnAndroid, rightView, titleStyle, b
 		<View style={[styles.titleBar, baseStyle, { height, paddingTop }]}>
 			{onBack && (
 				<TouchableOpacity style={[styles.back, { top: paddingTop }]} onPress={onBack}>
-					{withBackground ? (
+					{isDarkMode || withBackground ? (
 						<Icon name={'back'} color={colors.white} width="24" height="24" />
 					) : (
 						<Image source={require('../../../images/back.png')} />
 					)}
 				</TouchableOpacity>
 			)}
-			<Text style={[styles.title, titleStyle, { fontSize: dynamicFontSize }]} onLayout={handleTextLayout}>
+			<Text
+				style={[styles.title, titleStyle, isDarkMode && baseStyles.textDark, { fontSize: dynamicFontSize }]}
+				onLayout={handleTextLayout}
+			>
 				{title}
 			</Text>
 			{rightView && <View style={[styles.rightView, { top: paddingTop }]}>{rightView}</View>}

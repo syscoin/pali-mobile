@@ -11,7 +11,7 @@ import {
 	BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { colors, fontStyles, activeOpacity } from '../../../styles/common';
+import { colors, fontStyles, activeOpacity, baseStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import PreventScreenshot from '../../../core/PreventScreenshot';
 import SecureKeychain from '../../../core/SecureKeychain';
@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { getSeedPhraseSplit } from '../../../core/Vault';
 import MStatusBar from '../../UI/MStatusBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 const styles = StyleSheet.create({
 	mainWrapper: {
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
  * the backup seed phrase flow
  */
 class ManualBackupStep1 extends PureComponent {
+	static contextType = ThemeContext;
 	static propTypes = {
 		/**
 		/* navigation object required to push and pop other views
@@ -230,40 +232,53 @@ class ManualBackupStep1 extends PureComponent {
 	renderSeedphraseView = () => {
 		const words = this.words || [];
 		const wordLength = words.length;
+		const { isDarkMode } = this.context;
 		return (
 			<ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
 				<MStatusBar navigation={this.props.navigation} />
-				<Text style={styles.action}>{strings('manual_backup_step_1.wallet_backup')}</Text>
+				<Text style={[styles.action, isDarkMode && baseStyles.textDark]}>
+					{strings('manual_backup_step_1.wallet_backup')}
+				</Text>
 				<View style={styles.seedPhraseWrapper}>
 					{this.words.slice(0, wordLength).map((word, i) => (
-						<View key={`word_${i}`} style={styles.wordWrapper}>
-							<View style={styles.numberWrapper}>
-								<Text style={styles.number}>{`${i + 1}`}</Text>
+						<View
+							key={`word_${i}`}
+							style={[styles.wordWrapper, isDarkMode && baseStyles.darkActionBackground]}
+						>
+							<View style={[styles.numberWrapper, isDarkMode && baseStyles.lightBlueBackground]}>
+								<Text style={[styles.number, isDarkMode && baseStyles.textDark]}>{`${i + 1}`}</Text>
 							</View>
-							<Text style={styles.word}>{`${word}`}</Text>
+							<Text style={[styles.word, isDarkMode && baseStyles.textDark]}>{`${word}`}</Text>
 						</View>
 					))}
 				</View>
-
-				<View style={styles.whatSeedPhraseView}>
+				<View style={[styles.whatSeedPhraseView, isDarkMode && baseStyles.darkActionBackground]}>
 					<View style={styles.borderTitleView}>
-						<Image source={require('../../../images/ic_wallet_doubt.png')} />
-						<Text style={styles.borderTitleText}>{strings('wallet_management.what_seed_phrase')}</Text>
+						<Text style={[styles.borderTitleText, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.what_seed_phrase')}
+						</Text>
 					</View>
-					<Text style={styles.borderDesc}>{strings('wallet_management.what_seed_phrase_desc')}</Text>
+					<Text style={[styles.borderDesc, isDarkMode && baseStyles.subTextDark]}>
+						{strings('wallet_management.what_seed_phrase_desc')}
+					</Text>
 				</View>
-				<View style={styles.keepSeedPhraseSafeView}>
+				<View style={[styles.keepSeedPhraseSafeView, isDarkMode && baseStyles.darkActionBackground]}>
 					<View style={styles.borderTitleView}>
-						<Image source={require('../../../images/ic_wallet_dengpao.png')} />
-						<Text style={styles.borderTitleText}>{strings('wallet_management.keep_seed_phrase_safe')}</Text>
+						<Text style={[styles.borderTitleText, isDarkMode && baseStyles.textDark]}>
+							{strings('wallet_management.keep_seed_phrase_safe')}
+						</Text>
 					</View>
-					<Text style={styles.borderDesc}>{strings('wallet_management.keep_seed_phrase_safe_desc')}</Text>
+					<Text style={[styles.borderDesc, isDarkMode && baseStyles.subTextDark]}>
+						{strings('wallet_management.keep_seed_phrase_safe_desc')}
+					</Text>
 				</View>
 				<TouchableOpacity style={styles.goButtonWrapper} onPress={this.goNext} activeOpacity={activeOpacity}>
 					<Text style={styles.goButtonText}>{strings('manual_backup_step_1.go')}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.laterButtonWrapper} onPress={this.goHome} activeOpacity={activeOpacity}>
-					<Text style={styles.laterButtonText}>{strings('manual_backup_step_1.later')}</Text>
+					<Text style={[styles.laterButtonText, isDarkMode && baseStyles.textDark]}>
+						{strings('manual_backup_step_1.later')}
+					</Text>
 				</TouchableOpacity>
 			</ScrollView>
 		);
@@ -272,7 +287,12 @@ class ManualBackupStep1 extends PureComponent {
 	render() {
 		const { ready } = this.state;
 		if (!ready) return this.renderLoader();
-		return <SafeAreaView style={styles.mainWrapper}>{this.renderSeedphraseView()}</SafeAreaView>;
+		const { isDarkMode } = this.context;
+		return (
+			<SafeAreaView style={[styles.mainWrapper, isDarkMode && baseStyles.darkBackground]}>
+				{this.renderSeedphraseView()}
+			</SafeAreaView>
+		);
 	}
 }
 

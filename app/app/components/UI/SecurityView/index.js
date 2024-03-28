@@ -244,7 +244,7 @@ class SecurityView extends PureComponent {
 								{strings('security.faq_desc')}
 							</Text>
 							{this.state.unDetectedCount > 0 && (
-								<Text style={styles.faqDesc}>
+								<Text style={[styles.faqDesc, isDarkMode && baseStyles.subTextDark]}>
 									{strings('security.faq_desc_undetected', {
 										num: this.state.unDetectedCount
 									})}

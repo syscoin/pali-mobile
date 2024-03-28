@@ -929,6 +929,7 @@ class SendTab extends PureComponent {
 	renderSuggestItem = (item, index, match) => {
 		const name = item.name;
 		const formattedText = [];
+		const { isDarkMode } = this.context;
 		if (name.length <= 30) {
 			match = match.toLowerCase();
 			const mIndex = name.indexOf(match);
@@ -943,14 +944,20 @@ class SendTab extends PureComponent {
 				} else if (mIndex === 0) {
 					formattedText.push(mention);
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(match.length, name.length)}
 						</Text>
 					);
 					formattedText.push(other);
 				} else if (mIndex + match.length === name.length) {
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(0, mIndex)}
 						</Text>
 					);
@@ -958,14 +965,20 @@ class SendTab extends PureComponent {
 					formattedText.push(mention);
 				} else {
 					const other = (
-						<Text key={'suggestText' + index + 1} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 1}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(0, mIndex)}
 						</Text>
 					);
 					formattedText.push(other);
 					formattedText.push(mention);
 					const other2 = (
-						<Text key={'suggestText' + index + 2} style={styles.suggestionText}>
+						<Text
+							key={'suggestText' + index + 2}
+							style={[styles.suggestionText, isDarkMode && baseStyles.textDark]}
+						>
 							{name.substr(mIndex + match.length, name.length)}
 						</Text>
 					);
@@ -1031,8 +1044,8 @@ class SendTab extends PureComponent {
 				onScrollBeginDrag={dismissKeyboard}
 				scrollEnabled={suggestions.length === 0}
 			>
-				<View style={styles.titleLayout}>
-					<Text style={styles.intro}>{strings('other.send')}</Text>
+				<View style={[styles.titleLayout, isDarkMode && baseStyles.darkBackground600]}>
+					<Text style={[styles.intro, isDarkMode && baseStyles.textDark]}>{strings('other.send')}</Text>
 				</View>
 				<TouchableOpacity style={styles.container} activeOpacity={1} onPress={dismissKeyboard}>
 					{txStep === 1 ? (
@@ -1053,10 +1066,17 @@ class SendTab extends PureComponent {
 							/>
 							{!toSelectedAddressReady && inputAddress?.length > 0 ? (
 								<View style={baseStyles.flexGrow}>
-									<Text style={styles.suggestionsText}>{strings('other.suggestions')}</Text>
+									<Text style={[styles.suggestionsText, isDarkMode && baseStyles.textDark]}>
+										{strings('other.suggestions')}
+									</Text>
 									{loadSuggestions ? (
 										<View>
-											<View style={styles.animLayout}>
+											<View
+												style={[
+													styles.animLayout,
+													isDarkMode && baseStyles.darkModalBackground
+												]}
+											>
 												<LottieView
 													style={styles.animation}
 													autoPlay
@@ -1082,7 +1102,7 @@ class SendTab extends PureComponent {
 												style={styles.noSuggestionImg}
 												source={require('../../../../images/no_nft_img.png')}
 											/>
-											<Text style={styles.noSuggestionText}>
+											<Text style={[styles.noSuggestionText, isDarkMode && baseStyles.textDark]}>
 												{strings('other.no_suggestions')}
 											</Text>
 										</>
@@ -1096,9 +1116,11 @@ class SendTab extends PureComponent {
 										<View style={styles.saftyPanel} />
 									)}
 									<View style={styles.networkWrapper}>
-										<Text style={styles.toNetwork}>{strings('other.to_network')}</Text>
+										<Text style={[styles.toNetwork, isDarkMode && baseStyles.textDark]}>
+											{strings('other.to_network')}
+										</Text>
 										<View style={styles.networks}>{this.renderNetworks()}</View>
-										<Text style={styles.noteText}>
+										<Text style={[styles.noteText, isDarkMode && baseStyles.subTextDark]}>
 											{strings('other.send_note', {
 												fromToken: this.getFromToken(),
 												network: getChainTypeName(asset.type),
@@ -1160,8 +1182,12 @@ class SendTab extends PureComponent {
 						<View style={styles.stepTwo}>
 							<View>
 								<View style={styles.labelNet}>
-									<Text style={styles.labelTitle}>{strings('other.to')}</Text>
-									<Text style={styles.labelNetContent}>{getChainTypeName(networkSelectType)}</Text>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.to')}
+									</Text>
+									<Text style={[styles.labelNetContent, isDarkMode && baseStyles.subTextDark]}>
+										{getChainTypeName(networkSelectType)}
+									</Text>
 								</View>
 								{!isValidAddress(inputAddress) ? (
 									<>
@@ -1175,20 +1201,32 @@ class SendTab extends PureComponent {
 											) : (
 												<Image source={require('../../../../images/ic_ens.png')} />
 											)}
-											<Text style={styles.ensName}>{inputAddress}</Text>
+											<Text style={[styles.ensName, isDarkMode && baseStyles.subTextDark]}>
+												{inputAddress}
+											</Text>
 										</View>
-										<Text style={styles.endAddress} numberOfLines={1} ellipsizeMode={'middle'}>
+										<Text
+											style={[styles.endAddress, isDarkMode && baseStyles.subTextDark]}
+											numberOfLines={1}
+											ellipsizeMode={'middle'}
+										>
 											{toSelectedAddress}
 										</Text>
 									</>
 								) : (
-									<Text style={styles.toAddress} numberOfLines={1} ellipsizeMode={'middle'}>
+									<Text
+										style={[styles.toAddress, isDarkMode && baseStyles.subTextDark]}
+										numberOfLines={1}
+										ellipsizeMode={'middle'}
+									>
 										{toSelectedAddress}
 									</Text>
 								)}
 								<View style={styles.labelAmount}>
-									<Text style={styles.labelTitle}>{strings('other.amount')}</Text>
-									<Text style={styles.labelAmountContent}>
+									<Text style={[styles.labelTitle, isDarkMode && baseStyles.textDark]}>
+										{strings('other.amount')}
+									</Text>
+									<Text style={[styles.labelAmountContent, isDarkMode && baseStyles.subTextDark]}>
 										{renderAmount(renderableInputValueConversion)}
 									</Text>
 								</View>
@@ -1221,7 +1259,11 @@ class SendTab extends PureComponent {
 									</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
-									style={[styles.confirmButton, confirmEnabled && styles.confirmButtonEnabled]}
+									style={[
+										styles.confirmButton,
+										confirmEnabled &&
+											(isDarkMode ? baseStyles.darkConfirmButton : styles.confirmButtonEnabled)
+									]}
 									onPress={this.onConfirmClick}
 									activeOpacity={activeOpacity}
 									disabled={!confirmEnabled || loading}
@@ -1232,7 +1274,10 @@ class SendTab extends PureComponent {
 										<Text
 											style={[
 												styles.confirmButtonText,
-												confirmEnabled && styles.confirmButtonTextEnable
+												confirmEnabled &&
+													(isDarkMode
+														? baseStyles.darkConfirmText
+														: styles.confirmButtonTextEnable)
 											]}
 										>
 											{strings('action_view.confirm')}
@@ -1256,14 +1301,19 @@ class SendTab extends PureComponent {
 		);
 	};
 
-	render = () =>
-		Device.isIos() ? (
-			<KeyboardAvoidingView style={styles.wrapper} behavior={'padding'}>
+	render = () => {
+		const { isDarkMode } = this.context;
+		return Device.isIos() ? (
+			<KeyboardAvoidingView
+				style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}
+				behavior={'padding'}
+			>
 				{this.renderView()}
 			</KeyboardAvoidingView>
 		) : (
-			<View style={styles.wrapper}>{this.renderView()}</View>
+			<View style={[styles.wrapper, isDarkMode && baseStyles.darkModalBackground]}>{this.renderView()}</View>
 		);
+	};
 }
 
 const mapStateToProps = state => ({
